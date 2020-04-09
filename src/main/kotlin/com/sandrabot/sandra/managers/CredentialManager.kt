@@ -18,6 +18,9 @@ package com.sandrabot.sandra.managers
 
 import org.json.JSONObject
 
+/**
+ * This class keeps track of sensitive tokens and secrets used throughout the bot.
+ */
 class CredentialManager(data: JSONObject) {
 
     /* If any of these fields are missing, the bot will fail to start */

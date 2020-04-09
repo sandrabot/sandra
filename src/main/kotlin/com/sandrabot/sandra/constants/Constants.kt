@@ -14,18 +14,12 @@
  *    limitations under the License.
  */
 
-package com.sandrabot.sandra.config
+package com.sandrabot.sandra.constants
 
-import org.json.JSONObject
+import com.sandrabot.sandra.SandraInfo
 
-class SandraConfig(data: JSONObject) {
+object Constants {
 
-    // Require that development mode is intentionally set
-    var developmentMode = data.getBoolean("development")
-
-    var apiEnabled = data.optBoolean("apiEnabled", true)
-    var sentryEnabled = data.optBoolean("sentryEnabled", true)
-    var apiPort = data.optInt("port", 41517)
-    var totalShards = data.optInt("shards", -1)
+    val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
 
 }

@@ -14,18 +14,21 @@
  *    limitations under the License.
  */
 
-package com.sandrabot.sandra.config
+package com.sandrabot.sandra.managers
 
-import org.json.JSONObject
+/**
+ * This class keeps track of miscellaneous values and statistics.
+ */
+class StatisticsManager {
 
-class SandraConfig(data: JSONObject) {
+    // This doesn't have to be super accurate
+    val startTime = System.currentTimeMillis()
 
-    // Require that development mode is intentionally set
-    var developmentMode = data.getBoolean("development")
+    var requestCount = 0
+        private set
 
-    var apiEnabled = data.optBoolean("apiEnabled", true)
-    var sentryEnabled = data.optBoolean("sentryEnabled", true)
-    var apiPort = data.optInt("port", 41517)
-    var totalShards = data.optInt("shards", -1)
+    fun incrementRequestCount() {
+        requestCount++
+    }
 
 }

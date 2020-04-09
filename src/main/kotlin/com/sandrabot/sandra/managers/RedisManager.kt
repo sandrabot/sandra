@@ -21,6 +21,9 @@ import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 
+/**
+ * This class provides a means of communication with a redis server.
+ */
 class RedisManager(private val config: RedisConfig) {
 
     private val pool = JedisPool(JedisPoolConfig(), config.host, config.port, config.timeout, config.password, config.database)

@@ -16,9 +16,12 @@
 
 package com.sandrabot.sandra
 
+import com.sandrabot.sandra.api.SandraAPI
 import com.sandrabot.sandra.config.SandraConfig
+import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
+import com.sandrabot.sandra.managers.StatisticsManager
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -28,13 +31,20 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.LoggerFactory
 import java.util.*
 
+/**
+ * This is the main class for the bot.
+ */
 class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credentials: CredentialManager) {
 
+    val apiEnabled = sandraConfig.apiEnabled
     val developmentMode = sandraConfig.developmentMode
+
+    val sandraApi = SandraAPI(this, sandraConfig.apiPort)
+    val statistics = StatisticsManager()
 
     val shards: ShardManager
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(Sandra::class.java)
 
     init {
 
@@ -49,6 +59,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(developmentMode)
         builder.setEnableShutdownHook(false)
+        builder.addEventListeners(ReadyListener(this))
 
         logger.info("Building JDA and signing into Discord")
         shards = builder.build()
@@ -74,6 +85,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val type = if (restart) "restart" else "shutdown"
         logger.info("Received request to $type from $caller")
 
+        sandraApi.shutdown()
         shards.shutdown()
         redis.shutdown()
 

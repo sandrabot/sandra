@@ -43,10 +43,11 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("net.dv8tion:JDA:4.1.1_134") {
-        // We don't need this because Lavaplayer will always sends opus for us
+        // We don't need this because Lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("io.javalin:javalin:3.8.0")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("org.json:json:20190722")
     implementation("redis.clients:jedis:3.2.0")
