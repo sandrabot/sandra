@@ -55,4 +55,31 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     }
 
+    /**
+     * Gracefully closes all resources and shuts down the bot.
+     * Any other shutdown hooks registered in the JVM will not run.
+     *
+     * Setting [restart] to true will exit with code 2 which is to
+     * be interpreted by a control system to restart the process.
+     */
+    fun shutdown(restart: Boolean = false) {
+        // Figure out who called this method and log the caller
+        val caller = try {
+            // Element 0 is this getStackTrace(), 1 is this method, 2 is shutdown$default, 3 is the caller
+            val element = Thread.currentThread().stackTrace[3]
+            "${element.className}::${element.methodName}"
+        } catch (ignored: Exception) {
+            null
+        }
+        val type = if (restart) "restart" else "shutdown"
+        logger.info("Received request to $type from $caller")
+
+        shards.shutdown()
+        redis.shutdown()
+
+        val code = if (restart) 2 else 0
+        logger.info("Finished shutting down, attempting to halt with code $code")
+        Runtime.getRuntime().halt(code)
+    }
+
 }

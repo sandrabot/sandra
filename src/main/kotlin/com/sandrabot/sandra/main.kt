@@ -121,8 +121,7 @@ fun bootstrap(): Int {
         return 1
     }
 
-    // TODO Shutdown Hook
-
+    Runtime.getRuntime().addShutdownHook(Thread({ sandra.shutdown() }, "Shutdown Hook"))
     val duration = System.currentTimeMillis() - beginStartup
     logger.info("Initialization finished in ${"%,d".format(duration)}ms")
 

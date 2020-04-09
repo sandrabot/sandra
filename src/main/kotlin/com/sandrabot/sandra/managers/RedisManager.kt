@@ -28,4 +28,8 @@ class RedisManager(private val config: RedisConfig) {
     val resource: Jedis
         get() = pool.resource
 
+    fun shutdown() {
+        pool.destroy()
+    }
+
 }
