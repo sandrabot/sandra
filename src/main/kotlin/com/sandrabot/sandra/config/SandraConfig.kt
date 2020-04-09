@@ -20,8 +20,6 @@ import org.json.JSONObject
 
 class SandraConfig(data: JSONObject) {
 
-    val beginStartup = System.currentTimeMillis()
-
     // Require that development mode is intentionally set
     var developmentMode = data.getBoolean("development")
 

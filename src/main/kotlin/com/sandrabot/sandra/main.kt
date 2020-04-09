@@ -31,8 +31,6 @@ import java.io.File
 import java.net.InetAddress
 import kotlin.system.exitProcess
 
-private val logger = LoggerFactory.getLogger(Sandra::class.java)
-
 fun main() {
 
     val code = bootstrap()
@@ -42,6 +40,8 @@ fun main() {
 
 fun bootstrap(): Int {
 
+    val logger = LoggerFactory.getLogger(Sandra::class.java)
+    val beginStartup = System.currentTimeMillis()
 
     // Print the logo and any relevant version information
     println("\n${Sandra::class.java.getResource("/logo.txt").readText()}")
@@ -123,7 +123,7 @@ fun bootstrap(): Int {
 
     // TODO Shutdown Hook
 
-    val duration = System.currentTimeMillis() - sandraConfig.beginStartup
+    val duration = System.currentTimeMillis() - beginStartup
     logger.info("Initialization finished in ${"%,d".format(duration)}ms")
 
     return 0

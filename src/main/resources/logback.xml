@@ -16,14 +16,37 @@
 
 <configuration>
 
+    <!-- Prevent configuration information from printing at startup -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%yellow([%d{MM.dd.yy HH:mm:ss.SSS}]) %highlight(%level) %green([%thread]) %cyan(%logger{0}) %boldRed(::) %msg%n</pattern>
+            <pattern>%yellow([%d{MM.dd.yy HH:mm:ss.SSS}]) %highlight(%-5level) %green([%t]) %cyan(%c{0}) %boldRed(::) %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/latest.log</file>
+        <immediateFlush>true</immediateFlush>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/%d{yyyy,aux}/%d{MM,aux}/%d{ddMMyy}.log.gz</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{MM.dd.yy HH:mm:ss.SSS}] %-5level [%t] %c :: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>warn</level>
+        </filter>
+        <filter class="com.sandrabot.sandra.utils.SentryFilter" />
+    </appender>
+
+    <root level="info">
         <appender-ref ref="Console" />
+        <appender-ref ref="File" />
+        <appender-ref ref="Sentry" />
     </root>
 
 </configuration>

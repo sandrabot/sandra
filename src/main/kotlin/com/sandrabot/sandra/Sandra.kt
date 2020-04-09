@@ -37,6 +37,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     init {
+
         // Initialize JDA and the event listeners
         val token = if (developmentMode) credentials.betaToken else credentials.token
         val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
@@ -48,8 +49,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(developmentMode)
         builder.setEnableShutdownHook(false)
-        logger.info("Building JDA and signing into Discord...")
+
+        logger.info("Building JDA and signing into Discord")
         shards = builder.build()
+
     }
 
 }

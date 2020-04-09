@@ -8,6 +8,6 @@ I have opted to open-source the bot and continue development on GitHub to be mor
 With this I will also be rewriting the bot from the ground up using Kotlin to ensure we are maximizing
 Discord's features and addressing any privacy concerns that may arise. (And to keep very old commits to myself...)
 
-Feel free to join our [Support Server](https://sandrabot.com/support) if you have any questions.
+Feel free to join our [support server](https://sandrabot.com/support) if you have any questions.
 
 **Self hosting is not, and will not, be supported.**
