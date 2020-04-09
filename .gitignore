@@ -1,0 +1,11 @@
+# Ignore Gradle project files
+.gradle
+build
+out
+
+# Ignore IntelliJ project files
+.idea
+
+# Ignore Sandra files
+logs
+config.json
