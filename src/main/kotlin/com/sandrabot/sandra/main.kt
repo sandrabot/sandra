@@ -44,8 +44,7 @@ fun bootstrap(): Int {
 
 
     // Print the logo and any relevant version information
-    val logo = Sandra::class.java.getResource("/logo.txt").readText()
-    println("\n$logo\n")
+    println("\n${Sandra::class.java.getResource("/logo.txt").readText()}")
     println(" | Version: ${SandraInfo.VERSION}")
     println(" | Commit: ${SandraInfo.COMMIT}")
     if (SandraInfo.LOCAL_CHANGES.isNotBlank()) {
