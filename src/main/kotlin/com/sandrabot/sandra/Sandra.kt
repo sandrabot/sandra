@@ -18,10 +18,14 @@ package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.SandraAPI
 import com.sandrabot.sandra.config.SandraConfig
+import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.managers.StatisticsManager
+import com.sandrabot.sandra.services.PresenceService
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -38,7 +42,9 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     val apiEnabled = sandraConfig.apiEnabled
     val developmentMode = sandraConfig.developmentMode
+    val prefix = if (developmentMode) Constants.BETA_PREFIX else Constants.PREFIX
 
+    val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
 
@@ -48,14 +54,19 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     init {
 
+        // Configure the development presence
+        if (developmentMode) presence.setDevelopment()
+
         // Initialize JDA and the event listeners
         val token = if (developmentMode) credentials.betaToken else credentials.token
         val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
         val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
         builder.disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
         builder.setMemberCachePolicy(MemberCachePolicy.DEFAULT)
-        builder.setShardsTotal(sandraConfig.totalShards)
+        builder.setActivity(Activity.listening("booting sounds"))
+        builder.setStatus(OnlineStatus.IDLE)
         builder.setChunkingFilter(ChunkingFilter.NONE)
+        builder.setShardsTotal(sandraConfig.totalShards)
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(developmentMode)
         builder.setEnableShutdownHook(false)

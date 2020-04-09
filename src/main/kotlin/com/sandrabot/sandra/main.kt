@@ -104,8 +104,8 @@ fun bootstrap(): Int {
     val redis = RedisManager(redisConfig)
 
     // Test the connection to the redis server, we don't know if it's any good until we poll a resource
-    val beginConnection = System.currentTimeMillis()
     try {
+        val beginConnection = System.currentTimeMillis()
         redis.resource.use { it.ping() }
         logger.info("Verified the redis connection in ${System.currentTimeMillis() - beginConnection}ms")
     } catch (e: Exception) {

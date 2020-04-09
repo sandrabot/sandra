@@ -20,6 +20,10 @@ import com.sandrabot.sandra.SandraInfo
 
 object Constants {
 
+    const val PREFIX = "s."
+    const val BETA_PREFIX = "b."
+    const val TWITCH = "https://twitch.tv/averen"
+
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
 
 }
