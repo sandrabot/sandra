@@ -20,6 +20,8 @@ import com.sandrabot.sandra.SandraInfo
 
 object Constants {
 
+    const val APPLICATION_ID = 302915036492333067L
+
     const val PREFIX = "s."
     const val BETA_PREFIX = "b."
     const val TWITCH = "https://twitch.tv/averen"

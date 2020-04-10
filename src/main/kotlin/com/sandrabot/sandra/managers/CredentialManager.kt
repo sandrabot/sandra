@@ -26,7 +26,13 @@ class CredentialManager(data: JSONObject) {
     /* If any of these fields are missing, the bot will fail to start */
 
     // Discord Tokens and Secrets
-    val token = data.getString("token")
-    val betaToken = data.getString("betaToken")
+    val token: String = data.getString("token")
+    val betaToken: String = data.getString("betaToken")
+
+    // Bot List Tokens
+    val botsOnDiscordToken: String = data.getString("bodToken")
+    val discordBotListToken: String = data.getString("dblToken")
+    val discordBotsGgToken: String = data.getString("dbgToken")
+    val topGgToken: String = data.getString("topGgToken")
 
 }

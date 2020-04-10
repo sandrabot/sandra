@@ -23,6 +23,7 @@ import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.managers.StatisticsManager
+import com.sandrabot.sandra.services.BotListService
 import com.sandrabot.sandra.services.PresenceService
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
@@ -44,6 +45,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val developmentMode = sandraConfig.developmentMode
     val prefix = if (developmentMode) Constants.BETA_PREFIX else Constants.PREFIX
 
+    val botList = BotListService(this)
     val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
