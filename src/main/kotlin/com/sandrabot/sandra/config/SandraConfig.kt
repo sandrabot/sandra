@@ -25,7 +25,7 @@ class SandraConfig(data: JSONObject) {
 
     var apiEnabled = data.optBoolean("apiEnabled", true)
     var sentryEnabled = data.optBoolean("sentryEnabled", true)
-    var apiPort = data.optInt("port", 41517)
-    var totalShards = data.optInt("shards", -1)
+    var apiPort = data.optInt("apiPort", 41517)
+    var shardsTotal = data.optInt("shardsTotal", -1)
 
 }

@@ -20,6 +20,7 @@ import com.sandrabot.sandra.Sandra
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.hooks.EventListener
+import org.slf4j.LoggerFactory
 
 class ReadyListener(private val sandra: Sandra) : EventListener {
 
@@ -32,15 +33,18 @@ class ReadyListener(private val sandra: Sandra) : EventListener {
         if (event is ReadyEvent) {
             // A shard finished loading
             shardsReady++
-            // Update the shard's presence, it is currently "booting"
+            // Update the shard's presence, it is currently set to idle
             sandra.presence.update(event.jda)
+            val shardInfo = event.jda.shardInfo
             // The last shard to finish loading initializes most of the bot
-            if (shardsReady == event.jda.shardInfo.shardTotal) {
+            if (shardsReady == shardInfo.shardTotal) {
                 if (sandra.apiEnabled) sandra.sandraApi.start()
                 if (!sandra.developmentMode) {
                     sandra.presence.start()
                     sandra.botList.start()
                 }
+                val logger = LoggerFactory.getLogger(ReadyListener::class.java)
+                logger.info("Shard ${shardInfo.shardId} has finished initializing additional items")
                 // This is the last ready event that will ever
                 // fire, so we don't need this listener anymore
                 sandra.shards.removeEventListener(this)

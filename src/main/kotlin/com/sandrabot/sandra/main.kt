@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.JDAInfo
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.net.InetAddress
 import kotlin.system.exitProcess
 
 fun main() {
@@ -64,12 +63,12 @@ fun bootstrap(): Int {
 
     val sandraConfig = SandraConfig(config)
     if (sandraConfig.developmentMode) {
-        logger.info("Development Mode has been enabled, using beta token")
+        logger.info("Development mode has been enabled, using beta token")
     }
 
     // Adjust the root logger level if specified
-    if (config.has("logger")) {
-        val level = Level.toLevel(config.getString("logger"), Level.INFO)
+    if (config.has("logLevel")) {
+        val level = Level.toLevel(config.getString("logLevel"), Level.INFO)
         (LoggerFactory.getLogger("ROOT") as Logger).level = level
     }
 
@@ -83,11 +82,6 @@ fun bootstrap(): Int {
         // stacktrace.app.packages can only be set in sentry.properties apparently
         sentry.environment = if (sandraConfig.developmentMode) "development" else "production"
         sentry.release = SandraInfo.COMMIT
-        try {
-            sentry.serverName = InetAddress.getLocalHost().hostName
-        } catch (ignored: Exception) {
-            // Sentry will instead use the local IP address or linux hostname
-        }
     }
 
     // Initialize the credential manager to be used throughout the bot

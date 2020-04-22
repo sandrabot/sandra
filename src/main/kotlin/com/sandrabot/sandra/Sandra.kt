@@ -26,7 +26,6 @@ import com.sandrabot.sandra.managers.StatisticsManager
 import com.sandrabot.sandra.services.BotListService
 import com.sandrabot.sandra.services.PresenceService
 import net.dv8tion.jda.api.OnlineStatus
-import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -65,17 +64,20 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
         builder.disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
         builder.setMemberCachePolicy(MemberCachePolicy.DEFAULT)
-        builder.setActivity(Activity.listening("booting sounds"))
-        builder.setStatus(OnlineStatus.IDLE)
         builder.setChunkingFilter(ChunkingFilter.NONE)
-        builder.setShardsTotal(sandraConfig.totalShards)
+        builder.setStatus(OnlineStatus.IDLE)
+        builder.setShardsTotal(sandraConfig.shardsTotal)
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(developmentMode)
         builder.setEnableShutdownHook(false)
         builder.addEventListeners(ReadyListener(this))
 
         logger.info("Building JDA and signing into Discord")
+        // Blocks the thread until the first shard signs in
         shards = builder.build()
+
+        val self = shards.shardCache.first().selfUser
+        logger.info("Signed into Discord as ${self.asTag} (${self.id})")
 
     }
 
@@ -89,21 +91,25 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     fun shutdown(restart: Boolean = false) {
         // Figure out who called this method and log the caller
         val caller = try {
-            // Element 0 is this getStackTrace(), 1 is this method, 2 is shutdown$default, 3 is the caller
-            val element = Thread.currentThread().stackTrace[3]
-            "${element.className}::${element.methodName}"
+            // Element 0 is getStackTrace(), 1 is this method, 2 might be shutdown$default or the caller
+            val stackTrace = Thread.currentThread().stackTrace
+            val indexTwo = stackTrace[2]
+            // Checking the method name is probably good enough
+            val caller = if (indexTwo.methodName == "shutdown\$default") {
+                stackTrace[3]
+            } else indexTwo
+            "${caller.className}::${caller.methodName}"
         } catch (ignored: Exception) {
             null
         }
-        val type = if (restart) "restart" else "shutdown"
-        logger.info("Received request to $type from $caller")
+        logger.info("Shutdown called by $caller with restart: $restart")
 
-        sandraApi.shutdown()
+        if (apiEnabled) sandraApi.shutdown()
         shards.shutdown()
         redis.shutdown()
 
         val code = if (restart) 2 else 0
-        logger.info("Finished shutting down, attempting to halt with code $code")
+        logger.info("Finished shutting down, halting with code $code")
         Runtime.getRuntime().halt(code)
     }
 

@@ -42,7 +42,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("net.dv8tion:JDA:4.1.1_134") {
+    implementation("net.dv8tion:JDA:4.1.1_137") {
         // We don't need this because Lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
