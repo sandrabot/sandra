@@ -73,7 +73,7 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
                 if (lastActivity == activities.size) lastActivity = 0 else lastActivity++
                 activities[lastActivity]
             }
-            else -> sandra.shards.getShardById(0)!!.presence.activity
+            else -> sandra.shards.shardCache.first().presence.activity
         } ?: serverActivity
         return Activity.of(template.type, parseActivity(template.name), template.url)
     }
@@ -84,7 +84,7 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
     }
 
     companion object {
-        private val developmentActivity = Activity.streaming("sandrabot.com | {prefix}help", Constants.TWITCH)
+        private val developmentActivity = Activity.streaming("sandrabot.com", Constants.TWITCH)
         private val serverActivity = Activity.watching("{servers} servers | {prefix}help")
         private val websiteActivity = Activity.playing("sandrabot.com | {prefix}help")
     }

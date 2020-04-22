@@ -21,7 +21,7 @@
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%yellow([%d{MM.dd.yy HH:mm:ss.SSS}]) %highlight(%-5level) %green([%t]) %cyan(%c{0}) %boldRed(::) %msg%n</pattern>
+            <pattern>%yellow([%d{HH:mm:ss.SSS}]) %highlight(%-5level) %green([%t]) %cyan(%c{0}) %boldRed(::) %msg%n</pattern>
         </encoder>
     </appender>
 
