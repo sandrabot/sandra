@@ -30,19 +30,34 @@ import org.slf4j.LoggerFactory
  */
 class SandraAPI(private val sandra: Sandra, private val port: Int) {
 
-    private val api = Javalin.create { config ->
-        config.defaultContentType = "application/json"
-        config.logIfServerNotStarted = false
-        config.showJavalinBanner = false
-        if (sandra.developmentMode) config.enableDevLogging()
-    }.routes {
-        path("/api/v1") {
-            get(::welcome)
-            get("/status", ::status)
+    private val api: Javalin
+
+    init {
+
+        api = Javalin.create { config ->
+            config.defaultContentType = "application/json"
+            config.logIfServerNotStarted = false
+            config.showJavalinBanner = false
+            if (sandra.developmentMode) config.enableDevLogging()
         }
-    }.before {
-        logger.info("Received ${it.method()} ${it.url()} from ${it.ip()} ${it.userAgent()}")
-        sandra.statistics.incrementRequestCount()
+
+        api.before {
+            logger.info("Received ${it.method()} ${it.url()} from ${it.ip()} ${it.userAgent()}")
+            sandra.statistics.incrementRequestCount()
+        }
+
+        api.routes {
+            path("/api/v1") {
+                // A path is used here because more
+                // routes will be added in the future
+                get("/status", ::status)
+            }
+        }
+
+        api.error(404) {
+            createError(it, it.status(), "Resource not found")
+        }
+
     }
 
     fun start() {
@@ -53,25 +68,38 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
         api.stop()
     }
 
-    /* Route Handlers */
+    /* Factory Methods */
 
-    private fun welcome(context: Context) {
-        val response = JSONObject()
-        response.put("message", "Welcome to the Sandra API!")
-        response.put("version", Constants.VERSION)
-        context.result(response.toString())
+    private fun createError(context: Context, code: Int, message: String) {
+        createResponse(context) {
+            it.put("success", false)
+            it.put("message", message)
+            it.put("code", code)
+        }
+        context.status(code)
     }
 
-    private fun status(context: Context) {
+    private fun createResponse(context: Context, handler: ((JSONObject) -> Unit)? = null) {
         val response = JSONObject()
-        response.put("ping", sandra.shards.averageGatewayPing)
-        response.put("guilds", sandra.shards.guildCache.size())
-        response.put("requests", sandra.statistics.requestCount)
-        val runtime = Runtime.getRuntime()
-        response.put("memory", (runtime.totalMemory() - runtime.freeMemory()) shr 20)
-        response.put("uptime", (System.currentTimeMillis() - sandra.statistics.startTime) / 1000)
+        // Prevent the handler from editing default fields
+        if (handler != null) handler(response)
+        response.put("success", true)
         response.put("version", Constants.VERSION)
-        context.result(response.toString())
+        // Set the response body to the JSON with 4 spaces as indentation
+        context.result(response.toString(4))
+    }
+
+    /* Route Handlers */
+
+    private fun status(context: Context) {
+        createResponse(context) {
+            it.put("ping", sandra.shards.averageGatewayPing)
+            it.put("guilds", sandra.shards.guildCache.size())
+            it.put("requests", sandra.statistics.requestCount)
+            val runtime = Runtime.getRuntime()
+            it.put("memory", (runtime.totalMemory() - runtime.freeMemory()) shr 20)
+            it.put("uptime", (System.currentTimeMillis() - sandra.statistics.startTime) / 1000)
+        }
     }
 
     companion object {
