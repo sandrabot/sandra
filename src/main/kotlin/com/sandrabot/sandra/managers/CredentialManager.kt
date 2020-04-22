@@ -30,6 +30,7 @@ class CredentialManager(data: JSONObject) {
     val betaToken: String = data.getString("betaToken")
 
     // Bot List Tokens
+    val botListSpaceToken: String = data.getString("spaceToken")
     val botsOnDiscordToken: String = data.getString("bodToken")
     val discordBotListToken: String = data.getString("dblToken")
     val discordBotsGgToken: String = data.getString("dbgToken")

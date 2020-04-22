@@ -51,6 +51,10 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         val topData = JSONObject().put("shards", guilds)
         send(topGgUrl, sandra.credentials.topGgToken, topData)
 
+        // https://botlist.space/bot/302915036492333067
+        // We can reuse the JSON here because this API follows the same format
+        send(spaceUrl, sandra.credentials.botListSpaceToken, topData)
+
         for (i in guilds.indices) {
 
             // https://discord.bots.gg/bots/302915036492333067
@@ -78,6 +82,7 @@ class BotListService(private val sandra: Sandra) : Service(300) {
     companion object {
         private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/{}/guilds"
         private const val topGgUrl = "https://top.gg/api/bots/{}/stats"
+        private const val spaceUrl = "https://api.botlist.space/v1/bots/{}"
         private const val discordBotsUrl = "https://discord.bots.gg/api/v1/bots/{}/stats"
         private const val dblUrl = "https://discordbotlist.com/api/bots/{}/stats"
     }
