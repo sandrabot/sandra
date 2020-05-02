@@ -17,8 +17,10 @@
 package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.SandraAPI
+import com.sandrabot.sandra.cache.GuildCache
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.entities.CountingThreadFactory
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
@@ -34,6 +36,9 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.LoggerFactory
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * This is the main class for the bot.
@@ -43,8 +48,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val apiEnabled = sandraConfig.apiEnabled
     val developmentMode = sandraConfig.developmentMode
     val prefix = if (developmentMode) Constants.BETA_PREFIX else Constants.PREFIX
+    val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
     val botList = BotListService(this)
+    val guilds = GuildCache(this)
     val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
@@ -106,6 +113,9 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
         if (apiEnabled) sandraApi.shutdown()
         shards.shutdown()
+        cacheExecutor.shutdown()
+        // Prevent data loss by waiting for pending operations
+        cacheExecutor.awaitTermination(2, TimeUnit.SECONDS)
         redis.shutdown()
 
         val code = if (restart) 2 else 0

@@ -47,6 +47,7 @@ dependencies {
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("com.google.guava:guava:29.0-jre")
     implementation("io.javalin:javalin:3.8.0")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("org.json:json:20190722")

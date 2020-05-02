@@ -73,7 +73,7 @@ class BotListService(private val sandra: Sandra) : Service(300) {
 
     private fun send(url: String, token: String, data: JSONObject) {
         val route = url.replace("{}", Constants.APPLICATION_ID.toString())
-        val body = HttpUtil.Companion.createBody(HttpUtil.APPLICATION_JSON, data.toString())
+        val body = HttpUtil.createBody(HttpUtil.APPLICATION_JSON, data.toString())
         val request = HttpUtil.createRequest(route, "POST", body)
         request.header("Authorization", token)
         HttpUtil.execute(request.build())
