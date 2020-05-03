@@ -18,63 +18,63 @@ package com.sandrabot.sandra.entities
 
 /**
  * Tokens used to resolve text into objects for consumption by commands.
+ * Type safety can be achieved by expecting the specific type returned by each token from [Argument.ArgumentHolder.value].
  */
 enum class ArgumentType {
 
     /**
-     * Searches for text channels in guilds.
+     * Searches for text channels in guilds. Resolves [net.dv8tion.jda.api.entities.TextChannel] objects.
      */
     CHANNEL,
 
     /**
-     * Searches for command by name or alias.
+     * Searches for commands by name or alias. Resolves [com.sandrabot.sandra.entities.Command] objects.
      */
     COMMAND,
 
     /**
-     * Searches for any digits that fit into a [Long].
+     * Searches for any digits that fit into a long. Resolves as a [Long].
      */
     DIGIT,
 
     /**
-     * Searches for timestamps and resolves them to seconds that fit into a [Long].
+     * Searches for durations and converts them into seconds. Resolves as a [Long].
      */
     DURATION,
 
     /**
-     * Searches for emotes in guilds.
+     * Searches for emotes in guilds. Resolves [net.dv8tion.jda.api.entities.Emote] objects.
      */
     EMOTE,
 
     /**
-     * Searches for optional command arguments prefixed with an exclamation mark.
-     * Flags cannot be required.
+     * Searches for optional command arguments prefixed with an exclamation mark. Flags cannot be required.
+     * Resolves as a [Boolean], whether the flag is present or not.
      */
     FLAG,
 
     /**
-     * Searches for items by name.
+     * Searches for items by name. Resolves [com.sandrabot.sandra.entities.ItemType] objects.
      */
     ITEM,
 
     /**
-     * Searches for roles in guilds.
+     * Searches for roles in guilds. Resolves [net.dv8tion.jda.api.entities.Role] objects.
      */
     ROLE,
 
     /**
-     * Any remaining text from parsing is resolved.
-     * Typically this is used at the end of argument tokens.
+     * Any remaining text from parsing is consumed. Resolves as a [String].
      */
     TEXT,
 
     /**
-     * Searches for a user.
+     * Searches for a user. Resolves [net.dv8tion.jda.api.entities.User] objects.
      */
     USER,
 
     /**
-     * Searches for voice channels in guilds.
+     * Searches for voice channels in guilds. Resolves [net.dv8tion.jda.api.entities.VoiceChannel] objects.
      */
     VOICE,
 
