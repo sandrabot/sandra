@@ -24,6 +24,7 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.CountingThreadFactory
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.CredentialManager
+import com.sandrabot.sandra.managers.EventManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.managers.StatisticsManager
 import com.sandrabot.sandra.services.BotListService
@@ -52,6 +53,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
     val botList = BotListService(this)
+    val eventManager = EventManager()
     val guilds = GuildCache(this)
     val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
@@ -67,7 +69,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         // Configure the development presence
         if (developmentMode) presence.setDevelopment()
 
-        // Initialize JDA and the event listeners
+        // Configure JDA settings, we've got a lot of them
         val token = if (developmentMode) credentials.betaToken else credentials.token
         val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
         val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
@@ -79,7 +81,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(developmentMode)
         builder.setEnableShutdownHook(false)
-        builder.addEventListeners(ReadyListener(this))
+        builder.setEventManagerProvider { eventManager }
+
+        // Register the event listeners
+        eventManager.registerAll(ReadyListener(this))
 
         logger.info("Building JDA and signing into Discord")
         // Blocks the thread until the first shard signs in
