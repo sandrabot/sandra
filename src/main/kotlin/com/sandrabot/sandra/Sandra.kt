@@ -18,6 +18,7 @@ package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.SandraAPI
 import com.sandrabot.sandra.cache.GuildCache
+import com.sandrabot.sandra.cache.UserCache
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.CountingThreadFactory
@@ -55,6 +56,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
+    val users = UserCache(this)
 
     val shards: ShardManager
 
