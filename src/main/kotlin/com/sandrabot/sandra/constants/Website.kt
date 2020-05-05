@@ -16,17 +16,8 @@
 
 package com.sandrabot.sandra.constants
 
-import com.sandrabot.sandra.SandraInfo
+object Website {
 
-object Constants {
-
-    const val APPLICATION_ID = 302915036492333067L
-
-    const val PREFIX = "s."
-    const val BETA_PREFIX = "b."
-    const val TWITCH = "https://twitch.tv/averen"
-
-    val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
-    val USER_AGENT = "Sandra/$VERSION (+${Website.WEBSITE})"
+    const val WEBSITE = "https://sandrabot.com"
 
 }

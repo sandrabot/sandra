@@ -45,7 +45,7 @@ class HttpUtil {
             val builder = OkHttpClient.Builder()
             builder.addInterceptor {
                 val requestBuilder = it.request().newBuilder()
-                requestBuilder.header("User-Agent", "Sandra/" + Constants.VERSION)
+                requestBuilder.header("User-Agent", Constants.USER_AGENT)
                 it.proceed(requestBuilder.build())
             }
             client = builder.build()
