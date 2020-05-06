@@ -49,10 +49,13 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
      */
     var isCycling = true
 
-    override fun execute() = update()
+    override fun execute() = updateAll()
 
-    fun update(shard: JDA) = shard.presence.setPresence(status, buildActivity())
-    fun update() {
+    fun update(shard: JDA) {
+        shard.presence.setPresence(status, buildActivity(true))
+    }
+
+    fun updateAll() {
         val activity = buildActivity()
         sandra.shards.shardCache.forEachUnordered {
             if (it.status == JDA.Status.CONNECTED) {
@@ -66,11 +69,12 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
         status = OnlineStatus.DO_NOT_DISTURB
     }
 
-    private fun buildActivity(): Activity {
+    private fun buildActivity(useFirst: Boolean = false): Activity {
         val template = when {
             overrideActivity != null -> overrideActivity
+            useFirst -> activities[0]
             isCycling -> {
-                if (lastActivity == activities.size) lastActivity = 0 else lastActivity++
+                if (lastActivity == activities.lastIndex) lastActivity = 0 else lastActivity++
                 activities[lastActivity]
             }
             else -> sandra.shards.shardCache.first().presence.activity
