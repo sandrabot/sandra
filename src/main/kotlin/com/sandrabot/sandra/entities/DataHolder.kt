@@ -16,13 +16,13 @@
 
 package com.sandrabot.sandra.entities
 
-import org.json.JSONObject
+import com.beust.klaxon.JsonObject
 
 /**
  * Provides a layer of abstraction for generics and data processing.
  */
 interface DataHolder {
 
-    fun toData(): JSONObject
+    fun toData(): JsonObject
 
 }

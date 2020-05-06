@@ -16,16 +16,43 @@
 
 package com.sandrabot.sandra.config
 
-import org.json.JSONObject
+/**
+ * This class is used to configure the Sandra instance during startup.
+ */
+class SandraConfig {
 
-class SandraConfig(data: JSONObject) {
+    /**
+     * Primarily determines which Discord account this session will sign into.
+     * It may also be used to determine other behaviors throughout the bot.
+     * When set to `true`, the beta account will be used. By using `true` as
+     * the default, we prevent signing into production accounts accidentally.
+     */
+    var development = true
 
-    // Require that development mode is intentionally set
-    var developmentMode = data.getBoolean("development")
+    /**
+     * Determines whether the api is enabled or not.
+     * When the api is disabled, it will not be started or
+     * stopped automatically, however it can still be started.
+     */
+    var apiEnabled = true
 
-    var apiEnabled = data.optBoolean("apiEnabled", true)
-    var sentryEnabled = data.optBoolean("sentryEnabled", true)
-    var apiPort = data.optInt("apiPort", 41517)
-    var shardsTotal = data.optInt("shardsTotal", -1)
+    /**
+     * Determines whether sentry is enabled or not.
+     * When sentry is disabled, error and warning events will not
+     * be sent to sentry, whether the DSN is present or not.
+     */
+    var sentryEnabled = true
+
+    /**
+     * Determines the port the api will use when started.
+     */
+    var apiPort = 41517
+
+    /**
+     * Determines how many shards this session should use.
+     * By using `-1` as the default, JDA will use the suggested
+     * amount for the account we are signing into.
+     */
+    var shardsTotal = -1
 
 }

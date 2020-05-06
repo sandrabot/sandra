@@ -16,13 +16,14 @@
 
 package com.sandrabot.sandra.services
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.json
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
 import com.sandrabot.sandra.utils.HttpUtil
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.internal.JDAImpl
-import org.json.JSONObject
 
 /**
  * Updates the bot's listings on various Discord Bot Lists.
@@ -44,36 +45,34 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         }
 
         // https://bots.ondiscord.xyz/bots/302915036492333067
-        val onDiscordData = JSONObject().put("guildCount", guilds.sum())
-        send(onDiscordUrl, sandra.credentials.botsOnDiscordToken, onDiscordData)
+        val onDiscordData = json { obj("guildCount" to guilds.sum()) }
+        send(onDiscordUrl, sandra.credentials.bodToken, onDiscordData)
 
         // https://top.gg/bot/302915036492333067
-        val topData = JSONObject().put("shards", guilds)
+        val topData = json { obj("shards" to guilds) }
         send(topGgUrl, sandra.credentials.topGgToken, topData)
 
         // https://botlist.space/bot/302915036492333067
         // We can reuse the JSON here because this API follows the same format
-        send(spaceUrl, sandra.credentials.botListSpaceToken, topData)
+        send(spaceUrl, sandra.credentials.spaceToken, topData)
 
         for (i in guilds.indices) {
 
             // https://discord.bots.gg/bots/302915036492333067
-            val botsGgData = JSONObject().put("guildCount", guilds[i])
-            botsGgData.put("shardCount", guilds.size).put("shardId", i)
-            send(discordBotsUrl, sandra.credentials.discordBotsGgToken, botsGgData)
+            val botsGgData = json { obj("guildCount" to guilds[i], "shardCount" to guilds.size, "shardId" to i) }
+            send(discordBotsUrl, sandra.credentials.dbgToken, botsGgData)
 
             // https://discordbotlist.com/bots/302915036492333067
-            val dblData = JSONObject().put("voice_connections", voice[i])
-            dblData.put("shard_id", i).put("guilds", guilds[i])
-            send(dblUrl, sandra.credentials.discordBotListToken, dblData)
+            val dblData = json { obj("voice_connections" to voice[i], "shard_id" to i, "guilds" to guilds[i]) }
+            send(dblUrl, sandra.credentials.dblToken, dblData)
 
         }
 
     }
 
-    private fun send(url: String, token: String, data: JSONObject) {
+    private fun send(url: String, token: String, data: JsonObject) {
         val route = url.replace("{}", Constants.APPLICATION_ID.toString())
-        val body = HttpUtil.createBody(HttpUtil.APPLICATION_JSON, data.toString())
+        val body = HttpUtil.createBody(HttpUtil.APPLICATION_JSON, data.toJsonString())
         val request = HttpUtil.createRequest(route, "POST", body)
         request.header("Authorization", token)
         HttpUtil.execute(request.build())

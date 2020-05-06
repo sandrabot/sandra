@@ -18,6 +18,9 @@ package com.sandrabot.sandra
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.Parser
 import com.sandrabot.sandra.config.RedisConfig
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.managers.CredentialManager
@@ -25,9 +28,7 @@ import com.sandrabot.sandra.managers.RedisManager
 import io.sentry.Sentry
 import io.sentry.dsn.Dsn
 import net.dv8tion.jda.api.JDAInfo
-import org.json.JSONObject
 import org.slf4j.LoggerFactory
-import java.io.File
 import kotlin.system.exitProcess
 
 fun main() {
@@ -39,8 +40,8 @@ fun main() {
 
 fun bootstrap(): Int {
 
-    val logger = LoggerFactory.getLogger(Sandra::class.java)
     val beginStartup = System.currentTimeMillis()
+    val logger = LoggerFactory.getLogger(Sandra::class.java)
 
     // Print the logo and any relevant version information
     println("\n${Sandra::class.java.getResource("/logo.txt").readText()}")
@@ -55,45 +56,61 @@ fun bootstrap(): Int {
 
     // Read the file containing all our options
     val config = try {
-        JSONObject(File("config.json").readText())
+        val obj = Parser.default().parse("config.json")
+        if (obj is JsonObject) obj else {
+            throw IllegalArgumentException("Configuration file is improperly formatted")
+        }
     } catch (e: Exception) {
         logger.error("Failed to read config file, exiting immediately", e)
         return 1
     }
 
-    val sandraConfig = SandraConfig(config)
-    if (sandraConfig.developmentMode) {
+    val sandraConfig = Klaxon().parseFromJsonObject<SandraConfig>(config)!!
+    if (sandraConfig.development) {
         logger.info("Development mode has been enabled, using beta token")
     }
 
     // Adjust the root logger level if specified
-    if (config.has("logLevel")) {
-        val level = Level.toLevel(config.getString("logLevel"), Level.INFO)
+    val logLevel = config["logLevel"]
+    if (logLevel != null && logLevel is String) {
+        val level = Level.toLevel(logLevel, Level.INFO)
         (LoggerFactory.getLogger("ROOT") as Logger).level = level
     }
 
     // Configure the Sentry client, if enabled
     val dsn = if (sandraConfig.sentryEnabled) {
-        config.optString("dsn", null)
+        val obj = config["dsn"]
+        if (obj is String) obj else null
     } else null
     val sentry = Sentry.init(dsn ?: Dsn.DEFAULT_DSN)
     if (sandraConfig.sentryEnabled) {
         if (dsn == null) logger.warn("Sentry is enabled but the DSN was not found, using noop client")
         // stacktrace.app.packages can only be set in sentry.properties apparently
-        sentry.environment = if (sandraConfig.developmentMode) "development" else "production"
+        sentry.environment = if (sandraConfig.development) "development" else "production"
         sentry.release = SandraInfo.COMMIT
     }
 
     // Initialize the credential manager to be used throughout the bot
     val credentials = try {
-        CredentialManager(config.getJSONObject("credentials"))
+        val obj = config["credentials"]
+        if (obj != null && obj is JsonObject) {
+            Klaxon().parseFromJsonObject<CredentialManager>(obj)!!
+        } else throw IllegalArgumentException("Credentials are missing or improperly formatted")
     } catch (e: Exception) {
         logger.error("Failed to read credentials, exiting immediately", e)
         return 1
     }
 
     // Configure a redis manager to be used throughout the bot
-    val redisConfig = RedisConfig(config.optJSONObject("redis") ?: JSONObject())
+    val redisConfig = try {
+        val obj = config["redis"] ?: JsonObject()
+        if (obj is JsonObject) {
+            Klaxon().parseFromJsonObject<RedisConfig>(obj)!!
+        } else throw IllegalArgumentException("Redis settings are improperly formatted")
+    } catch (e: Exception) {
+        logger.warn("Failed to read redis configuration, continuing with defaults", e)
+        RedisConfig()
+    }
     logger.info("Connecting to redis at ${redisConfig.host}:${redisConfig.port} on database ${redisConfig.database}")
     val redis = RedisManager(redisConfig)
 

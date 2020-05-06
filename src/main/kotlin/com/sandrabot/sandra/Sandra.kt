@@ -48,8 +48,8 @@ import java.util.concurrent.TimeUnit
 class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credentials: CredentialManager) {
 
     val apiEnabled = sandraConfig.apiEnabled
-    val developmentMode = sandraConfig.developmentMode
-    val prefix = if (developmentMode) Constants.BETA_PREFIX else Constants.PREFIX
+    val development = sandraConfig.development
+    val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
     val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
     val botList = BotListService(this)
@@ -67,10 +67,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     init {
 
         // Configure the development presence
-        if (developmentMode) presence.setDevelopment()
+        if (development) presence.setDevelopment()
 
         // Configure JDA settings, we've got a lot of them
-        val token = if (developmentMode) credentials.betaToken else credentials.token
+        val token = if (development) credentials.betaToken else credentials.token
         val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
         val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
         builder.disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
@@ -79,7 +79,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setStatus(OnlineStatus.IDLE)
         builder.setShardsTotal(sandraConfig.shardsTotal)
         builder.setBulkDeleteSplittingEnabled(false)
-        builder.setRelativeRateLimit(developmentMode)
+        builder.setRelativeRateLimit(development)
         builder.setEnableShutdownHook(false)
         builder.setEventManagerProvider { eventManager }
 

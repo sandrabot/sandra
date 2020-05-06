@@ -16,24 +16,48 @@
 
 package com.sandrabot.sandra.managers
 
-import org.json.JSONObject
-
 /**
  * This class keeps track of sensitive tokens and secrets used throughout the bot.
  */
-class CredentialManager(data: JSONObject) {
+data class CredentialManager(
 
-    /* If any of these fields are missing, the bot will fail to start */
+        /* ========== Discord Tokens ========== */
 
-    // Discord Tokens and Secrets
-    val token: String = data.getString("token")
-    val betaToken: String = data.getString("betaToken")
+        /**
+         * The token for the production bot account.
+         */
+        val token: String,
 
-    // Bot List Tokens
-    val botListSpaceToken: String = data.getString("spaceToken")
-    val botsOnDiscordToken: String = data.getString("bodToken")
-    val discordBotListToken: String = data.getString("dblToken")
-    val discordBotsGgToken: String = data.getString("dbgToken")
-    val topGgToken: String = data.getString("topGgToken")
+        /**
+         * The token for the development bot account.
+         */
+        val betaToken: String,
 
-}
+        /* ========== Bot List Tokens ========== */
+
+        /**
+         * The token for using the API at https://botlist.space
+         */
+        val spaceToken: String,
+
+        /**
+         * The token for using the API at https://bots.ondiscord.xyz
+         */
+        val bodToken: String,
+
+        /**
+         * The token for using the API at https://discordbotlist.com
+         */
+        val dblToken: String,
+
+        /**
+         * The token for using the API at https://discord.bots.gg
+         */
+        val dbgToken: String,
+
+        /**
+         * The token for using the api at https://top.gg
+         */
+        val topGgToken: String
+
+)

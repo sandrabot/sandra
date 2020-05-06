@@ -16,12 +16,13 @@
 
 package com.sandrabot.sandra.entities
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
-import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 /**
@@ -29,18 +30,21 @@ import java.util.concurrent.TimeUnit
  */
 abstract class EntityCache<T : DataHolder>(private val sandra: Sandra, private val redisPrefix: RedisPrefix) {
 
+    private val parser = Parser.default()
     private val cache: LoadingCache<Long, T> = CacheBuilder.newBuilder()
             .expireAfterAccess(1, TimeUnit.DAYS).build(
                     object : CacheLoader<Long, T>() {
                         override fun load(key: Long): T {
                             val rawData = sandra.redis.get("$redisPrefix$key")
-                            val data = if (rawData == null) JSONObject() else JSONObject(rawData)
+                            val data = if (rawData == null) JsonObject() else {
+                                parser.parse(StringBuilder(rawData)) as JsonObject
+                            }
                             return createEntity(key, data)
                         }
                     }
             )
 
-    abstract fun createEntity(key: Long, data: JSONObject): T
+    abstract fun createEntity(key: Long, data: JsonObject): T
 
     fun get(key: Long): T = cache.getUnchecked(key)
 
@@ -48,12 +52,12 @@ abstract class EntityCache<T : DataHolder>(private val sandra: Sandra, private v
         sandra.cacheExecutor.execute {
             val data = entity.toData()
             val redisKey = "$redisPrefix$key"
-            if (data.isEmpty) {
+            if (data.isEmpty()) {
                 // Delete empty objects to keep the database clean
                 // This also ensures the change that removed the last key is persisted
                 sandra.redis.delete(redisKey)
             } else {
-                sandra.redis.set(redisKey, data.toString())
+                sandra.redis.set(redisKey, data.toJsonString())
             }
         }
     }

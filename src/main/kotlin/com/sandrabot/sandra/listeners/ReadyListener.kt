@@ -39,7 +39,7 @@ class ReadyListener(private val sandra: Sandra) : EventListener {
             // The last shard to finish loading initializes most of the bot
             if (shardsReady == shardInfo.shardTotal) {
                 if (sandra.apiEnabled) sandra.sandraApi.start()
-                if (!sandra.developmentMode) {
+                if (!sandra.development) {
                     sandra.presence.start()
                     sandra.botList.start()
                 }

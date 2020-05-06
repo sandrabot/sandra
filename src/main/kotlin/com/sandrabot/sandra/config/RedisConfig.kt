@@ -16,16 +16,34 @@
 
 package com.sandrabot.sandra.config
 
-import org.json.JSONObject
-import redis.clients.jedis.Protocol
+/**
+ * This class is used to configure the redis manager.
+ */
+class RedisConfig {
 
-class RedisConfig(data: JSONObject) {
+    /**
+     * The hostname where the redis server is running.
+     */
+    var host = "localhost"
 
-    var host: String = data.optString("host", Protocol.DEFAULT_HOST)
-    var password: String? = data.optString("password", null)
+    /**
+     * The password used to authenticate connections. Optional.
+     */
+    var password: String? = null
 
-    var port = data.optInt("port", Protocol.DEFAULT_PORT)
-    var timeout = data.optInt("timeout", Protocol.DEFAULT_TIMEOUT)
-    var database = data.optInt("database", Protocol.DEFAULT_DATABASE)
+    /**
+     * The port the redis server is running on.
+     */
+    var port = 6379
+
+    /**
+     * The timeout for redis commands in milliseconds.
+     */
+    var timeout = 2000
+
+    /**
+     * The database to be used.
+     */
+    var database = 0
 
 }

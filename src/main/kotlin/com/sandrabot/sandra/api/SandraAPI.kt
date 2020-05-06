@@ -16,13 +16,13 @@
 
 package com.sandrabot.sandra.api
 
+import com.beust.klaxon.JsonObject
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.javalin.http.Context
-import org.json.JSONObject
 import org.slf4j.LoggerFactory
 
 /**
@@ -38,7 +38,7 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
             config.defaultContentType = "application/json"
             config.logIfServerNotStarted = false
             config.showJavalinBanner = false
-            if (sandra.developmentMode) config.enableDevLogging()
+            if (sandra.development) config.enableDevLogging()
         }
 
         api.before {
@@ -72,33 +72,33 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
 
     private fun createError(context: Context, code: Int, message: String) {
         createResponse(context) {
-            it.put("success", false)
-            it.put("message", message)
-            it.put("code", code)
+            it["success"] = false
+            it["message"] = message
+            it["code"] = code
         }
         context.status(code)
     }
 
-    private fun createResponse(context: Context, handler: ((JSONObject) -> Unit)? = null) {
-        val response = JSONObject()
+    private fun createResponse(context: Context, handler: ((JsonObject) -> Unit)? = null) {
+        val response = JsonObject()
         // Prevent the handler from editing default fields
         if (handler != null) handler(response)
-        response.put("success", true)
-        response.put("version", Constants.VERSION)
-        // Set the response body to the JSON with 4 spaces as indentation
-        context.result(response.toString(4))
+        response["success"] = true
+        response["version"] = Constants.VERSION
+        // Set the response body to the JSON with 2 spaces as indentation
+        context.result(response.toJsonString(true))
     }
 
     /* Route Handlers */
 
     private fun status(context: Context) {
         createResponse(context) {
-            it.put("ping", sandra.shards.averageGatewayPing)
-            it.put("guilds", sandra.shards.guildCache.size())
-            it.put("requests", sandra.statistics.requestCount)
+            it["ping"] = sandra.shards.averageGatewayPing
+            it["guilds"] = sandra.shards.guildCache.size()
+            it["requests"] = sandra.statistics.requestCount
             val runtime = Runtime.getRuntime()
-            it.put("memory", (runtime.totalMemory() - runtime.freeMemory()) shr 20)
-            it.put("uptime", (System.currentTimeMillis() - sandra.statistics.startTime) / 1000)
+            it["memory"] = (runtime.totalMemory() - runtime.freeMemory()) shr 20
+            it["uptime"] = (System.currentTimeMillis() - sandra.statistics.startTime) / 1000
         }
     }
 

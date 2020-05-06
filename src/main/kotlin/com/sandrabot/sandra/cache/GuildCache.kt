@@ -16,15 +16,15 @@
 
 package com.sandrabot.sandra.cache
 
+import com.beust.klaxon.JsonObject
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.EntityCache
 import com.sandrabot.sandra.entities.SandraGuild
-import org.json.JSONObject
 
 class GuildCache(private val sandra: Sandra) : EntityCache<SandraGuild>(sandra, RedisPrefix.GUILD) {
 
-    override fun createEntity(key: Long, data: JSONObject): SandraGuild {
+    override fun createEntity(key: Long, data: JsonObject): SandraGuild {
         return SandraGuild(sandra, key, data)
     }
 
