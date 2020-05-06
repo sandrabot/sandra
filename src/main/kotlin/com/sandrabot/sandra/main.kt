@@ -31,14 +31,14 @@ import net.dv8tion.jda.api.JDAInfo
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
-fun main() {
+fun main(args: Array<String>) {
 
-    val code = bootstrap()
+    val code = bootstrap(args)
     if (code != 0) exitProcess(code)
 
 }
 
-fun bootstrap(): Int {
+fun bootstrap(args: Array<String>): Int {
 
     val beginStartup = System.currentTimeMillis()
     val logger = LoggerFactory.getLogger(Sandra::class.java)
@@ -56,7 +56,8 @@ fun bootstrap(): Int {
 
     // Read the file containing all our options
     val config = try {
-        val obj = Parser.default().parse("config.json")
+        val file = if (args.isNotEmpty()) args[0] else "config.json"
+        val obj = Parser.default().parse(file)
         if (obj is JsonObject) obj else {
             throw IllegalArgumentException("Configuration file is improperly formatted")
         }
