@@ -70,6 +70,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         if (development) presence.setDevelopment()
 
         // Configure JDA settings, we've got a lot of them
+        logger.info("Configuring JDA and signing into Discord")
         val token = if (development) credentials.betaToken else credentials.token
         val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
         val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
@@ -86,12 +87,13 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         // Register the event listeners
         eventManager.registerAll(ReadyListener(this))
 
-        logger.info("Building JDA and signing into Discord")
-        // Blocks the thread until the first shard signs in
+        // Block the thread until the first shard signs in
         shards = builder.build()
 
         val self = shards.shardCache.first().selfUser
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
+        // Start the api now, it doesn't depend on all shards being loaded
+        if (apiEnabled) sandraApi.start()
 
     }
 

@@ -38,13 +38,12 @@ class ReadyListener(private val sandra: Sandra) : EventListener {
             val shardInfo = event.jda.shardInfo
             // The last shard to finish loading initializes most of the bot
             if (shardsReady == shardInfo.shardTotal) {
-                if (sandra.apiEnabled) sandra.sandraApi.start()
                 if (!sandra.development) {
                     sandra.presence.start()
                     sandra.botList.start()
                 }
                 val logger = LoggerFactory.getLogger(ReadyListener::class.java)
-                logger.info("Shard ${shardInfo.shardId} has finished initializing additional items")
+                logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
                 // This is the last ready event that will ever
                 // fire, so we don't need this listener anymore
                 sandra.shards.removeEventListener(this)
