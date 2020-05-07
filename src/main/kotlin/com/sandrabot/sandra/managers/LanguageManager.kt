@@ -41,15 +41,15 @@ class LanguageManager {
                 throw IllegalArgumentException("Failed to parse language file for ${it.identifier}", e)
             }
             val paths = HashMap<String, Any>()
-            loadRecursive(null, paths, obj)
+            loadRecursive("", paths, obj)
             map[it] = paths
         }
         languages = Collections.unmodifiableMap(map)
     }
 
-    private fun loadRecursive(root: String?, paths: HashMap<String, Any>, obj: JsonObject) {
+    private fun loadRecursive(root: String, paths: HashMap<String, Any>, obj: JsonObject) {
         for (it in obj.map) {
-            val newRoot = (if (root == null) "" else "$root.") + it.key
+            val newRoot = if (root.isEmpty()) it.key else "$root.${it.key}"
             when (val value = it.value) {
                 is JsonObject -> loadRecursive(newRoot, paths, value)
                 is JsonArray<*> -> paths[newRoot] = value.toTypedArray()
