@@ -23,10 +23,7 @@ import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.CountingThreadFactory
 import com.sandrabot.sandra.listeners.ReadyListener
-import com.sandrabot.sandra.managers.CredentialManager
-import com.sandrabot.sandra.managers.EventManager
-import com.sandrabot.sandra.managers.RedisManager
-import com.sandrabot.sandra.managers.StatisticsManager
+import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
 import com.sandrabot.sandra.services.PresenceService
 import net.dv8tion.jda.api.OnlineStatus
@@ -55,6 +52,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val botList = BotListService(this)
     val eventManager = EventManager()
     val guilds = GuildCache(this)
+    val languages = LanguageManager()
     val presence = PresenceService(this)
     val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
