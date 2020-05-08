@@ -1,0 +1,14 @@
+{
+	"logLevel":null,
+	"dsn":null,
+	"credentials":
+		{
+			"token": "",
+			"betaToken":"",
+			"spaceToken":"",
+			"bodToken":"",
+			"dblToken":"",
+			"dbgToken":"",
+			"topGgToken":"",
+		}
+}

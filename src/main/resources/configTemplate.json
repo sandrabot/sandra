@@ -1,0 +1,22 @@
+{
+	"logLevel":"",
+	"dsn":"",
+	"credentials":
+		{
+			"token": "",
+			"betaToken":"",
+			"spaceToken":"",
+			"bodToken":"",
+			"dblToken":"",
+			"dbgToken":"",
+			"topGgToken":"",
+		},
+	"redis":
+		{
+			"host":"localhost",
+			"port":6379,
+			"timeout":2000,
+			"password":"",
+			"database":0
+		}
+}

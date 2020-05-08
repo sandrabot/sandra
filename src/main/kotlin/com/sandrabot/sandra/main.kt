@@ -56,7 +56,8 @@ fun bootstrap(args: Array<String>): Int {
 
     // Read the file containing all our options
     val config = try {
-        val file = if (args.isNotEmpty()) args[0] else "config.json"
+        // If config file is not given as an argument, load default from resource directory
+        val file = if (args.isNotEmpty()) args[0] else Sandra::class.java.getResource("/defaultConfig.json").path
         val obj = Parser.default().parse(file)
         if (obj is JsonObject) obj else {
             throw IllegalArgumentException("Configuration file is improperly formatted")
