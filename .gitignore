@@ -2,6 +2,10 @@
 .gradle
 build
 out
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
 
 # Ignore IntelliJ project files
 .idea
@@ -9,7 +13,4 @@ out
 # Ignore Sandra files
 logs
 config.json
-gradle/wrapper/gradle-wrapper.jar
-gradle/wrapper/gradle-wrapper.properties
-gradlew
-gradlew.bat
+
