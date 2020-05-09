@@ -1,6 +1,12 @@
-Change 19d9cada4b71e6fb827f655a6f4e539999e6b719 Copyright 2020 **Joseph Sohn** / **ElectroJo**
+Template:
+Notice:
+Copyright:
+Details of Change (If applicable):
 
-Change a49a2534a8b5c8b7b50ad00305c579b724459247 Copyright 2020 **Joseph Sohn** / **ElectroJo**
+Notice:Contributions to logo.txt\
+Copyright: Copyright 2020 **Joseph Sohn** / **ElectroJo**\
+Details: Changed 8's to 5's
 
-5/9/2020 5:52 AM Changes Copyright **Joseph Sohn** / **ElectroJo**
-												
+Notice: Contributions to configuration file loading and generation\
+Copyright: Copyright 2020 **Joseph Sohn** / **ElectroJo**\
+Details: Changed how main.kt checks for config.json. Added configuration generation utility.  
