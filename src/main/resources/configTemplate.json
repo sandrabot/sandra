@@ -1,6 +1,6 @@
 {
-	"logLevel":"",
-	"dsn":"",
+	"logLevel":null,
+	"dsn":null,
 	"credentials":
 		{
 			"token": "",
@@ -16,7 +16,7 @@
 			"host":"localhost",
 			"port":6379,
 			"timeout":2000,
-			"password":"",
+			"password":null,
 			"database":0
 		}
 } 

@@ -25,10 +25,12 @@ import com.sandrabot.sandra.config.RedisConfig
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
+import com.sandrabot.sandra.utils.ConfigGenerator
 import io.sentry.Sentry
 import io.sentry.dsn.Dsn
 import net.dv8tion.jda.api.JDAInfo
 import org.slf4j.LoggerFactory
+import java.io.File
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -55,8 +57,31 @@ fun bootstrap(args: Array<String>): Int {
     logger.info("Initializing Sandra (◕ᴗ◕✿)")
 
     // Read the file containing all our options
+
     val config = try {
-        val file = if (args.isNotEmpty()) args[0] else "config.json"
+        val file = when {
+            args.isNotEmpty() -> args[0]
+            File("config.json").exists() -> "config.json"
+            else -> {
+                logger.info("Config file argument was not supplied and no config.json in CWD. Asking if one should be created.")
+                print("Would you like to create one in the CWD? Yes/No\n")
+                loop@ while(true) {
+                    val createConfig = readLine()!!
+                    when{
+                        arrayOf("y","ye","yes").contains(createConfig.toLowerCase()) -> {
+                            ConfigGenerator().generateConfig()
+                            break@loop
+                        }
+                        arrayOf("n","no").contains(createConfig.toLowerCase()) -> break@loop
+                        else -> {
+                            logger.error("Incorrect input \"$createConfig\" entered.")
+                            print("Please enter Yes or No.\n")
+                        }
+                    }
+                }
+                "config.json"
+            }
+        }
         val obj = Parser.default().parse(file)
         if (obj is JsonObject) obj else {
             throw IllegalArgumentException("Configuration file is improperly formatted")
@@ -66,7 +91,7 @@ fun bootstrap(args: Array<String>): Int {
         return 1
     }
 
-    val sandraConfig = Klaxon().parseFromJsonObject<SandraConfig>(config)!!
+    val sandraConfig = Klaxon().parseFromJsonObject<SandraConfig>(config as JsonObject)!!
     if (sandraConfig.development) {
         logger.info("Development mode has been enabled, using beta token")
     }
