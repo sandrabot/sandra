@@ -21,7 +21,7 @@ plugins {
     idea
     application
     kotlin("jvm") version "1.3.72"
-    id("com.github.gmazzo.buildconfig") version "1.7.1"
+    id("com.github.gmazzo.buildconfig") version "2.0.1"
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
@@ -42,7 +42,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("net.dv8tion:JDA:4.1.1_145") {
+    implementation("net.dv8tion:JDA:4.1.1_153") {
         // We don't need this because Lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
@@ -51,7 +51,7 @@ dependencies {
     implementation("com.google.guava:guava:29.0-jre")
     implementation("io.javalin:javalin:3.8.0")
     implementation("io.sentry:sentry-logback:1.7.30")
-    implementation("redis.clients:jedis:3.2.0")
+    implementation("redis.clients:jedis:3.3.0")
 }
 
 buildConfig {
