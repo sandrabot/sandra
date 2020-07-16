@@ -75,7 +75,7 @@ fun bootstrap(args: Array<String>): Int {
             config["credentials"] = json { obj(CredentialManager::class.declaredMemberProperties.map { it.name to "" }) }
             try {
                 file.writeText(config.toJsonString(prettyPrint = true))
-                logger.info("The configuration file couldn't be found, one has been created for you at ${file.absolutePath}")
+                logger.info("The configuration file wasn't found, one has been created for you at ${file.absolutePath}")
             } catch (e: Exception) {
                 logger.error("Failed to write default configuration file at ${file.absolutePath}", e)
             }
@@ -96,17 +96,13 @@ fun bootstrap(args: Array<String>): Int {
     }
 
     // Adjust the root logger level if specified
-    val logLevel = config["logLevel"]
-    if (logLevel != null && logLevel is String) {
-        val level = Level.toLevel(logLevel, Level.INFO)
+    if (sandraConfig.logLevel != null) {
+        val level = Level.toLevel(sandraConfig.logLevel, Level.INFO)
         (LoggerFactory.getLogger("ROOT") as Logger).level = level
     }
 
     // Configure the Sentry client, if enabled
-    val dsn = if (sandraConfig.sentryEnabled) {
-        val obj = config["dsn"]
-        if (obj is String) obj else null
-    } else null
+    val dsn = if (sandraConfig.sentryEnabled) sandraConfig.sentryDsn else null
     val sentry = Sentry.init(dsn ?: Dsn.DEFAULT_DSN)
     if (sandraConfig.sentryEnabled) {
         if (dsn == null) logger.warn("Sentry is enabled but the DSN was not found, using noop client")

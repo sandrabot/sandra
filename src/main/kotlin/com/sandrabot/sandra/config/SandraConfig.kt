@@ -44,6 +44,21 @@ class SandraConfig {
     var sentryEnabled = true
 
     /**
+     * Determines the host and project sentry events are sent to.
+     * You can find this value in your sentry dashboard.
+     * When this value is `null`, error and warning events will
+     * not be sent to sentry, whether sentry is enabled or not.
+     */
+    var sentryDsn: String? = null
+
+    /**
+     * Determines the threshold for log messages to be displayed in stdout.
+     * If a message is below the threshold, it will not be printed.
+     * This may represent any value in [ch.qos.logback.classic.Level].
+     */
+    var logLevel: String? = "info"
+
+    /**
      * Determines the port the api will use when started.
      */
     var apiPort = 41517
