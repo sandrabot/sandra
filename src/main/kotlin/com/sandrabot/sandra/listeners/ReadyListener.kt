@@ -17,37 +17,32 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
-import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.ReadyEvent
-import net.dv8tion.jda.api.hooks.EventListener
 import org.slf4j.LoggerFactory
 
-class ReadyListener(private val sandra: Sandra) : EventListener {
+class ReadyListener(private val sandra: Sandra) {
 
     // We need this to track the shards that have
     // finished, shards may disconnect during startup
     private var shardsReady = 0
 
-    override fun onEvent(event: GenericEvent) {
+    @Suppress("unused")
+    fun onReady(event: ReadyEvent) {
 
-        if (event is ReadyEvent) {
-            // A shard finished loading
-            shardsReady++
-            // Update the shard's presence, it is currently set to idle
-            sandra.presence.update(event.jda)
-            val shardInfo = event.jda.shardInfo
-            // The last shard to finish loading initializes most of the bot
-            if (shardsReady == shardInfo.shardTotal) {
-                if (!sandra.development) {
-                    sandra.presence.start()
-                    sandra.botList.start()
-                }
-                val logger = LoggerFactory.getLogger(ReadyListener::class.java)
-                logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
-                // This is the last ready event that will ever
-                // fire, so we don't need this listener anymore
-                sandra.shards.removeEventListener(this)
+        shardsReady++
+        // Update the shard's presence, it is currently set to idle
+        sandra.presence.update(event.jda)
+        val shardInfo = event.jda.shardInfo
+        // The last shard to finish loading initializes most of the bot
+        if (shardsReady == shardInfo.shardTotal) {
+            if (!sandra.development) {
+                sandra.presence.start()
+                sandra.botList.start()
             }
+            val logger = LoggerFactory.getLogger(ReadyListener::class.java)
+            logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
+            // This is the last ready event that will fire, so we don't need this listener anymore
+            sandra.eventManager.unregister(this)
         }
 
     }

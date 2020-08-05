@@ -21,15 +21,16 @@ plugins {
     idea
     application
     kotlin("jvm") version "1.3.72"
-    id("com.github.gmazzo.buildconfig") version "2.0.1"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.ben-manes.versions") version "0.29.0"
+    id("com.github.gmazzo.buildconfig") version "2.0.2"
+    id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
 val commit = runCommand(arrayListOf("git", "rev-parse", "HEAD"))
 val changes = runCommand(arrayListOf("git", "diff", "--shortstat"))
 
-version = "5.0.0-SNAPSHOT"
 group = "com.sandrabot"
+version = "5.0.0-SNAPSHOT"
 
 application {
     mainClassName = "com.sandrabot.sandra.MainKt"
@@ -41,16 +42,17 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("net.dv8tion:JDA:4.1.1_153") {
+    listOf("stdlib-jdk8", "reflect").forEach { implementation(kotlin(it)) }
+    implementation("net.dv8tion:JDA:4.2.0_187") {
         // We don't need this because Lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("com.beust:klaxon:5.2")
+    implementation("com.beust:klaxon:5.4")
     implementation("com.google.guava:guava:29.0-jre")
-    implementation("io.javalin:javalin:3.8.0")
+    implementation("io.javalin:javalin:3.9.1")
     implementation("io.sentry:sentry-logback:1.7.30")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     implementation("redis.clients:jedis:3.3.0")
 }
 
@@ -63,13 +65,7 @@ buildConfig {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "13"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "13"
-}
+compileKotlin.kotlinOptions.jvmTarget = "13"
 
 fun runCommand(commands: List<String>): String {
     val stdout = ByteArrayOutputStream()

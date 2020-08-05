@@ -80,10 +80,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setRelativeRateLimit(development)
         builder.setEnableShutdownHook(false)
-        builder.setEventManagerProvider { eventManager }
+        builder.addEventListeners(eventManager)
 
         // Register the event listeners
-        eventManager.registerAll(ReadyListener(this))
+        eventManager.register(ReadyListener(this))
 
         // Block the thread until the first shard signs in
         shards = builder.build()
