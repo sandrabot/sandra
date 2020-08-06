@@ -48,6 +48,10 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         val onDiscordData = json { obj("guildCount" to guilds.sum()) }
         send(onDiscordUrl, sandra.credentials.bodToken, onDiscordData)
 
+        // https://discord.boats/bot/302915036492333067
+        val boatData = json { obj("server_count" to guilds.sum()) }
+        send(boatUrl, sandra.credentials.boatToken, boatData)
+
         // https://top.gg/bot/302915036492333067
         val topData = json { obj("shards" to guilds) }
         send(topGgUrl, sandra.credentials.topGgToken, topData)
@@ -80,6 +84,7 @@ class BotListService(private val sandra: Sandra) : Service(300) {
 
     companion object {
         private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/{}/guilds"
+        private const val boatUrl = "https://discord.boats/api/bot/{}"
         private const val topGgUrl = "https://top.gg/api/bots/{}/stats"
         private const val spaceUrl = "https://api.botlist.space/v1/bots/{}"
         private const val discordBotsUrl = "https://discord.bots.gg/api/v1/bots/{}/stats"

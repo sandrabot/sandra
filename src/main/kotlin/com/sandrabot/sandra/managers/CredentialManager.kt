@@ -46,6 +46,11 @@ data class CredentialManager(
         val bodToken: String,
 
         /**
+         * The token for using the API at https://discord.boats
+         */
+        val boatToken: String,
+
+        /**
          * The token for using the API at https://discordbotlist.com
          */
         val dblToken: String,
