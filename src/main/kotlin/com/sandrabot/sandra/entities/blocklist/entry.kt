@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.constants
+package com.sandrabot.sandra.entities.blocklist
 
-/**
- * These prefixes are used to categorize and to perform
- * batch operations on keys in the redis database.
- */
-enum class RedisPrefix(private val prefix: String) {
+data class BlocklistEntry(
+        val targetId: Long,
+        val targetType: TargetType,
+        val blockedFeatures: MutableList<BlockedFeature>,
+        val offences: MutableList<BlocklistOffence>
+)
 
-    GUILD("G:"), USER("U:"), SETTING("S:");
+data class BlockedFeature(
+        val feature: FeatureType, val expiresAt: Long
+)
 
-    override fun toString(): String {
-        return prefix
-    }
-
-    operator fun plus(other: String): String {
-        return prefix + other
-    }
-
-}
+data class BlocklistOffence(
+        val features: List<FeatureType>, val moderator: Long,
+        val timestamp: Long, val automated: Boolean, val reason: String
+)

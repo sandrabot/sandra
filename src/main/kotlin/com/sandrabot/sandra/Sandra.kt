@@ -49,6 +49,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
     val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
+    val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val eventManager = EventManager()
     val guilds = GuildCache(this)
