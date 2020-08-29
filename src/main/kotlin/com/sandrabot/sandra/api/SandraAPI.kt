@@ -81,9 +81,8 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
 
     private fun createResponse(context: Context, handler: ((JsonObject) -> Unit)? = null) {
         val response = JsonObject()
-        // Prevent the handler from editing default fields
-        if (handler != null) handler(response)
         response["success"] = true
+        if (handler != null) handler(response)
         response["version"] = Constants.VERSION
         // Set the response body to the JSON with 2 spaces as indentation
         context.result(response.toJsonString(true))
