@@ -64,8 +64,7 @@ class BlocklistManager(private val sandra: Sandra) {
     }
 
     fun unblockFeature(targetId: Long, featureType: FeatureType) {
-        val entry = entries[targetId] ?: return
-        val blockedFeatures = entry.blockedFeatures
+        val blockedFeatures = entries[targetId]?.blockedFeatures ?: return
         synchronized(blockedFeatures) {
             blockedFeatures.removeIf { it.feature == featureType }
         }
