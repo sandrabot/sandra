@@ -56,10 +56,10 @@ class EventManager : EventListener {
     }
 
     fun unregister(registrant: Any) {
-        listeners.forEach { (clazz, list) ->
+        listeners.forEach { (clazz, set) ->
             val target = registrant::class.java
-            list.removeIf { target.isInstance(it.second) }
-            if (list.isEmpty()) listeners.remove(clazz)
+            set.removeIf { target.isInstance(it.second) }
+            if (set.isEmpty()) listeners.remove(clazz)
         }
     }
 

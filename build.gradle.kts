@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.4.0"
-    id("com.github.ben-manes.versions") version "0.29.0"
+    kotlin("jvm") version "1.4.10"
+    id("com.github.ben-manes.versions") version "0.33.0"
     id("com.github.gmazzo.buildconfig") version "2.0.2"
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
@@ -43,17 +43,18 @@ repositories {
 
 dependencies {
     listOf("stdlib-jdk8", "reflect").forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:4.2.0_198") {
+    implementation("net.dv8tion:JDA:4.2.0_207") {
         // We don't need this because Lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("com.beust:klaxon:5.4")
     implementation("com.google.guava:guava:29.0-jre")
-    implementation("io.javalin:javalin:3.9.1")
+    implementation("io.javalin:javalin:3.10.1")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("net.sf.trove4j:trove4j:3.0.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.reflections:reflections:0.9.12")
     implementation("redis.clients:jedis:3.3.0")
 }
 

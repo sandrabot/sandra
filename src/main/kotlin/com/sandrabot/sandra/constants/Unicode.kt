@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.constants
 
-enum class Locale(val identifier: String) {
+/**
+ * A central place to keep track of unicode characters used throughout the bot.
+ * The names will typically be the official unicode description.
+ */
+object Unicode {
 
-    ENGLISH("en_US")
+    const val CROSS_MARK = "\u274C"
+    const val SPEAK_NO_EVIL = "\uD83D\uDE4A"
 
 }

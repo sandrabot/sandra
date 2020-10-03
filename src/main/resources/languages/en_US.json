@@ -1,2 +1,32 @@
 {
+  "general": {
+    "missing_permission": "I need the **%1$s** permission in this **$2%s**to continue!",
+    "missing_caller_permission": "You need the **%1$s** permission in this **$2%s** to continue!",
+    "guild_only": "This command **can only be used** within servers.",
+    "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
+    "command_exception": "Hm, it appears as if **something strange** has happened. Apologies."
+  },
+  "permissions": {
+    "create_invite": "Create Invite",
+    "kick": "Kick Members",
+    "ban": "Ban Members",
+    "administrator": "Administrator",
+    "manage_channels": "Manage Channels",
+    "add_reactions": "Add Reactions",
+    "view_audit_logs": "View Audit Logs",
+    "read_messages": "Read Messages",
+    "send_messages": "Send Messages",
+    "manage_messages": "Manage Messages",
+    "embed_links": "Embed LInks",
+    "attach_files": "Attach Files",
+    "read_history": "Read History",
+    "external_emojis": "Use External Emojis",
+    "voice_connect": "Connect",
+    "voice_speak": "Speak",
+    "voice_activity": "Use Voice Activity",
+    "change_nickname": "Change Nickname",
+    "manage_nicknames": "Manage Nicknames",
+    "manage_roles": "Manage Roles",
+    "manage_permissions": "Manage Permissions"
+  }
 }

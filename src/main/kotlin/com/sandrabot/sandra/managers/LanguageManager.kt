@@ -26,7 +26,7 @@ import kotlin.collections.HashMap
 
 class LanguageManager {
 
-    val languages: Map<Locale, Map<String, Any>>
+    private val translationMap: Map<Locale, Map<String, Any>>
 
     init {
         val values = Locale.values()
@@ -44,7 +44,7 @@ class LanguageManager {
             loadRecursive("", paths, obj)
             map[it] = paths
         }
-        languages = Collections.unmodifiableMap(map)
+        translationMap = Collections.unmodifiableMap(map)
     }
 
     private fun loadRecursive(root: String, paths: HashMap<String, Any>, obj: JsonObject) {
@@ -60,7 +60,7 @@ class LanguageManager {
 
     fun get(locale: Locale, path: String): String {
         // All locales must be loaded or the bot will fail to start
-        val map = languages[locale] ?: throw AssertionError("Missing translation for $locale")
+        val map = translationMap[locale] ?: throw AssertionError("Missing translation for $locale")
         val value = map[path] ?: if (locale != Locale.ENGLISH) get(Locale.ENGLISH, path) else {
             throw MissingTranslationException("Missing translation path $path")
         }

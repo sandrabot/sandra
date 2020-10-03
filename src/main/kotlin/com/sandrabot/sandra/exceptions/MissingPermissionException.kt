@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.exceptions
 
-enum class Locale(val identifier: String) {
+import com.sandrabot.sandra.events.CommandEvent
+import net.dv8tion.jda.api.Permission
 
-    ENGLISH("en_US")
-
-}
+class MissingPermissionException(val event: CommandEvent, val permission: Permission): RuntimeException(
+        "Missing permission $permission in ${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
+)

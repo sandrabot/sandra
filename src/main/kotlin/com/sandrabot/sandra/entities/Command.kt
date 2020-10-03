@@ -16,8 +16,22 @@
 
 package com.sandrabot.sandra.entities
 
-enum class Locale(val identifier: String) {
+import com.sandrabot.sandra.events.CommandEvent
+import kotlin.reflect.full.createInstance
 
-    ENGLISH("en_US")
+abstract class Command(
+        val name: String,
+        val aliases: Array<String> = emptyArray(),
+        arguments: String = "",
+        val guildOnly: Boolean = false,
+        val ownerOnly: Boolean = false
+) {
+
+    val arguments = Argument.compile(arguments)
+    val children = this::class.nestedClasses.mapNotNull {
+        if (it is Command) it.createInstance() as Command else null
+    }.toList()
+
+    abstract suspend fun execute(event: CommandEvent)
 
 }

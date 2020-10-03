@@ -22,10 +22,16 @@ object Constants {
 
     const val APPLICATION_ID = 302915036492333067L
 
+    const val AVERY = 579335274388258858L
+    const val LOGAN = 275012982725935105L
+    const val BLAIR = 571446613021556748L
+
     const val PREFIX = "s."
     const val BETA_PREFIX = "b."
     const val TWITCH = "https://twitch.tv/averen"
+    const val HASTEBIN = "https://haste.averen.dev"
 
+    val OWNERS = arrayOf(AVERY, LOGAN, BLAIR)
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
     val USER_AGENT = "Sandra/$VERSION (+${Website.WEBSITE})"
 

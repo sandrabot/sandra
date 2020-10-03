@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.constants
 
-enum class Locale(val identifier: String) {
+import java.awt.Color
 
-    ENGLISH("en_US")
+object Colors {
+
+    val BLURPLE = Color(0x7289DA)
+    val DARK_GREY = Color(0x36393F)
+    val RED = Color(0xF04747)
 
 }

@@ -16,8 +16,19 @@
 
 package com.sandrabot.sandra.entities
 
-enum class Locale(val identifier: String) {
+import com.sandrabot.sandra.Sandra
 
-    ENGLISH("en_US")
+class LanguageContext(
+        private val sandra: Sandra,
+        sandraGuild: SandraGuild,
+        sandraUser: SandraUser,
+        var root: String? = null
+) {
+
+    // TODO Use the preferences to decide the locale
+    private val decidedLocale: Locale = Locale.ENGLISH
+
+    fun get(path: String) = sandra.languages.get(decidedLocale, if (root == null) path else "$root.$path")
+    fun getFormatted(path: String, vararg args: Any?) = get(path).format(*args)
 
 }

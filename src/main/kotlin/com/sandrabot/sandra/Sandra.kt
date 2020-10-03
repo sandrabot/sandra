@@ -20,12 +20,15 @@ import com.sandrabot.sandra.api.SandraAPI
 import com.sandrabot.sandra.cache.GuildCache
 import com.sandrabot.sandra.cache.UserCache
 import com.sandrabot.sandra.config.SandraConfig
+import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.CountingThreadFactory
+import com.sandrabot.sandra.listeners.CommandListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
 import com.sandrabot.sandra.services.PresenceService
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
@@ -46,11 +49,13 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
+    val color = if (development) Colors.RED else Colors.BLURPLE
     val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
     val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
+    val commands = CommandManager(this)
     val eventManager = EventManager()
     val guilds = GuildCache(this)
     val languages = LanguageManager()
@@ -83,18 +88,25 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setEnableShutdownHook(false)
         builder.addEventListeners(eventManager)
 
-        // Register the event listeners
-        eventManager.register(ReadyListener(this))
+        // Register our event listeners
+        eventManager.register(CommandListener(this), ReadyListener(this))
 
         // Block the thread until the first shard signs in
         shards = builder.build()
 
         val self = shards.shardCache.first().selfUser
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
-        // Start the api now, it doesn't depend on all shards being loaded
+
+        commands.setMentionPrefixes(self.id)
         if (apiEnabled) sandraApi.start()
 
     }
+
+    /**
+     * Returns a new embed with the current color.
+     * By using a centralized factory, templates can be tweaked.
+     */
+    fun createEmbed() = EmbedBuilder().setColor(color)
 
     /**
      * Gracefully closes all resources and shuts down the bot.
