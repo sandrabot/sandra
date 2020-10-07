@@ -28,6 +28,7 @@ abstract class Command(
 ) {
 
     val arguments = Argument.compile(arguments)
+    val category = Category.fromClass(this::class)
     val children = this::class.nestedClasses.mapNotNull {
         if (it is Command) it.createInstance() as Command else null
     }.toList()
