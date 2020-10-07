@@ -21,6 +21,7 @@ import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingPermissionException
+import com.sandrabot.sandra.utils.checkBlocklist
 import com.sandrabot.sandra.utils.hasPermission
 import com.sandrabot.sandra.utils.missingPermission
 import com.sandrabot.sandra.utils.missingSelfMessage
@@ -35,10 +36,6 @@ class CommandListener(private val sandra: Sandra) {
     fun onMessageReceived(event: MessageReceivedEvent) {
 
         if (event.author.isBot) return
-
-        // TODO Blocklist notify, utility method?
-        if (sandra.blocklist.isFeatureBlocked(event.author.idLong, FeatureType.COMMANDS)) return
-        if (event.isFromGuild && sandra.blocklist.isFeatureBlocked(event.guild.idLong, FeatureType.COMMANDS)) return
 
         val content = event.message.contentRaw
         // Check if the message starts with a prefix
@@ -67,21 +64,27 @@ class CommandListener(private val sandra: Sandra) {
     fun onCommand(event: CommandEvent) {
 
         val command = event.command
+        val isFromGuild = event.isFromGuild
 
-        // TODO Handle subcommands
+        // Check the blocklist to prevent processing in active contexts
+        if (checkBlocklist(event, FeatureType.COMMANDS)) {
+            logger.info("The command was not executed, this context is active in the blocklist")
+            return
+        }
 
-        // TODO Check cooldown to prevent reacting to spam
+        // TODO Check the cooldowns to prevent processing spam
 
-        // Check for basic permissions when the command is used in a server
-        if (event.isFromGuild) when {
+        // Check for basic permissions we might need to reply in a server
+        if (isFromGuild) when {
             missingPermission(event, Permission.MESSAGE_WRITE) -> {
                 if (hasPermission(event, Permission.MESSAGE_ADD_REACTION)) {
                     event.message.addReaction(Unicode.SPEAK_NO_EVIL).queue()
-                } else logger.info("Cannot execute command: Couldn't indicate missing MESSAGE_WRITE")
+                } else logger.info("Cannot execute command: Missing MESSAGE_WRITE")
                 return
             }
             missingPermission(event, Permission.MESSAGE_EXT_EMOJI) -> {
-                event.reply("${Unicode.CROSS_MARK} ${missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)}")
+                val selfMessage = missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)
+                event.reply("${Unicode.CROSS_MARK} $selfMessage")
                 return
             }
         } else if (command.guildOnly) {

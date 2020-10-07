@@ -34,7 +34,9 @@ class BlocklistManager(private val sandra: Sandra) {
         Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries.put(it.targetId, it) }
     }
 
-    private fun saveEntries() {
+    fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
+
+    fun saveEntries() {
         val data = Klaxon().toJsonString(entries.values())
         sandra.redis.set(RedisPrefix.SETTING + "blocklist", data)
     }
@@ -42,9 +44,9 @@ class BlocklistManager(private val sandra: Sandra) {
     fun appendOffence(targetId: Long, targetType: TargetType, features: List<FeatureType>,
                       expiresAt: Long, moderator: Long, automated: Boolean, reason: String) {
         val entry = if (targetId in entries) entries[targetId] else {
-            val emptyEntry = BlocklistEntry(targetId, targetType, mutableListOf(), mutableListOf())
-            entries.put(targetId, emptyEntry)
-            emptyEntry
+            BlocklistEntry(targetId, targetType, mutableListOf(), mutableListOf()).also {
+                entries.put(targetId, it)
+            }
         }
         val blockedFeatures = entry.blockedFeatures
         synchronized(blockedFeatures) {
@@ -63,25 +65,19 @@ class BlocklistManager(private val sandra: Sandra) {
         saveEntries()
     }
 
-    fun unblockFeature(targetId: Long, featureType: FeatureType) {
-        val blockedFeatures = entries[targetId]?.blockedFeatures ?: return
-        synchronized(blockedFeatures) {
-            blockedFeatures.removeIf { it.feature == featureType }
-        }
-        saveEntries()
-    }
-
     fun isFeatureBlocked(targetId: Long, featureType: FeatureType): Boolean {
-        val blockedFeature = entries[targetId]?.let { entry: BlocklistEntry ->
-            synchronized(entry.blockedFeatures) {
-                entry.blockedFeatures.firstOrNull { it.feature == featureType }
-            }
+        val entry = entries[targetId] ?: return false
+        val blockedFeature = synchronized(entry.blockedFeatures) {
+            entry.blockedFeatures.find { it.feature == featureType }
         } ?: return false
-        // By checking and unblocking the feature here, we
-        // don't have to set up a service to check it
+        // Check for and unblock the feature if it is expired
+        // This way we don't need to set up a service to check it
         val currentTimeSeconds = System.currentTimeMillis() / 1000
         if (blockedFeature.expiresAt != 0L && currentTimeSeconds >= blockedFeature.expiresAt) {
-            unblockFeature(targetId, featureType)
+            synchronized(entry.blockedFeatures) {
+                entry.blockedFeatures.removeIf { it.feature == featureType }
+            }
+            saveEntries()
             return false
         }
         return true

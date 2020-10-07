@@ -31,6 +31,7 @@ import com.sandrabot.sandra.services.PresenceService
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.requests.restaction.MessageAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.ChunkingFilter
@@ -72,6 +73,9 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
         // Configure the development presence
         if (development) presence.setDevelopment()
+
+        // Disable every mention type by default to prevent accidental pings
+        MessageAction.setDefaultMentions(emptyList())
 
         // Configure JDA settings, we've got a lot of them
         logger.info("Configuring JDA and signing into Discord")

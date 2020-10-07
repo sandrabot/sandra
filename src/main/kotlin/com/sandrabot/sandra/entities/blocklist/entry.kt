@@ -16,15 +16,42 @@
 
 package com.sandrabot.sandra.entities.blocklist
 
+private fun blockedFeature(entry: BlocklistEntry, featureType: FeatureType): BlockedFeature? {
+    return synchronized(entry.blockedFeatures) {
+        entry.blockedFeatures.find { it.feature == featureType }
+    }
+}
+
 data class BlocklistEntry(
         val targetId: Long,
         val targetType: TargetType,
         val blockedFeatures: MutableList<BlockedFeature>,
         val offences: MutableList<BlocklistOffence>
-)
+) {
+
+    fun getReason(featureType: FeatureType): String? {
+        return synchronized(offences) {
+            offences.find { featureType in it.features }
+        }?.reason
+    }
+
+    fun isNotified(featureType: FeatureType) = blockedFeature(this, featureType)?.notification != null
+
+    fun recordNotify(featureType: FeatureType, channel: Long, message: Long) {
+        blockedFeature(this, featureType)?.apply {
+            val currentTimeSeconds = System.currentTimeMillis() / 1000
+            notification = FeatureNotification(currentTimeSeconds, channel, message)
+        }
+    }
+
+}
 
 data class BlockedFeature(
-        val feature: FeatureType, val expiresAt: Long
+        val feature: FeatureType, val expiresAt: Long, var notification: FeatureNotification? = null
+)
+
+data class FeatureNotification(
+        val timestamp: Long, val channel: Long, val message: Long
 )
 
 data class BlocklistOffence(
