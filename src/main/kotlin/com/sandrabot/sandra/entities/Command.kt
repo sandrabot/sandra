@@ -24,7 +24,9 @@ abstract class Command(
         val aliases: Array<String> = emptyArray(),
         arguments: String = "",
         val guildOnly: Boolean = false,
-        val ownerOnly: Boolean = false
+        val ownerOnly: Boolean = false,
+        val cooldown: Int = 2000,
+        val cooldownScope: CooldownScope = CooldownScope.USER
 ) {
 
     val arguments = Argument.compile(arguments)

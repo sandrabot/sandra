@@ -46,12 +46,6 @@ class CommandListener(private val sandra: Sandra) {
         // Check if a command exists with this name
         val command = sandra.commands.getCommand(name) ?: return
 
-        val author = "${event.author.asTag} [${event.author.id}]"
-        val channel = if (event.isFromGuild) {
-            "${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
-        } else "direct message"
-        logger.info("$name | $author | $channel | $content")
-
         val args = if (contentParts.size == 1) "" else contentParts[1]
         val commandEvent = CommandEvent(sandra, event, command, args)
         // Fire the event using our event system even though we handle them immediately below
@@ -67,12 +61,12 @@ class CommandListener(private val sandra: Sandra) {
         val isFromGuild = event.isFromGuild
 
         // Check the blocklist to prevent processing in active contexts
-        if (checkBlocklist(event, FeatureType.COMMANDS)) {
-            logger.info("The command was not executed, this context is active in the blocklist")
-            return
-        }
+        if (checkBlocklist(event, FeatureType.COMMANDS)) return
 
-        // TODO Check the cooldowns to prevent processing spam
+        // Apply the cooldown and return if active
+        if (event.command.cooldown > 0 && !event.isOwner) {
+            if (event.sandra.cooldowns.applyCooldown(event)) return
+        }
 
         // Check for basic permissions we might need to reply in a server
         if (isFromGuild) when {
@@ -96,6 +90,13 @@ class CommandListener(private val sandra: Sandra) {
             event.replyError(event.translate("general.owner_only"))
             return
         }
+
+        // Only log the command when it is actually executed
+        val author = "${event.author.asTag} [${event.author.id}]"
+        val channel = if (event.isFromGuild) {
+            "${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
+        } else "direct message"
+        logger.info("${event.command.name} | $author | $channel | ${event.message.contentRaw}")
 
         // Execute the command in a blocking coroutine, execute is a suspended function
         runBlocking {

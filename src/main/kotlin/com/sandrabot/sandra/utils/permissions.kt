@@ -28,6 +28,10 @@ fun hasPermission(event: CommandEvent, permission: Permission): Boolean {
     } else event.selfMember.hasPermission(permission)
 }
 
+fun hasPermissions(event: CommandEvent, vararg permissions: Permission): Boolean {
+    return permissions.all { hasPermission(event, it) }
+}
+
 fun assertPermission(event: CommandEvent, permission: Permission) {
     if (missingPermission(event, permission)) throw MissingPermissionException(event, permission)
 }

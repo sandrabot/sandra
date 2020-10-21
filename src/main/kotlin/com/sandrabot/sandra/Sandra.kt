@@ -27,6 +27,7 @@ import com.sandrabot.sandra.listeners.CommandListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
+import com.sandrabot.sandra.services.CooldownService
 import com.sandrabot.sandra.services.PresenceService
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
@@ -57,6 +58,8 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val commands = CommandManager(this)
+    val cooldowns = CooldownManager(this)
+    val cooldownService = CooldownService(this)
     val eventManager = EventManager()
     val guilds = GuildCache(this)
     val languages = LanguageManager()
@@ -138,6 +141,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         if (apiEnabled) sandraApi.shutdown()
         shards.shutdown()
         cacheExecutor.shutdown()
+        cooldowns.shutdown()
         // Prevent data loss by waiting for pending operations
         cacheExecutor.awaitTermination(2, TimeUnit.SECONDS)
         redis.shutdown()

@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.constants
+package com.sandrabot.sandra.entities
 
-object Emotes {
+enum class CooldownScope {
 
-    const val CREDIT = "<:credit:539954084476878849>"
-    const val ERROR = "<:error:513864585342877707>"
-    const val FAVORITE = "<:favorite:521545826925805568>"
-    const val MOD_SHIELD = "<:modshield:513864660877967360>"
-    const val MUSIC = "<:music:513864669442736148>"
-    const val PATREON = "<:patreon:664297420972228634>"
-    const val PIN = "<:pin:513864702321754123>"
-    const val PROMPT = "<:prompt:513864712363048979>"
-    const val TIME = "<:time:513864556234407936>"
-    const val USER = "<:user:513864753106649119>"
+    USER, CHANNEL, GUILD, SHARD, COMMAND
 
 }

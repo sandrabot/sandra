@@ -20,6 +20,7 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.entities.CooldownScope
 import com.sandrabot.sandra.entities.LanguageContext
 import com.sandrabot.sandra.entities.SandraGuild
 import com.sandrabot.sandra.entities.SandraUser
@@ -60,7 +61,15 @@ class CommandEvent(
     val embed: EmbedBuilder
         get() = sandra.createEmbed()
 
-    val isOwner: Boolean by lazy { author.idLong in Constants.OWNERS }
+    val isOwner: Boolean = author.idLong in Constants.OWNERS
+    val cooldownKey: String = when (command.cooldownScope) {
+        CooldownScope.USER -> "U:${author.id}|${command.name}"
+        CooldownScope.CHANNEL -> "C:${channel.id}|${command.name}"
+        CooldownScope.GUILD -> "G:${guild.id}|${command.name}"
+        CooldownScope.SHARD -> "S:${jda.shardInfo.shardId}|${command.name}"
+        CooldownScope.COMMAND -> "C:${command.name}"
+    }
+
     val languageContext: LanguageContext by lazy { LanguageContext(sandra, sandraGuild, sandraUser) }
     val sandraGuild: SandraGuild by lazy { sandra.guilds.get(guild.idLong) }
     val sandraUser: SandraUser by lazy { sandra.users.get(author.idLong) }
