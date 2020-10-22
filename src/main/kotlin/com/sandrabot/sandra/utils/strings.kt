@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.constants
+package com.sandrabot.sandra.utils
 
-/**
- * These prefixes are used to categorize and to perform
- * bulk operations on keys in the redis database.
- */
-enum class RedisPrefix(private val prefix: String) {
+import net.dv8tion.jda.api.utils.MarkdownSanitizer
 
-    GUILD("G:"), USER("U:"), SETTING("S:");
+fun asReaction(emote: String): String = emote.substring(1, emote.length - 1)
 
-    override fun toString(): String {
-        return prefix
-    }
-
-    operator fun plus(other: String): String {
-        return prefix + other
-    }
-
-}
+fun sanitize(sequence: String): String = MarkdownSanitizer.sanitize(sequence)

@@ -38,7 +38,7 @@ class CountingThreadFactory(private val identifier: String) : ThreadFactory {
     }
 
     companion object {
-        private val identifiers = HashMap<String, AtomicLong>()
+        private val identifiers = mutableMapOf<String, AtomicLong>()
     }
 
 }

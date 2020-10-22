@@ -47,16 +47,13 @@ class CooldownManager(private val sandra: Sandra) {
             } as Cooldown
         }
 
-        // If this is the first attempt, don't block it
-        if (cooldown.attempts++ == 0) return false
-
-        // Add a timer reaction on their second attempt, but don't try again after
-        if (!cooldown.notified && cooldown.attempts == 2) {
-            if (hasPermissions(event, Permission.MESSAGE_ADD_REACTION,
+        when (++cooldown.attempts) {
+            // Don't block the first attempt
+            1 -> return false
+            // Attempt to add a timer reaction on their second attempt
+            2 -> if (hasPermissions(event, Permission.MESSAGE_ADD_REACTION,
                             Permission.MESSAGE_HISTORY, Permission.MESSAGE_EXT_EMOJI)) {
-                event.message.addReaction(asReaction(Emotes.TIME)).queue {
-                    cooldown.notified = true
-                }
+                event.message.addReaction(asReaction(Emotes.TIME)).queue()
             }
         }
 

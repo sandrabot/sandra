@@ -36,17 +36,15 @@ data class BlocklistEntry(
     }
 
     fun isFeatureBlocked(featureType: FeatureType): Boolean {
-        val blockedFeature = blockedFeature(this, featureType) ?: return false
-        blockedFeature.apply {
+        blockedFeature(this, featureType)?.apply {
             val currentTimeSeconds = System.currentTimeMillis() / 1000
-            if (expiresAt != 0L && currentTimeSeconds >= expiresAt) {
-                synchronized(blockedFeatures) {
-                    blockedFeatures.remove(this)
-                }
-                return false
+            val isExpired = expiresAt != 0L && currentTimeSeconds >= expiresAt
+            if (isExpired) synchronized(blockedFeatures) {
+                blockedFeatures.remove(this)
             }
-            return true
+            return !isExpired
         }
+        return false
     }
 
     fun isNotified(featureType: FeatureType) = blockedFeature(this, featureType)?.notification != null
