@@ -21,10 +21,7 @@ import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingPermissionException
-import com.sandrabot.sandra.utils.checkBlocklist
-import com.sandrabot.sandra.utils.hasPermission
-import com.sandrabot.sandra.utils.missingPermission
-import com.sandrabot.sandra.utils.missingSelfMessage
+import com.sandrabot.sandra.utils.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -63,23 +60,41 @@ class CommandListener(private val sandra: Sandra) {
         // Check the blocklist to prevent processing in active contexts
         if (checkBlocklist(event, FeatureType.COMMANDS)) return
 
-        // Apply the cooldown and return if active
+        // Owners are exempt from cooldowns
         if (event.command.cooldown > 0 && !event.isOwner) {
+            // Apply the cooldown and return if active
             if (event.sandra.cooldowns.applyCooldown(event)) return
         }
 
-        // Check for basic permissions we might need to reply in a server
-        if (isFromGuild) when {
-            missingPermission(event, Permission.MESSAGE_WRITE) -> {
-                if (hasPermission(event, Permission.MESSAGE_ADD_REACTION)) {
-                    event.message.addReaction(Unicode.SPEAK_NO_EVIL).queue()
-                } else logger.info("Cannot execute command: Missing MESSAGE_WRITE")
-                return
+        // Do additional checks for guilds, mostly permission checks
+        if (isFromGuild) {
+            when {
+                // Check for basic permissions we might need to reply
+                missingPermission(event, Permission.MESSAGE_WRITE) -> {
+                    if (hasPermission(event, Permission.MESSAGE_ADD_REACTION)) {
+                        event.message.addReaction(Unicode.SPEAK_NO_EVIL).queue()
+                    } else logger.info("Cannot execute command: Missing MESSAGE_WRITE")
+                    return
+                }
+                missingPermission(event, Permission.MESSAGE_EXT_EMOJI) -> {
+                    val selfMessage = missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)
+                    event.reply("${Unicode.CROSS_MARK} $selfMessage")
+                    return
+                }
             }
-            missingPermission(event, Permission.MESSAGE_EXT_EMOJI) -> {
-                val selfMessage = missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)
-                event.reply("${Unicode.CROSS_MARK} $selfMessage")
-                return
+            // Ensure the command permission requirements are met
+            for (permission in command.botPermissions) {
+                if (missingPermission(event, permission)) {
+                    event.replyError(missingSelfMessage(event, permission))
+                    return
+                }
+            }
+            // Owners are exempt from user permission checks
+            if (!event.isOwner) for (permission in command.userPermissions) {
+                if (missingUserPermission(event, permission)) {
+                    event.replyError(missingUserMessage(event, permission))
+                    return
+                }
             }
         } else if (command.guildOnly) {
             event.replyError(event.translate("general.guild_only"))
@@ -114,7 +129,7 @@ class CommandListener(private val sandra: Sandra) {
     }
 
     private fun getPrefixUsed(content: String): String? {
-        return sandra.commands.prefixes.firstOrNull { content.startsWith(it, ignoreCase = true) }
+        return sandra.commands.prefixes.find { content.startsWith(it, ignoreCase = true) }
     }
 
     companion object {

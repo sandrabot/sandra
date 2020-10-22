@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
+import net.dv8tion.jda.api.Permission
 import kotlin.reflect.full.createInstance
 
 abstract class Command(
@@ -26,7 +27,9 @@ abstract class Command(
         val guildOnly: Boolean = false,
         val ownerOnly: Boolean = false,
         val cooldown: Int = 2000,
-        val cooldownScope: CooldownScope = CooldownScope.USER
+        val cooldownScope: CooldownScope = CooldownScope.USER,
+        val botPermissions: Array<Permission> = emptyArray(),
+        val userPermissions: Array<Permission> = emptyArray()
 ) {
 
     val arguments = Argument.compile(arguments)

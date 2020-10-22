@@ -17,31 +17,33 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.exceptions.MissingTranslationException
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Member
 
 fun missingPermission(event: CommandEvent, permission: Permission) = !hasPermission(event, permission)
-fun hasPermission(event: CommandEvent, permission: Permission): Boolean {
+fun hasPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.selfMember)
+
+fun missingUserPermission(event: CommandEvent, permission: Permission) = !hasUserPermission(event, permission)
+fun hasUserPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.member)
+
+private fun check(event: CommandEvent, permission: Permission, member: Member): Boolean {
     return if (permission.isChannel) {
-        event.selfMember.hasPermission(event.textChannel, permission)
-    } else event.selfMember.hasPermission(permission)
+        member.hasPermission(event.textChannel, permission)
+    } else member.hasPermission(permission)
 }
 
 fun hasPermissions(event: CommandEvent, vararg permissions: Permission): Boolean {
     return permissions.all { hasPermission(event, it) }
 }
 
-fun assertPermission(event: CommandEvent, permission: Permission) {
-    if (missingPermission(event, permission)) throw MissingPermissionException(event, permission)
-}
-
-fun missingSelfMessage(event: CommandEvent, permission: Permission): String {
+fun missingSelfMessage(event: CommandEvent, permission: Permission) = missingMessage(event, permission, true)
+fun missingUserMessage(event: CommandEvent, permission: Permission) = missingMessage(event, permission, false)
+private fun missingMessage(event: CommandEvent, permission: Permission, self: Boolean): String {
     val context = if (permission.isChannel) "channel" else "server"
     return event.translate(
-            "general.missing_permission",
-            event.languageContext.get("permissions.${findTranslationKey(permission)}"),
-            context
+            if (self) "general.missing_permission" else "general.missing_user_permission",
+            event.languageContext.get("permissions.${findTranslationKey(permission)}"), context
     )
 }
 

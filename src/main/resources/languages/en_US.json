@@ -1,7 +1,7 @@
 {
   "general": {
-    "missing_permission": "I need the **%1$s** permission in this **$2%s**to continue!",
-    "missing_caller_permission": "You need the **%1$s** permission in this **$2%s** to continue!",
+    "missing_permission": "I need the **%1$s** permission in this **%2$s** to continue!",
+    "missing_user_permission": "You need the **%1$s** permission in this **%2$s** to continue!",
     "guild_only": "This command **can only be used** within servers.",
     "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
     "command_exception": "Hm, it appears as if **something strange** has happened. Apologies.",
