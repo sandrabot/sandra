@@ -55,6 +55,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
     val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
+    val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val commands = CommandManager(this)
@@ -64,7 +65,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val guilds = GuildCache(this)
     val languages = LanguageManager()
     val presence = PresenceService(this)
-    val sandraApi = SandraAPI(this, sandraConfig.apiPort)
     val statistics = StatisticsManager()
     val users = UserCache(this)
 
@@ -105,7 +105,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
 
         commands.setMentionPrefixes(self.id)
-        if (apiEnabled) sandraApi.start()
+        if (apiEnabled) api.start()
 
     }
 
@@ -138,7 +138,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         }
         logger.info("Shutdown called by $caller with restart: $restart")
 
-        if (apiEnabled) sandraApi.shutdown()
+        if (apiEnabled) api.shutdown()
         shards.shutdown()
         cacheExecutor.shutdown()
         blocklist.shutdown()
