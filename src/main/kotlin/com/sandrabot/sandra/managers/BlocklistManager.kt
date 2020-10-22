@@ -36,7 +36,7 @@ class BlocklistManager(private val sandra: Sandra) {
 
     fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
 
-    fun saveEntries() {
+    fun shutdown() {
         val data = Klaxon().toJsonString(entries.values())
         sandra.redis.set(RedisPrefix.SETTING + "blocklist", data)
     }
@@ -62,25 +62,6 @@ class BlocklistManager(private val sandra: Sandra) {
             val currentOffence = BlocklistOffence(features, moderator, timestamp, automated, reason)
             offences.add(currentOffence)
         }
-        saveEntries()
-    }
-
-    fun isFeatureBlocked(targetId: Long, featureType: FeatureType): Boolean {
-        val entry = entries[targetId] ?: return false
-        val blockedFeature = synchronized(entry.blockedFeatures) {
-            entry.blockedFeatures.find { it.feature == featureType }
-        } ?: return false
-        // Check for and unblock the feature if it is expired
-        // This way we don't need to set up a service to check it
-        val currentTimeSeconds = System.currentTimeMillis() / 1000
-        if (blockedFeature.expiresAt != 0L && currentTimeSeconds >= blockedFeature.expiresAt) {
-            synchronized(entry.blockedFeatures) {
-                entry.blockedFeatures.removeIf { it.feature == featureType }
-            }
-            saveEntries()
-            return false
-        }
-        return true
     }
 
 }

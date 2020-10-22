@@ -153,7 +153,7 @@ fun bootstrap(args: Array<String>): Int {
         return 1
     }
 
-    Runtime.getRuntime().addShutdownHook(Thread({ sandra.shutdown() }, "Shutdown Hook"))
+    Runtime.getRuntime().addShutdownHook(Thread(sandra::shutdown, "Shutdown Hook"))
     val duration = System.currentTimeMillis() - beginStartup
     logger.info("Initialization finished in ${"%,d".format(duration)}ms")
 

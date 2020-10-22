@@ -35,6 +35,20 @@ data class BlocklistEntry(
         }?.reason
     }
 
+    fun isFeatureBlocked(featureType: FeatureType): Boolean {
+        val blockedFeature = blockedFeature(this, featureType) ?: return false
+        blockedFeature.apply {
+            val currentTimeSeconds = System.currentTimeMillis() / 1000
+            if (expiresAt != 0L && currentTimeSeconds >= expiresAt) {
+                synchronized(blockedFeatures) {
+                    blockedFeatures.remove(this)
+                }
+                return false
+            }
+            return true
+        }
+    }
+
     fun isNotified(featureType: FeatureType) = blockedFeature(this, featureType)?.notification != null
 
     fun recordNotify(featureType: FeatureType, channel: Long, message: Long) {

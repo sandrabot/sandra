@@ -141,6 +141,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         if (apiEnabled) sandraApi.shutdown()
         shards.shutdown()
         cacheExecutor.shutdown()
+        blocklist.shutdown()
         cooldowns.shutdown()
         // Prevent data loss by waiting for pending operations
         cacheExecutor.awaitTermination(2, TimeUnit.SECONDS)

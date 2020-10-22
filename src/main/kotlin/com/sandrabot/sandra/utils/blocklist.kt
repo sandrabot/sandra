@@ -27,18 +27,16 @@ import org.slf4j.LoggerFactory
 private val logger = LoggerFactory.getLogger(BlocklistManager::class.java)
 
 fun checkBlocklist(event: CommandEvent, featureType: FeatureType): Boolean {
-    val targetId = arrayOf(event.author.idLong, event.guild.idLong).find {
-        event.sandra.blocklist.isFeatureBlocked(it, featureType)
-    } ?: return false
-    val entry = event.sandra.blocklist.getEntry(targetId) ?: return false
+    val entry = arrayOf(event.author.idLong, event.guild.idLong).mapNotNull {
+        event.sandra.blocklist.getEntry(it)
+    }.find { it.isFeatureBlocked(featureType) } ?: return false
     if (!entry.isNotified(featureType) && hasPermission(event, Permission.MESSAGE_WRITE)) {
-        val name = sanitize(if (targetId == event.guild.idLong) event.guild.name else event.author.name)
+        val name = sanitize(if (entry.targetId == event.author.idLong) event.author.name else event.guild.name)
         val reason = entry.getReason(featureType)
         val message = event.translate("general.blocked", name, reason)
         val consumer: (Message) -> Unit = {
             logger.info("This context has been notified of feature $featureType and reason \"$reason\" with message ${it.idLong}")
             entry.recordNotify(featureType, event.channel.idLong, it.idLong)
-            event.sandra.blocklist.saveEntries()
         }
         if (missingPermission(event, Permission.MESSAGE_EXT_EMOJI)) {
             event.reply("${Unicode.CROSS_MARK} $message", consumer)
