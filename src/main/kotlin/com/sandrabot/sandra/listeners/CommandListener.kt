@@ -18,6 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
+import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
@@ -39,13 +40,35 @@ class CommandListener(private val sandra: Sandra) {
         // Check if the message starts with a prefix
         val prefixUsed = getPrefixUsed(content) ?: return
 
-        val contentParts = content.substring(prefixUsed.length).trim().split(spaceRegex, 2)
+        val contentParts = content.substring(prefixUsed.length).trim().splitSpaces(2)
         val name = contentParts[0].toLowerCase()
         // Check if a command exists with this name
         val command = sandra.commands.getCommand(name) ?: return
 
-        val args = if (contentParts.size == 1) "" else contentParts[1]
-        val commandEvent = CommandEvent(sandra, event, command, args)
+        var args = if (contentParts.size == 1) "" else contentParts[1]
+        // Check to see if maybe a subcommand is being used
+        val maybeSubcommand = if (args.isNotEmpty()) {
+            var currentCommand: Command = command
+            // Only keep looking while there's children to search
+            while (currentCommand.children.isNotEmpty()) {
+                val firstArg = args.splitSpaces()[0]
+                // Find the first child with this name or alias
+                val child = currentCommand.children.firstOrNull {
+                    arrayOf(it.name, *it.aliases).any { alias ->
+                        firstArg.equals(alias, ignoreCase = true)
+                    }
+                }
+                // If a child was found remove the name from the args
+                // And also keep checking if nested subcommands are being used
+                if (child != null) {
+                    args = args.replaceFirst(firstArg, "").removeExtraSpaces()
+                    currentCommand = child
+                } else break
+            }
+            currentCommand
+        } else command
+
+        val commandEvent = CommandEvent(sandra, event, maybeSubcommand, args)
         // Fire the event using our event system even though we handle them immediately below
         // This allows multiple core systems to listen for commands and react accordingly
         sandra.eventManager.handleEvent(commandEvent)
@@ -112,7 +135,7 @@ class CommandListener(private val sandra: Sandra) {
         val channel = if (event.isFromGuild) {
             "${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
         } else "direct message"
-        logger.info("${event.command.name} | $author | $channel | ${event.message.contentRaw}")
+        logger.info("${event.commandPath} | $author | $channel | ${event.message.contentRaw}")
 
         // Execute the command in a blocking coroutine, execute is a suspended function
         runBlocking {
@@ -137,7 +160,6 @@ class CommandListener(private val sandra: Sandra) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandListener::class.java)
-        private val spaceRegex = Regex("""\s+""")
     }
 
 }

@@ -24,8 +24,18 @@ fun asReaction(emote: String): String = emote.substring(1, emote.length - 1)
 
 fun sanitize(sequence: String): String = MarkdownSanitizer.sanitize(sequence)
 
+fun commandPath(command: Command): String {
+    var currentCommand: Command? = command
+    val builder = StringBuilder()
+    do {
+        builder.insert(0, currentCommand!!.name + ":")
+        currentCommand = currentCommand.parent
+    } while (currentCommand != null)
+    return builder.substring(0, builder.lastIndex)
+}
+
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
-fun String.splitSpaces(): List<String> = this.split(spaceRegex)
+fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
 
 @ExperimentalTime
 fun duration(duration: Duration): String = duration.toComponents { days, hours, minutes, seconds, nanoseconds ->

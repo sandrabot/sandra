@@ -20,6 +20,7 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
+import com.sandrabot.sandra.utils.commandPath
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
@@ -57,13 +58,14 @@ class CommandEvent(
     val embed: EmbedBuilder
         get() = sandra.createEmbed()
 
+    val commandPath: String = commandPath(command)
     val isOwner: Boolean = author.idLong in Constants.OWNERS
     val cooldownKey: String = when (command.cooldownScope) {
-        CooldownScope.USER -> "U:${author.id}|${command.name}"
-        CooldownScope.CHANNEL -> "C:${channel.id}|${command.name}"
-        CooldownScope.GUILD -> "G:${guild.id}|${command.name}"
-        CooldownScope.SHARD -> "S:${jda.shardInfo.shardId}|${command.name}"
-        CooldownScope.COMMAND -> "C:${command.name}"
+        CooldownScope.USER -> "U:${author.id}|${commandPath}"
+        CooldownScope.CHANNEL -> "C:${channel.id}|${commandPath}"
+        CooldownScope.GUILD -> "G:${guild.id}|${commandPath}"
+        CooldownScope.SHARD -> "S:${jda.shardInfo.shardId}|${commandPath}"
+        CooldownScope.COMMAND -> "C:${commandPath}"
     }
 
     val arguments: ArgumentResult by lazy { Argument.parse(this, command.arguments) }

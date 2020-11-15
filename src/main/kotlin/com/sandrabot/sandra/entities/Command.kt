@@ -19,6 +19,7 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.Permission
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.isSubclassOf
 
 abstract class Command(
         val name: String,
@@ -34,9 +35,14 @@ abstract class Command(
 
     val arguments = Argument.compile(arguments)
     val category = Category.fromClass(this::class)
-    val children = this::class.nestedClasses.mapNotNull {
-        if (it is Command) it.createInstance() as Command else null
+    val children = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }.map {
+        (it.createInstance() as Command).also { child -> child.parent = this }
     }.toList()
+
+    var parent: Command? = null
+        internal set
+    val isSubcommand: Boolean
+        get() = parent != null
 
     abstract suspend fun execute(event: CommandEvent)
 
