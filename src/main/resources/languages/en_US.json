@@ -3,6 +3,7 @@
     "missing_permission": "I need the **%1$s** permission in this **%2$s** to continue!",
     "missing_user_permission": "You need the **%1$s** permission in this **%2$s** to continue!",
     "guild_only": "This command **can only be used** within servers.",
+    "missing_argument": "It appears the required argument **%1$s** is missing; check the **command usage** and try again.",
     "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
     "command_exception": "Hm, it appears as if **something strange** has happened. Apologies.",
     "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*This message will serve as your notification and you will not receive another.*"

@@ -18,7 +18,7 @@ package com.sandrabot.sandra.entities
 
 /**
  * Tokens used to resolve text into objects for consumption by commands.
- * Type safety can be achieved by expecting the specific type returned by each token from [Argument.ArgumentHolder.value].
+ * Type safety is achieved by using the corresponding method with the type name in [ArgumentResult].
  */
 enum class ArgumentType {
 
@@ -33,7 +33,7 @@ enum class ArgumentType {
     COMMAND,
 
     /**
-     * Searches for any digits that fit into a long. Resolves as a [Long].
+     * Searches for any digits that fit into a long. Resolves as a [kotlin.time.Duration].
      */
     DIGIT,
 
@@ -48,7 +48,8 @@ enum class ArgumentType {
     EMOTE,
 
     /**
-     * Searches for optional command arguments prefixed with an exclamation mark. Flags cannot be required.
+     * Searches for optional command arguments prefixed with an exclamation mark.
+     * Flags cannot be required nor arrays.
      * Resolves as a [Boolean], whether the flag is present or not.
      */
     FLAG,
@@ -64,12 +65,13 @@ enum class ArgumentType {
     ROLE,
 
     /**
-     * Any remaining text from parsing is consumed. Resolves as a [String].
+     * Any remaining text from parsing is consumed.
+     * Text cannot be an array. Resolves as a [String].
      */
     TEXT,
 
     /**
-     * Searches for a user. Resolves [net.dv8tion.jda.api.entities.User] objects.
+     * Searches for mentioned users. Resolves [net.dv8tion.jda.api.entities.User] objects.
      */
     USER,
 
@@ -86,7 +88,7 @@ enum class ArgumentType {
     companion object {
 
         fun fromName(name: String): ArgumentType {
-            return values().firstOrNull { name.equals(it.name, ignoreCase = true) } ?: UNKNOWN
+            return values().find { name.equals(it.name, ignoreCase = true) } ?: UNKNOWN
         }
 
     }

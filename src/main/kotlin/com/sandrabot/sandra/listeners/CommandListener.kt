@@ -20,6 +20,7 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.*
 import kotlinx.coroutines.runBlocking
@@ -120,6 +121,8 @@ class CommandListener(private val sandra: Sandra) {
             } catch (e: MissingPermissionException) {
                 event.replyError(missingSelfMessage(event, e.permission))
                 logger.info("Cannot finish executing command due to missing permissions", e)
+            } catch (e: MissingArgumentException) {
+                event.replyError(event.translate("general.missing_argument", e.argument.name))
             } catch (e: Exception) {
                 event.replyError(event.translate("general.command_exception"))
                 logger.error("An exception occurred while executing a command", e)

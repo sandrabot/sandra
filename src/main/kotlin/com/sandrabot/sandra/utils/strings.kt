@@ -18,6 +18,35 @@ package com.sandrabot.sandra.utils
 
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 
+private val spaceRegex = Regex("""\s+""")
+
 fun asReaction(emote: String): String = emote.substring(1, emote.length - 1)
 
 fun sanitize(sequence: String): String = MarkdownSanitizer.sanitize(sequence)
+
+fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
+fun String.splitSpaces(): List<String> = this.split(spaceRegex)
+
+@ExperimentalTime
+fun duration(duration: Duration): String = duration.toComponents { days, hours, minutes, seconds, nanoseconds ->
+    val builder = StringBuilder()
+    if (days > 0) builder.append(days.format()).append("d")
+    if (hours > 0) {
+        if (builder.isNotEmpty()) builder.append(" ")
+        builder.append("**").append(hours).append("**h")
+    }
+    if (minutes > 0) {
+        if (builder.isNotEmpty()) builder.append(" ")
+        builder.append("**").append(minutes).append("**m")
+    }
+    if (seconds > 0) {
+        if (builder.isNotEmpty()) builder.append(" ")
+        builder.append("**").append(seconds).append("**s")
+    }
+    val milliseconds = nanoseconds / 1000000
+    if (milliseconds > 0) {
+        if (builder.isNotEmpty()) builder.append(" ")
+        builder.append("**").append(milliseconds).append("**ms")
+    }
+    return builder.toString()
+}

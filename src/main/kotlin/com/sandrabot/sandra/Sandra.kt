@@ -29,15 +29,16 @@ import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
 import com.sandrabot.sandra.services.CooldownService
 import com.sandrabot.sandra.services.PresenceService
+import com.sandrabot.sandra.utils.await
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
-import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
-import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -77,23 +78,21 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         // Configure the development presence
         if (development) presence.setDevelopment()
 
-        // Disable every mention type by default to prevent accidental pings
-        MessageAction.setDefaultMentions(emptyList())
+        // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
+        val disabledMentioned = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
+        MessageAction.setDefaultMentions(EnumSet.complementOf(disabledMentioned))
 
-        // Configure JDA settings, we've got a lot of them
+        // Configure JDA settings, we've got a couple of them
         logger.info("Configuring JDA and signing into Discord")
         val token = if (development) credentials.betaToken else credentials.token
-        val disabledIntents = EnumSet.of(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.DIRECT_MESSAGE_TYPING)
-        val builder = DefaultShardManagerBuilder.create(token, EnumSet.complementOf(disabledIntents))
-        builder.disableCache(EnumSet.of(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS))
-        builder.setMemberCachePolicy(MemberCachePolicy.DEFAULT)
-        builder.setChunkingFilter(ChunkingFilter.NONE)
-        builder.setStatus(OnlineStatus.IDLE)
+        val builder = DefaultShardManagerBuilder.createDefault(token)
+        builder.enableIntents(GatewayIntent.GUILD_MEMBERS)
+        builder.setMemberCachePolicy(MemberCachePolicy.ALL)
         builder.setShardsTotal(sandraConfig.shardsTotal)
-        builder.setBulkDeleteSplittingEnabled(false)
-        builder.setRelativeRateLimit(development)
-        builder.setEnableShutdownHook(false)
+        builder.setStatus(OnlineStatus.IDLE)
         builder.addEventListeners(eventManager)
+        builder.setBulkDeleteSplittingEnabled(false)
+        builder.setEnableShutdownHook(false)
 
         // Register our event listeners
         eventManager.register(CommandListener(this), ReadyListener(this))
@@ -114,6 +113,27 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
      * By using a centralized factory, templates can be tweaked.
      */
     fun createEmbed() = EmbedBuilder().setColor(color)
+
+    /**
+     * For use in coroutines to asynchronously retrieve users.
+     */
+    suspend fun retrieveUser(userId: Long): User? = shards.retrieveUserById(userId).await()
+
+    /**
+     * **Use with caution.** Blocks the thread while retrieving a user.
+     * This should only be used when you cannot access a coroutine scope.
+     */
+    fun completeUser(userId: String): User? = completeUser(userId.toLong())
+
+    /**
+     * **Use with caution.** Blocks the thread while retrieving a user.
+     * This should only be used when you cannot access a coroutine scope.
+     */
+    fun completeUser(userId: Long): User? = try {
+        shards.retrieveUserById(userId).complete()
+    } catch (e: Exception) {
+        null
+    }
 
     /**
      * Gracefully closes all resources and shuts down the bot.
