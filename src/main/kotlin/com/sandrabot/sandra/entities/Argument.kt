@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.entities.Argument.Companion.compile
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.removeExtraSpaces
@@ -29,7 +28,7 @@ import java.util.*
 
 /**
  * Represents an object that may be parsed from text and consumed by a command as an argument.
- * The private constructor ensures the rules defined in [compile] are enforced.
+ * The private constructor ensures the rules defined in [Argument.compile] are enforced.
  */
 class Argument private constructor(
         val name: String, val type: ArgumentType, val isRequired: Boolean, val isArray: Boolean
@@ -50,8 +49,8 @@ class Argument private constructor(
         private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
         private val roleRegex = Regex("""<@&(\d{17,19})>""")
         private val digitRegex = Regex("""\d{1,16}""")
-        private val flagRegex = Regex("""!(\S+)""")
         private val idRegex = Regex("""\d{17,19}""")
+        private val flagRegex = Regex("""!(\S+)""")
 
         /**
          * Compiles the provided [tokens] into a read-only list of arguments.
@@ -146,7 +145,7 @@ class Argument private constructor(
             for (arg in arguments) {
 
                 // There's nothing left to parse
-                if (remainingText.isEmpty()) break
+                if (remainingText.isBlank()) break
 
                 val result: List<Any>? = when (arg.type) {
 
@@ -277,8 +276,7 @@ class Argument private constructor(
                         val commands = LinkedList<Command>()
                         // We probably won't support fuzzy searching for
                         // commands, it would be too ambiguous with aliases
-                        val remainingSplit = remainingText.splitSpaces()
-                        for (split in remainingSplit) {
+                        for (split in remainingText.splitSpaces()) {
                             // If this word isn't a command name, try the next one
                             val command = event.sandra.commands.getCommand(split) ?: continue
                             remainingText = remainingText.replaceFirst(split, "").removeExtraSpaces()
