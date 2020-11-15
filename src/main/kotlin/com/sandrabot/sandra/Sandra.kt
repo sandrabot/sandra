@@ -54,7 +54,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val development = sandraConfig.development
     val color = if (development) Colors.RED else Colors.BLURPLE
     val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
-    val cacheExecutor: ExecutorService = Executors.newCachedThreadPool(CountingThreadFactory("cache"))
 
     val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
@@ -160,11 +159,8 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
         if (apiEnabled) api.shutdown()
         shards.shutdown()
-        cacheExecutor.shutdown()
         blocklist.shutdown()
         cooldowns.shutdown()
-        // Prevent data loss by waiting for pending operations
-        cacheExecutor.awaitTermination(2, TimeUnit.SECONDS)
         redis.shutdown()
 
         val code = if (restart) 2 else 0

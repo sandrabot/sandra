@@ -72,7 +72,7 @@ class CommandEvent(
     val sandraUser: SandraUser by lazy { sandra.users.get(author.idLong) }
 
     fun translate(path: String, vararg args: Any?): String {
-        return languageContext.getFormatted(path, *args)
+        return languageContext.translate(path, *args)
     }
 
     fun reply(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {

@@ -17,18 +17,33 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.utils.findLocale
 
+/**
+ * Wrapper class for conveniently retrieving translation keys.
+ */
 class LanguageContext(
         private val sandra: Sandra,
-        sandraGuild: SandraGuild,
-        sandraUser: SandraUser,
-        var root: String? = null
+        val locale: Locale,
+        val root: String? = null
 ) {
 
-    // TODO Use the preferences to decide the locale
-    private val decidedLocale: Locale = Locale.ENGLISH
+    constructor(sandra: Sandra, sandraGuild: SandraGuild, sandraUser: SandraUser, root: String? = null) :
+            this(sandra, findLocale(sandraGuild, sandraUser), root)
 
-    fun get(path: String) = sandra.languages.get(decidedLocale, if (root == null) path else "$root.$path")
-    fun getFormatted(path: String, vararg args: Any?) = get(path).format(*args)
+    /**
+     * Returns a new context with the new root.
+     */
+    fun withRoot(root: String?) = LanguageContext(sandra, locale, root)
+
+    /**
+     * Returns the raw translation.
+     */
+    fun get(path: String) = sandra.languages.get(locale, if (root == null) path else "$root.$path")
+
+    /**
+     * Formats the translation with the [args] provided.
+     */
+    fun translate(path: String, vararg args: Any?) = get(path).format(*args)
 
 }

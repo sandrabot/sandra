@@ -50,3 +50,7 @@ fun duration(duration: Duration): String = duration.toComponents { days, hours, 
     }
     return builder.toString()
 }
+
+fun findLocale(sandraGuild: SandraGuild, sandraUser: SandraUser): Locale {
+    return sandraUser.locale ?: sandraGuild.locale ?: Locale.ENGLISH
+}

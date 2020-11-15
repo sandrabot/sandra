@@ -16,20 +16,11 @@
 
 package com.sandrabot.sandra.entities
 
-import com.beust.klaxon.JsonObject
-import com.sandrabot.sandra.Sandra
-
 /**
  * Stores Sandra-specific properties and settings for users.
  */
-class SandraUser(private val sandra: Sandra, val id: Long, data: JsonObject) : DataHolder {
+class SandraUser(val id: Long) {
 
-    fun save() {
-        sandra.users.save(id, this)
-    }
-
-    override fun toData(): JsonObject {
-        return JsonObject()
-    }
+    var locale: Locale? = null
 
 }
