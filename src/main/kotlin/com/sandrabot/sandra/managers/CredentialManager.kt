@@ -33,6 +33,13 @@ data class CredentialManager(
          */
         val betaToken: String,
 
+        /* ======= Miscellaneous Secrets ======= */
+
+        /**
+         * The creator's access token for your patreon client.
+         */
+        val patreonToken: String,
+
         /* ========== Bot List Tokens ========== */
 
         /**

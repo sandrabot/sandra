@@ -43,14 +43,14 @@ repositories {
 
 dependencies {
     listOf("stdlib-jdk8", "reflect").forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:4.2.0_216") {
+    implementation("net.dv8tion:JDA:4.2.0_217") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("com.beust:klaxon:5.4")
     implementation("com.google.guava:guava:30.0-jre")
-    implementation("io.javalin:javalin:3.11.2")
+    implementation("io.javalin:javalin:3.12.0")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("me.xdrop:fuzzywuzzy:1.3.1")
     implementation("net.sf.trove4j:trove4j:3.0.3")

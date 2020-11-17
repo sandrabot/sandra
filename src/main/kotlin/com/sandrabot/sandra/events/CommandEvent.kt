@@ -72,6 +72,7 @@ class CommandEvent(
     val languageContext: LanguageContext by lazy { LanguageContext(sandra, sandraGuild, sandraUser) }
     val sandraGuild: SandraGuild by lazy { sandra.guilds.get(guild.idLong) }
     val sandraUser: SandraUser by lazy { sandra.users.get(author.idLong) }
+    val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(author.idLong) }
 
     fun translate(path: String, vararg args: Any?): String {
         return languageContext.translate(path, *args)

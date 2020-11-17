@@ -22,7 +22,6 @@ import com.sandrabot.sandra.cache.UserCache
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.entities.CountingThreadFactory
 import com.sandrabot.sandra.listeners.CommandListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
@@ -41,9 +40,6 @@ import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.LoggerFactory
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 /**
  * This is the main class for the bot.
@@ -64,6 +60,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val eventManager = EventManager()
     val guilds = GuildCache(this)
     val languages = LanguageManager()
+    val patreon = PatreonManager(this)
     val presence = PresenceService(this)
     val statistics = StatisticsManager()
     val users = UserCache(this)
