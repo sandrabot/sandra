@@ -26,6 +26,7 @@ object Emotes {
     const val PATREON = "<:patreon:664297420972228634>"
     const val PIN = "<:pin:513864702321754123>"
     const val PROMPT = "<:prompt:513864712363048979>"
+    const val SPIN = "<a:spin:592453687721328640>"
     const val TIME = "<:time:513864556234407936>"
     const val USER = "<:user:513864753106649119>"
 
