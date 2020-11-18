@@ -20,24 +20,23 @@ import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.blocklist.*
-import gnu.trove.map.hash.TLongObjectHashMap
 
 /**
  * Keeps track of blocked features and offence history.
  */
 class BlocklistManager(private val sandra: Sandra) {
 
-    private val entries = TLongObjectHashMap<BlocklistEntry>()
+    private val entries = mutableMapOf<Long, BlocklistEntry>()
 
     init {
         val data = sandra.redis.get(RedisPrefix.SETTING + "blocklist") ?: "[]"
-        Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries.put(it.targetId, it) }
+        Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries[it.targetId] = it }
     }
 
     fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
 
     fun shutdown() {
-        val data = Klaxon().toJsonString(entries.values())
+        val data = Klaxon().toJsonString(entries.values)
         sandra.redis.set(RedisPrefix.SETTING + "blocklist", data)
     }
 
@@ -45,10 +44,10 @@ class BlocklistManager(private val sandra: Sandra) {
                       expiresAt: Long, moderator: Long, automated: Boolean, reason: String) {
         val entry = if (targetId in entries) entries[targetId] else {
             BlocklistEntry(targetId, targetType, mutableListOf(), mutableListOf()).also {
-                entries.put(targetId, it)
+                entries[targetId] = it
             }
         }
-        val blockedFeatures = entry.blockedFeatures
+        val blockedFeatures = entry!!.blockedFeatures
         synchronized(blockedFeatures) {
             // By removing features that are already blocked, we guarantee
             // only the most recent offence expresses the expiration timestamp

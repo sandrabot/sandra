@@ -53,8 +53,6 @@ dependencies {
     implementation("io.javalin:javalin:3.12.0")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("me.xdrop:fuzzywuzzy:1.3.1")
-    implementation("net.sf.trove4j:trove4j:3.0.3")
-    implementation("org.codehaus.groovy:groovy-console:3.0.6")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
     implementation("org.reflections:reflections:0.9.12")
     implementation("redis.clients:jedis:3.3.0")
