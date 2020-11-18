@@ -16,7 +16,16 @@
 
 package com.sandrabot.sandra.utils
 
+import com.beust.klaxon.Klaxon
+import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.entities.Locale
+import com.sandrabot.sandra.entities.SandraGuild
+import com.sandrabot.sandra.entities.SandraUser
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
+import java.io.StringReader
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 private val spaceRegex = Regex("""\s+""")
 
@@ -36,6 +45,8 @@ fun commandPath(command: Command): String {
 
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
+
+fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 
 @ExperimentalTime
 fun duration(duration: Duration): String = duration.toComponents { days, hours, minutes, seconds, nanoseconds ->
@@ -63,4 +74,14 @@ fun duration(duration: Duration): String = duration.toComponents { days, hours, 
 
 fun findLocale(sandraGuild: SandraGuild, sandraUser: SandraUser): Locale {
     return sandraUser.locale ?: sandraGuild.locale ?: Locale.ENGLISH
+}
+
+fun hastebin(text: String): String? {
+    val response = HttpUtil.post("${Constants.HASTEBIN}/documents", text)
+    return if (response.isEmpty()) null else try {
+        val key = Klaxon().parseJsonObject(StringReader(response)).string("key")
+        "${Constants.HASTEBIN}/$key"
+    } catch (e: Exception) {
+        null
+    }
 }
