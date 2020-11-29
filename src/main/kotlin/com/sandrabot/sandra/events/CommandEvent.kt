@@ -20,7 +20,6 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
-import com.sandrabot.sandra.utils.commandPath
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
@@ -58,7 +57,7 @@ class CommandEvent(
     val embed: EmbedBuilder
         get() = sandra.createEmbed()
 
-    val commandPath: String = commandPath(command)
+    val commandPath: String = command.path
     val isOwner: Boolean = author.idLong in Constants.OWNERS
     val cooldownKey: String = when (command.cooldownScope) {
         CooldownScope.USER -> "U:${author.id}|${commandPath}"

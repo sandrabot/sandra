@@ -41,6 +41,16 @@ abstract class Command(
         (it.createInstance() as Command).also { child -> child.parent = this }
     }.toList()
 
+    val path: String = run {
+        var currentCommand = this
+        val builder = StringBuilder()
+        do {
+            builder.insert(0, currentCommand.name + ":")
+            currentCommand = currentCommand.parent ?: break
+        } while (true)
+        builder.substring(0, builder.lastIndex)
+    }
+
     var parent: Command? = null
         internal set
     val isSubcommand: Boolean

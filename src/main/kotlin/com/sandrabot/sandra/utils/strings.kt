@@ -18,7 +18,6 @@ package com.sandrabot.sandra.utils
 
 import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.entities.SandraGuild
 import com.sandrabot.sandra.entities.SandraUser
@@ -32,16 +31,6 @@ private val spaceRegex = Regex("""\s+""")
 fun asReaction(emote: String): String = emote.substring(1, emote.length - 1)
 
 fun sanitize(sequence: String): String = MarkdownSanitizer.sanitize(sequence)
-
-fun commandPath(command: Command): String {
-    var currentCommand: Command? = command
-    val builder = StringBuilder()
-    do {
-        builder.insert(0, currentCommand!!.name + ":")
-        currentCommand = currentCommand.parent
-    } while (currentCommand != null)
-    return builder.substring(0, builder.lastIndex)
-}
 
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
