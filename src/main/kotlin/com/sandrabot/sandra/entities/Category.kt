@@ -33,12 +33,11 @@ enum class Category(val emote: String) {
     val displayName = name.toLowerCase().capitalize()
 
     companion object {
-        fun fromClass(clazz: KClass<out Command>): Category? {
-            val qualifiedName = clazz.qualifiedName
-                    ?: throw IllegalArgumentException("Local or anonymous commands are not permitted")
-            if (qualifiedName.substringAfterLast(".").contains("$")) return null
-            val packageName = qualifiedName.substringBeforeLast(".").substringAfterLast(".")
-            return values().find { packageName.equals(it.name, ignoreCase = true) }
+        fun fromClass(clazz: KClass<out Command>): Category {
+            if (clazz.qualifiedName?.startsWith("com.sandrabot.sandra.commands.") == false)
+                throw IllegalArgumentException("Class must be a member of a command category package")
+            val packageName = clazz.toString().substringBeforeLast(".").substringAfterLast(".")
+            return values().first { packageName.equals(it.name, ignoreCase = true) }
         }
     }
 

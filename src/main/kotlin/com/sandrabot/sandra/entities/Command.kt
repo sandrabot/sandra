@@ -33,9 +33,11 @@ abstract class Command(
         val userPermissions: Array<Permission> = emptyArray()
 ) {
 
-    val arguments = Argument.compile(arguments)
-    val category = Category.fromClass(this::class)
-    val children = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }.map {
+    val arguments: List<Argument> = Argument.compile(arguments)
+    val category: Category = Category.fromClass(this::class)
+    val children: List<Command> = this::class.nestedClasses.filter {
+        it.isSubclassOf(Command::class)
+    }.map {
         (it.createInstance() as Command).also { child -> child.parent = this }
     }.toList()
 
