@@ -53,7 +53,7 @@ class CooldownManager(private val sandra: Sandra) {
             // Attempt to add a timer reaction on their second attempt
             2 -> if (hasPermissions(event, Permission.MESSAGE_ADD_REACTION,
                             Permission.MESSAGE_HISTORY, Permission.MESSAGE_EXT_EMOJI)) {
-                event.message.addReaction(asReaction(Emotes.TIME)).queue()
+                event.message.addReaction(Emotes.TIME.asReaction()).queue()
             }
         }
 

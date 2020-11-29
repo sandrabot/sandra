@@ -31,7 +31,7 @@ fun checkBlocklist(event: CommandEvent, featureType: FeatureType): Boolean {
         event.sandra.blocklist.getEntry(it)
     }.find { it.isFeatureBlocked(featureType) } ?: return false
     if (!entry.isNotified(featureType) && hasPermission(event, Permission.MESSAGE_WRITE)) {
-        val name = sanitize(if (entry.targetId == event.author.idLong) event.author.name else event.guild.name)
+        val name = (if (entry.targetId == event.author.idLong) event.author.name else event.guild.name).sanitize()
         val reason = entry.getReason(featureType)
         val message = event.translate("general.blocked", name, reason)
         val consumer: (Message) -> Unit = {

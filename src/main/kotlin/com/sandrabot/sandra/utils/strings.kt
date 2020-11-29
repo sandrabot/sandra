@@ -28,10 +28,9 @@ import kotlin.time.ExperimentalTime
 
 private val spaceRegex = Regex("""\s+""")
 
-fun asReaction(emote: String): String = emote.substring(1, emote.length - 1)
+fun String.asReaction(): String = this.substring(1, lastIndex)
 
-fun sanitize(sequence: String): String = MarkdownSanitizer.sanitize(sequence)
-
+fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
 
