@@ -147,7 +147,7 @@ class Argument private constructor(
                 // There's nothing left to parse
                 if (remainingText.isBlank()) break
 
-                val result: List<Any>? = when (arg.type) {
+                val result: List<Any> = when (arg.type) {
 
                     ArgumentType.USER, ArgumentType.CHANNEL, ArgumentType.EMOTE -> {
                         // Figure out which regex pattern we are going to need
@@ -306,6 +306,17 @@ class Argument private constructor(
                         voiceChannels
                     }
 
+                    ArgumentType.WORD -> {
+                        val words = LinkedList<String>()
+                        do {
+                            // Parse the first word in the remaining text
+                            val splitFirst = remainingText.splitSpaces().first()
+                            remainingText = remainingText.substring(splitFirst.length).removeExtraSpaces()
+                            words.add(splitFirst)
+                        } while (arg.isArray)
+                        words
+                    }
+
                     ArgumentType.TEXT -> {
                         // Text is another exception to arrays as it can only return a singleton
                         // This argument must be put at the very end of your tokens
@@ -320,8 +331,10 @@ class Argument private constructor(
 
                 }
 
-                if (result != null && result.isNotEmpty()) {
-                    parsedValues[arg.name] = if (arg.isArray) result.distinct() else result.first()
+                if (result.isNotEmpty()) {
+                    parsedValues[arg.name] = if (arg.isArray) {
+                        result.distinct()
+                    } else result.first()
                 }
 
             }
