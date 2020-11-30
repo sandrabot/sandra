@@ -43,7 +43,7 @@ abstract class Command(
         (it.createInstance() as Command).also { child -> child.parent = this }
     }.toList()
 
-    val path: String = run {
+    val path: String by lazy {
         var currentCommand = this
         val builder = StringBuilder()
         do {
