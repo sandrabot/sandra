@@ -48,24 +48,7 @@ class CommandListener(private val sandra: Sandra) {
         var args = if (contentParts.size == 1) "" else contentParts[1]
         // Check to see if maybe a subcommand is being used
         val maybeSubcommand = if (args.isNotEmpty()) {
-            var currentCommand: Command = command
-            // Only keep looking while there's children to search
-            while (currentCommand.children.isNotEmpty()) {
-                val firstArg = args.splitSpaces()[0]
-                // Find the first child with this name or alias
-                val child = currentCommand.children.firstOrNull {
-                    arrayOf(it.name, *it.aliases).any { alias ->
-                        firstArg.equals(alias, ignoreCase = true)
-                    }
-                }
-                // If a child was found remove the name from the args
-                // And also keep checking if nested subcommands are being used
-                if (child != null) {
-                    args = args.replaceFirst(firstArg, "").removeExtraSpaces()
-                    currentCommand = child
-                } else break
-            }
-            currentCommand
+            command.findChild(args).also { args = it.second }.first ?: command
         } else command
 
         val commandEvent = CommandEvent(sandra, event, maybeSubcommand, args)
