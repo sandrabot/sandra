@@ -18,10 +18,15 @@ package com.sandrabot.sandra.constants
 
 object Emotes {
 
+    const val BUBBLES = "<:bubbles:521548360201797653>"
+    const val COMMANDS = "<:commands:513864566355263518>"
+    const val CONFIG = "<:config:513864576534577162>"
     const val CREDIT = "<:credit:539954084476878849>"
     const val ERROR = "<:error:513864585342877707>"
     const val FAVORITE = "<:favorite:521545826925805568>"
+    const val INFO = "<:info:513864650811768844>"
     const val MOD_SHIELD = "<:modshield:513864660877967360>"
+    const val NOTIFY = "<:notify:513864680645853194>"
     const val MUSIC = "<:music:513864669442736148>"
     const val PATREON = "<:patreon:664297420972228634>"
     const val PIN = "<:pin:513864702321754123>"
@@ -29,5 +34,6 @@ object Emotes {
     const val SPIN = "<a:spin:592453687721328640>"
     const val TIME = "<:time:513864556234407936>"
     const val USER = "<:user:513864753106649119>"
+    const val WARN = "<:warn:513864765173399563>"
 
 }

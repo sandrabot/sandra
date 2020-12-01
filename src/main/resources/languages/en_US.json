@@ -19,7 +19,7 @@
     "read_messages": "Read Messages",
     "send_messages": "Send Messages",
     "manage_messages": "Manage Messages",
-    "embed_links": "Embed LInks",
+    "embed_links": "Embed Links",
     "attach_files": "Attach Files",
     "read_history": "Read History",
     "external_emojis": "Use External Emojis",
@@ -30,5 +30,34 @@
     "manage_nicknames": "Manage Nicknames",
     "manage_roles": "Manage Roles",
     "manage_permissions": "Manage Permissions"
+  },
+  "commands": {
+    "help": {
+      "description": "View some basic quick-start information about the bot",
+      "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",
+      "available_subcommands": "It looks like that subcommand **does not exist** for this command, however you can try any of these: %1$s",
+      "required_arguments": "Any arguments that are enclosed with <> are required.",
+      "extra_help": "Need some extra help?",
+      "you_can_use": "You can also use",
+      "description_title": "Description",
+      "aliases_title": "Aliases",
+      "usage_title": "Usage",
+      "info_embed": {
+        "title": "Sandra's Website",
+        "description": "I was created by %1$s, %2$s, and %3$s; with art by [%4$s](%5$s).",
+        "configure": "%1$s Configure Settings",
+        "configure_content": "> To **configure** my **settings**, use the new **[dashboard](%1$s)**.",
+        "commands": "%1$s Commands",
+        "commands_content": "> To see my **command list**, use `%1$scommands`.",
+        "invite": "%1$s Invite Sandra",
+        "invite_content": "> Would you like me in **your server**? **[Click to invite me](%1$s)**.",
+        "support": "%1$s Support Server",
+        "support_content": "> Need **more help**? **[Join my support server](%1$s)**."
+      }
+    },
+    "ping": {
+      "description": "Sends a ping to test Sandra's connection to Discord",
+      "response": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
+    }
   }
 }

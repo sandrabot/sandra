@@ -21,19 +21,23 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.entities.SandraGuild
 import com.sandrabot.sandra.entities.SandraUser
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.StringReader
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 private val spaceRegex = Regex("""\s+""")
 
+fun String.asEmoteUrl() = "https://cdn.discordapp.com/emojis/${emoteRegex.find(this)?.groupValues?.get(1)}.png"
 fun String.asReaction(): String = this.substring(1, lastIndex)
 
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
 
+fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 
 @ExperimentalTime

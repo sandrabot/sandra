@@ -78,15 +78,23 @@ class CommandEvent(
     }
 
     fun reply(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.channel.sendMessage(message).queue(success, failure)
+        event.message.reply(message).queue(success, failure)
     }
 
     fun reply(embed: MessageEmbed, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.channel.sendMessage(embed).queue(success, failure)
+        event.message.reply(embed).queue(success, failure)
+    }
+
+    fun reply(any: Any, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
+        reply(any.toString(), success, failure)
+    }
+
+    fun replyInfo(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
+        reply("${Emotes.INFO}｜$message", success, failure)
     }
 
     fun replyError(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        reply("${Emotes.ERROR} $message", success, failure)
+        reply("${Emotes.ERROR}｜$message", success, failure)
     }
 
 }

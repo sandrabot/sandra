@@ -26,11 +26,16 @@ object Constants {
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L
     const val BLAIR = 571446613021556748L
+    const val GABBY = 276856260253712384L
 
     const val PREFIX = "s."
     const val BETA_PREFIX = "b."
     const val TWITCH = "https://twitch.tv/averen"
     const val HASTEBIN = "https://haste.averen.dev"
+    const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
+    const val DIRECT_SUPPORT = "https://discord.com/invite/ybuvfZR"
+    const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?" +
+            "client_id=$APPLICATION_ID&permissions=473296087&scope=bot"
 
     val OWNERS = arrayOf(AVERY, LOGAN, BLAIR)
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"

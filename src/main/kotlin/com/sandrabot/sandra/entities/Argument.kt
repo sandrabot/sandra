@@ -34,6 +34,12 @@ class Argument private constructor(
         val name: String, val type: ArgumentType, val isRequired: Boolean, val isArray: Boolean
 ) {
 
+    val usage = run {
+        val (start, end) = if (isRequired) "<" to ">" else "[" to "]"
+        val array = if (isArray) "*" else ""
+        "$start$name$array$end"
+    }
+
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
         val array = if (isArray) "*" else ""
