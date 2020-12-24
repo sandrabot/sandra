@@ -23,6 +23,7 @@ import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.CommandListener
+import com.sandrabot.sandra.listeners.EventWaiter
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
@@ -58,6 +59,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val cooldowns = CooldownManager(this)
     val cooldownService = CooldownService(this)
     val eventManager = EventManager()
+    val eventWaiter = EventWaiter()
     val guilds = GuildCache(this)
     val languages = LanguageManager()
     val patreon = PatreonManager(this)
@@ -91,7 +93,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setEnableShutdownHook(false)
 
         // Register our event listeners
-        eventManager.register(CommandListener(this), ReadyListener(this))
+        eventManager.register(CommandListener(this), ReadyListener(this), eventWaiter)
 
         // Block the thread until the first shard signs in
         shards = builder.build()
