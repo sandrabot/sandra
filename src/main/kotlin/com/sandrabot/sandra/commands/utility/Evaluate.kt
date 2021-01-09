@@ -62,6 +62,8 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
                 import java.util.*
                 import java.util.concurrent.TimeUnit
                 import java.time.OffsetDateTime
+                import kotlin.coroutines.*
+                import kotlinx.coroutines.*
                 import net.dv8tion.jda.api.*
                 import net.dv8tion.jda.api.entities.*
                 import redis.clients.jedis.*
@@ -79,22 +81,22 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
 
         // Create a map of the variables we might want
         val bindings = listOf(
-                Triple("event", event, CommandEvent::class),
-                Triple("author", event.author, User::class),
-                Triple("member", event.member, Member::class),
-                Triple("channel", event.textChannel, TextChannel::class),
-                Triple("guild", event.guild, Guild::class),
-                Triple("id", event.guild.id, String::class),
-                Triple("sg", event.sandraGuild, SandraGuild::class),
-                Triple("su", event.sandraUser, SandraUser::class),
-                Triple("sandra", event.sandra, Sandra::class),
-                Triple("shards", event.sandra.shards, ShardManager::class),
-                Triple("commands", event.sandra.commands, CommandManager::class),
-                Triple("redis", event.sandra.redis, RedisManager::class),
-                Triple("guilds", event.sandra.guilds, GuildCache::class),
-                Triple("users", event.sandra.users, UserCache::class),
-                // Have a way of cancelling running jobs?
-                Triple("scope", engineScope, CoroutineScope::class)
+            Triple("event", event, CommandEvent::class),
+            Triple("author", event.author, User::class),
+            Triple("member", event.member, Member::class),
+            Triple("channel", event.textChannel, TextChannel::class),
+            Triple("guild", event.guild, Guild::class),
+            Triple("id", event.guild.id, String::class),
+            Triple("sg", event.sandraGuild, SandraGuild::class),
+            Triple("su", event.sandraUser, SandraUser::class),
+            Triple("sandra", event.sandra, Sandra::class),
+            Triple("shards", event.sandra.shards, ShardManager::class),
+            Triple("commands", event.sandra.commands, CommandManager::class),
+            Triple("redis", event.sandra.redis, RedisManager::class),
+            Triple("guilds", event.sandra.guilds, GuildCache::class),
+            Triple("users", event.sandra.users, UserCache::class),
+            // Have a way of cancelling running jobs?
+            Triple("scope", engineScope, CoroutineScope::class)
         )
 
         // Insert them into the script engine
@@ -106,7 +108,12 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
         }
 
         // Strip the command block if present
-        val script = blockPattern.find(event.args)?.let { it.groupValues[1] } ?: event.args
+        val strippedScript = blockPattern.find(event.args)?.let { it.groupValues[1] } ?: event.args
+
+        // Before we begin the script, we need to inject any additional imports
+        val importLines = strippedScript.lines().takeWhile { it.startsWith("import") }
+        val additionalImports = importLines.joinToString("\n", postfix = "\n\n")
+        val script = strippedScript.lines().filterNot { it in importLines }.joinToString("\n")
 
         // Evaluate the script *non blocking*, it could take a while to finish
         engineScope.launch {
@@ -115,7 +122,7 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
             // Measure how long it takes to evaluate the script
             val timedResult = measureTimedValue {
                 try {
-                    engine.eval(imports + variables + script)
+                    engine.eval(imports + additionalImports + variables + script)
                 } catch (exception: Exception) {
                     exception
                 }
