@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.restaction.MessageAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -86,6 +87,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val builder = DefaultShardManagerBuilder.createDefault(token)
         builder.enableIntents(GatewayIntent.GUILD_MEMBERS)
         builder.setMemberCachePolicy(MemberCachePolicy.ALL)
+        builder.setChunkingFilter(ChunkingFilter.include(Constants.GUILD_HANGOUT))
         builder.setShardsTotal(sandraConfig.shardsTotal)
         builder.setStatus(OnlineStatus.IDLE)
         builder.addEventListeners(eventManager)

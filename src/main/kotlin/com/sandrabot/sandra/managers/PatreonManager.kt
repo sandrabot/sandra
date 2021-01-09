@@ -36,8 +36,18 @@ class PatreonManager(private val sandra: Sandra) {
     private val pledges = mutableMapOf<Long, PatreonTier>()
     private var lastUpdate: Long = 0
 
+    // This is only intended to be called via an eval
+    fun updatePledgesNow() {
+        lastUpdate = 0
+        updatePledges()
+    }
+
     @Synchronized
     private fun updatePledges() {
+        // Check if we need to update the pledges, synchronously
+        val minutesSinceUpdate = (System.currentTimeMillis() - lastUpdate) / 60000
+        // Only update them if our cache is older than 5 minutes
+        if (minutesSinceUpdate < 30) return
         // Patreon User ID to Reward ID
         val userToPledge = mutableMapOf<String, String>()
         // Patreon User ID to Discord User ID
@@ -46,9 +56,11 @@ class PatreonManager(private val sandra: Sandra) {
         val rewardToTier = mutableMapOf<String, PatreonTier>()
         var nextUrl: String? = pledgesUrl
         do {
-            val request = HttpUtil.execute(HttpUtil.createRequest(nextUrl!!)
+            val request = HttpUtil.execute(
+                HttpUtil.createRequest(nextUrl!!)
                     .header("Authorization", "Bearer ${sandra.credentials.patreonToken}")
-                    .build())
+                    .build()
+            )
             // If there was an issue with the request there's not much we can do
             if (request.isEmpty()) break
             val json = Klaxon().parseJsonObject(StringReader(request))
@@ -68,7 +80,9 @@ class PatreonManager(private val sandra: Sandra) {
             val included = json.array<JsonObject>("included")!!
             included.filter {
                 it["type"] == "user" && it["id"] in userToPledge
-            }.forEach { userToDiscord[it.string("id")!!] = it.lookup<String>("attributes.social_connections.discord.user_id")[0] }
+            }.forEach {
+                userToDiscord[it.string("id")!!] = it.lookup<String>("attributes.social_connections.discord.user_id")[0]
+            }
             // Figure out which reward id is which reward tier
             included.filter {
                 it["type"] == "reward" && it.string("id")!!.toInt() > 0
@@ -84,6 +98,14 @@ class PatreonManager(private val sandra: Sandra) {
             val discordId = userToDiscord[pledge.key]?.toLongOrNull() ?: continue
             pledges[discordId] = rewardToTier[pledge.value]!!
         }
+        // Our boosters should also get a treat for helping us out
+        sandra.shards.getGuildById(Constants.GUILD_HANGOUT)?.let { guild ->
+            guild.boostRole?.let { boostRole ->
+                guild.getMembersWithRoles(boostRole).forEach {
+                    if (pledges[it.idLong] != PatreonTier.SPONSOR) pledges[it.idLong] = PatreonTier.DONOR
+                }
+            }
+        }
         lastUpdate = System.currentTimeMillis()
     }
 
@@ -91,16 +113,13 @@ class PatreonManager(private val sandra: Sandra) {
      * Returns the reward tier for the user, or null if they are not a patron.
      */
     fun getUserTier(userId: Long): PatreonTier? {
-        // Check if we need to update the pledges
-        val minutesSinceUpdate = (System.currentTimeMillis() - lastUpdate) / 60000
-        // Only update them if our cache is older than 5 minutes
-        if (minutesSinceUpdate >= 5) updatePledges()
-        // Return null if they are not a patron
+        updatePledges()
         return pledges[userId]
     }
 
     companion object {
-        private const val pledgesUrl = "https://patreon.com/api/oauth2/api/campaigns/${Constants.PATREON_CAMPAIGN}/pledges"
+        private const val pledgesUrl =
+            "https://patreon.com/api/oauth2/api/campaigns/${Constants.PATREON_CAMPAIGN}/pledges"
         private val logger = LoggerFactory.getLogger(PatreonManager::class.java)
     }
 

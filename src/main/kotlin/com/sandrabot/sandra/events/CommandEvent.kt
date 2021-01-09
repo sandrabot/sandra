@@ -58,7 +58,7 @@ class CommandEvent(
         get() = sandra.createEmbed()
 
     val commandPath: String = command.path
-    val isOwner: Boolean = author.idLong in Constants.OWNERS
+    val isOwner: Boolean = author.idLong in Constants.DEVELOPERS
     val cooldownKey: String = when (command.cooldownScope) {
         CooldownScope.USER -> "U:${author.id}|${commandPath}"
         CooldownScope.CHANNEL -> "C:${channel.id}|${commandPath}"
