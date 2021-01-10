@@ -17,14 +17,13 @@
 package com.sandrabot.sandra.commands.utility
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.cache.GuildCache
-import com.sandrabot.sandra.cache.UserCache
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
-import com.sandrabot.sandra.entities.SandraGuild
-import com.sandrabot.sandra.entities.SandraUser
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
+import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.duration
@@ -87,14 +86,13 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
             Triple("channel", event.textChannel, TextChannel::class),
             Triple("guild", event.guild, Guild::class),
             Triple("id", event.guild.id, String::class),
-            Triple("sg", event.sandraGuild, SandraGuild::class),
-            Triple("su", event.sandraUser, SandraUser::class),
+            Triple("gc", event.guildConfig, GuildConfig::class),
+            Triple("uc", event.userConfig, UserConfig::class),
             Triple("sandra", event.sandra, Sandra::class),
             Triple("shards", event.sandra.shards, ShardManager::class),
             Triple("commands", event.sandra.commands, CommandManager::class),
             Triple("redis", event.sandra.redis, RedisManager::class),
-            Triple("guilds", event.sandra.guilds, GuildCache::class),
-            Triple("users", event.sandra.users, UserCache::class),
+            Triple("config", event.sandra.config, ConfigurationManager::class),
             // Have a way of cancelling running jobs?
             Triple("scope", engineScope, CoroutineScope::class)
         )

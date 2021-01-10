@@ -18,6 +18,8 @@ package com.sandrabot.sandra.entities
 
 enum class Locale(val identifier: String) {
 
+    DEFAULT("en_US"),
+
     ENGLISH("en_US")
 
 }

@@ -26,21 +26,22 @@ import redis.clients.jedis.JedisPoolConfig
  */
 class RedisManager(config: RedisConfig) {
 
-    private val pool = JedisPool(JedisPoolConfig(), config.host, config.port, config.timeout, config.password, config.database)
+    private val pool = JedisPool(
+        JedisPoolConfig(), config.host, config.port,
+        config.timeout, config.password, config.database
+    )
 
     val resource: Jedis
         get() = pool.resource
 
-    fun get(key: String): String? {
-        return resource.use { it.get(key) }
-    }
+    operator fun get(key: String): String? = resource.use { it.get(key) }
 
-    fun delete(key: String) {
-        resource.use { it.del(key) }
-    }
-
-    fun set(key: String, value: String) {
+    operator fun set(key: String, value: String) {
         resource.use { it.set(key, value) }
+    }
+
+    fun del(key: String) {
+        resource.use { it.del(key) }
     }
 
     fun shutdown() {

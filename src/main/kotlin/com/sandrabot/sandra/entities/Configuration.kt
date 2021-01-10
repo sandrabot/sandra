@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.cache
+package com.sandrabot.sandra.entities
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.constants.RedisPrefix
-import com.sandrabot.sandra.entities.EntityCache
-import com.sandrabot.sandra.entities.SandraUser
-
-class UserCache(sandra: Sandra) : EntityCache<SandraUser>(sandra, RedisPrefix.USER) {
-
-    override fun createEntity(klaxon: Klaxon, key: Long, json: JsonObject) = klaxon.parseFromJsonObject<SandraUser>(json)!!
-
-}
+interface Configuration

@@ -29,7 +29,7 @@ class BlocklistManager(private val sandra: Sandra) {
     private val entries = mutableMapOf<Long, BlocklistEntry>()
 
     init {
-        val data = sandra.redis.get(RedisPrefix.SETTING + "blocklist") ?: "[]"
+        val data = sandra.redis[RedisPrefix.SETTING + "blocklist"] ?: "[]"
         Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries[it.targetId] = it }
     }
 
@@ -37,7 +37,7 @@ class BlocklistManager(private val sandra: Sandra) {
 
     fun shutdown() {
         val data = Klaxon().toJsonString(entries.values)
-        sandra.redis.set(RedisPrefix.SETTING + "blocklist", data)
+        sandra.redis[RedisPrefix.SETTING + "blocklist"] = data
     }
 
     fun appendOffence(targetId: Long, targetType: TargetType, features: List<FeatureType>,

@@ -17,6 +17,8 @@
 package com.sandrabot.sandra.events
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
@@ -68,9 +70,9 @@ class CommandEvent(
     }
 
     val arguments: ArgumentResult by lazy { Argument.parse(this, command.arguments) }
-    val languageContext: LanguageContext by lazy { LanguageContext(sandra, sandraGuild, sandraUser) }
-    val sandraGuild: SandraGuild by lazy { sandra.guilds.get(guild.idLong) }
-    val sandraUser: SandraUser by lazy { sandra.users.get(author.idLong) }
+    val languageContext: LanguageContext by lazy { LanguageContext(sandra, guildConfig, userConfig) }
+    val guildConfig: GuildConfig by lazy { sandra.config.getGuild(guild.idLong) }
+    val userConfig: UserConfig by lazy { sandra.config.getUser(author.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(author.idLong) }
 
     fun translate(path: String, vararg args: Any?): String {

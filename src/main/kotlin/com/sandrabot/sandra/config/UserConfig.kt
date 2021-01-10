@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.config
+
+import com.sandrabot.sandra.entities.Configuration
+import com.sandrabot.sandra.entities.Locale
 
 /**
- * Stores Sandra-specific properties and settings for guilds.
+ * Stores Sandra-specific properties and settings for users.
  */
-class SandraGuild(val id: Long) {
+class UserConfig(val id: Long) : Configuration {
 
-    var locale: Locale? = null
+    var locale: Locale = Locale.DEFAULT
 
 }

@@ -17,6 +17,8 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.utils.findLocale
 
 /**
@@ -28,8 +30,8 @@ class LanguageContext(
         val root: String? = null
 ) {
 
-    constructor(sandra: Sandra, sandraGuild: SandraGuild, sandraUser: SandraUser, root: String? = null) :
-            this(sandra, findLocale(sandraGuild, sandraUser), root)
+    constructor(sandra: Sandra, guildConfig: GuildConfig, userConfig: UserConfig, root: String? = null) :
+            this(sandra, findLocale(guildConfig, userConfig), root)
 
     /**
      * Returns a new context with the new root.

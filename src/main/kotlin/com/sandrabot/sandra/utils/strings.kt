@@ -17,10 +17,10 @@
 package com.sandrabot.sandra.utils
 
 import com.beust.klaxon.Klaxon
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
-import com.sandrabot.sandra.entities.SandraGuild
-import com.sandrabot.sandra.entities.SandraUser
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.StringReader
@@ -64,8 +64,12 @@ fun duration(duration: Duration): String = duration.toComponents { days, hours, 
     return builder.toString()
 }
 
-fun findLocale(sandraGuild: SandraGuild, sandraUser: SandraUser): Locale {
-    return sandraUser.locale ?: sandraGuild.locale ?: Locale.ENGLISH
+fun findLocale(guildConfig: GuildConfig, userConfig: UserConfig): Locale {
+    return if (userConfig.locale == Locale.DEFAULT) {
+        if (guildConfig.locale == Locale.DEFAULT) {
+            Locale.DEFAULT
+        } else guildConfig.locale
+    } else userConfig.locale
 }
 
 fun hastebin(text: String): String? {

@@ -17,8 +17,6 @@
 package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.SandraAPI
-import com.sandrabot.sandra.cache.GuildCache
-import com.sandrabot.sandra.cache.UserCache
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
@@ -56,17 +54,16 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
+    val config = ConfigurationManager(this)
     val commands = CommandManager(this)
     val cooldowns = CooldownManager(this)
     val cooldownService = CooldownService(this)
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
-    val guilds = GuildCache(this)
     val languages = LanguageManager()
     val patreon = PatreonManager(this)
     val presence = PresenceService(this)
     val statistics = StatisticsManager()
-    val users = UserCache(this)
 
     val shards: ShardManager
 
@@ -162,6 +159,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         shards.shutdown()
         blocklist.shutdown()
         cooldowns.shutdown()
+        config.shutdown()
         redis.shutdown()
 
         val code = if (restart) 2 else 0
