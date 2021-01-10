@@ -19,7 +19,7 @@ A few have been listed below, including what they are used for:
 * [Jedis](https://github.com/xetorthio/jedis) - Communicating with Redis
 * [Klaxon](https://github.com/cbeust/klaxon) - JSON Parsing and Object Mapping
 * [Javalin](https://javalin.io/) - Providing the Sandra API
-* [Guava](https://github.com/google/guava) - Expiring Entity Caches
+* [ExpiringMap](https://github.com/jhalterman/expiringmap) - Expiring Caches
 
 # Authors and Contributors
 * [averen](https://github.com/averen) - Project Founder and Maintainer

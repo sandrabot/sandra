@@ -46,7 +46,7 @@ class PatreonManager(private val sandra: Sandra) {
     private fun updatePledges() {
         // Check if we need to update the pledges, synchronously
         val minutesSinceUpdate = (System.currentTimeMillis() - lastUpdate) / 60000
-        // Only update them if our cache is older than 5 minutes
+        // Only update them if our cache is older than 30 minutes
         if (minutesSinceUpdate < 30) return
         // Patreon User ID to Reward ID
         val userToPledge = mutableMapOf<String, String>()
