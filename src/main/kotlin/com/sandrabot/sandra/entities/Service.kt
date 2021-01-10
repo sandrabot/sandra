@@ -39,7 +39,7 @@ abstract class Service(private val period: Long) {
 
     private fun beginTask() {
         if (isRunning) shutdown()
-        task = executor.scheduleAtFixedRate(::execute, period, period, TimeUnit.SECONDS)
+        task = executor.scheduleWithFixedDelay(::execute, period, period, TimeUnit.SECONDS)
     }
 
     companion object {
