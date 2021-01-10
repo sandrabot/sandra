@@ -18,7 +18,6 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
@@ -26,6 +25,7 @@ import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.LoggerFactory
 
@@ -38,7 +38,7 @@ class CommandListener(private val sandra: Sandra) {
 
         val content = event.message.contentRaw
         // Check if the message starts with a prefix
-        val prefixUsed = getPrefixUsed(content) ?: return
+        val prefixUsed = getPrefixUsed(content, event.guild) ?: return
 
         val contentParts = content.substring(prefixUsed.length).trim().splitSpaces(2)
         val name = contentParts[0].toLowerCase()
@@ -137,8 +137,11 @@ class CommandListener(private val sandra: Sandra) {
 
     }
 
-    private fun getPrefixUsed(content: String): String? {
-        return sandra.commands.prefixes.find { content.startsWith(it, ignoreCase = true) }
+    private fun getPrefixUsed(content: String, guild: Guild?): String? {
+        val prefixes = if (guild != null) {
+            sandra.config.getGuild(guild.idLong).prefixes.toTypedArray() + sandra.commands.prefixes
+        } else sandra.commands.prefixes
+        return prefixes.find { content.startsWith(it, ignoreCase = true) }
     }
 
     companion object {

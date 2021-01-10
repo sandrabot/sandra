@@ -24,6 +24,8 @@ import com.sandrabot.sandra.entities.Locale
  */
 class GuildConfig(val id: Long) : Configuration {
 
+    val prefixes: MutableList<String> = mutableListOf()
+
     var locale: Locale = Locale.DEFAULT
 
 }
