@@ -61,7 +61,7 @@ class LanguageManager {
     fun get(locale: Locale, path: String): String {
         // All locales must be loaded or the bot will fail to start
         val map = translationMap[locale] ?: throw AssertionError("Missing translation for $locale")
-        val value = map[path] ?: if (locale != Locale.ENGLISH) get(Locale.ENGLISH, path) else {
+        val value = map[path] ?: if (locale != Locale.DEFAULT) get(Locale.DEFAULT, path) else {
             throw MissingTranslationException("Missing translation path $path")
         }
         return when (value) {

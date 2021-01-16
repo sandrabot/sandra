@@ -32,9 +32,8 @@ val changes = runCommand(arrayListOf("git", "diff", "--shortstat"))
 group = "com.sandrabot"
 version = "5.0.0-SNAPSHOT"
 
-application {
-    mainClass.set("com.sandrabot.sandra.MainKt")
-}
+// Needed for shadowJar and application since they wanted to deprecate it
+setProperty("mainClassName", "com.sandrabot.sandra.MainKt")
 
 repositories {
     jcenter()
