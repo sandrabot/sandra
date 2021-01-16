@@ -43,8 +43,10 @@ class MessageListener(private val sandra: Sandra) {
         if (event.message.type != MessageType.DEFAULT) return
 
         // If this message was sent from a guild, handle any moderation features
-        // TODO Cache the message so it can be logged if sent in guild
-        if (event.isFromGuild && handleAntiAdvertising(event)) return
+        if (event.isFromGuild) {
+            sandra.messages.put(event.message)
+            if (handleAntiAdvertising(event)) return
+        }
 
         // If this message is a command we'll want to know about it later
         val isCommand = handleCommand(event)

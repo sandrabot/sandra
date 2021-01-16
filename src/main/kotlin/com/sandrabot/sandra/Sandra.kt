@@ -62,6 +62,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
     val languages = LanguageManager()
+    val messages = MessageManager()
     val patreon = PatreonManager(this)
     val presence = PresenceService(this)
     val statistics = StatisticsManager()
