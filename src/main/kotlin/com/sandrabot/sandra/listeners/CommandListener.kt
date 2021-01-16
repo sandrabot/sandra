@@ -129,7 +129,7 @@ class CommandListener(private val sandra: Sandra) {
                 logger.info("Cannot finish executing command due to missing permissions", e)
             } catch (e: MissingArgumentException) {
                 event.replyError(event.translate("general.missing_argument", e.argument.name))
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 event.replyError(event.translate("general.command_exception"))
                 logger.error("An exception occurred while executing a command", e)
             }
