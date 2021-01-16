@@ -22,6 +22,7 @@ import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.CommandListener
 import com.sandrabot.sandra.listeners.EventWaiter
+import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
@@ -92,7 +93,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setEnableShutdownHook(false)
 
         // Register our event listeners
-        eventManager.register(CommandListener(this), ReadyListener(this), eventWaiter)
+        eventManager.register(MessageListener(this), CommandListener(), ReadyListener(this), eventWaiter)
 
         // Block the thread until the first shard signs in
         shards = builder.build()

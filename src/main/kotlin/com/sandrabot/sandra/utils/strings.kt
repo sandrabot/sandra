@@ -17,10 +17,12 @@
 package com.sandrabot.sandra.utils
 
 import com.beust.klaxon.Klaxon
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
+import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.StringReader
@@ -62,6 +64,14 @@ fun duration(duration: Duration): String = duration.toComponents { days, hours, 
         builder.append("**").append(milliseconds).append("**ms")
     }
     return builder.toString()
+}
+
+fun getPrefixUsed(sandra: Sandra, content: String, guild: Guild?): String? {
+    val prefixes = if (guild != null) {
+        val customPrefixes = sandra.config.getGuild(guild.idLong).prefixes
+        sandra.commands.prefixes + customPrefixes.toTypedArray()
+    } else sandra.commands.prefixes
+    return prefixes.find { content.startsWith(it, ignoreCase = true) }
 }
 
 fun findLocale(guildConfig: GuildConfig, userConfig: UserConfig): Locale {

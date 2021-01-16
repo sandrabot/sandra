@@ -26,9 +26,15 @@ class StatisticsManager {
 
     var requestCount = 0
         private set
+    var messageCount = 0
+        private set
 
     fun incrementRequestCount() {
         requestCount++
+    }
+
+    fun incrementMessageCount() {
+        messageCount++
     }
 
 }

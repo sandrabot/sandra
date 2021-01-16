@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.listeners
 
-import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
@@ -25,38 +24,9 @@ import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.*
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.LoggerFactory
 
-class CommandListener(private val sandra: Sandra) {
-
-    @Suppress("unused")
-    fun onMessageReceived(event: MessageReceivedEvent) {
-
-        if (event.author.isBot) return
-
-        val content = event.message.contentRaw
-        // Check if the message starts with a prefix
-        val prefixUsed = getPrefixUsed(content, event.guild) ?: return
-
-        val contentParts = content.substring(prefixUsed.length).trim().splitSpaces(2)
-        val name = contentParts[0].toLowerCase()
-        // Check if a command exists with this name
-        val command = sandra.commands.getCommand(name) ?: return
-
-        var args = if (contentParts.size == 1) "" else contentParts[1]
-        // Check to see if maybe a subcommand is being used
-        val maybeSubcommand = if (args.isNotEmpty()) {
-            command.findChild(args).also { args = it.second }.first ?: command
-        } else command
-
-        val commandEvent = CommandEvent(sandra, event, maybeSubcommand, args)
-        // Fire the event using our event system even though we handle them immediately below
-        // This allows multiple core systems to listen for commands and react accordingly
-        sandra.eventManager.handleEvent(commandEvent)
-
-    }
+class CommandListener {
 
     @Suppress("unused")
     fun onCommand(event: CommandEvent) {
@@ -135,13 +105,6 @@ class CommandListener(private val sandra: Sandra) {
             }
         }
 
-    }
-
-    private fun getPrefixUsed(content: String, guild: Guild?): String? {
-        val prefixes = if (guild != null) {
-            sandra.config.getGuild(guild.idLong).prefixes.toTypedArray() + sandra.commands.prefixes
-        } else sandra.commands.prefixes
-        return prefixes.find { content.startsWith(it, ignoreCase = true) }
     }
 
     companion object {
