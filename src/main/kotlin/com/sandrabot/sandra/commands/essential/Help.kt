@@ -27,9 +27,9 @@ import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
 class Help : Command(
-        name = "help",
-        aliases = arrayOf("about", "discord", "h", "info", "invite", "links", "support"),
-        arguments = "[command] [subcommands:text]"
+    name = "help",
+    aliases = arrayOf("about", "discord", "h", "info", "invite", "links", "support"),
+    arguments = "[command] [subcommands:text]"
 ) {
 
     override suspend fun execute(event: CommandEvent) {
@@ -38,25 +38,24 @@ class Help : Command(
 
             // Create a new context with a root so we don't have to use the full path each time
             val lang = event.languageContext.withRoot("commands.help")
-            if (!event.arguments.has("command")) {
+
+            // The user may potentially be looking for a subcommand
+            val maybeCommand = event.arguments.command() ?: run {
                 // The command couldn't be found with the given arguments
                 event.replyError(lang.translate("not_found", event.sandra.prefix))
                 return
             }
 
-            // The user may potentially be looking for a subcommand
-            val maybeCommand = event.arguments.command("command")
-            val command = if (event.arguments.has("subcommands")) {
-                // Find a subcommand with the remaining arguments
-                maybeCommand.findChild(event.arguments.text("subcommands")).first ?: run {
+            val command = event.arguments.text("subcommands")?.let { subcommands ->
+                maybeCommand.findChild(subcommands).first ?: run {
                     // If there are no subcommands to list, just show the parent command
                     if (maybeCommand.children.isEmpty()) return@run maybeCommand
                     // Otherwise display a list of the available subcommands for this command
-                    val subcommands = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
-                    event.replyError(lang.translate("available_subcommands", subcommands))
+                    val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
+                    event.replyError(lang.translate("available_subcommands", joined))
                     return
                 }
-            } else maybeCommand
+            } ?: maybeCommand
 
             // Begin putting the embed together, starting with the command path and category
             val author = "${command.path.replace(':', ' ')} • ${command.category.name.toLowerCase()}"
