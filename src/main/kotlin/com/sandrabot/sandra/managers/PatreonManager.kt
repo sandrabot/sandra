@@ -22,7 +22,8 @@ import com.beust.klaxon.lookup
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.PatreonTier
-import com.sandrabot.sandra.utils.HttpUtil
+import com.sandrabot.sandra.utils.getBlocking
+import io.ktor.client.request.*
 import org.slf4j.LoggerFactory
 import java.io.StringReader
 
@@ -37,6 +38,7 @@ class PatreonManager(private val sandra: Sandra) {
     private var lastUpdate: Long = 0
 
     // This is only intended to be called via an eval
+    @Suppress("unused")
     fun updatePledgesNow() {
         lastUpdate = 0
         updatePledges()
@@ -56,14 +58,10 @@ class PatreonManager(private val sandra: Sandra) {
         val rewardToTier = mutableMapOf<String, PatreonTier>()
         var nextUrl: String? = pledgesUrl
         do {
-            val request = HttpUtil.execute(
-                HttpUtil.createRequest(nextUrl!!)
-                    .header("Authorization", "Bearer ${sandra.credentials.patreonToken}")
-                    .build()
-            )
-            // If there was an issue with the request there's not much we can do
-            if (request.isEmpty()) break
-            val json = Klaxon().parseJsonObject(StringReader(request))
+            val response = getBlocking<String>(nextUrl!!) {
+                header("Authorization", "Bearer ${sandra.credentials.patreonToken}")
+            }
+            val json = Klaxon().parseJsonObject(StringReader(response))
             // If there was an authentication error log it and stop here
             if ("errors" in json) {
                 logger.warn("Failed to retrieve campaign pledges: {}", json.toJsonString())

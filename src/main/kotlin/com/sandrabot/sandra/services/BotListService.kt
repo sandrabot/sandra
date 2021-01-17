@@ -21,12 +21,13 @@ import com.beust.klaxon.json
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
-import com.sandrabot.sandra.utils.HttpUtil
+import com.sandrabot.sandra.utils.postBlocking
+import io.ktor.client.request.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.internal.JDAImpl
 
 /**
- * Updates the bot's listings on various Discord Bot Lists.
+ * Updates the bot listings on various discord bot list sites.
  */
 class BotListService(private val sandra: Sandra) : Service(300) {
 
@@ -76,10 +77,7 @@ class BotListService(private val sandra: Sandra) : Service(300) {
 
     private fun send(url: String, token: String, data: JsonObject) {
         val route = url.replace("{}", Constants.APPLICATION_ID.toString())
-        val body = HttpUtil.createBody(HttpUtil.APPLICATION_JSON, data.toJsonString())
-        val request = HttpUtil.createRequest(route, "POST", body)
-        request.header("Authorization", token)
-        HttpUtil.execute(request.build())
+        postBlocking<Unit>(route, data.toJsonString()) { header("Authorization", token) }
     }
 
     companion object {

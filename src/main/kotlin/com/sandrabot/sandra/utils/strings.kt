@@ -16,16 +16,16 @@
 
 package com.sandrabot.sandra.utils
 
-import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
+import io.ktor.content.*
+import io.ktor.http.*
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
-import java.io.StringReader
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -85,11 +85,13 @@ fun findLocale(guildConfig: GuildConfig, userConfig: UserConfig): Locale {
 }
 
 fun hastebin(text: String): String? {
-    val response = HttpUtil.post("${Constants.HASTEBIN}/documents", text)
-    return if (response.isEmpty()) null else try {
-        val key = Klaxon().parseJsonObject(StringReader(response)).string("key")
-        "${Constants.HASTEBIN}/$key"
-    } catch (e: Exception) {
-        null
+    val response = try {
+        postBlocking<Map<String, String>>(
+            "${Constants.HASTEBIN}/documents",
+            TextContent(text, ContentType.Text.Plain)
+        )
+    } catch (t: Throwable) { null }
+    return if (response == null) null else {
+        "${Constants.HASTEBIN}/${response["key"]}"
     }
 }
