@@ -33,6 +33,12 @@
     "manage_permissions": "Manage Permissions"
   },
   "commands": {
+    "cat": {
+      "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
+    },
+    "dog": {
+      "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."
+    },
     "help": {
       "description": "View some basic quick-start information about the bot",
       "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",
