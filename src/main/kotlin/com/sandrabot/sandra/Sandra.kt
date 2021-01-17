@@ -26,7 +26,6 @@ import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
-import com.sandrabot.sandra.services.CooldownService
 import com.sandrabot.sandra.services.PresenceService
 import com.sandrabot.sandra.utils.await
 import net.dv8tion.jda.api.EmbedBuilder
@@ -58,7 +57,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val config = ConfigurationManager(this)
     val commands = CommandManager(this)
     val cooldowns = CooldownManager(this)
-    val cooldownService = CooldownService(this)
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
     val languages = LanguageManager()

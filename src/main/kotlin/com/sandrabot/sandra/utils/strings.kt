@@ -29,6 +29,7 @@ import java.io.StringReader
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+private val doubleRegex = Regex("""[,.]""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 private val spaceRegex = Regex("""\s+""")
 
@@ -41,6 +42,7 @@ fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, li
 
 fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
+fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 
 @ExperimentalTime
 fun duration(duration: Duration): String = duration.toComponents { days, hours, minutes, seconds, nanoseconds ->

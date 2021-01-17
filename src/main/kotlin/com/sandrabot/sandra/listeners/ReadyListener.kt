@@ -39,7 +39,6 @@ class ReadyListener(private val sandra: Sandra) {
                 sandra.presence.start()
                 sandra.botList.start()
             }
-            sandra.cooldownService.start()
             val logger = LoggerFactory.getLogger(ReadyListener::class.java)
             logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
             // This is the last ready event that will fire, so we don't need this listener anymore

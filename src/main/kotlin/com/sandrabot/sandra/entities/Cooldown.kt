@@ -22,10 +22,10 @@ package com.sandrabot.sandra.entities
 data class Cooldown(val cooldownKey: String, val duration: Int) {
 
     var attempts = 0
-    var notified = false
+    var isNotified = false
     var startTime = System.currentTimeMillis()
 
-    val isExpired: Boolean
-        get() = System.currentTimeMillis() >= startTime + duration
+    val remaining: Long
+        get() = startTime + duration - System.currentTimeMillis()
 
 }

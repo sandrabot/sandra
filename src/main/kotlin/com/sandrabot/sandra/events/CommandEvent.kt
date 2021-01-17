@@ -28,10 +28,10 @@ import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 class CommandEvent(
-        val sandra: Sandra,
-        val event: MessageReceivedEvent,
-        val command: Command,
-        val args: String
+    val sandra: Sandra,
+    val event: MessageReceivedEvent,
+    val command: Command,
+    val args: String
 ) {
 
     val author: User
@@ -91,12 +91,19 @@ class CommandEvent(
         reply(any.toString(), success, failure)
     }
 
+    fun replyEmote(
+        message: String, emote: String,
+        success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null
+    ) {
+        reply("$emote｜$message", success, failure)
+    }
+
     fun replyInfo(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        reply("${Emotes.INFO}｜$message", success, failure)
+        replyEmote(message, Emotes.INFO, success, failure)
     }
 
     fun replyError(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        reply("${Emotes.ERROR}｜$message", success, failure)
+        replyEmote(message, Emotes.ERROR, success, failure)
     }
 
 }

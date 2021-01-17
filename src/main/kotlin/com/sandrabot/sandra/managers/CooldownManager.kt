@@ -18,59 +18,54 @@ package com.sandrabot.sandra.managers
 
 import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Cooldown
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.asReaction
+import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hasPermissions
 import net.dv8tion.jda.api.Permission
+import net.jodah.expiringmap.ExpirationPolicy
+import net.jodah.expiringmap.ExpiringMap
+import java.util.concurrent.TimeUnit
 
 class CooldownManager(private val sandra: Sandra) {
 
-    private val cooldowns = mutableMapOf<String, Cooldown>()
-
-    val size: Int
-        get() = cooldowns.size
+    private val cooldowns: ExpiringMap<String, Cooldown> = ExpiringMap.builder()
+        .expiration(Constants.DEFAULT_COOLDOWN.toLong(), TimeUnit.MILLISECONDS)
+        .expirationPolicy(ExpirationPolicy.CREATED)
+        .variableExpiration().build()
 
     init {
-        val data = sandra.redis.get(RedisPrefix.SETTING + "cooldowns") ?: "[]"
-        Klaxon().parseArray<Cooldown>(data)!!.forEach { cooldowns[it.cooldownKey] = it }
-    }
-
-    fun applyCooldown(event: CommandEvent): Boolean {
-        val cooldown = synchronized(cooldowns) {
-            cooldowns.compute(event.cooldownKey) { key, value ->
-                if (value == null || value.isExpired) {
-                    Cooldown(key, event.command.cooldown)
-                } else value
-            } as Cooldown
-        }
-
-        when (++cooldown.attempts) {
-            // Don't block the first attempt
-            1 -> return false
-            // Attempt to add a timer reaction on their second attempt
-            2 -> if (hasPermissions(event, Permission.MESSAGE_ADD_REACTION,
-                            Permission.MESSAGE_HISTORY, Permission.MESSAGE_EXT_EMOJI)) {
-                event.message.addReaction(Emotes.TIME.asReaction()).queue()
-            }
-        }
-
-        return true
-    }
-
-    fun clean() {
-        synchronized(cooldowns) {
-            cooldowns.filterValues { it.isExpired }.forEach { (key, _) ->
-                cooldowns.remove(key)
-            }
+        val data = sandra.redis[RedisPrefix.SETTING + "cooldowns"] ?: "[]"
+        Klaxon().parseArray<Cooldown>(data)?.forEach {
+            cooldowns[it.cooldownKey] = it
+            cooldowns.setExpiration(it.cooldownKey, it.remaining, TimeUnit.MILLISECONDS)
         }
     }
 
     fun shutdown() {
         val data = Klaxon().toJsonString(cooldowns.values)
-        sandra.redis.set(RedisPrefix.SETTING + "cooldowns", data)
+        sandra.redis[RedisPrefix.SETTING + "cooldowns"] = data
+    }
+
+    fun applyCooldown(event: CommandEvent, duration: Int = event.command.cooldown): Boolean {
+        val cooldown = cooldowns[event.cooldownKey] ?: run {
+            if (event.command.cooldown == 0) return false
+            cooldowns[event.cooldownKey] = Cooldown(event.cooldownKey, duration)
+            cooldowns.setExpiration(event.cooldownKey, duration.toLong(), TimeUnit.MILLISECONDS)
+            return false
+        }
+        // Only attempt to notify when exceeding the cooldown the first time
+        val hasPermissions = hasPermissions(event, Permission.MESSAGE_WRITE, Permission.MESSAGE_EXT_EMOJI)
+        if (++cooldown.attempts == 1 && hasPermissions) {
+            val formattedDuration = (cooldown.remaining / 1000.0).format()
+            event.replyEmote(event.translate("general.cooldown", formattedDuration), Emotes.TIME, {
+                cooldown.isNotified = true
+            })
+        }
+        return true
     }
 
 }
