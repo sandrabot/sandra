@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Website
+import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
@@ -42,6 +43,11 @@ class Help : Command(
             // The user may potentially be looking for a subcommand
             val maybeCommand = event.arguments.command() ?: run {
                 // The command couldn't be found with the given arguments
+                event.replyError(lang.translate("not_found", event.sandra.prefix))
+                return
+            }
+
+            if (maybeCommand.ownerOnly || maybeCommand.category == Category.CUSTOM) {
                 event.replyError(lang.translate("not_found", event.sandra.prefix))
                 return
             }
