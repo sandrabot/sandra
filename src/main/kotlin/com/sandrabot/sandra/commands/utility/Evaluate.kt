@@ -28,23 +28,22 @@ import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.duration
 import com.sandrabot.sandra.utils.hastebin
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.User
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.withContext
+import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
-import kotlin.coroutines.EmptyCoroutineContext
+import org.slf4j.LoggerFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 @Suppress("unused")
 class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
 
-    private val engineScope = CoroutineScope(EmptyCoroutineContext)
+    private val engineContext = SupervisorJob() + Dispatchers.IO
     private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
     private val imports: String
 
@@ -56,25 +55,19 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
             it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
         }.forEach { importBuilder.append("import ").append(it).append(".*\n") }
         // Include some miscellaneous stuff for quality of life
-        importBuilder.append("""
-                import java.awt.Color
-                import java.util.*
-                import java.util.concurrent.TimeUnit
-                import java.time.OffsetDateTime
-                import kotlin.coroutines.*
-                import kotlinx.coroutines.*
-                import net.dv8tion.jda.api.*
-                import net.dv8tion.jda.api.entities.*
-                import redis.clients.jedis.*
-            """.trimIndent()).append("\n\n")
-        imports = importBuilder.toString()
+        listOf(
+            "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
+            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*",
+            "net.dv8tion.jda.api.*", "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
+        ).forEach { importBuilder.append("import $it\n") }
+        imports = importBuilder.append("\n\n").toString()
     }
 
     @ExperimentalTime
     override suspend fun execute(event: CommandEvent) {
 
         if (event.args.isEmpty()) {
-            event.reply("i can't evaluate thin air")
+            event.reply("you forgot to include the script")
             return
         }
 
@@ -93,8 +86,6 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
             Triple("commands", event.sandra.commands, CommandManager::class),
             Triple("redis", event.sandra.redis, RedisManager::class),
             Triple("config", event.sandra.config, ConfigurationManager::class),
-            // Have a way of cancelling running jobs?
-            Triple("scope", engineScope, CoroutineScope::class)
         )
 
         // Insert them into the script engine
@@ -108,42 +99,55 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
         // Strip the command block if present
         val strippedScript = blockPattern.find(event.args)?.let { it.groupValues[1] } ?: event.args
 
-        // Before we begin the script, we need to inject any additional imports
+        // Before we begin constructing the script, we need to find any additional imports
         val importLines = strippedScript.lines().takeWhile { it.startsWith("import") }
         val additionalImports = importLines.joinToString("\n", postfix = "\n\n")
         val script = strippedScript.lines().filterNot { it in importLines }.joinToString("\n")
 
-        // Evaluate the script *non blocking*, it could take a while to finish
-        engineScope.launch {
-            // Wait for the message to send before continuing
-            val message = event.channel.sendMessage("${Emotes.SPIN} hold on while i crunch the numbers...").await()
-            // Measure how long it takes to evaluate the script
-            val timedResult = measureTimedValue {
+        // Wait for the message to send so we can edit it later
+        val message = event.channel.sendMessage("${Emotes.SPIN} hold on while i crunch the numbers...").await()
+        val handler = CoroutineExceptionHandler { _, throwable ->
+            handleResult(message, "**unknown** with unhandled exception", throwable.stackTraceToString())
+        }
+
+        // Measure how long it takes to evaluate the script
+        val timedResult = measureTimedValue {
+            // We still need to catch any unexpected coroutine exceptions
+            withContext(engineContext + handler) {
                 try {
                     engine.eval(imports + additionalImports + variables + script)
-                } catch (exception: Exception) {
-                    exception
+                } catch (throwable: Throwable) {
+                    throwable
                 }
             }
-            val duration = duration(timedResult.duration)
-            val result = timedResult.value?.toString() ?: run {
-                message.editMessage("evaluated in $duration with no returns").queue()
-                return@launch
-            }
-            // Check the result length, if it's too large attempt to upload it to hastebin
-            val formatted = "evaluated in $duration\n```\n$result\n```"
-            if (formatted.length > 2000) {
-                val hastebin = hastebin(result)
-                if (hastebin == null) {
-                    message.editMessage("upload failed, printed to stdout").queue()
-                    println(result)
-                } else message.editMessage(hastebin).queue()
-            } else message.editMessage(formatted).queue()
         }
+
+        val duration = duration(timedResult.duration)
+        val result = timedResult.value?.toString() ?: run {
+            message.editMessage("evaluated in $duration with no returns").queue()
+            return
+        }
+        handleResult(message, duration, result)
 
     }
 
+    @ExperimentalTime
+    private fun handleResult(message: Message, duration: String, result: String) {
+        // Check the result length, if it's too large attempt to upload it to hastebin
+        val formatted = "evaluated in $duration\n```\n$result\n```"
+        if (formatted.length > 2000) {
+            // If the upload failed print it to stdout
+            val hastebin = hastebin(result) ?: run {
+                message.editMessage("upload failed, result was logged").queue()
+                logger.info("Evaluation result failed to upload:\n$result")
+                return
+            }
+            message.editMessage("evaluated in $duration $hastebin").queue()
+        } else message.editMessage(formatted).queue()
+    }
+
     companion object {
+        private val logger = LoggerFactory.getLogger(Evaluate::class.java)
         private val blockPattern = Regex("""```(?:\S*)\n(.*)```""", RegexOption.DOT_MATCHES_ALL)
     }
 
