@@ -50,6 +50,8 @@ class ArgumentResult(val results: Map<String, Any>) {
         (results[name] as List<*>).filterIsInstance<T>()
     } else null
 
+    override fun toString(): String = results.toString()
+
     /* JDA Objects */
 
     fun channel(name: String = "channel"): TextChannel? = get(name)
@@ -65,16 +67,12 @@ class ArgumentResult(val results: Map<String, Any>) {
     /* Native Objects */
 
     fun digit(name: String = "digit"): Long? = get(name)
+    fun flag(name: String = "flag"): Boolean? = get(name)
     fun text(name: String = "text"): String? = get(name)
     fun word(name: String = "word"): String? = get(name)
 
     @ExperimentalTime
     fun duration(name: String = "duration"): Duration? =
         get<Long>(name)?.toDuration(TimeUnit.SECONDS)
-
-    /**
-     * Flags do not have a default name.
-     */
-    fun flag(name: String): Boolean? = get(name)
 
 }

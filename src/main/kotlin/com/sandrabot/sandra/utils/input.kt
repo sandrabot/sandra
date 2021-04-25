@@ -56,16 +56,15 @@ fun promptAction(
     inputAction(event, message, timeout, unit, expired, consumer)
 }
 
-fun digitAction(
-    event: CommandEvent, prompt: String,
-    expired: (() -> Unit)? = null, consumer: (Long) -> Unit
+fun <T> argumentAction(
+    event: CommandEvent, prompt: String, argumentType: ArgumentType,
+    expired: (() -> Unit)? = null, consumer: (T) -> Unit
 ) = promptAction(event, prompt, expired = expired) {
-    singleton<Long>(event, it.message.contentRaw, ArgumentType.DIGIT)
-        ?.let { digit -> consumer(digit); true } ?: run { expired?.invoke(); false }
+    singleton<T>(event, it.message.contentRaw, argumentType)
+        ?.let { argument -> consumer(argument); true }
+        ?: run { expired?.invoke(); false }
 }
 
 private fun checkAndDelete(event: CommandEvent, message: Message) {
-    if (event.isFromGuild && hasPermission(event, Permission.MESSAGE_MANAGE)) {
-        message.delete().queue()
-    }
+    if (event.isFromGuild && hasPermission(event, Permission.MESSAGE_MANAGE)) message.delete().queue()
 }

@@ -69,15 +69,13 @@ class CommandEvent(
         CooldownScope.COMMAND -> "C:${commandPath}"
     }
 
-    val arguments: ArgumentResult by lazy { Argument.parse(this, command.arguments) }
+    val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, args) }
     val languageContext: LanguageContext by lazy { LanguageContext(sandra, guildConfig, userConfig) }
     val guildConfig: GuildConfig by lazy { sandra.config.getGuild(guild.idLong) }
     val userConfig: UserConfig by lazy { sandra.config.getUser(author.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(author.idLong) }
 
-    fun translate(path: String, vararg args: Any?): String {
-        return languageContext.translate(path, *args)
-    }
+    fun translate(path: String, vararg args: Any?): String = languageContext.translate(path, *args)
 
     fun reply(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
         event.message.reply(message).queue(success, failure)
@@ -87,16 +85,17 @@ class CommandEvent(
         event.message.reply(embed).queue(success, failure)
     }
 
+    fun reply(message: Message, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
+        event.message.reply(message).queue(success, failure)
+    }
+
     fun reply(any: Any, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
         reply(any.toString(), success, failure)
     }
 
     fun replyEmote(
-        message: String, emote: String,
-        success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null
-    ) {
-        reply("$emote｜$message", success, failure)
-    }
+        message: String, emote: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null
+    ) = reply("$emote｜$message", success, failure)
 
     fun replyInfo(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
         replyEmote(message, Emotes.INFO, success, failure)
