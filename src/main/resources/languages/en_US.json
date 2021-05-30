@@ -7,6 +7,7 @@
     "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
     "command_exception": "Hm, it appears as if **something strange** has happened. Apologies.",
     "cooldown": "Woah there! You need to wait another %1$ss before doing that again.",
+    "page_prompt": "Please respond with the page number you would like to jump to:",
     "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*This message will serve as your notification and you will not receive another.*"
   },
   "permissions": {

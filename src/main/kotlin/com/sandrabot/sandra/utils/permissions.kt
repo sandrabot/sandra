@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.exceptions.MissingTranslationException
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
@@ -33,8 +34,16 @@ private fun check(event: CommandEvent, permission: Permission, member: Member): 
     } else member.hasPermission(permission)
 }
 
+fun missingPermissions(event: CommandEvent, vararg permissions: Permission) = !hasPermissions(event, *permissions)
 fun hasPermissions(event: CommandEvent, vararg permissions: Permission): Boolean {
     return permissions.all { hasPermission(event, it) }
+}
+
+fun ensurePermissions(event: CommandEvent, vararg permissions: Permission) =
+    permissions.forEach { ensurePermission(event, it) }
+
+fun ensurePermission(event: CommandEvent, permission: Permission) {
+    if (missingPermission(event, permission)) throw MissingPermissionException(event, permission)
 }
 
 fun missingSelfMessage(event: CommandEvent, permission: Permission) = missingMessage(event, permission, true)
@@ -42,8 +51,8 @@ fun missingUserMessage(event: CommandEvent, permission: Permission) = missingMes
 private fun missingMessage(event: CommandEvent, permission: Permission, self: Boolean): String {
     val context = if (permission.isChannel) "channel" else "server"
     return event.translate(
-            if (self) "general.missing_permission" else "general.missing_user_permission",
-            event.languageContext.get("permissions.${findTranslationKey(permission)}"), context
+        if (self) "general.missing_permission" else "general.missing_user_permission",
+        event.languageContext.get("permissions.${findTranslationKey(permission)}"), context
     )
 }
 

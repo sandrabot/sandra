@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.4.32"
-    id("com.github.ben-manes.versions") version "0.38.0"
+    kotlin("jvm") version "1.5.10"
+    id("com.github.ben-manes.versions") version "0.39.0"
     id("com.github.gmazzo.buildconfig") version "3.0.0"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "com.sandrabot"
@@ -41,20 +41,20 @@ dependencies {
     listOf("stdlib-jdk8", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:4.2.1_261") {
+    implementation("net.dv8tion:JDA:4.2.1_266") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("com.beust:klaxon:5.5")
-    implementation("io.javalin:javalin:3.13.3")
-    implementation("io.ktor:ktor-client-core:1.5.3")
-    implementation("io.ktor:ktor-client-okhttp:1.5.3")
-    implementation("io.ktor:ktor-client-jackson:1.5.3")
+    implementation("io.javalin:javalin:3.13.7")
+    implementation("io.ktor:ktor-client-core:1.6.0")
+    implementation("io.ktor:ktor-client-okhttp:1.6.0")
+    implementation("io.ktor:ktor-client-jackson:1.6.0")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("me.xdrop:fuzzywuzzy:1.3.1")
     implementation("net.jodah:expiringmap:0.5.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("org.reflections:reflections:0.9.12")
     implementation("redis.clients:jedis:3.6.0")
 }
@@ -71,7 +71,6 @@ buildConfig {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "14"
-compileKotlin.kotlinOptions.useIR = true
 
 fun runCommand(commands: List<String>): String {
     val stdout = ByteArrayOutputStream()
