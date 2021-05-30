@@ -64,7 +64,7 @@ class Help : Command(
             } ?: maybeCommand
 
             // Begin putting the embed together, starting with the command path and category
-            val author = "${command.path.replace(':', ' ')} • ${command.category.name.toLowerCase()}"
+            val author = "${command.path.replace(':', ' ')} • ${command.category.name.lowercase()}"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
             embed.setTitle(lang.translate("extra_help"), Constants.DIRECT_SUPPORT)

@@ -30,7 +30,7 @@ enum class Category(val emote: String) {
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
 
-    val displayName = name.toLowerCase().capitalize()
+    val displayName = name.lowercase().replaceFirstChar { it.uppercase() }
 
     companion object {
         fun fromClass(clazz: KClass<out Command>): Category {

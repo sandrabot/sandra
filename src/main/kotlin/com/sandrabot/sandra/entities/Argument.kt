@@ -118,7 +118,7 @@ fun compileArguments(tokens: String): List<Argument> {
         }
 
         // The name must always be lowercase
-        val name = rawName.ifEmpty { type.name }.toLowerCase()
+        val name = rawName.ifEmpty { type.name }.lowercase()
 
         // Arguments cannot share names, if there are two
         // of the same type they must be named differently

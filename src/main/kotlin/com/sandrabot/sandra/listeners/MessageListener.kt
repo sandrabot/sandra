@@ -92,7 +92,7 @@ class MessageListener(private val sandra: Sandra) {
         // Remove the prefix and isolate the first word
         val trimmedContent = content.substringAfter(prefixUsed).trim()
         val contentParts = trimmedContent.splitSpaces(2)
-        val commandName = contentParts[0].toLowerCase()
+        val commandName = contentParts[0].lowercase()
 
         // Check if the first word is a command that exists
         val command = sandra.commands.getCommand(commandName) ?: return false

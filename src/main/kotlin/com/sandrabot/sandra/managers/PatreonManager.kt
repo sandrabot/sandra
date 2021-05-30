@@ -86,7 +86,7 @@ class PatreonManager(private val sandra: Sandra) {
                 it["type"] == "reward" && it.string("id")!!.toInt() > 0
             }.forEach {
                 val rewardName = it.obj("attributes")!!.string("title")!!.filter { ch -> ch.isLetter() }
-                rewardToTier[it.string("id")!!] = PatreonTier.valueOf(rewardName.toUpperCase())
+                rewardToTier[it.string("id")!!] = PatreonTier.valueOf(rewardName.uppercase())
             }
             nextUrl = json.obj("links")!!.string("next")
         } while (nextUrl != null)

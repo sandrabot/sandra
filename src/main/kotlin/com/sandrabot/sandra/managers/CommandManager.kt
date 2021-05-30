@@ -42,7 +42,7 @@ class CommandManager(sandra: Sandra) {
                 null
             }
         }.toMutableList()
-        val childrenSum = commands.sumBy { it.children.size }
+        val childrenSum = commands.sumOf { it.children.size }
         logger.info("Successfully loaded ${commands.size} commands with $childrenSum children")
     }
 
