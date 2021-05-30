@@ -77,6 +77,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
         val disabledMentioned = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
         MessageAction.setDefaultMentions(EnumSet.complementOf(disabledMentioned))
+        MessageAction.setDefaultMentionRepliedUser(false)
 
         // Configure JDA settings, we've got a couple of them
         logger.info("Configuring JDA and signing into Discord")
