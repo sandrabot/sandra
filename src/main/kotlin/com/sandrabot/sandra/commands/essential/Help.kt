@@ -97,9 +97,9 @@ class Help : Command(
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
         // You can never be too safe with users, if anyone ever deletes their accounts it will be handled
         val gabby = event.sandra.retrieveUser(Constants.GABBY)?.asTag?.sanitize() ?: "deleted-user"
-        val (avery, logan, blair) = Constants.DEVELOPERS.map { event.sandra.retrieveUser(it)?.format() ?: "deleted-user" }
+        val (avery, logan) = Constants.DEVELOPERS.map { event.sandra.retrieveUser(it)?.format() ?: "deleted-user" }
         // Gabby is specifically formatted differently than the other developers, so don't change that
-        embed.setDescription(lang.translate("description", avery, logan, blair, gabby, Constants.TWITTER_GABBY))
+        embed.setDescription(lang.translate("description", avery, logan, gabby, Constants.TWITTER_GABBY))
         embed.addField(lang.translate("configure", Emotes.CONFIG), lang.translate("configure_content", Website.DASHBOARD), false)
         embed.addField(lang.translate("commands", Emotes.COMMANDS), lang.translate("commands_content", event.sandra.prefix), false)
         embed.addField(lang.translate("invite", Emotes.NOTIFY), lang.translate("invite_content", Constants.DIRECT_INVITE), false)

@@ -52,7 +52,7 @@
       "usage_title": "Usage",
       "info_embed": {
         "title": "Sandra's Website",
-        "description": "I was created by %1$s, %2$s, and %3$s; with art by [%4$s](%5$s).",
+        "description": "I was created by %1$s and %2$s, with art by [%3$s](%4$s).",
         "configure": "%1$s Configure Settings",
         "configure_content": "> To **configure** my **settings**, use the new **[dashboard](%1$s)**.",
         "commands": "%1$s Commands",
