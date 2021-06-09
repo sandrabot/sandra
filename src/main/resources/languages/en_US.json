@@ -35,9 +35,11 @@
   },
   "commands": {
     "cat": {
+      "description": "Gracefully displays a cat for your viewing pleasure",
       "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
     },
     "dog": {
+      "description": "Fetches a dog from the depths of the internet",
       "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."
     },
     "help": {
