@@ -21,6 +21,7 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
@@ -95,7 +96,7 @@ class CommandEvent(
 
     fun replyEmote(
         message: String, emote: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null
-    ) = reply("$emote｜$message", success, failure)
+    ) = reply(emote + Unicode.VERTICAL_LINE + message, success, failure)
 
     fun replyInfo(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
         replyEmote(message, Emotes.INFO, success, failure)

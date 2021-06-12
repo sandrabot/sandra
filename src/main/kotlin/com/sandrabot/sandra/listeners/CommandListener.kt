@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.listeners
 
+import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
@@ -55,7 +56,12 @@ class CommandListener {
                 }
                 missingPermission(event, Permission.MESSAGE_EXT_EMOJI) -> {
                     val selfMessage = missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)
-                    event.reply("${Unicode.CROSS_MARK} $selfMessage")
+                    event.channel.sendMessage(Unicode.CROSS_MARK + Unicode.VERTICAL_LINE + selfMessage).queue()
+                    return
+                }
+                missingPermission(event, Permission.MESSAGE_HISTORY) -> {
+                    val selfMessage = missingSelfMessage(event, Permission.MESSAGE_HISTORY)
+                    event.channel.sendMessage(Emotes.ERROR + Unicode.VERTICAL_LINE + selfMessage).queue()
                     return
                 }
             }

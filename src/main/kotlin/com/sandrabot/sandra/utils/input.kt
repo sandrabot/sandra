@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.ArgumentType
 import com.sandrabot.sandra.entities.singleton
 import com.sandrabot.sandra.events.CommandEvent
@@ -52,7 +53,7 @@ fun promptAction(
     timeout: Long = 2, unit: TimeUnit = TimeUnit.MINUTES,
     expired: (() -> Unit)? = null, consumer: (MessageReceivedEvent) -> Boolean
 ) {
-    val message = MessageBuilder("$emote｜$prompt").build()
+    val message = MessageBuilder(emote + Unicode.VERTICAL_LINE + prompt).build()
     inputAction(event, message, timeout, unit, expired, consumer)
 }
 

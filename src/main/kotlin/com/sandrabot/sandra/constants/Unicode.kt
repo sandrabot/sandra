@@ -24,5 +24,6 @@ object Unicode {
 
     const val CROSS_MARK = "\u274C"
     const val SPEAK_NO_EVIL = "\uD83D\uDE4A"
+    const val VERTICAL_LINE = "\uFF5C"
 
 }
