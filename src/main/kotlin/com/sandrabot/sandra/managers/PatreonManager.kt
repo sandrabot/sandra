@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory
 import java.io.StringReader
 
 /**
- * Keeps a cache of patrons and the rewards they currently have.
- * If a request is made and the cache is older
- * than 5 minutes, the cache will be refreshed.
+ * Maintains a map of patrons and the tier they are subscribed to.
+ * If the map is accessed and the entries are older than 30 minutes, the entries
+ * will be updated. During the update, the calling thread will be blocked.
  */
 class PatreonManager(private val sandra: Sandra) {
 
