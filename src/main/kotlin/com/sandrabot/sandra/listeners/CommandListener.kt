@@ -36,7 +36,7 @@ class CommandListener {
         val isFromGuild = event.isFromGuild
 
         // Check the blocklist to prevent processing in active contexts
-        if (checkBlocklist(event, FeatureType.COMMANDS)) return
+        if (checkCommandBlocklist(event)) return
 
         // Owners are exempt from cooldowns
         if (event.command.cooldown > 0 && !event.isOwner) {
