@@ -306,7 +306,7 @@ private fun parseCommand(event: CommandEvent, remaining: AtomicReference<String>
     val parsedValues = mutableListOf<Command>()
     // We don't support fuzzy searching commands because it would be too ambiguous with aliases
     for (word in remaining.get().splitSpaces()) {
-        event.sandra.commands.getCommand(word)?.also { parsedValues.add(it) } ?: continue
+        event.sandra.commands[word]?.also { parsedValues.add(it) } ?: continue
         // If we reach this line, that means a command was found
         remaining.getAndUpdate { it.replaceFirst(word, "").removeExtraSpaces() }
         if (!argument.isArray) break

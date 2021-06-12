@@ -38,6 +38,11 @@
       "description": "Gracefully displays a cat for your viewing pleasure",
       "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
     },
+    "commands": {
+      "description": "Browse through Sandra's countless commands",
+      "command_title": "Commands",
+      "more_information": "Use %1$shelp <command> for more information"
+    },
     "dog": {
       "description": "Fetches a dog from the depths of the internet",
       "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."

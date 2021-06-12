@@ -95,7 +95,7 @@ class MessageListener(private val sandra: Sandra) {
         val commandName = contentParts[0].lowercase()
 
         // Check if the first word is a command that exists
-        val command = sandra.commands.getCommand(commandName) ?: return false
+        val command = sandra.commands[commandName] ?: return false
 
         var args = if (contentParts.size == 1) "" else contentParts[1]
         // Check to see if a subcommand is being used

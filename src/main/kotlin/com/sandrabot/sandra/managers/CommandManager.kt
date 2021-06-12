@@ -26,7 +26,7 @@ class CommandManager(sandra: Sandra) {
 
     // Messages cannot start with spaces, so these placeholders require no special handling
     val prefixes = arrayOf(sandra.prefix, " ", " ")
-    private val commands: MutableList<Command>
+    val commands: MutableList<Command>
 
     val size: Int
         get() = commands.size
@@ -53,7 +53,7 @@ class CommandManager(sandra: Sandra) {
         prefixes[2] = "<@!$botId>"
     }
 
-    fun getCommand(name: String): Command? = commands.firstOrNull {
+    operator fun get(name: String): Command? = commands.firstOrNull {
         name.equals(it.name, ignoreCase = true) || it.aliases.any { alias -> name.equals(alias, ignoreCase = true) }
     }
 

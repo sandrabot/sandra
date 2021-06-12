@@ -92,4 +92,6 @@ abstract class Command(
         return nestedCommand to arguments
     }
 
+    override fun toString(): String = "C:" + name.uppercase()
+
 }
