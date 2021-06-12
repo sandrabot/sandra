@@ -68,6 +68,8 @@ fun duration(duration: Duration): String = duration.toComponents { days, hours, 
     return builder.toString()
 }
 
+fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
+
 fun getPrefixUsed(sandra: Sandra, content: String, guild: Guild?): String? {
     val prefixes = if (guild != null) {
         val customPrefixes = sandra.config.getGuild(guild.idLong).prefixes

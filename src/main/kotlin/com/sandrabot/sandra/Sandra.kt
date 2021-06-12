@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 /**
- * This is the main class for the bot.
+ * This class is the heart and soul of the bot. To avoid static abuse,
+ * it must be used to access other systems throughout the codebase.
  */
 class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credentials: CredentialManager) {
 
@@ -71,7 +72,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     init {
 
-        // Configure the development presence
+        // Configure the development presence, if enabled
         if (development) presence.setDevelopment()
 
         // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
@@ -92,8 +93,9 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setEnableShutdownHook(false)
 
-        // Register our event listeners
-        eventManager.register(MessageListener(this), CommandListener(), ReadyListener(this), eventWaiter)
+        // Register event listeners using our event manager
+        // The ready listener will remove itself after startup finishes
+        eventManager.register(MessageListener(this), CommandListener(), eventWaiter, ReadyListener(this))
 
         // Block the thread until the first shard signs in
         shards = builder.build()
@@ -107,8 +109,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     }
 
     /**
-     * Returns a new embed with the current color.
-     * By using a centralized factory, templates can be tweaked.
+     * Factory method to create embed templates.
      */
     fun createEmbed() = EmbedBuilder().setColor(color)
 
@@ -137,19 +138,17 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
      * Gracefully closes all resources and shuts down the bot.
      * Any other shutdown hooks registered in the JVM will not run.
      *
-     * Setting [restart] to true will exit with code 2 which is to
-     * be interpreted by a control system to restart the process.
+     * Setting [restart] to `true` will cause the application to exit with
+     * error code 2, which is to be interpreted by a process control system.
      */
     fun shutdown(restart: Boolean = false) {
-        // Figure out who called this method and log the caller
+        // Figure out who started the shutdown and log the caller
         val caller = try {
-            // Element 0 is getStackTrace(), 1 is this method, 2 might be shutdown$default or the caller
+            // Element 0 is getStackTrace, 1 is this method, 2 might be shutdown$default or the caller
             val stackTrace = Thread.currentThread().stackTrace
             val indexTwo = stackTrace[2]
             // Checking the method name is probably good enough
-            val caller = if (indexTwo.methodName == "shutdown\$default") {
-                stackTrace[3]
-            } else indexTwo
+            val caller = if (indexTwo.methodName == "shutdown\$default") stackTrace[3] else indexTwo
             "${caller.className}::${caller.methodName}"
         } catch (ignored: Exception) {
             null
@@ -164,7 +163,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         redis.shutdown()
 
         val code = if (restart) 2 else 0
-        logger.info("Finished shutting down, halting with code $code")
+        logger.info("Finished shutting down, halting runtime with code $code")
         Runtime.getRuntime().halt(code)
     }
 
