@@ -113,26 +113,8 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
      */
     fun createEmbed() = EmbedBuilder().setColor(color)
 
-    /**
-     * For use in coroutines to asynchronously retrieve users.
-     */
     suspend fun retrieveUser(userId: Long): User? = shards.retrieveUserById(userId).await()
-
-    /**
-     * **Use with caution.** Blocks the thread while retrieving a user.
-     * This should only be used when you cannot access a coroutine scope.
-     */
-    fun completeUser(userId: String): User? = completeUser(userId.toLong())
-
-    /**
-     * **Use with caution.** Blocks the thread while retrieving a user.
-     * This should only be used when you cannot access a coroutine scope.
-     */
-    fun completeUser(userId: Long): User? = try {
-        shards.retrieveUserById(userId).complete()
-    } catch (e: Exception) {
-        null
-    }
+    suspend fun retrieveUser(userId: String): User? = shards.retrieveUserById(userId).await()
 
     /**
      * Gracefully closes all resources and shuts down the bot.

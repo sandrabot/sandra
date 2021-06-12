@@ -20,6 +20,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.removeExtraSpaces
 import com.sandrabot.sandra.utils.splitSpaces
+import kotlinx.coroutines.runBlocking
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import net.dv8tion.jda.api.entities.IMentionable
 import net.dv8tion.jda.api.entities.Role
@@ -205,7 +206,7 @@ private fun parseSnowflake(
             // Validate that the id found is the same type as the requested type
             when (argument.type) {
                 // User lookup is a blocking call, use only within coroutines
-                ArgumentType.USER -> event.sandra.completeUser(match.value)
+                ArgumentType.USER -> runBlocking { event.sandra.retrieveUser(match.value) }
                 ArgumentType.CHANNEL -> event.guild.getTextChannelById(match.value)
                 ArgumentType.VOICE -> event.guild.getVoiceChannelById(match.value)
                 ArgumentType.ROLE -> event.guild.getRoleById(match.value)
