@@ -19,6 +19,7 @@ package com.sandrabot.sandra.constants
 object Emotes {
 
     const val BUBBLES = "<:bubbles:788968504417714196>"
+    const val CLEAR = "<:clear:788969890568470539>"
     const val COMMANDS = "<:commands:788968505121833030>"
     const val CONFIG = "<:config:788968505349111868>"
     const val CREDIT = "<:credit:788969112386011139>"
