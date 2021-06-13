@@ -39,6 +39,9 @@ fun String.asReaction(): String = this.substring(1, lastIndex)
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
 fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
+fun String.capitalizeWords(): String = split(" ").joinToString {
+    it.lowercase().replaceFirstChar { ch -> ch.uppercase() }
+}
 
 fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")

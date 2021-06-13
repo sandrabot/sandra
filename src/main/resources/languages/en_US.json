@@ -73,6 +73,14 @@
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
       "response": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
+    },
+    "shards": {
+      "description": "View a list of shards and their stats",
+      "having_issues": "Having issues? Join Sandra Support",
+      "status": "Status: **%1$s**\nPing: %2$sms\nServers: %3$s",
+      "shards_connected": "%1$d of %2$d shards connected",
+      "server_using": " • This server is using shard %1$d",
+      "shard_title": "Shard %1$s"
     }
   }
 }
