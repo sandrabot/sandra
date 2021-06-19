@@ -98,6 +98,8 @@ class CommandListener {
 
         // Execute the command in a blocking coroutine, execute is a suspended function
         runBlocking {
+            // Ensure that all members are loaded if this command is only for guilds
+            if (command.guildOnly && !event.guild.isLoaded) event.guild.loadMembers().await()
             try {
                 command.execute(event)
             } catch (e: MissingPermissionException) {

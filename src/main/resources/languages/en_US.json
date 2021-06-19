@@ -70,6 +70,10 @@
         "support_content": "> Need **more help**? **[Join my support server](%1$s)**."
       }
     },
+    "membercount": {
+      "description": "View the server's member count",
+      "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
+    },
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
       "response": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
