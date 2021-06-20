@@ -47,6 +47,11 @@
       "description": "Fetches a dog from the depths of the internet",
       "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."
     },
+    "feedback": {
+      "description": "Submit your feedback to the Sandra developers",
+      "reply": "Please join our support server to discuss your concerns directly with the **Sandra developers**.",
+      "button_label": "Join Sandra's Hangout"
+    },
     "help": {
       "description": "View some basic quick-start information about the bot",
       "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",
