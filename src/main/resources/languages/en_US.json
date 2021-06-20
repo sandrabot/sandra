@@ -43,6 +43,14 @@
       "reply": "You can read about the latest releases from the documentation on our website.",
       "button_label": "Learn More"
     },
+    "choose": {
+      "description": "Randomly picks one of your words from a hat",
+      "reply": "Out of %1$s options in total, I decided to go with **%2$s**."
+    },
+    "clap": {
+      "description": "Have Sandra emphasize your important arguments",
+      "max_length": "Unfortunately, the text you provided is **too long** to be emphasized."
+    },
     "commands": {
       "description": "Browse through Sandra's countless commands",
       "command_title": "Commands",

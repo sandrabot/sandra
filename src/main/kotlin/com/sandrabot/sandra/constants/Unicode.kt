@@ -22,7 +22,9 @@ package com.sandrabot.sandra.constants
  */
 object Unicode {
 
+    const val CLAPPING_HANDS = "\uD83D\uDC4F"
     const val CROSS_MARK = "\u274C"
+    const val SCALES = "\u2696"
     const val SPEAK_NO_EVIL = "\uD83D\uDE4A"
     const val VERTICAL_LINE = "\uFF5C"
 
