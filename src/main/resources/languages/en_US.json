@@ -38,6 +38,11 @@
       "description": "Gracefully displays a cat for your viewing pleasure",
       "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
     },
+    "changes": {
+      "description": "Learn more about Sandra's latest changes",
+      "reply": "You can read about the latest releases from the documentation on our website.",
+      "button_label": "Learn More"
+    },
     "commands": {
       "description": "Browse through Sandra's countless commands",
       "command_title": "Commands",
