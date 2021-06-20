@@ -30,16 +30,14 @@ import org.slf4j.LoggerFactory
  */
 class SandraAPI(private val sandra: Sandra, private val port: Int) {
 
-    private val api: Javalin
+    private val api: Javalin = Javalin.create { config ->
+        config.defaultContentType = "application/json"
+        config.logIfServerNotStarted = false
+        config.showJavalinBanner = false
+        if (sandra.development) config.enableDevLogging()
+    }
 
     init {
-
-        api = Javalin.create { config ->
-            config.defaultContentType = "application/json"
-            config.logIfServerNotStarted = false
-            config.showJavalinBanner = false
-            if (sandra.development) config.enableDevLogging()
-        }
 
         api.before {
             logger.info("Received ${it.method()} ${it.url()} from ${it.ip()} ${it.userAgent()}")

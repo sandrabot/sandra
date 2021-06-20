@@ -18,7 +18,7 @@ package com.sandrabot.sandra.constants
 
 /**
  * A central place to keep track of unicode characters used throughout the bot.
- * The names will typically be the official unicode description.
+ * The names will typically be related to the official unicode description.
  */
 object Unicode {
 

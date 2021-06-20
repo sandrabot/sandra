@@ -25,6 +25,7 @@ import com.sandrabot.sandra.utils.format
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 
+@Suppress("unused")
 class Shards : Command(name = "shards", aliases = arrayOf("shard")) {
 
     override suspend fun execute(event: CommandEvent) {

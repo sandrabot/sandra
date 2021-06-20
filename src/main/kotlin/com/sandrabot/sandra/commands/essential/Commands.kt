@@ -22,6 +22,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.Paginator
 import com.sandrabot.sandra.events.CommandEvent
 
+@Suppress("unused")
 class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
 
     override suspend fun execute(event: CommandEvent) {

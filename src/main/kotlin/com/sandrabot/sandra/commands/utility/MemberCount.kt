@@ -21,6 +21,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.sanitize
 
+@Suppress("unused")
 class MemberCount : Command(name = "membercount", aliases = arrayOf("mc", "members"), guildOnly = true) {
 
     override suspend fun execute(event: CommandEvent) {

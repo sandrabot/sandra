@@ -18,7 +18,6 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException

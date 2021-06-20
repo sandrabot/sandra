@@ -91,11 +91,9 @@ enum class ArgumentType {
     UNKNOWN;
 
     companion object {
-
         fun fromName(name: String): ArgumentType {
             return values().find { name.equals(it.name, ignoreCase = true) } ?: UNKNOWN
         }
-
     }
 
 }

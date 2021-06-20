@@ -148,7 +148,7 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(Evaluate::class.java)
-        private val blockPattern = Regex("""```(?:\S*)\n(.*)```""", RegexOption.DOT_MATCHES_ALL)
+        private val blockPattern = Regex("""```\S*\n(.*)```""", RegexOption.DOT_MATCHES_ALL)
     }
 
 }
