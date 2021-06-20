@@ -23,8 +23,6 @@ import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
-import com.sandrabot.sandra.utils.format
-import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
 class Help : Command(
@@ -74,7 +72,9 @@ class Help : Command(
             // Display a field listing the aliases if there are any
             if (command.aliases.isNotEmpty()) {
                 // Combine all of the aliases into a string to be displayed
-                val join = command.aliases.joinToString("**, **${event.sandra.prefix}", "**${event.sandra.prefix}", "**")
+                val join = command.aliases.joinToString(
+                    separator = "**, **${event.sandra.prefix}", prefix = "**${event.sandra.prefix}", postfix = "**"
+                )
                 val aliasesValue = "> ${lang.translate("you_can_use")} $join"
                 embed.addField("${Emotes.COMMANDS} ${lang.translate("aliases_title")}", aliasesValue, false)
             }
@@ -93,17 +93,18 @@ class Help : Command(
 
         // If no arguments were supplied, just show information about the bot
         val lang = event.languageContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.translate("title"), Website.WEBSITE)
+        val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
-        // You can never be too safe with users, if anyone ever deletes their accounts it will be handled
-        val gabby = event.sandra.retrieveUser(Constants.GABBY)?.asTag?.sanitize() ?: "deleted-user"
-        val (avery, logan) = Constants.DEVELOPERS.map { event.sandra.retrieveUser(it)?.format() ?: "deleted-user" }
-        // Gabby is specifically formatted differently than the other developers, so don't change that
-        embed.setDescription(lang.translate("description", avery, logan, gabby, Constants.TWITTER_GABBY))
-        embed.addField(lang.translate("configure", Emotes.CONFIG), lang.translate("configure_content", Website.DASHBOARD), false)
-        embed.addField(lang.translate("commands", Emotes.COMMANDS), lang.translate("commands_content", event.sandra.prefix), false)
-        embed.addField(lang.translate("invite", Emotes.NOTIFY), lang.translate("invite_content", Constants.DIRECT_INVITE), false)
-        embed.addField(lang.translate("support", Emotes.BUBBLES), lang.translate("support_content", Constants.DIRECT_SUPPORT), false)
+
+        val configureContent = lang.translate("configure_content", Website.DASHBOARD)
+        val commandsContent = lang.translate("commands_content", event.sandra.prefix)
+        val inviteContent = lang.translate("invite_content", Constants.DIRECT_INVITE)
+        val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
+        embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)
+        embed.addField(lang.translate("commands", Emotes.COMMANDS), commandsContent, false)
+        embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
+        embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
+
         event.reply(embed.build())
 
     }
