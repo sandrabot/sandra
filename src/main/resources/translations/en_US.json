@@ -93,7 +93,7 @@
     },
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
-      "response": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
+      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
     },
     "shards": {
       "description": "View a list of shards and their stats",

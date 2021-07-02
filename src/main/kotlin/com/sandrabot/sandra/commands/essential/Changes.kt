@@ -28,8 +28,8 @@ class Changes : Command(name = "changes", aliases = arrayOf("changelog", "update
 
     override suspend fun execute(event: CommandEvent) {
 
-        val button = Button.link(Website.DOCS, event.translate("commands.changes.button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("commands.changes.reply")
+        val button = Button.link(Website.DOCS, event.translate("button_label"))
+        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
         event.message.reply(reply).setActionRow(button).queue()
 
     }

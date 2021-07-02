@@ -18,7 +18,7 @@ package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.LanguageContext
+import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.BlocklistEntry
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.entities.blocklist.TargetType
@@ -61,7 +61,7 @@ fun blocklistNotify(
     }
     val reason = entry.getReason(featureType)
     val blockedMessage = Unicode.CROSS_MARK + Unicode.VERTICAL_LINE +
-            LanguageContext(sandra, locale).translate("general.blocked", entryName, reason)
+            LocaleContext(sandra, locale).translate("general.blocked", entryName, reason)
     channel.sendMessage(blockedMessage).queue {
         entry.recordNotify(featureType, channel.idLong, it.idLong)
         LoggerFactory.getLogger(BlocklistManager::class.java).info(

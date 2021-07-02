@@ -21,33 +21,28 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.exceptions.MissingTranslationException
-import java.util.*
-import kotlin.collections.HashMap
 
-class LanguageManager {
+class LocaleManager {
 
-    private val translationMap: Map<Locale, Map<String, Any>>
+    private val translationMap = mutableMapOf<Locale, Map<String, Any>>()
 
     init {
-        val values = Locale.values()
-        val map = HashMap<Locale, Map<String, Any>>(values.size)
-        val parser = Parser.default()
-        for (it in values) {
-            val obj = try {
-                val file = LanguageManager::class.java.getResourceAsStream("/languages/${it.identifier}.json")
-                        ?: throw IllegalStateException("Language file for ${it.identifier} is missing")
-                parser.parse(file) as JsonObject
+        val jsonParser = Parser.default()
+        for (it in Locale.values()) {
+            val jsonObj = try {
+                val file = LocaleManager::class.java.getResourceAsStream("/translations/${it.identifier}.json")
+                    ?: throw IllegalStateException("Translation file for ${it.identifier} is missing")
+                jsonParser.parse(file) as JsonObject
             } catch (e: Exception) {
-                throw IllegalArgumentException("Failed to parse language file for ${it.identifier}", e)
+                throw IllegalArgumentException("Failed to parse translation file for ${it.identifier}", e)
             }
-            val paths = HashMap<String, Any>()
-            loadRecursive("", paths, obj)
-            map[it] = paths
+            val pathMap = mutableMapOf<String, Any>()
+            loadRecursive("", pathMap, jsonObj)
+            translationMap[it] = pathMap
         }
-        translationMap = Collections.unmodifiableMap(map)
     }
 
-    private fun loadRecursive(root: String, paths: HashMap<String, Any>, obj: JsonObject) {
+    private fun loadRecursive(root: String, paths: MutableMap<String, Any>, obj: JsonObject) {
         for (it in obj.map) {
             val newRoot = if (root.isEmpty()) it.key else "$root.${it.key}"
             when (val value = it.value) {

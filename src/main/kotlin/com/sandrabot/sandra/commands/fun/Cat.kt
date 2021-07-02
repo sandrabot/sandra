@@ -33,7 +33,7 @@ class Cat : Command(name = "cat") {
         event.channel.sendTyping().await()
         val response = httpClient.get<HttpResponse>("https://cataas.com/cat")
         if (response.status != HttpStatusCode.OK) {
-            event.replyError(event.translate("commands.cat.error"))
+            event.replyError(event.translate("error"))
         } else event.message.reply(response.readBytes(), "cat.jpeg").queue()
     }
 

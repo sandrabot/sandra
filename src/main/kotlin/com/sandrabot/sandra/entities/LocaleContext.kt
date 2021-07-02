@@ -24,10 +24,10 @@ import com.sandrabot.sandra.utils.findLocale
 /**
  * Wrapper class for conveniently retrieving translation keys.
  */
-class LanguageContext(
-        private val sandra: Sandra,
-        val locale: Locale,
-        val root: String? = null
+class LocaleContext(
+    private val sandra: Sandra,
+    val locale: Locale,
+    val root: String? = null
 ) {
 
     constructor(sandra: Sandra, guildConfig: GuildConfig, userConfig: UserConfig, root: String? = null) :
@@ -36,16 +36,25 @@ class LanguageContext(
     /**
      * Returns a new context with the new root.
      */
-    fun withRoot(root: String?) = LanguageContext(sandra, locale, root)
+    fun withRoot(root: String?) = LocaleContext(sandra, locale, root)
 
     /**
-     * Returns the raw translation.
+     * Returns the raw translation. The lookup path will
+     * include the root when [withRoot] is `true`.
      */
-    fun get(path: String) = sandra.languages.get(locale, if (root == null) path else "$root.$path")
+    fun get(path: String, withRoot: Boolean) = sandra.locales.get(
+        locale, if (root == null || !withRoot) path else "$root.$path"
+    )
 
     /**
      * Formats the translation with the [args] provided.
      */
-    fun translate(path: String, vararg args: Any?) = get(path).format(*args)
+    fun translate(path: String, vararg args: Any?) = translate(path, true, *args)
+
+    /**
+     * Formats the translation with the [args] provided.
+     * If [withRoot] is `true` the context root will be used for lookup.
+     */
+    fun translate(path: String, withRoot: Boolean, vararg args: Any?) = get(path, withRoot).format(*args)
 
 }

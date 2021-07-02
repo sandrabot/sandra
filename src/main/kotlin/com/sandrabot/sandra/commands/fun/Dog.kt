@@ -33,7 +33,7 @@ class Dog : Command(name = "dog") {
         do imagePath = httpClient.get("https://random.dog/woof")
         while (imagePath.endsWith("mp4"))
         if (!imagePath.endsWith("jpg")) {
-            event.replyError(event.translate("commands.dog.error"))
+            event.replyError(event.translate("error"))
         } else event.reply("https://random.dog/$imagePath")
     }
 

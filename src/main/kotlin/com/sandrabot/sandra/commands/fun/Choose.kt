@@ -28,7 +28,7 @@ class Choose : Command(name = "choose", aliases = arrayOf("pick"), arguments = "
     override suspend fun execute(event: CommandEvent) {
 
         val list = event.arguments.array<String>("choices")!!
-        val reply = event.translate("commands.choose.reply", list.size.format(), list.random().sanitize().take(50))
+        val reply = event.translate("reply", list.size.format(), list.random().sanitize().take(50))
         event.reply(Unicode.SCALES + Unicode.VERTICAL_LINE + reply)
 
     }

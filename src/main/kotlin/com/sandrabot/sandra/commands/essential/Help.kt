@@ -35,18 +35,15 @@ class Help : Command(
 
         if (event.args.isNotEmpty()) {
 
-            // Create a new context with a root so we don't have to use the full path each time
-            val lang = event.languageContext.withRoot("commands.help")
-
             // The user may potentially be looking for a subcommand
             val maybeCommand = event.arguments.command() ?: run {
                 // The command couldn't be found with the given arguments
-                event.replyError(lang.translate("not_found", event.sandra.prefix))
+                event.replyError(event.translate("not_found", event.sandra.prefix))
                 return
             }
 
             if (maybeCommand.ownerOnly || maybeCommand.category == Category.CUSTOM) {
-                event.replyError(lang.translate("not_found", event.sandra.prefix))
+                event.replyError(event.translate("not_found", event.sandra.prefix))
                 return
             }
 
@@ -56,7 +53,7 @@ class Help : Command(
                     if (maybeCommand.children.isEmpty()) return@run maybeCommand
                     // Otherwise display a list of the available subcommands for this command
                     val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
-                    event.replyError(lang.translate("available_subcommands", joined))
+                    event.replyError(event.translate("available_subcommands", joined))
                     return
                 }
             } ?: maybeCommand
@@ -65,34 +62,35 @@ class Help : Command(
             val author = "${command.path.replace(':', ' ')} • ${command.category.name.lowercase()}"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
-            embed.setTitle(lang.translate("extra_help"), Constants.DIRECT_SUPPORT)
-            // Retrieve the translation for the command's description, this time we don't use our other context
-            val descriptionValue = "> ${event.translate("commands.${command.path.replace(':', '.')}.description")}"
-            embed.addField("${Emotes.PROMPT} ${lang.translate("description_title")}", descriptionValue, false)
+            embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
+            // Retrieve the translation for the command's description, this time we need to not use the root
+            val descriptionPath = "commands.${command.path.replace(':', '.')}.description"
+            val descriptionValue = "> ${event.translate(descriptionPath, false)}"
+            embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
             // Display a field listing the aliases if there are any
             if (command.aliases.isNotEmpty()) {
                 // Combine all of the aliases into a string to be displayed
                 val join = command.aliases.joinToString(
                     separator = "**, **${event.sandra.prefix}", prefix = "**${event.sandra.prefix}", postfix = "**"
                 )
-                val aliasesValue = "> ${lang.translate("you_can_use")} $join"
-                embed.addField("${Emotes.COMMANDS} ${lang.translate("aliases_title")}", aliasesValue, false)
+                val aliasesValue = "> ${event.translate("you_can_use")} $join"
+                embed.addField("${Emotes.COMMANDS} ${event.translate("aliases_title")}", aliasesValue, false)
             }
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {
                 // Combine all of the arguments into a string to be displayed
                 val join = command.arguments.joinToString(" ") { it.usage }
                 val usageValue = "> **${event.sandra.prefix}${command.name}** $join"
-                embed.addField("${Emotes.INFO} ${lang.translate("usage_title")}", usageValue, false)
+                embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
-                embed.setFooter(lang.translate("required_arguments"))
+                embed.setFooter(event.translate("required_arguments"))
             }
             event.reply(embed.build())
             return
         }
 
         // If no arguments were supplied, just show information about the bot
-        val lang = event.languageContext.withRoot("commands.help.info_embed")
+        val lang = event.localeContext.withRoot("commands.help.info_embed")
         val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 

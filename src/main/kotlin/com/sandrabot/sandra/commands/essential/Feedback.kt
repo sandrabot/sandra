@@ -28,8 +28,8 @@ class Feedback : Command(name = "feedback", aliases = arrayOf("bug", "request", 
 
     override suspend fun execute(event: CommandEvent) {
 
-        val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("commands.feedback.button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("commands.feedback.reply")
+        val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("button_label"))
+        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
         event.message.reply(reply).setActionRow(button).queue()
 
     }

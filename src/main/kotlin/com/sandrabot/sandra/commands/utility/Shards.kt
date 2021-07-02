@@ -30,17 +30,16 @@ class Shards : Command(name = "shards", aliases = arrayOf("shard")) {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val lang = event.languageContext.withRoot("commands.shards")
         val shardFields = event.sandra.shards.shardCache.sortedBy { it.shardInfo.shardId }.map {
             val status = it.status.name.replace("_", " ").capitalizeWords()
-            val value = lang.translate("status", status, it.gatewayPing.format(), it.guildCache.size().format())
-            MessageEmbed.Field(lang.translate("shard_title", it.shardInfo.shardId), value, true)
+            val value = event.translate("status", status, it.gatewayPing.format(), it.guildCache.size().format())
+            MessageEmbed.Field(event.translate("shard_title", it.shardInfo.shardId), value, true)
         }
         val size = event.sandra.shards.shardCache.size()
         val connected = event.sandra.shards.shardCache.count { it.status == JDA.Status.CONNECTED }
-        val embed = event.embed.setTitle(lang.translate("having_issues"), Constants.DIRECT_SUPPORT)
-        embed.setFooter(lang.translate("shards_connected", connected, size) + if (event.isFromGuild)
-            lang.translate("server_using", event.jda.shardInfo.shardId) else ""
+        val embed = event.embed.setTitle(event.translate("having_issues"), Constants.DIRECT_SUPPORT)
+        embed.setFooter(event.translate("shards_connected", connected, size) + if (event.isFromGuild)
+            event.translate("server_using", event.jda.shardInfo.shardId) else ""
         )
         Paginator(event).paginate(shardFields.chunked(9).map { chunk ->
             embed.also { it.fields.addAll(chunk) }.build()

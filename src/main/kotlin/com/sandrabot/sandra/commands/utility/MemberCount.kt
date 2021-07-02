@@ -31,8 +31,7 @@ class MemberCount : Command(name = "membercount", aliases = arrayOf("mc", "membe
         val humanCount = memberCount - botCount
 
         event.translate(
-            "commands.membercount.reply",
-            event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
+            "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
         ).let { event.replyInfo(it) }
 
     }

@@ -71,12 +71,16 @@ class CommandEvent(
     }
 
     val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, args) }
-    val languageContext: LanguageContext by lazy { LanguageContext(sandra, guildConfig, userConfig) }
     val guildConfig: GuildConfig by lazy { sandra.config.getGuild(guild.idLong) }
     val userConfig: UserConfig by lazy { sandra.config.getUser(author.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(author.idLong) }
+    val localeContext: LocaleContext by lazy {
+        LocaleContext(sandra, guildConfig, userConfig, "commands.${command.name}")
+    }
 
-    fun translate(path: String, vararg args: Any?): String = languageContext.translate(path, *args)
+    fun translate(path: String, vararg args: Any?): String = translate(path, true, *args)
+    fun translate(path: String, withRoot: Boolean, vararg args: Any?): String =
+        localeContext.translate(path, withRoot, *args)
 
     fun reply(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
         event.message.reply(message).queue(success, failure)

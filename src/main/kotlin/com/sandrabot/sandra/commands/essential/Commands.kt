@@ -34,7 +34,6 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
             }.sortedBy { it.name }
         }.filterNot { it.key == Category.CUSTOM || it.value.isEmpty() }
 
-        val lang = event.languageContext.withRoot("commands.commands")
         val descriptionPages = mutableListOf<String>()
         val builder = StringBuilder()
         var commandsWritten = 0
@@ -42,10 +41,10 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
         for ((category, list) in sortedCommands) {
             // Begin by appending the category header
             builder.append(category.emote).append(" __**").append(category.displayName)
-            builder.append(" ").append(lang.translate("command_title")).append("**__\n")
+            builder.append(" ").append(event.translate("command_title")).append("**__\n")
             for (command in list) {
                 builder.append("`").append(event.sandra.prefix).append(command.name).append("` - ")
-                builder.append(event.translate("commands.${command.name}.description")).append("\n")
+                builder.append(event.translate("commands.${command.name}.description", false)).append("\n")
                 // Wrap the list of commands into pages
                 if (++commandsWritten % 20 == 0) {
                     descriptionPages.add(builder.toString())
@@ -58,8 +57,8 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
 
         // Wrap any remaining text to another page
         if (builder.isNotBlank()) descriptionPages.add(builder.toString())
-        val embed = event.embed.setTitle(event.translate("commands.help.extra_help"), Constants.DIRECT_SUPPORT)
-        embed.setFooter(lang.translate("more_information", event.sandra.prefix))
+        val embed = event.embed.setTitle(event.translate("commands.help.extra_help", false), Constants.DIRECT_SUPPORT)
+        embed.setFooter(event.translate("more_information", event.sandra.prefix))
         Paginator(event).paginate(descriptionPages.map { embed.setDescription(it).build() })
 
     }

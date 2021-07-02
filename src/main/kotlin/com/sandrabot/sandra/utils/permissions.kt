@@ -52,7 +52,7 @@ private fun missingMessage(event: CommandEvent, permission: Permission, self: Bo
     val context = if (permission.isChannel) "channel" else "server"
     return event.translate(
         if (self) "general.missing_permission" else "general.missing_user_permission",
-        event.languageContext.get("permissions.${findTranslationKey(permission)}"), context
+        event.localeContext.get("permissions.${findTranslationKey(permission)}", false), context
     )
 }
 
