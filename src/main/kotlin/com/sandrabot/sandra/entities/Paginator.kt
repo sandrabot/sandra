@@ -175,7 +175,7 @@ class Paginator(
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to
         argumentAction<Long>(
-            event, event.translate("general.page_prompt"), ArgumentType.DIGIT, { waitForButton() }
+            event, event.translate("general.page_prompt", false), ArgumentType.DIGIT, { waitForButton() }
         ) { digit ->
             val index = digit.toInt() - 1
             if (index in messages.indices && index != currentPage) {

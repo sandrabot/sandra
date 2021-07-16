@@ -67,7 +67,7 @@ class Argument internal constructor(
  * If a name isn't supplied, it will default to the name of the type.
  * If multiple tokens have the same type, they must be named differently
  *  to indicate clearly which token is being referred to.
- * All letters are case in-sensitive, however the name will always be converted to lowercase.
+ * All letters are case insensitive, however the name will always be converted to lowercase.
  *
  *  * The `@` denotes the token as a required argument.
  *  * The name can be used to describe the argument in usage prompts.
@@ -90,7 +90,7 @@ class Argument internal constructor(
  *  * `[@time:duration]` - Required argument with the name of "time" and the type of [ArgumentType.DURATION]
  *  * `[bots:flag]` - Optional argument with the name of "bots" and the type of [ArgumentType.FLAG]
  *  * `[users:user*]` - Optional array of arguments with the name of "users" and the type of [ArgumentType.USER]
- *  * `[yourmom:isgay]` - Throws [IllegalArgumentException], the type is invalid
+ *  * `[something:else]` - Throws [IllegalArgumentException], the type "else" is invalid
  *  * `[text*]` - Throws [IllegalArgumentException], text must not be arrays
  *  * `[@global:flag]` - Throws [IllegalArgumentException], flags must not be required
  *  * `[time:digit] [time:duration]` - Throws [IllegalArgumentException], the name is already used
