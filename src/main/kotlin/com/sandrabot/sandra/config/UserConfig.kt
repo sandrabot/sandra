@@ -18,10 +18,12 @@ package com.sandrabot.sandra.config
 
 import com.sandrabot.sandra.entities.Configuration
 import com.sandrabot.sandra.entities.Locale
+import kotlinx.serialization.Serializable
 
 /**
  * Stores Sandra-specific properties and settings for users.
  */
+@Serializable
 class UserConfig(val id: Long) : Configuration {
 
     var locale: Locale = Locale.DEFAULT

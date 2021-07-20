@@ -16,9 +16,12 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.Serializable
+
 /**
  * This class is used to configure the Sandra instance during startup.
  */
+@Serializable
 class SandraConfig {
 
     /**

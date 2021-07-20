@@ -21,6 +21,7 @@ plugins {
     idea
     application
     kotlin("jvm") version "1.5.21"
+    kotlin("plugin.serialization") version "1.5.21"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("com.github.gmazzo.buildconfig") version "3.0.2"
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -38,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    listOf("stdlib-jdk8", "reflect", "script-util", "script-runtime",
+    listOf("stdlib", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
     implementation("net.dv8tion:JDA:4.3.0_296") {
@@ -54,7 +55,7 @@ dependencies {
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("me.xdrop:fuzzywuzzy:1.3.1")
     implementation("net.jodah:expiringmap:0.5.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     implementation("org.reflections:reflections:0.9.12")
     implementation("redis.clients:jedis:3.6.2")
 }

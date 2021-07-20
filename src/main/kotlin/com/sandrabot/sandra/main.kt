@@ -18,10 +18,6 @@ package com.sandrabot.sandra
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-import com.beust.klaxon.Parser
-import com.beust.klaxon.json
 import com.sandrabot.sandra.config.RedisConfig
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.managers.CredentialManager
@@ -29,6 +25,9 @@ import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.getResourceAsText
 import io.sentry.Sentry
 import io.sentry.dsn.Dsn
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.JDAInfo
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -41,6 +40,12 @@ fun bootstrap(args: Array<String>): Int {
 
     val beginStartup = System.currentTimeMillis()
     val logger = LoggerFactory.getLogger(Sandra::class.java)
+    val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        prettyPrint = true
+        prettyPrintIndent = "  "
+    }
 
     // Print the logo and any relevant version information
     println("\n${getResourceAsText("/logo.txt")}")
@@ -57,22 +62,19 @@ fun bootstrap(args: Array<String>): Int {
     val file = File(if (args.isNotEmpty()) args[0] else "config.json")
     val config = try {
         // Attempt to parse the config file if it exists
-        if (file.exists()) Parser.default().parse(file.absolutePath) as JsonObject else {
+        if (file.exists()) json.decodeFromString<JsonObject>(file.readText()) else {
             // Otherwise, generate a new config file with default values
-            val config = json {
-                val sandraConfig = SandraConfig()
-                obj(SandraConfig::class.declaredMemberProperties.map { it.name to it.get(sandraConfig) })
+            val config = buildJsonObject {
+                json.encodeToJsonElement(SandraConfig()).jsonObject.forEach { put(it.key, it.value) }
+                put("redis", json.encodeToJsonElement(RedisConfig()))
+                // We can't exactly provide default credentials, so we set them to empty strings instead
+                putJsonObject("credentials") {
+                    CredentialManager::class.declaredMemberProperties.forEach { put(it.name, "") }
+                }
             }
-            config["redis"] = json {
-                val redisConfig = RedisConfig()
-                obj(RedisConfig::class.declaredMemberProperties.map { it.name to it.get(redisConfig) })
-            }
-            // We can't exactly provide default credentials, so we set them to empty strings instead
-            config["credentials"] =
-                json { obj(CredentialManager::class.declaredMemberProperties.map { it.name to "" }) }
             try {
                 // Attempt to write the config file at the same location as provided
-                file.writeText(config.toJsonString(prettyPrint = true))
+                file.writeText(json.encodeToString(config))
                 logger.info("The configuration file wasn't found, one has been created for you at ${file.absolutePath}")
             } catch (t: Throwable) {
                 logger.error("Failed to write default configuration file at ${file.absolutePath}", t)
@@ -84,7 +86,7 @@ fun bootstrap(args: Array<String>): Int {
         return 1
     }
 
-    val sandraConfig = Klaxon().parseFromJsonObject<SandraConfig>(config)!!
+    val sandraConfig = json.decodeFromJsonElement<SandraConfig>(config)
     if (sandraConfig.development) logger.info("Development mode is enabled, beta configurations will be used")
 
     // Adjust the root logger level if specified
@@ -105,7 +107,7 @@ fun bootstrap(args: Array<String>): Int {
 
     // Initialize the credential manager with all the tokens and secrets
     val credentials = try {
-        Klaxon().parseFromJsonObject<CredentialManager>(config["credentials"] as JsonObject)!!
+        json.decodeFromJsonElement<CredentialManager>(config["credentials"]!!)
     } catch (t: Throwable) {
         logger.error("Failed to read credentials from configuration file, exiting with error code", t)
         return 1
@@ -113,8 +115,7 @@ fun bootstrap(args: Array<String>): Int {
 
     // Configure a redis manager to communicate with the database
     val redisConfig = try {
-        val redis = config.obj("redis") ?: JsonObject()
-        Klaxon().parseFromJsonObject<RedisConfig>(redis)!!
+        json.decodeFromJsonElement(config.getOrDefault("redis", buildJsonObject {}))
     } catch (t: Throwable) {
         logger.warn("Failed to read redis configuration, attempting to continue with defaults", t)
         RedisConfig()
