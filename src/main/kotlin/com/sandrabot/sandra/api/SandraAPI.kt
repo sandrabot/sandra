@@ -16,9 +16,9 @@
 
 package com.sandrabot.sandra.api
 
-import com.beust.klaxon.JsonObject
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.utils.toJson
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
@@ -77,13 +77,13 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
         context.status(code)
     }
 
-    private fun createResponse(context: Context, handler: ((JsonObject) -> Unit)? = null) {
-        val response = JsonObject()
+    private fun createResponse(context: Context, handler: ((MutableMap<String, Any>) -> Unit)? = null) {
+        val response = mutableMapOf<String, Any>()
         response["success"] = true
         if (handler != null) handler(response)
         response["version"] = Constants.VERSION
         // Set the response body to the JSON with 2 spaces as indentation
-        context.result(response.toJsonString(true))
+        context.result(response.toJson())
     }
 
     /* Route Handlers */
