@@ -16,10 +16,12 @@
 
 package com.sandrabot.sandra.managers
 
-import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.blocklist.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Keeps track of blocked features and offence history.
@@ -30,14 +32,13 @@ class BlocklistManager(private val sandra: Sandra) {
 
     init {
         val data = sandra.redis[RedisPrefix.SETTING + "blocklist"] ?: "[]"
-        Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries[it.targetId] = it }
+        Json.decodeFromString<List<BlocklistEntry>>(data).forEach { entries[it.targetId] = it }
     }
 
     fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
 
     fun shutdown() {
-        val data = Klaxon().toJsonString(entries.values)
-        sandra.redis[RedisPrefix.SETTING + "blocklist"] = data
+        sandra.redis[RedisPrefix.SETTING + "blocklist"] = Json.encodeToString(entries.values)
     }
 
     fun appendOffence(targetId: Long, targetType: TargetType, features: List<FeatureType>,
