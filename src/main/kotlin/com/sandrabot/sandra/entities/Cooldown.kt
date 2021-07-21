@@ -16,9 +16,12 @@
 
 package com.sandrabot.sandra.entities
 
+import kotlinx.serialization.Serializable
+
 /**
  * Keeps track of information needed in a cooldown context.
  */
+@Serializable
 data class Cooldown(val cooldownKey: String, val duration: Int) {
 
     var attempts = 0
