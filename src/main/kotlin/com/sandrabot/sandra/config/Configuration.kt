@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.config
 
-interface Configuration
+import com.sandrabot.sandra.entities.Locale
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class Configuration {
+    abstract val id: Long
+    var locale: Locale = Locale.DEFAULT
+}
