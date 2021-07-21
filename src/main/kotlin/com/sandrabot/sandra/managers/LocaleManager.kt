@@ -16,39 +16,38 @@
 
 package com.sandrabot.sandra.managers
 
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
 import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.exceptions.MissingTranslationException
+import com.sandrabot.sandra.utils.getResourceAsText
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.*
 
 class LocaleManager {
 
     private val translationMap = mutableMapOf<Locale, Map<String, Any>>()
 
     init {
-        val jsonParser = Parser.default()
         for (it in Locale.values()) {
-            val jsonObj = try {
-                val file = LocaleManager::class.java.getResourceAsStream("/translations/${it.identifier}.json")
+            val jsonObject = try {
+                val text = getResourceAsText("/translations/${it.identifier}.json")
                     ?: throw IllegalStateException("Translation file for ${it.identifier} is missing")
-                jsonParser.parse(file) as JsonObject
+                Json.decodeFromString<JsonObject>(text)
             } catch (e: Exception) {
                 throw IllegalArgumentException("Failed to parse translation file for ${it.identifier}", e)
             }
             val pathMap = mutableMapOf<String, Any>()
-            loadRecursive("", pathMap, jsonObj)
+            loadRecursive("", pathMap, jsonObject)
             translationMap[it] = pathMap
         }
     }
 
     private fun loadRecursive(root: String, paths: MutableMap<String, Any>, obj: JsonObject) {
-        for (it in obj.map) {
+        for (it in obj.entries) {
             val newRoot = if (root.isEmpty()) it.key else "$root.${it.key}"
             when (val value = it.value) {
                 is JsonObject -> loadRecursive(newRoot, paths, value)
-                is JsonArray<*> -> paths[newRoot] = value.toTypedArray()
-                is String -> paths[newRoot] = value
+                is JsonArray -> paths[newRoot] = value.jsonArray.map { it.jsonPrimitive.content }.toTypedArray()
+                is JsonPrimitive -> paths[newRoot] = value.content
             }
         }
     }
