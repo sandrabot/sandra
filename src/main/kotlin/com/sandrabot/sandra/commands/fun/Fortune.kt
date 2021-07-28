@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.constants
+package com.sandrabot.sandra.commands.`fun`
 
-/**
- * A central place to keep track of unicode characters used throughout the bot.
- * The names will typically be related to the official unicode description.
- */
-object Unicode {
+import com.sandrabot.sandra.constants.Unicode
+import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.utils.getResourceAsText
 
-    const val CLAPPING_HANDS = "\uD83D\uDC4F"
-    const val CROSS_MARK = "\u274C"
-    const val CRYSTAL_BALL = "\uD83D\uDD2E"
-    const val SCALES = "\u2696"
-    const val SPEAK_NO_EVIL = "\uD83D\uDE4A"
-    const val VERTICAL_LINE = "\uFF5C"
+@Suppress("unused")
+class Fortune : Command(name = "fortune") {
+
+    override suspend fun execute(event: CommandEvent) {
+
+        event.replyEmote(fortunes.random(), Unicode.CRYSTAL_BALL)
+
+    }
+
+    companion object {
+        private val fortunes = getResourceAsText("/fortunes.txt")!!.lines()
+    }
 
 }
