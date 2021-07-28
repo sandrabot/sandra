@@ -65,6 +65,13 @@
       "reply": "Please join our support server to discuss your concerns directly with the **Sandra developers**.",
       "button_label": "Join Sandra's Hangout"
     },
+    "flip": {
+      "description": "Toss one of your coins to settle your bets",
+      "no_credits": "Because you are broke, you don't have any coins to flip.",
+      "reply": "Your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards.",
+      "side_heads": "heads",
+      "side_tails": "tails"
+    },
     "help": {
       "description": "View some basic quick-start information about the bot",
       "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",

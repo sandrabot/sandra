@@ -24,6 +24,7 @@ import com.sandrabot.sandra.entities.Locale
  */
 class UserConfig(val id: Long) : Configuration {
 
+    var credits: Long = 0
     var locale: Locale = Locale.DEFAULT
 
 }
