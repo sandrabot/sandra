@@ -33,8 +33,8 @@ class LocaleManager {
                 val file = LocaleManager::class.java.getResourceAsStream("/translations/${it.identifier}.json")
                     ?: throw IllegalStateException("Translation file for ${it.identifier} is missing")
                 jsonParser.parse(file) as JsonObject
-            } catch (e: Exception) {
-                throw IllegalArgumentException("Failed to parse translation file for ${it.identifier}", e)
+            } catch (t: Throwable) {
+                throw IllegalArgumentException("Failed to parse translation file for ${it.identifier}", t)
             }
             val pathMap = mutableMapOf<String, Any>()
             loadRecursive("", pathMap, jsonObj)

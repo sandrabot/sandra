@@ -87,7 +87,7 @@ class CommandEvent(
     }
 
     fun reply(embed: MessageEmbed, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.message.reply(embed).queue(success, failure)
+        event.message.replyEmbeds(embed).queue(success, failure)
     }
 
     fun reply(message: Message, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
