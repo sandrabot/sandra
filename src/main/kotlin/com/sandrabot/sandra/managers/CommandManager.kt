@@ -37,8 +37,8 @@ class CommandManager(sandra: Sandra) {
         commands = commandClasses.filterNot { it.isMemberClass }.mapNotNull {
             try {
                 it.kotlin.createInstance()
-            } catch (e: Exception) {
-                logger.error("Failed to instantiate command $it", e)
+            } catch (t: Throwable) {
+                logger.error("Failed to instantiate command $it", t.cause)
                 null
             }
         }.toMutableList()

@@ -37,6 +37,7 @@ object Emotes {
     const val PROMPT = "<:prompt:788968511257968640>"
     const val SPIN = "<a:spin:592453687721328640>"
     const val SUCCESS = "<:success:788968511245385730>"
+    const val TAILS = "<:tails:788969114311589898>"
     const val TIME = "<:time:788968511577391127>"
     const val USER = "<:user:788968509282844712>"
     const val WARN = "<:warn:788968511577391124>"

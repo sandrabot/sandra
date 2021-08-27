@@ -42,7 +42,7 @@ class Shards : Command(name = "shards", aliases = arrayOf("shard")) {
             event.translate("server_using", event.jda.shardInfo.shardId) else ""
         )
         Paginator(event).paginate(shardFields.chunked(9).map { chunk ->
-            embed.also { it.fields.addAll(chunk) }.build()
+            embed.clearFields().also { it.fields.addAll(chunk) }.build()
         })
 
     }

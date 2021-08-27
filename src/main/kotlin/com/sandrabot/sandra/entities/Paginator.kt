@@ -105,7 +105,7 @@ class Paginator(
                 val newText = page.footer?.text?.let { "$pageIndicator • $it" } ?: pageIndicator
                 EmbedBuilder(page).setFooter(newText, page.footer?.iconUrl).build()
             } else page
-            messages.add(MessageBuilder().setContent(text).setEmbed(embed).build())
+            messages.add(MessageBuilder().setContent(text).setEmbeds(embed).build())
         }
     }
 
