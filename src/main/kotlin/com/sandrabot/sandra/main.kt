@@ -44,7 +44,6 @@ fun bootstrap(args: Array<String>): Int {
         ignoreUnknownKeys = true
         encodeDefaults = true
         prettyPrint = true
-        prettyPrintIndent = "  "
     }
 
     // Print the logo and any relevant version information

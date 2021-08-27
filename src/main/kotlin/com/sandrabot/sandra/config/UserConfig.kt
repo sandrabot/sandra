@@ -24,4 +24,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @SerialName("user")
-class UserConfig(override val id: Long) : Configuration() {}
+class UserConfig(override val id: Long) : Configuration() {
+
+    var credits: Long = 0
+
+}
