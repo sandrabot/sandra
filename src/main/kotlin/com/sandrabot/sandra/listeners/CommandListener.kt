@@ -79,12 +79,12 @@ class CommandListener {
                 }
             }
         } else if (command.guildOnly) {
-            event.replyError(event.translate("general.guild_only"))
+            event.replyError(event.translate("general.guild_only", false))
             return
         }
 
         if (command.ownerOnly && !event.isOwner) {
-            event.replyError(event.translate("general.owner_only"))
+            event.replyError(event.translate("general.owner_only", false))
             return
         }
 
@@ -105,9 +105,9 @@ class CommandListener {
                 event.replyError(missingSelfMessage(event, e.permission))
                 logger.info("Cannot finish executing command due to missing permissions", e)
             } catch (e: MissingArgumentException) {
-                event.replyError(event.translate("general.missing_argument", e.argument.name))
+                event.replyError(event.translate("general.missing_argument", false, e.argument.name))
             } catch (e: Throwable) {
-                event.replyError(event.translate("general.command_exception"))
+                event.replyError(event.translate("general.command_exception", false))
                 logger.error("An exception occurred while executing a command", e)
             }
         }

@@ -61,7 +61,7 @@ class CooldownManager(private val sandra: Sandra) {
         val hasPermissions = hasPermissions(event, Permission.MESSAGE_WRITE, Permission.MESSAGE_EXT_EMOJI)
         if (++cooldown.attempts == 1 && hasPermissions) {
             val formattedDuration = (cooldown.remaining / 1000.0).format()
-            event.replyEmote(event.translate("general.cooldown", formattedDuration), Emotes.TIME, {
+            event.replyEmote(event.translate("general.cooldown", false, formattedDuration), Emotes.TIME, {
                 cooldown.isNotified = true
             })
         }

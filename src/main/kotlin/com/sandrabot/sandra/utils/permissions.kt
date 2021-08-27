@@ -51,7 +51,7 @@ fun missingUserMessage(event: CommandEvent, permission: Permission) = missingMes
 private fun missingMessage(event: CommandEvent, permission: Permission, self: Boolean): String {
     val context = if (permission.isChannel) "channel" else "server"
     return event.translate(
-        if (self) "general.missing_permission" else "general.missing_user_permission",
+        "general." + if (self) "missing_permission" else "missing_user_permission", false,
         event.localeContext.get("permissions.${findTranslationKey(permission)}", false), context
     )
 }
