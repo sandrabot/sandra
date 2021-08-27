@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.5.30"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("com.github.gmazzo.buildconfig") version "3.0.2"
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -38,25 +38,24 @@ repositories {
 }
 
 dependencies {
-    listOf("stdlib-jdk8", "reflect", "script-util", "script-runtime",
+    listOf("stdlib", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:4.3.0_296") {
+    implementation("net.dv8tion:JDA:4.3.0_310") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.2.5")
     implementation("com.beust:klaxon:5.5")
-    implementation("io.javalin:javalin:3.13.9")
-    implementation("io.ktor:ktor-client-core:1.6.1")
-    implementation("io.ktor:ktor-client-okhttp:1.6.1")
-    implementation("io.ktor:ktor-client-jackson:1.6.1")
+    implementation("io.javalin:javalin:3.13.11")
+    implementation("io.ktor:ktor-client-core:1.6.3")
+    implementation("io.ktor:ktor-client-okhttp:1.6.3")
+    implementation("io.ktor:ktor-client-jackson:1.6.3")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("me.xdrop:fuzzywuzzy:1.3.1")
-    implementation("net.jodah:expiringmap:0.5.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.reflections:reflections:0.9.12")
-    implementation("redis.clients:jedis:3.6.2")
+    implementation("redis.clients:jedis:3.6.3")
 }
 
 buildConfig {
@@ -70,7 +69,7 @@ buildConfig {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "14"
+compileKotlin.kotlinOptions.jvmTarget = "16"
 
 fun runCommand(commands: List<String>): String {
     val stdout = ByteArrayOutputStream()
