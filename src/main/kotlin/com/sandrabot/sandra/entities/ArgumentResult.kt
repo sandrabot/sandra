@@ -71,7 +71,7 @@ class ArgumentResult(val results: Map<String, Any>) {
     fun text(name: String = "text"): String? = get(name)
     fun word(name: String = "word"): String? = get(name)
 
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     fun duration(name: String = "duration"): Duration? =
         get<Long>(name)?.toDuration(TimeUnit.SECONDS)
 

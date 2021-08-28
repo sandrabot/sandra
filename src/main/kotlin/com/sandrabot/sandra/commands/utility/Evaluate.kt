@@ -26,8 +26,8 @@ import com.sandrabot.sandra.managers.CommandManager
 import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.await
-import com.sandrabot.sandra.utils.duration
 import com.sandrabot.sandra.utils.hastebin
+import com.sandrabot.sandra.utils.toFormattedString
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -63,7 +63,7 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
         imports = importBuilder.append("\n\n").toString()
     }
 
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
 
         if (event.args.isEmpty()) {
@@ -122,7 +122,7 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
             }
         }
 
-        val duration = duration(timedResult.duration)
+        val duration = timedResult.duration.toFormattedString()
         val result = timedResult.value?.toString() ?: run {
             message.editMessage("evaluated in $duration with no returns").queue()
             return
@@ -131,7 +131,6 @@ class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
 
     }
 
-    @ExperimentalTime
     private fun handleResult(message: Message, duration: String, result: String) {
         // Check the result length, if it's too large attempt to upload it to hastebin
         val formatted = "evaluated in $duration\n```\n$result\n```"

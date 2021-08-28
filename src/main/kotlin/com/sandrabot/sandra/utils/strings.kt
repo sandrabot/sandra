@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 private val spaceRegex = Regex("""\s+""")
@@ -47,29 +48,8 @@ fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 
-@ExperimentalTime
-fun duration(duration: Duration): String = duration.toComponents { days, hours, minutes, seconds, nanoseconds ->
-    val builder = StringBuilder()
-    if (days > 0) builder.append(days.format()).append("d")
-    if (hours > 0) {
-        if (builder.isNotEmpty()) builder.append(" ")
-        builder.append("**").append(hours).append("**h")
-    }
-    if (minutes > 0) {
-        if (builder.isNotEmpty()) builder.append(" ")
-        builder.append("**").append(minutes).append("**m")
-    }
-    if (seconds > 0) {
-        if (builder.isNotEmpty()) builder.append(" ")
-        builder.append("**").append(seconds).append("**s")
-    }
-    val milliseconds = nanoseconds / 1000000
-    if (milliseconds > 0) {
-        if (builder.isNotEmpty()) builder.append(" ")
-        builder.append("**").append(milliseconds).append("**ms")
-    }
-    return builder.toString()
-}
+@OptIn(ExperimentalTime::class)
+fun Duration.toFormattedString(): String = toString().replace(digitRegex, "**$0**")
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
