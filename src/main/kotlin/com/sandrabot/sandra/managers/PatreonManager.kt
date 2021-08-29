@@ -14,30 +14,34 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.services
+package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.PatreonTier
 import com.sandrabot.sandra.entities.Service
-import com.sandrabot.sandra.utils.*
+import com.sandrabot.sandra.utils.array
+import com.sandrabot.sandra.utils.getBlocking
+import com.sandrabot.sandra.utils.obj
+import com.sandrabot.sandra.utils.string
 import io.ktor.client.request.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import org.slf4j.LoggerFactory
 
 /**
  * Maintains a map of patrons and the tier they are subscribed to.
  * The map is refreshed every 30 minutes while the service is running.
  */
-class PatreonService(private val sandra: Sandra) : Service(1800) {
+class PatreonManager(private val sandra: Sandra) : Service(1800) {
 
     private val userTiers = mutableMapOf<Long, PatreonTier>()
 
     fun getUserTier(id: Long) = if (id in Constants.DEVELOPERS) PatreonTier.SPONSOR else userTiers[id]
 
-    override fun start() {
-        super.start()
-        execute()
+    init {
+        start(initialDelay = 0)
     }
 
     override fun execute() {
@@ -106,7 +110,7 @@ class PatreonService(private val sandra: Sandra) : Service(1800) {
 
     companion object {
         private const val apiUrl = "https://patreon.com/api/oauth2/api/campaigns/${Constants.PATREON_CAMPAIGN}/pledges"
-        private val logger = LoggerFactory.getLogger(PatreonService::class.java)
+        private val logger = LoggerFactory.getLogger(PatreonManager::class.java)
     }
 
 }

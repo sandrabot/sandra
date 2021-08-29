@@ -38,7 +38,6 @@ class ReadyListener(private val sandra: Sandra) {
             if (!sandra.development) {
                 sandra.presence.start()
                 sandra.botList.start()
-                sandra.patreon.start()
             }
             val logger = LoggerFactory.getLogger(ReadyListener::class.java)
             logger.info("Shard ${shardInfo.shardId} has finished starting additional items")

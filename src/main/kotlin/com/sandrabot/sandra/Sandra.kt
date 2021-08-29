@@ -26,7 +26,7 @@ import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
-import com.sandrabot.sandra.services.PatreonService
+import com.sandrabot.sandra.managers.PatreonManager
 import com.sandrabot.sandra.services.PresenceService
 import com.sandrabot.sandra.utils.await
 import net.dv8tion.jda.api.EmbedBuilder
@@ -63,7 +63,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val eventWaiter = EventWaiter()
     val locales = LocaleManager()
     val messages = MessageManager()
-    val patreon = PatreonService(this)
+    val patreon = PatreonManager(this)
     val presence = PresenceService(this)
     val statistics = StatisticsManager()
 
