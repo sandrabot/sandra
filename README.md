@@ -31,7 +31,7 @@ If you wish to use code from this repository, you must include the [license](htt
 We don't mind if you gain inspiration from us, but **do not blatantly copy the source code**.
 
 ## License
-Copyright 2017-2020 **Avery Clifton** / **averen** and **Logan Devecka** / **legolog3**
+Copyright 2017-2020 **Avery Carroll** / **averen** and **Logan Devecka** / **legolog3**
 
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
