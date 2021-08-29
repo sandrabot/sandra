@@ -38,7 +38,7 @@ class BlocklistManager(private val sandra: Sandra) {
     fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
 
     fun shutdown() {
-        sandra.redis[RedisPrefix.SETTING + "blocklist"] = Json.encodeToString(entries.values)
+        sandra.redis[RedisPrefix.SETTING + "blocklist"] = Json.encodeToString(entries.values.toList())
     }
 
     fun appendOffence(targetId: Long, targetType: TargetType, features: List<FeatureType>,

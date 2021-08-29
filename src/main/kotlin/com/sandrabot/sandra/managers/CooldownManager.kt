@@ -48,7 +48,7 @@ class CooldownManager(private val sandra: Sandra) {
     }
 
     fun shutdown() {
-        sandra.redis[RedisPrefix.SETTING + "cooldowns"] = Json.encodeToString(cooldowns.values)
+        sandra.redis[RedisPrefix.SETTING + "cooldowns"] = Json.encodeToString(cooldowns.values.toList())
     }
 
     fun applyCooldown(event: CommandEvent, duration: Int = event.command.cooldown): Boolean {
