@@ -17,20 +17,15 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.config.Configuration
-import com.sandrabot.sandra.config.GuildConfig
-import com.sandrabot.sandra.config.UserConfig
+import com.sandrabot.sandra.config.*
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.full.findAnnotation
 
 /**
  * Stores configuration objects in memory to prevent overhead of recreating objects too often.
@@ -53,18 +48,18 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30) {
         execute()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun execute() {
         val copyOfKeys = synchronized(accessedKeys) {
             LinkedList(accessedKeys).also { accessedKeys.clear() }
         }
         for (key in copyOfKeys) {
-            val configuration = configs[key]
-            val prefix = when (configuration) {
-                is GuildConfig -> RedisPrefix.GUILD
-                is UserConfig -> RedisPrefix.USER
-                else -> throw AssertionError()
+            when (val configuration = configs[key]) {
+                is GuildConfig -> sandra.redis["${RedisPrefix.GUILD}$key"] =
+                    json.encodeToString(ConfigTransformer, configuration)
+                is UserConfig -> sandra.redis["${RedisPrefix.USER}$key"] =
+                    json.encodeToString(ConfigTransformer, configuration)
             }
-            sandra.redis["$prefix$key"] = json.encodeToString(configuration)
         }
     }
 
@@ -74,23 +69,15 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30) {
     fun getGuild(id: Long) = get(id, RedisPrefix.GUILD) as GuildConfig
     fun getUser(id: Long) = get(id, RedisPrefix.USER) as UserConfig
 
-    fun get(id: Long, redisPrefix: RedisPrefix): Configuration {
-        return (configs[id] ?: getOrDefault(id, redisPrefix)).also {
-            synchronized(accessedKeys) { accessedKeys.add(id) }
-        }
-    }
+    fun get(id: Long, redisPrefix: RedisPrefix) =
+        (configs[id] ?: getOrDefault(id, redisPrefix)).also { synchronized(accessedKeys) { accessedKeys.add(id) } }
 
-    private fun getOrDefault(id: Long, redisPrefix: RedisPrefix): Configuration {
-        val jsonString = sandra.redis["$redisPrefix$id"] ?: run {
-            val serialName = if (redisPrefix == RedisPrefix.GUILD) guildSerialName else userSerialName
-            """{"type":"$serialName","id":$id}"""
-        }
-        return json.decodeFromString<Configuration>(jsonString).also { configs[id] = it }
-    }
-
-    companion object {
-        private val guildSerialName = GuildConfig::class.findAnnotation<SerialName>()!!.value
-        private val userSerialName = UserConfig::class.findAnnotation<SerialName>()!!.value
-    }
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun getOrDefault(id: Long, redisPrefix: RedisPrefix) = (sandra.redis["$redisPrefix$id"]
+        ?.let { json.decodeFromString(ConfigSerializer, it) } ?: when (redisPrefix) {
+        RedisPrefix.GUILD -> GuildConfig(id)
+        RedisPrefix.USER -> UserConfig(id)
+        else -> throw AssertionError()
+    }).also { configs[id] = it }
 
 }
