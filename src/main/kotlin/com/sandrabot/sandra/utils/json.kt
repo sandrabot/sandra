@@ -16,9 +16,11 @@
 
 package com.sandrabot.sandra.utils
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 
+@OptIn(ExperimentalSerializationApi::class)
 fun Map<*, *>.toJson(json: Json = Json) = json.encodeToString(toJsonObject())
 
 fun Map<*, *>.toJsonObject(): JsonObject = JsonObject(map {
@@ -35,3 +37,9 @@ fun Any?.toJsonElement(): JsonElement = when (this) {
     is Array<*> -> JsonArray(this.map { it.toJsonElement() })
     else -> JsonPrimitive(this.toString()) // Or throw some "unsupported" exception?
 }
+
+fun JsonObject.obj(name: String): JsonObject? = get(name)?.escapeNull()?.jsonObject
+fun JsonObject.array(name: String): JsonArray? = get(name)?.escapeNull()?.jsonArray
+fun JsonObject.string(name: String): String? = get(name)?.escapeNull()?.jsonPrimitive?.contentOrNull
+
+fun JsonElement.escapeNull(): JsonElement? = if (this is JsonNull) null else this

@@ -47,7 +47,6 @@ dependencies {
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.5")
-    implementation("com.beust:klaxon:5.5")
     implementation("io.javalin:javalin:3.13.11")
     implementation("io.ktor:ktor-client-core:1.6.3")
     implementation("io.ktor:ktor-client-okhttp:1.6.3")
