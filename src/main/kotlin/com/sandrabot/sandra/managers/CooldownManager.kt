@@ -24,6 +24,7 @@ import com.sandrabot.sandra.entities.Cooldown
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hasPermissions
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -32,6 +33,7 @@ import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalSerializationApi::class)
 class CooldownManager(private val sandra: Sandra) {
 
     private val cooldowns: ExpiringMap<String, Cooldown> = ExpiringMap.builder()

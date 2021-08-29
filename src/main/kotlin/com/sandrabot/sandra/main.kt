@@ -25,6 +25,7 @@ import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.getResourceAsText
 import io.sentry.Sentry
 import io.sentry.dsn.Dsn
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -36,6 +37,7 @@ import kotlin.system.exitProcess
 
 fun main(args: Array<String>): Unit = bootstrap(args).let { if (it != 0) exitProcess(it) }
 
+@OptIn(ExperimentalSerializationApi::class)
 fun bootstrap(args: Array<String>): Int {
 
     val beginStartup = System.currentTimeMillis()

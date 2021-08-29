@@ -26,7 +26,6 @@ import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
-import com.sandrabot.sandra.managers.PatreonManager
 import com.sandrabot.sandra.services.PresenceService
 import com.sandrabot.sandra.utils.await
 import net.dv8tion.jda.api.EmbedBuilder
