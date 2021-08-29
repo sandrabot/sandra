@@ -20,7 +20,7 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.await
-import com.sandrabot.sandra.utils.duration
+import com.sandrabot.sandra.utils.toFormattedString
 import java.util.concurrent.TimeUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
@@ -28,15 +28,15 @@ import kotlin.time.toDuration
 @Suppress("unused")
 class Ping : Command(name = "ping", aliases = arrayOf("pong")) {
 
-    @ExperimentalTime
+    @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
 
         val restPing = event.jda.restPing.await()
-        val rest = duration(restPing.toDuration(TimeUnit.MILLISECONDS))
+        val rest = restPing.toDuration(TimeUnit.MILLISECONDS).toFormattedString()
         val formattedRest = if (restPing > 250) "${Emotes.WARN} $rest" else rest
 
         val websocketAverage = event.jda.gatewayPing
-        val websocket = duration(websocketAverage.toDuration(TimeUnit.MILLISECONDS))
+        val websocket = websocketAverage.toDuration(TimeUnit.MILLISECONDS).toFormattedString()
         val formattedWebsocket = if (websocketAverage > 250) "${Emotes.WARN} $websocket" else websocket
 
         event.replyInfo(event.translate("reply", formattedRest, formattedWebsocket))

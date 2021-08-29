@@ -71,6 +71,7 @@ buildConfig {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "16"
+compileKotlin.kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 
 fun runCommand(commands: List<String>): String {
     val stdout = ByteArrayOutputStream()
