@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.managers
 
-import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
@@ -25,11 +24,16 @@ import com.sandrabot.sandra.entities.Cooldown
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hasPermissions
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.Permission
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalSerializationApi::class)
 class CooldownManager(private val sandra: Sandra) {
 
     private val cooldowns: ExpiringMap<String, Cooldown> = ExpiringMap.builder()
@@ -39,15 +43,14 @@ class CooldownManager(private val sandra: Sandra) {
 
     init {
         val data = sandra.redis[RedisPrefix.SETTING + "cooldowns"] ?: "[]"
-        Klaxon().parseArray<Cooldown>(data)?.forEach {
+        Json.decodeFromString<List<Cooldown>>(data).forEach {
             cooldowns[it.cooldownKey] = it
             cooldowns.setExpiration(it.cooldownKey, it.remaining, TimeUnit.MILLISECONDS)
         }
     }
 
     fun shutdown() {
-        val data = Klaxon().toJsonString(cooldowns.values)
-        sandra.redis[RedisPrefix.SETTING + "cooldowns"] = data
+        sandra.redis[RedisPrefix.SETTING + "cooldowns"] = Json.encodeToString(cooldowns.values.toList())
     }
 
     fun applyCooldown(event: CommandEvent, duration: Int = event.command.cooldown): Boolean {

@@ -16,32 +16,37 @@
 
 package com.sandrabot.sandra.managers
 
-import com.beust.klaxon.Klaxon
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.blocklist.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Keeps track of blocked features and offence history.
  */
+@OptIn(ExperimentalSerializationApi::class)
 class BlocklistManager(private val sandra: Sandra) {
 
     private val entries = mutableMapOf<Long, BlocklistEntry>()
 
     init {
         val data = sandra.redis[RedisPrefix.SETTING + "blocklist"] ?: "[]"
-        Klaxon().parseArray<BlocklistEntry>(data)!!.forEach { entries[it.targetId] = it }
+        Json.decodeFromString<List<BlocklistEntry>>(data).forEach { entries[it.targetId] = it }
     }
 
     fun getEntry(targetId: Long): BlocklistEntry? = entries[targetId]
 
     fun shutdown() {
-        val data = Klaxon().toJsonString(entries.values)
-        sandra.redis[RedisPrefix.SETTING + "blocklist"] = data
+        sandra.redis[RedisPrefix.SETTING + "blocklist"] = Json.encodeToString(entries.values.toList())
     }
 
-    fun appendOffence(targetId: Long, targetType: TargetType, features: List<FeatureType>,
-                      expiresAt: Long, moderator: Long, automated: Boolean, reason: String) {
+    fun appendOffence(
+        targetId: Long, targetType: TargetType, features: List<FeatureType>,
+        expiresAt: Long, moderator: Long, automated: Boolean, reason: String
+    ) {
         val entry = if (targetId in entries) entries[targetId] else {
             BlocklistEntry(targetId, targetType, mutableListOf(), mutableListOf()).also {
                 entries[targetId] = it

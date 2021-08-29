@@ -16,12 +16,15 @@
 
 package com.sandrabot.sandra.entities.blocklist
 
+import kotlinx.serialization.Serializable
+
 private fun blockedFeature(entry: BlocklistEntry, featureType: FeatureType): BlockedFeature? {
     return synchronized(entry.blockedFeatures) {
         entry.blockedFeatures.find { it.feature == featureType }
     }
 }
 
+@Serializable
 data class BlocklistEntry(
         val targetId: Long,
         val targetType: TargetType,
@@ -58,14 +61,17 @@ data class BlocklistEntry(
 
 }
 
+@Serializable
 data class BlockedFeature(
         val feature: FeatureType, val expiresAt: Long, var notification: FeatureNotification? = null
 )
 
+@Serializable
 data class FeatureNotification(
         val timestamp: Long, val channel: Long, val message: Long
 )
 
+@Serializable
 data class BlocklistOffence(
         val features: List<FeatureType>, val moderator: Long,
         val timestamp: Long, val automated: Boolean, val reason: String

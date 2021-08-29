@@ -17,7 +17,6 @@ Sandra uses a range of tools and libraries to help deliver your experience.
 A few have been listed below, including what they are used for:
 * [JDA](https://github.com/DV8FromTheWorld/JDA) - Communicating with Discord
 * [Jedis](https://github.com/xetorthio/jedis) - Communicating with Redis
-* [Klaxon](https://github.com/cbeust/klaxon) - JSON Parsing and Object Mapping
 * [Javalin](https://javalin.io/) - Providing the Sandra API
 * [ExpiringMap](https://github.com/jhalterman/expiringmap) - Expiring Caches
 

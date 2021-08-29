@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
-/**
- * Keeps track of information needed in a cooldown context.
- */
 @Serializable
-data class Cooldown(val cooldownKey: String, val duration: Int) {
-
-    var attempts = 0
-    var isNotified = false
-    var startTime = System.currentTimeMillis()
-
-    val remaining: Long
-        get() = startTime + duration - System.currentTimeMillis()
-
+sealed class Configuration {
+    abstract val id: Long
+    var locale: Locale = Locale.DEFAULT
 }

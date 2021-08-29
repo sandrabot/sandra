@@ -16,9 +16,12 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.Serializable
+
 /**
  * This class is used to configure the redis manager.
  */
+@Serializable
 class RedisConfig {
 
     /**

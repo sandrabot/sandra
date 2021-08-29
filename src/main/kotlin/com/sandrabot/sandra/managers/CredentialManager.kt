@@ -16,9 +16,12 @@
 
 package com.sandrabot.sandra.managers
 
+import kotlinx.serialization.Serializable
+
 /**
  * This class keeps track of sensitive tokens and secrets used throughout the bot.
  */
+@Serializable
 data class CredentialManager(
 
         /* ========== Discord Tokens ========== */

@@ -16,12 +16,11 @@
 
 package com.sandrabot.sandra.services
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.json
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
 import com.sandrabot.sandra.utils.postBlocking
+import com.sandrabot.sandra.utils.toJson
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.internal.JDAImpl
@@ -46,15 +45,15 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         }
 
         // https://bots.ondiscord.xyz/bots/302915036492333067
-        val onDiscordData = json { obj("guildCount" to guilds.sum()) }
+        val onDiscordData = mapOf("guildCount" to guilds.sum())
         send(onDiscordUrl, sandra.credentials.bodToken, onDiscordData)
 
         // https://discord.boats/bot/302915036492333067
-        val boatData = json { obj("server_count" to guilds.sum()) }
+        val boatData = mapOf("server_count" to guilds.sum())
         send(boatUrl, sandra.credentials.boatToken, boatData)
 
         // https://top.gg/bot/302915036492333067
-        val topData = json { obj("shards" to guilds) }
+        val topData = mapOf("shards" to guilds)
         send(topGgUrl, sandra.credentials.topGgToken, topData)
 
         // https://botlist.space/bot/302915036492333067
@@ -64,20 +63,20 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         for (i in guilds.indices) {
 
             // https://discord.bots.gg/bots/302915036492333067
-            val botsGgData = json { obj("guildCount" to guilds[i], "shardCount" to guilds.size, "shardId" to i) }
+            val botsGgData = mapOf("guildCount" to guilds[i], "shardCount" to guilds.size, "shardId" to i)
             send(discordBotsUrl, sandra.credentials.dbgToken, botsGgData)
 
             // https://discordbotlist.com/bots/302915036492333067
-            val dblData = json { obj("voice_connections" to voice[i], "shard_id" to i, "guilds" to guilds[i]) }
+            val dblData = mapOf("voice_connections" to voice[i], "shard_id" to i, "guilds" to guilds[i])
             send(dblUrl, sandra.credentials.dblToken, dblData)
 
         }
 
     }
 
-    private fun send(url: String, token: String, data: JsonObject) {
+    private fun send(url: String, token: String, data: Map<String, Any>) {
         val route = url.replace("{}", Constants.APPLICATION_ID.toString())
-        postBlocking<Unit>(route, data.toJsonString()) { header("Authorization", token) }
+        postBlocking<Unit>(route, data.toJson()) { header("Authorization", token) }
     }
 
     companion object {

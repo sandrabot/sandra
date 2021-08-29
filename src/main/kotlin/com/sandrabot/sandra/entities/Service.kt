@@ -32,14 +32,14 @@ abstract class Service(private val period: Long) {
 
     protected abstract fun execute()
 
-    open fun start() = beginTask()
+    open fun start(initialDelay: Long = period) = beginTask(initialDelay)
     open fun shutdown() {
         task?.cancel(false)
     }
 
-    private fun beginTask() {
+    private fun beginTask(initialDelay: Long) {
         if (isRunning) shutdown()
-        task = executor.scheduleWithFixedDelay(::execute, period, period, TimeUnit.SECONDS)
+        task = executor.scheduleWithFixedDelay(::execute, initialDelay, period, TimeUnit.SECONDS)
     }
 
     companion object {

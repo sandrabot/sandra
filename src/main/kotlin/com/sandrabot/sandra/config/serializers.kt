@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.config
 
-interface Configuration
+import kotlinx.serialization.json.*
+
+object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
+    override fun selectDeserializer(element: JsonElement) = when {
+        "prefixes" in element.jsonObject -> GuildConfig.serializer()
+        else -> UserConfig.serializer()
+    }
+}
+
+object ConfigTransformer : JsonTransformingSerializer<Configuration>(ConfigSerializer) {
+    override fun transformSerialize(element: JsonElement): JsonElement =
+        JsonObject(element.jsonObject.filterNot { (k, _) -> k == "type" })
+}
