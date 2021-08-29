@@ -26,7 +26,7 @@ class Fortune : Command(name = "fortune") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.replyEmote(fortunes.random(), Unicode.CRYSTAL_BALL)
+        event.replyEmote(fortunes.random(), Unicode.FORTUNE_COOKIE)
 
     }
 

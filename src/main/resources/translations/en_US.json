@@ -72,6 +72,9 @@
       "side_heads": "heads",
       "side_tails": "tails"
     },
+    "fortune": {
+      "description": "Break open a fortune cookie to reveal your luck"
+    },
     "help": {
       "description": "View some basic quick-start information about the bot",
       "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",
