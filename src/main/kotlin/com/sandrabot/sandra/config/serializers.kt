@@ -27,5 +27,5 @@ object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Config
 
 object ConfigTransformer : JsonTransformingSerializer<Configuration>(ConfigSerializer) {
     override fun transformSerialize(element: JsonElement): JsonElement =
-        JsonObject(element.jsonObject.filterNot { (k, v) -> k == "type" })
+        JsonObject(element.jsonObject.filterNot { (k, _) -> k == "type" })
 }

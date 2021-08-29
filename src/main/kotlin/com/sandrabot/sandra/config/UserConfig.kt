@@ -16,14 +16,12 @@
 
 package com.sandrabot.sandra.config
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
  * Stores Sandra-specific properties and settings for users.
  */
 @Serializable
-@SerialName("user")
 class UserConfig(override val id: Long) : Configuration() {
 
     var credits: Long = 0

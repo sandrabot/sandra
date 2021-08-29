@@ -16,14 +16,12 @@
 
 package com.sandrabot.sandra.config
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
  * Stores Sandra-specific properties and settings for guilds.
  */
 @Serializable
-@SerialName("guild")
 class GuildConfig(override val id: Long) : Configuration() {
 
     val prefixes: MutableList<String> = mutableListOf()

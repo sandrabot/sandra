@@ -38,8 +38,8 @@ fun Any?.toJsonElement(): JsonElement = when (this) {
     else -> JsonPrimitive(this.toString()) // Or throw some "unsupported" exception?
 }
 
-fun JsonObject.obj(name: String): JsonObject? = get(name)?.escapeNull()?.jsonObject
-fun JsonObject.array(name: String): JsonArray? = get(name)?.escapeNull()?.jsonArray
-fun JsonObject.string(name: String): String? = get(name)?.escapeNull()?.jsonPrimitive?.contentOrNull
+fun JsonObject.obj(name: String): JsonObject? = get(name)?.escapeJsonNull()?.jsonObject
+fun JsonObject.array(name: String): JsonArray? = get(name)?.escapeJsonNull()?.jsonArray
+fun JsonObject.string(name: String): String? = get(name)?.escapeJsonNull()?.jsonPrimitive?.contentOrNull
 
-fun JsonElement.escapeNull(): JsonElement? = if (this is JsonNull) null else this
+fun JsonElement.escapeJsonNull(): JsonElement? = if (this is JsonNull) null else this
