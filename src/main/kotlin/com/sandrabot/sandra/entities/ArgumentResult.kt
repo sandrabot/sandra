@@ -17,8 +17,8 @@
 package com.sandrabot.sandra.entities
 
 import net.dv8tion.jda.api.entities.*
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
@@ -73,6 +73,6 @@ class ArgumentResult(val results: Map<String, Any>) {
 
     @OptIn(ExperimentalTime::class)
     fun duration(name: String = "duration"): Duration? =
-        get<Long>(name)?.toDuration(TimeUnit.SECONDS)
+        get<Long>(name)?.toDuration(DurationUnit.SECONDS)
 
 }

@@ -59,6 +59,7 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30) {
                     json.encodeToString(ConfigTransformer, configuration)
                 is UserConfig -> sandra.redis["${RedisPrefix.USER}$key"] =
                     json.encodeToString(ConfigTransformer, configuration)
+                else -> {}
             }
         }
     }

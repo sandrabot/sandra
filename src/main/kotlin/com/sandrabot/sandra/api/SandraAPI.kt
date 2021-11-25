@@ -32,7 +32,6 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
 
     private val api: Javalin = Javalin.create { config ->
         config.defaultContentType = "application/json"
-        config.logIfServerNotStarted = false
         config.showJavalinBanner = false
         if (sandra.development) config.enableDevLogging()
     }
