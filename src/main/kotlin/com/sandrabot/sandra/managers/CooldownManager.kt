@@ -61,7 +61,7 @@ class CooldownManager(private val sandra: Sandra) {
             return false
         }
         // Only attempt to notify when exceeding the cooldown the first time
-        val hasPermissions = hasPermissions(event, Permission.MESSAGE_WRITE, Permission.MESSAGE_EXT_EMOJI)
+        val hasPermissions = hasPermissions(event, Permission.MESSAGE_SEND, Permission.MESSAGE_EXT_EMOJI)
         if (++cooldown.attempts == 1 && hasPermissions) {
             val formattedDuration = (cooldown.remaining / 1000.0).format()
             event.replyEmote(event.translate("general.cooldown", false, formattedDuration), Emotes.TIME, {

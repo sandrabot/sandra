@@ -53,7 +53,7 @@ fun blocklistNotify(
         // The guildId should only be null if the context is not from a guild
         val guild = sandra.shards.getGuildById(guildId ?: return) ?: return
         // If this channel is in a guild, make sure we have permissions to even continue
-        if (!guild.selfMember.hasPermission(Permission.MESSAGE_WRITE)) return
+        if (!guild.selfMember.hasPermission(Permission.MESSAGE_SEND)) return
         guild.name.sanitize() to sandra.config.getGuild(guildId).locale
     } else {
         val user = sandra.shards.getUserById(userId) ?: return

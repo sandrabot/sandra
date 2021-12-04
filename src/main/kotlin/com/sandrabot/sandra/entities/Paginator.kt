@@ -200,7 +200,7 @@ class Paginator(
         private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE)
 
         private val requiredPermissions = arrayOf(
-            Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY
+            Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY
         )
     }
 

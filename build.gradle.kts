@@ -42,7 +42,7 @@ dependencies {
     listOf("stdlib", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:4.3.0_348") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.2") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }

@@ -47,7 +47,7 @@ class CommandListener {
         if (isFromGuild) {
             when {
                 // Check for basic permissions we might need to reply
-                missingPermission(event, Permission.MESSAGE_WRITE) -> {
+                missingPermission(event, Permission.MESSAGE_SEND) -> {
                     if (hasPermission(event, Permission.MESSAGE_ADD_REACTION)) {
                         event.message.addReaction(Unicode.SPEAK_NO_EVIL).queue()
                     } else logger.info("Cannot execute command: Missing MESSAGE_WRITE")

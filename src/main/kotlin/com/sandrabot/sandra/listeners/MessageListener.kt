@@ -22,7 +22,7 @@ import com.sandrabot.sandra.utils.getPrefixUsed
 import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent
 import org.slf4j.LoggerFactory
 
 /**
@@ -57,7 +57,8 @@ class MessageListener(private val sandra: Sandra) {
     }
 
     @Suppress("unused")
-    fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
+    fun onMessageUpdate(event: MessageUpdateEvent) {
+        if (!event.isFromGuild) return
         val message = event.message
         // Once again ignore messages from bots or webhooks
         if (event.author.isBot || message.isWebhookMessage) return
