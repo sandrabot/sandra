@@ -59,12 +59,12 @@ class Help : Command(
             } ?: maybeCommand
 
             // Begin putting the embed together, starting with the command path and category
-            val author = "${command.path.replace(':', ' ')} • ${command.category.name.lowercase()}"
+            val author = "${command.path.replace('/', ' ')} • ${command.category.name.lowercase()}"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
             embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
-            val descriptionPath = "commands.${command.path.replace(':', '.')}.description"
+            val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
             val descriptionValue = "> ${event.translate(descriptionPath, false)}"
             embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
             // Display a field listing the aliases if there are any

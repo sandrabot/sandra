@@ -48,7 +48,7 @@ abstract class Command(
         var currentCommand = this
         val builder = StringBuilder()
         do {
-            builder.insert(0, currentCommand.name + ":")
+            builder.insert(0, currentCommand.name + '/')
             currentCommand = currentCommand.parent ?: break
         } while (true)
         builder.substring(0, builder.lastIndex)
