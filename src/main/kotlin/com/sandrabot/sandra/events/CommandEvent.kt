@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 
 class CommandEvent(
-    val sandra: Sandra, val event: SlashCommandEvent, val command: Command, val args: String
+    val sandra: Sandra, val event: SlashCommandEvent, val command: Command
 ) {
 
     val jda: JDA get() = event.jda
@@ -53,7 +53,7 @@ class CommandEvent(
     val commandPath: String = command.path
     val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
-    val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, args) }
+    val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, "") }
     val guildConfig: GuildConfig? by lazy { guild?.let { sandra.config.getGuild(it.idLong) } }
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }

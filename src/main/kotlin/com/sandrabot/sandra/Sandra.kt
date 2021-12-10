@@ -93,7 +93,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
         // Register event listeners using our event manager
         // The ready listener will remove itself after startup finishes
-        eventManager.register(MessageListener(this), CommandListener(), eventWaiter, ReadyListener(this))
+        eventManager.register(MessageListener(this), CommandListener(this), eventWaiter, ReadyListener(this))
 
         // Block the thread until the first shard signs in
         shards = builder.build()

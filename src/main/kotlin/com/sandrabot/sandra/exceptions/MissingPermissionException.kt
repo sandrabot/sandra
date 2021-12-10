@@ -19,6 +19,8 @@ package com.sandrabot.sandra.exceptions
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.Permission
 
-class MissingPermissionException(val event: CommandEvent, val permission: Permission): RuntimeException(
-        "Missing permission $permission in ${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
+class MissingPermissionException(val event: CommandEvent, val permission: Permission) : RuntimeException(
+    "Missing permission $permission in ${event.channel.name} [${event.channel.id}] | " + if (event.guild != null) {
+        "${event.guild.name} [${event.guild.id}]"
+    } else "direct message"
 )
