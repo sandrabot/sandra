@@ -18,6 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
+import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
@@ -77,7 +78,7 @@ class CommandListener {
             return
         }
 
-        if (command.ownerOnly && !event.isOwner) {
+        if (command.category == Category.OWNER && !event.isOwner) {
             event.replyError(event.translate("general.owner_only", false))
             return
         }

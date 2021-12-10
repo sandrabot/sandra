@@ -38,7 +38,7 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
                 return
             }
 
-            if (maybeCommand.ownerOnly || maybeCommand.category == Category.CUSTOM) {
+            if (maybeCommand.category == Category.OWNER || maybeCommand.category == Category.CUSTOM) {
                 event.replyError(event.translate("not_found"))
                 return
             }

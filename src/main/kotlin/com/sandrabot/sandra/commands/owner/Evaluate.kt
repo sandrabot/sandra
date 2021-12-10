@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.commands.utility
+package com.sandrabot.sandra.commands.owner
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
@@ -41,7 +41,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 @Suppress("unused")
-class Evaluate : Command(name = "eval", guildOnly = true, ownerOnly = true) {
+class Evaluate : Command(name = "eval", guildOnly = true) {
 
     private val engineContext = SupervisorJob() + Dispatchers.IO
     private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
