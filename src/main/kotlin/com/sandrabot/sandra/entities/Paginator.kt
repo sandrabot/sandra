@@ -29,7 +29,6 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import java.util.concurrent.TimeUnit
@@ -88,12 +87,11 @@ class Paginator(
         }
         buttons.add(destroyButton)
 
-        // Finally send the paginator message as a reply
-        event.message.reply(messages[currentPage])
-            .setActionRows(ActionRow.of(buttons)).queue {
-                messageId = it.idLong
-                waitForButton()
-            }
+        // Finally, send the paginator message as a reply
+        event.sendMessage(messages[currentPage]).addActionRow(buttons).queue {
+            messageId = it.idLong
+            waitForButton()
+        }
     }
 
     private fun renderMessages(pages: List<MessageEmbed>) {
@@ -119,9 +117,9 @@ class Paginator(
 
     private fun verifyButton(buttonEvent: ButtonClickEvent): Boolean {
         // Never process a button event that doesn't belong to our message
-        if (buttonEvent.message?.idLong != messageId) return false
+        if (buttonEvent.message.idLong != messageId) return false
         // If the user is not the author, only acknowledge it
-        return if (event.author.idLong != buttonEvent.user.idLong) {
+        return if (event.user.idLong != buttonEvent.user.idLong) {
             buttonEvent.deferEdit().queue()
             false
         } else when (buttonEvent.componentId) {
@@ -157,7 +155,7 @@ class Paginator(
 
     private fun updateMessage(buttonEvent: ButtonClickEvent) {
         // The message will never be ephemeral
-        val buttons = buttonEvent.message!!.buttons
+        val buttons = buttonEvent.message.buttons
         // Update the buttons depending on the current page
         val previousIndex = buttons.indexOfFirst { it.id == previousButtonId }
         buttons[previousIndex] = buttons[previousIndex].withDisabled(currentPage == 0)
@@ -165,7 +163,7 @@ class Paginator(
         buttons[nextIndex] = buttons[nextIndex].withDisabled(currentPage == messages.lastIndex)
         // Update the message either way, even if the event was acknowledged
         val action = if (buttonEvent.isAcknowledged) {
-            event.channel.editMessageById(messageId, messages[currentPage]).setActionRow(buttons)
+            event.hook.editMessageById(messageId, messages[currentPage]).setActionRow(buttons)
         } else buttonEvent.editMessage(messages[currentPage]).setActionRow(buttons)
         action.queue { waitForButton() }
     }
