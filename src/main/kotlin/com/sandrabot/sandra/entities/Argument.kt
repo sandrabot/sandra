@@ -17,14 +17,8 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.removeExtraSpaces
 import com.sandrabot.sandra.utils.splitSpaces
-import kotlinx.coroutines.runBlocking
-import me.xdrop.fuzzywuzzy.FuzzySearch
-import net.dv8tion.jda.api.entities.IMentionable
-import net.dv8tion.jda.api.entities.Role
-import net.dv8tion.jda.api.entities.VoiceChannel
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -67,7 +61,7 @@ class Argument internal constructor(
  * If a name isn't supplied, it will default to the name of the type.
  * If multiple tokens have the same type, they must be named differently
  *  to indicate clearly which token is being referred to.
- * All letters are case insensitive, however the name will always be converted to lowercase.
+ * All letters are case-insensitive, however the name will always be converted to lowercase.
  *
  *  * The `@` denotes the token as a required argument.
  *  * The name can be used to describe the argument in usage prompts.
@@ -150,8 +144,8 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
     for (arg in arguments) {
         if (remaining.get().isBlank()) break
         val result: List<Any> = when (arg.type) {
-            ArgumentType.USER, ArgumentType.CHANNEL, ArgumentType.EMOTE,
-            ArgumentType.ROLE, ArgumentType.VOICE -> parseSnowflake(event, remaining, arg)
+            /*ArgumentType.USER, ArgumentType.CHANNEL, ArgumentType.EMOTE,
+            ArgumentType.ROLE, ArgumentType.VOICE -> parseSnowflake(event, remaining, arg)*/
             ArgumentType.COMMAND -> parseCommand(event, remaining, arg)
             ArgumentType.DURATION -> parseDuration(remaining, arg)
             ArgumentType.DIGIT -> parseDigit(remaining, arg)
@@ -165,10 +159,6 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
         if (result.isNotEmpty()) parsedArguments[arg.name] = if (arg.isArray) result else result.first()
     }
 
-    // Check for and enforce any missing required arguments
-    arguments.firstOrNull { it.isRequired && it.name !in parsedArguments }
-        ?.let { throw MissingArgumentException(event, it) }
-
     return ArgumentResult(parsedArguments)
 }
 
@@ -177,7 +167,8 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
 /**
  * Parses argument types USER, CHANNEL, VOICE, ROLE, and EMOTE
  */
-private fun parseSnowflake(
+// TODO Figure out what to do with this
+/*private fun parseSnowflake(
     event: CommandEvent, remaining: AtomicReference<String>, argument: Argument
 ): List<IMentionable> {
     val parsedValues = mutableListOf<IMentionable>()
@@ -195,13 +186,13 @@ private fun parseSnowflake(
     if (snowflakes.isNotEmpty()) for (match in regex.findAll(remaining.get())) {
         // Add the match to the parsed values if the id matches a snowflake of the requested type
         snowflakes.firstOrNull { match.groupValues[1] == it.id }?.also { parsedValues.add(it) } ?: continue
-        // If we reach this line, the mention was validated and we need to remove the matched text
+        // If we reach this line the mention was validated, and we need to remove the matched text
         remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
         if (!argument.isArray) break
     }
     // If no mentions were found or this is an array, additionally search for ids
     if (parsedValues.isEmpty() || argument.isArray) {
-        // Find all of the ids at once to properly skip invalid matches
+        // Find all the ids at once to properly skip invalid matches
         for (match in idRegex.findAll(remaining.get())) {
             // Validate that the id found is the same type as the requested type
             when (argument.type) {
@@ -213,7 +204,7 @@ private fun parseSnowflake(
                 ArgumentType.EMOTE -> event.guild.getEmoteById(match.value)
                 else -> throw AssertionError("you should never see this")
             }?.also { parsedValues.add(it) } ?: continue
-            // If we reach this line, the id was validated and we need to remove the matched text
+            // If we reach this line the id was validated, and we need to remove the matched text
             remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
             if (!argument.isArray) break
         }
@@ -237,7 +228,7 @@ private fun parseSnowflake(
         } while (argument.isArray)
     }
     return parsedValues.distinct()
-}
+}*/
 
 /**
  * Parses argument type DURATION
