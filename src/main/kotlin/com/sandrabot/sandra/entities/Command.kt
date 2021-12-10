@@ -27,7 +27,7 @@ abstract class Command(
     val name: String,
     arguments: String = "",
     val guildOnly: Boolean = false,
-    val botPermissions: Array<Permission> = emptyArray(),
+    val requiredPermissions: Array<Permission> = emptyArray(),
     val userPermissions: Array<Permission> = emptyArray()
 ) {
 

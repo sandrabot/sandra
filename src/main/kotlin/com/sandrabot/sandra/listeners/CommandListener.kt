@@ -60,7 +60,7 @@ class CommandListener {
                 }
             }
             // Ensure the command permission requirements are met
-            for (permission in command.botPermissions) {
+            for (permission in command.requiredPermissions) {
                 if (missingPermission(event, permission)) {
                     event.replyError(missingSelfMessage(event, permission))
                     return
