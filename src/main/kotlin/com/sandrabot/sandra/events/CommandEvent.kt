@@ -68,10 +68,12 @@ class CommandEvent(
     fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 
     fun reply(message: String) = event.reply(message)
+    fun reply(message: Message) = event.reply(message)
     fun reply(embed: MessageEmbed) = event.replyEmbeds(embed)
     fun reply(vararg embeds: MessageEmbed) = event.replyEmbeds(embeds.asList())
 
     fun sendMessage(message: String) = event.hook.sendMessage(message)
+    fun sendMessage(message: Message) = event.hook.sendMessage(message)
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(vararg embeds: MessageEmbed) = event.hook.sendMessageEmbeds(embeds.asList())
 

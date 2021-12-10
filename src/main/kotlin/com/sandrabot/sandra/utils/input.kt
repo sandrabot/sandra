@@ -31,14 +31,14 @@ fun inputAction(
     event: CommandEvent, message: Message,
     timeout: Long = 2, unit: TimeUnit = TimeUnit.MINUTES,
     expired: (() -> Unit)? = null, consumer: (MessageReceivedEvent) -> Boolean
-) = event.reply(message, { promptMessage ->
+) = event.sendMessage(message).queue { promptMessage ->
     event.sandra.eventWaiter.waitForEvent(
         MessageReceivedEvent::class, timeout, unit,
         expired = {
             promptMessage.delete().queue()
             if (expired != null) expired()
         }, test = {
-            it.author == event.author && it.channel == event.channel
+            it.author == event.user && it.channel == event.channel
         }, action = { messageEvent ->
             promptMessage.delete().queue()
             consumer(messageEvent).also { shouldDelete ->
@@ -46,7 +46,7 @@ fun inputAction(
             }
         }
     )
-})
+}
 
 fun promptAction(
     event: CommandEvent, prompt: String, emote: String = Emotes.PROMPT,
