@@ -22,7 +22,6 @@ object Constants {
 
     const val APPLICATION_ID = 302915036492333067L
     const val PATREON_CAMPAIGN = 1386347
-    const val DEFAULT_COOLDOWN = 2000
 
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L

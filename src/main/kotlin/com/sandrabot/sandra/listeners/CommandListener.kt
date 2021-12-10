@@ -37,12 +37,6 @@ class CommandListener {
         // Check the blocklist to prevent processing in active contexts
         if (checkCommandBlocklist(event)) return
 
-        // Owners are exempt from cooldowns
-        if (event.command.cooldown > 0 && !event.isOwner) {
-            // Apply the cooldown and return if active
-            if (event.sandra.cooldowns.applyCooldown(event)) return
-        }
-
         // Do additional checks for guilds, mostly permission checks
         if (isFromGuild) {
             when {

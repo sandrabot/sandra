@@ -57,7 +57,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
     val commands = CommandManager(this)
-    val cooldowns = CooldownManager(this)
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
     val locales = LocaleManager()
@@ -140,7 +139,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         if (apiEnabled) api.shutdown()
         shards.shutdown()
         blocklist.shutdown()
-        cooldowns.shutdown()
         config.shutdown()
         redis.shutdown()
 

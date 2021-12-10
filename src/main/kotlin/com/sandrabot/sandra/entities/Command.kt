@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.removeExtraSpaces
 import com.sandrabot.sandra.utils.splitSpaces
@@ -30,8 +29,6 @@ abstract class Command(
     arguments: String = "",
     val guildOnly: Boolean = false,
     val ownerOnly: Boolean = false,
-    val cooldown: Int = Constants.DEFAULT_COOLDOWN,
-    val cooldownScope: CooldownScope = CooldownScope.USER,
     val botPermissions: Array<Permission> = emptyArray(),
     val userPermissions: Array<Permission> = emptyArray()
 ) {

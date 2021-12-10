@@ -62,13 +62,6 @@ class CommandEvent(
 
     val commandPath: String = command.path
     val isOwner: Boolean = author.idLong in Constants.DEVELOPERS
-    val cooldownKey: String = when (command.cooldownScope) {
-        CooldownScope.USER -> "U:${author.id}|${commandPath}"
-        CooldownScope.CHANNEL -> "C:${channel.id}|${commandPath}"
-        CooldownScope.GUILD -> "G:${guild.id}|${commandPath}"
-        CooldownScope.SHARD -> "S:${jda.shardInfo.shardId}|${commandPath}"
-        CooldownScope.COMMAND -> "C:${commandPath}"
-    }
 
     val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, args) }
     val guildConfig: GuildConfig by lazy { sandra.config.getGuild(guild.idLong) }
