@@ -17,9 +17,6 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.getPrefixUsed
-import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
@@ -48,11 +45,8 @@ class MessageListener(private val sandra: Sandra) {
             if (handleAntiAdvertising(event)) return
         }
 
-        // If this message is a command we'll want to know about it later
-        val isCommand = handleCommand(event)
-
         // Handle specific features for where the message was sent
-        if (event.isFromGuild) handleGuildMessage(event, isCommand) else handlePrivateMessage(event)
+        if (event.isFromGuild) handleGuildMessage(event) else handlePrivateMessage(event)
 
     }
 
@@ -65,7 +59,7 @@ class MessageListener(private val sandra: Sandra) {
         // TODO Recheck the message for invites and handle anti-advertise
     }
 
-    private fun handleGuildMessage(event: MessageReceivedEvent, isCommand: Boolean) {
+    private fun handleGuildMessage(event: MessageReceivedEvent) {
         // TODO Feature: Sever Experience
         // TODO Feature: Global Experience
         // TODO Feature: Message Replies
@@ -83,32 +77,6 @@ class MessageListener(private val sandra: Sandra) {
     private fun handleAntiAdvertising(event: MessageReceivedEvent): Boolean {
         // TODO Check the message for any foreign invites and delete them
         return false
-    }
-
-    private fun handleCommand(event: MessageReceivedEvent): Boolean {
-        val content = event.message.contentRaw
-        // Check if the message with a default or custom prefix
-        val prefixUsed = getPrefixUsed(sandra, content, event.guild) ?: return false
-
-        // Remove the prefix and isolate the first word
-        val trimmedContent = content.substringAfter(prefixUsed).trim()
-        val contentParts = trimmedContent.splitSpaces(2)
-        val commandName = contentParts[0].lowercase()
-
-        // Check if the first word is a command that exists
-        val command = sandra.commands[commandName] ?: return false
-
-        var args = if (contentParts.size == 1) "" else contentParts[1]
-        // Check to see if a subcommand is being used
-        val maybeSubcommand = if (args.isNotEmpty()) {
-            command.findChild(args).also { args = it.second }.first ?: command
-        } else command
-
-        // Fire the command through our event system so the command is actually handled
-        val commandEvent = CommandEvent(sandra, event, maybeSubcommand, args)
-        sandra.eventManager.handleEvent(commandEvent)
-
-        return true
     }
 
     companion object {
