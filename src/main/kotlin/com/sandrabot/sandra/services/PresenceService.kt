@@ -83,14 +83,13 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
     }
 
     private fun parseActivity(name: String): String {
-        val parsed = name.replace("{prefix}", sandra.prefix)
-        return parsed.replace("{servers}", "%,d".format(sandra.shards.guildCache.size()))
+        return name.replace("{servers}", "%,d".format(sandra.shards.guildCache.size()))
     }
 
     companion object {
         private val developmentActivity = Activity.streaming("sandrabot.com", Constants.TWITCH)
-        private val serverActivity = Activity.watching("{servers} servers | {prefix}help")
-        private val websiteActivity = Activity.playing("sandrabot.com | {prefix}help")
+        private val serverActivity = Activity.watching("{servers} servers | /help")
+        private val websiteActivity = Activity.playing("sandrabot.com | /help")
     }
 
 }

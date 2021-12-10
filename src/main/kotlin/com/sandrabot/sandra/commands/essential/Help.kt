@@ -38,12 +38,12 @@ class Help : Command(
             // The user may potentially be looking for a subcommand
             val maybeCommand = event.arguments.command() ?: run {
                 // The command couldn't be found with the given arguments
-                event.replyError(event.translate("not_found", event.sandra.prefix))
+                event.replyError(event.translate("not_found"))
                 return
             }
 
             if (maybeCommand.ownerOnly || maybeCommand.category == Category.CUSTOM) {
-                event.replyError(event.translate("not_found", event.sandra.prefix))
+                event.replyError(event.translate("not_found"))
                 return
             }
 
@@ -69,9 +69,9 @@ class Help : Command(
             embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
             // Display a field listing the aliases if there are any
             if (command.aliases.isNotEmpty()) {
-                // Combine all of the aliases into a string to be displayed
+                // Combine all the aliases into a string to be displayed
                 val join = command.aliases.joinToString(
-                    separator = "**, **${event.sandra.prefix}", prefix = "**${event.sandra.prefix}", postfix = "**"
+                    separator = "**, **/", prefix = "**/", postfix = "**"
                 )
                 val aliasesValue = "> ${event.translate("you_can_use")} $join"
                 embed.addField("${Emotes.COMMANDS} ${event.translate("aliases_title")}", aliasesValue, false)
@@ -80,7 +80,7 @@ class Help : Command(
             if (command.arguments.isNotEmpty()) {
                 // Combine all of the arguments into a string to be displayed
                 val join = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **${event.sandra.prefix}${command.name}** $join"
+                val usageValue = "> **/${command.name}** $join"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))
@@ -95,7 +95,7 @@ class Help : Command(
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
         val configureContent = lang.translate("configure_content", Website.DASHBOARD)
-        val commandsContent = lang.translate("commands_content", event.sandra.prefix)
+        val commandsContent = lang.translate("commands_content")
         val inviteContent = lang.translate("invite_content", Constants.DIRECT_INVITE)
         val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
         embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)

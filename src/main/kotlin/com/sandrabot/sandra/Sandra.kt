@@ -50,13 +50,12 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
     val color = if (development) Colors.RED else Colors.BLURPLE
-    val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
 
     val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
-    val commands = CommandManager(this)
+    val commands = CommandManager()
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
     val locales = LocaleManager()
@@ -102,7 +101,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val self = shards.shardCache.first().selfUser
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
 
-        commands.setMentionPrefixes(self.id)
         if (apiEnabled) api.start()
 
     }

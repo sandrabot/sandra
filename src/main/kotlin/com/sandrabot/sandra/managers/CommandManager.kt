@@ -16,16 +16,13 @@
 
 package com.sandrabot.sandra.managers
 
-import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Command
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
 
-class CommandManager(sandra: Sandra) {
+class CommandManager {
 
-    // Messages cannot start with spaces, so these placeholders require no special handling
-    val prefixes = arrayOf(sandra.prefix, " ", " ")
     val commands: MutableList<Command>
 
     val size: Int
@@ -44,13 +41,6 @@ class CommandManager(sandra: Sandra) {
         }.toMutableList()
         val childrenSum = commands.sumOf { it.children.size }
         logger.info("Successfully loaded ${commands.size} commands with $childrenSum children")
-    }
-
-    // We need to set the mentions after the bot has signed in because we don't know
-    // which account we are signing in to, while also loading the commands beforehand
-    fun setMentionPrefixes(botId: String) {
-        prefixes[1] = "<@$botId>"
-        prefixes[2] = "<@!$botId>"
     }
 
     operator fun get(name: String): Command? = commands.firstOrNull {

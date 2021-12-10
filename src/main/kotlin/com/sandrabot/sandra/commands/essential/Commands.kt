@@ -43,7 +43,7 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
             builder.append(category.emote).append(" __**").append(category.displayName)
             builder.append(" ").append(event.translate("command_title")).append("**__\n")
             for (command in list) {
-                builder.append("`").append(event.sandra.prefix).append(command.name).append("` - ")
+                builder.append("`/").append(command.name).append("` - ")
                 builder.append(event.translate("commands.${command.name}.description", false)).append("\n")
                 // Wrap the list of commands into pages
                 if (++commandsWritten % 20 == 0) {
@@ -58,7 +58,7 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
         // Wrap any remaining text to another page
         if (builder.isNotBlank()) descriptionPages.add(builder.toString())
         val embed = event.embed.setTitle(event.translate("commands.help.extra_help", false), Constants.DIRECT_SUPPORT)
-        embed.setFooter(event.translate("more_information", event.sandra.prefix))
+        embed.setFooter(event.translate("more_information"))
         Paginator(event).paginate(descriptionPages.map { embed.setDescription(it).build() })
 
     }
