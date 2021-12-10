@@ -51,12 +51,12 @@ fun Duration.toFormattedString(): String = toString().replace(digitRegex, "**$0*
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
-fun findLocale(guildConfig: GuildConfig, userConfig: UserConfig): Locale {
-    return if (userConfig.locale == Locale.DEFAULT) {
-        if (guildConfig.locale == Locale.DEFAULT) {
-            Locale.DEFAULT
-        } else guildConfig.locale
-    } else userConfig.locale
+fun findLocale(guildConfig: GuildConfig?, userConfig: UserConfig): Locale {
+    return when {
+        guildConfig == null -> userConfig.locale
+        userConfig.locale != Locale.DEFAULT -> userConfig.locale
+        else -> guildConfig.locale
+    }
 }
 
 fun hastebin(text: String): String? {

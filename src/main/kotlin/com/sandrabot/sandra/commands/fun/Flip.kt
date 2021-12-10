@@ -27,10 +27,10 @@ class Flip : Command(name = "flip") {
     override suspend fun execute(event: CommandEvent) {
 
         if (event.userConfig.credits <= 0) {
-            event.replyEmote(event.translate("no_credits"), Emotes.CREDIT)
+            event.replyEmote(event.translate("no_credits"), Emotes.CREDIT).queue()
         } else {
             val (emote, side) = if (Random.nextBoolean()) Emotes.CREDIT to "heads" else Emotes.TAILS to "tails"
-            event.replyEmote(event.translate("reply", event.localeContext.get("side_$side", true)), emote)
+            event.replyEmote(event.translate("reply", event.localeContext.get("side_$side", true)), emote).queue()
         }
 
     }

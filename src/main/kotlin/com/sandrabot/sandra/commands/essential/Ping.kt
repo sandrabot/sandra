@@ -39,7 +39,7 @@ class Ping : Command(name = "ping") {
         val websocket = websocketAverage.toDuration(DurationUnit.MILLISECONDS).toFormattedString()
         val formattedWebsocket = if (websocketAverage > 250) "${Emotes.WARN} $websocket" else websocket
 
-        event.replyInfo(event.translate("reply", formattedRest, formattedWebsocket))
+        event.replyInfo(event.translate("reply", formattedRest, formattedWebsocket)).queue()
 
     }
 

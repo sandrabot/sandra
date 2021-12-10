@@ -19,20 +19,21 @@ package com.sandrabot.sandra.commands.owner
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
-import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
 import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.hastebin
 import com.sandrabot.sandra.utils.toFormattedString
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
-import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
@@ -67,18 +68,19 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
     override suspend fun execute(event: CommandEvent) {
 
         if (event.args.isEmpty()) {
-            event.reply("you forgot to include the script")
+            event.reply("you forgot to include the script").queue()
             return
         }
 
         // Create a map of the variables we might want
         val bindings = listOf(
             Triple("event", event, CommandEvent::class),
-            Triple("author", event.author, User::class),
+            Triple("user", event.user, User::class),
             Triple("member", event.member, Member::class),
             Triple("channel", event.textChannel, TextChannel::class),
             Triple("guild", event.guild, Guild::class),
-            Triple("id", event.guild.id, String::class),
+            // This command can only be used within guilds, so guild will never be null
+            Triple("id", event.guild!!.id, String::class),
             Triple("gc", event.guildConfig, GuildConfig::class),
             Triple("uc", event.userConfig, UserConfig::class),
             Triple("sandra", event.sandra, Sandra::class),
@@ -91,7 +93,7 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
         // Insert them into the script engine
         bindings.forEach { engine.put(it.first, it.second) }
 
-        // Prepend the variables to the script so we don't have to use bindings["name"]
+        // Prepend the variables to the script, so we don't have to use bindings["name"]
         val variables = bindings.joinToString("\n", postfix = "\n\n") {
             """val ${it.first} = bindings["${it.first}"] as ${it.third.qualifiedName}"""
         }
@@ -104,10 +106,10 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
         val additionalImports = importLines.joinToString("\n", postfix = "\n\n")
         val script = strippedScript.lines().filterNot { it in importLines }.joinToString("\n")
 
-        // Wait for the message to send so we can edit it later
-        val message = event.channel.sendMessage("${Emotes.SPIN} hold on while i crunch the numbers...").await()
+        // Defer the reply so we can actually reply later
+        event.deferReply().queue()
         val handler = CoroutineExceptionHandler { _, throwable ->
-            handleResult(message, "**unknown** with unhandled exception", throwable.stackTraceToString())
+            handleResult(event, "**unknown** with unhandled exception", throwable.stackTraceToString())
         }
 
         // Measure how long it takes to evaluate the script
@@ -124,25 +126,25 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
 
         val duration = timedResult.duration.toFormattedString()
         val result = timedResult.value?.toString() ?: run {
-            message.editMessage("evaluated in $duration with no returns").queue()
+            event.sendMessage("evaluated in $duration with no returns").queue()
             return
         }
-        handleResult(message, duration, result)
+        handleResult(event, duration, result)
 
     }
 
-    private fun handleResult(message: Message, duration: String, result: String) {
+    private fun handleResult(event: CommandEvent, duration: String, result: String) {
         // Check the result length, if it's too large attempt to upload it to hastebin
         val formatted = "evaluated in $duration\n```\n$result\n```"
         if (formatted.length > 2000) {
             // If the upload failed print it to stdout
             val hastebin = hastebin(result) ?: run {
-                message.editMessage("upload failed, result was logged").queue()
+                event.sendMessage("upload failed, result was logged").queue()
                 logger.info("Evaluation result failed to upload:\n$result")
                 return
             }
-            message.editMessage("evaluated in $duration $hastebin").queue()
-        } else message.editMessage(formatted).queue()
+            event.sendMessage("evaluated in $duration $hastebin").queue()
+        } else event.sendMessage(formatted).queue()
     }
 
     companion object {

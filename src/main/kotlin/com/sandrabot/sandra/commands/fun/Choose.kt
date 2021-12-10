@@ -29,7 +29,7 @@ class Choose : Command(name = "choose", arguments = "[@choices:word*]") {
 
         val list = event.arguments.array<String>("choices")!!
         val reply = event.translate("reply", list.size.format(), list.random().sanitize().take(50))
-        event.reply(Unicode.SCALES + Unicode.VERTICAL_LINE + reply)
+        event.replyEmote(reply, Unicode.SCALES).queue()
 
     }
 

@@ -30,7 +30,7 @@ class Feedback : Command(name = "feedback") {
 
         val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("button_label"))
         val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
-        event.message.reply(reply).setActionRow(button).queue()
+        event.reply(reply).addActionRow(button).setEphemeral(true).queue()
 
     }
 

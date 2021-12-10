@@ -26,13 +26,13 @@ class MemberCount : Command(name = "membercount", guildOnly = true) {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val memberCount = event.guild.memberCount
+        val memberCount = event.guild!!.memberCount
         val botCount = event.guild.memberCache.count { it.user.isBot }
         val humanCount = memberCount - botCount
 
-        event.translate(
-            "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
-        ).let { event.replyInfo(it) }
+        // This is a *stylistic* choice :)
+        val args = arrayOf(event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format())
+        event.replyInfo(event.translate("reply", *args)).queue()
 
     }
 

@@ -34,12 +34,12 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
             // The user may potentially be looking for a subcommand
             val maybeCommand = event.arguments.command() ?: run {
                 // The command couldn't be found with the given arguments
-                event.replyError(event.translate("not_found"))
+                event.replyError(event.translate("not_found")).queue()
                 return
             }
 
             if (maybeCommand.category == Category.OWNER || maybeCommand.category == Category.CUSTOM) {
-                event.replyError(event.translate("not_found"))
+                event.replyError(event.translate("not_found")).queue()
                 return
             }
 
@@ -49,7 +49,7 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
                     if (maybeCommand.children.isEmpty()) return@run maybeCommand
                     // Otherwise, display a list of the available subcommands for this command
                     val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
-                    event.replyError(event.translate("available_subcommands", joined))
+                    event.replyError(event.translate("available_subcommands", joined)).queue()
                     return
                 }
             } ?: maybeCommand
@@ -72,7 +72,7 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))
             }
-            event.reply(embed.build())
+            event.reply(embed.build()).queue()
             return
         }
 
@@ -90,7 +90,7 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
         embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
         embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
 
-        event.reply(embed.build())
+        event.reply(embed.build()).queue()
 
     }
 

@@ -30,7 +30,7 @@ class LocaleContext(
     val root: String? = null
 ) {
 
-    constructor(sandra: Sandra, guildConfig: GuildConfig, userConfig: UserConfig, root: String? = null) :
+    constructor(sandra: Sandra, guildConfig: GuildConfig?, userConfig: UserConfig, root: String? = null) :
             this(sandra, findLocale(guildConfig, userConfig), root)
 
     /**

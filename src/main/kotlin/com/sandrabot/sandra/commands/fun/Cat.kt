@@ -18,7 +18,6 @@ package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.httpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -30,11 +29,11 @@ import kotlinx.coroutines.withContext
 class Cat : Command(name = "cat") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.channel.sendTyping().await()
+        event.deferReply().queue()
         val response = httpClient.get<HttpResponse>("https://cataas.com/cat")
         if (response.status != HttpStatusCode.OK) {
-            event.replyError(event.translate("error"))
-        } else event.message.reply(response.readBytes(), "cat.jpeg").queue()
+            event.replyError(event.translate("error")).queue()
+        } else event.hook.sendFile(response.readBytes(), "cat.jpeg").queue()
     }
 
 }

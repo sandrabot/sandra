@@ -26,47 +26,37 @@ import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.interactions.Interaction
+import net.dv8tion.jda.api.interactions.InteractionHook
 
 class CommandEvent(
-    val sandra: Sandra,
-    val event: MessageReceivedEvent,
-    val command: Command,
-    val args: String
+    val sandra: Sandra, val event: SlashCommandEvent, val command: Command, val args: String
 ) {
 
-    val author: User
-        get() = event.author
-    val channel: MessageChannel
-        get() = event.channel
-    val guild: Guild
-        get() = event.guild
-    val isFromGuild: Boolean
-        get() = event.isFromGuild
-    val jda: JDA
-        get() = event.jda
-    val member: Member
-        get() = if (event.isFromGuild) event.member!! else
-            throw IllegalStateException("This message did not happen in a guild")
-    val message: Message
-        get() = event.message
-    val selfMember: Member
-        get() = guild.selfMember
-    val selfUser: SelfUser
-        get() = jda.selfUser
-    val textChannel: TextChannel
-        get() = event.textChannel
+    val jda: JDA get() = event.jda
+    val isFromGuild: Boolean get() = event.isFromGuild
+    val isAcknowledged: Boolean get() = event.isAcknowledged
+    val interaction: Interaction get() = event.interaction
+    val hook: InteractionHook get() = event.hook
 
-    val embed: EmbedBuilder
-        get() = sandra.createEmbed()
+    val textChannel: TextChannel get() = event.textChannel
+    val channel: MessageChannel get() = event.channel
+    val embed: EmbedBuilder get() = sandra.createEmbed()
+
+    val guild: Guild? = event.guild
+    val member: Member? = event.member
+    val selfMember: Member? = guild?.selfMember
+    val selfUser: SelfUser get() = jda.selfUser
+    val user: User get() = event.user
 
     val commandPath: String = command.path
-    val isOwner: Boolean = author.idLong in Constants.DEVELOPERS
+    val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
     val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, args) }
-    val guildConfig: GuildConfig by lazy { sandra.config.getGuild(guild.idLong) }
-    val userConfig: UserConfig by lazy { sandra.config.getUser(author.idLong) }
-    val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(author.idLong) }
+    val guildConfig: GuildConfig? by lazy { guild?.let { sandra.config.getGuild(it.idLong) } }
+    val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
+    val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }
     val localeContext: LocaleContext by lazy {
         LocaleContext(sandra, guildConfig, userConfig, "commands.${command.name}")
     }
@@ -75,32 +65,18 @@ class CommandEvent(
     fun translate(path: String, withRoot: Boolean, vararg args: Any?): String =
         localeContext.translate(path, withRoot, *args)
 
-    fun reply(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.message.reply(message).queue(success, failure)
-    }
+    fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 
-    fun reply(embed: MessageEmbed, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.message.replyEmbeds(embed).queue(success, failure)
-    }
+    fun reply(message: String) = event.reply(message)
+    fun reply(embed: MessageEmbed) = event.replyEmbeds(embed)
+    fun reply(vararg embeds: MessageEmbed) = event.replyEmbeds(embeds.asList())
 
-    fun reply(message: Message, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        event.message.reply(message).queue(success, failure)
-    }
+    fun sendMessage(message: String) = event.hook.sendMessage(message)
+    fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
+    fun sendMessage(vararg embeds: MessageEmbed) = event.hook.sendMessageEmbeds(embeds.asList())
 
-    fun reply(any: Any, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        reply(any.toString(), success, failure)
-    }
-
-    fun replyEmote(
-        message: String, emote: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null
-    ) = reply(emote + Unicode.VERTICAL_LINE + message, success, failure)
-
-    fun replyInfo(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        replyEmote(message, Emotes.INFO, success, failure)
-    }
-
-    fun replyError(message: String, success: ((Message) -> Unit)? = null, failure: ((Throwable) -> Unit)? = null) {
-        replyEmote(message, Emotes.ERROR, success, failure)
-    }
+    fun replyEmote(message: String, emote: String) = reply(emote + Unicode.VERTICAL_LINE + message)
+    fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)
+    fun replyError(message: String) = replyEmote(message, Emotes.ERROR)
 
 }

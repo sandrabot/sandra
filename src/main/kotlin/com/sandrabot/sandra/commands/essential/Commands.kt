@@ -27,6 +27,7 @@ class Commands : Command(name = "commands") {
 
     override suspend fun execute(event: CommandEvent) {
 
+        event.deferReply().queue()
         // Sort the commands into their respective categories, also sorted alphabetically
         val sortedCommands = Category.values().associateWith { category ->
             event.sandra.commands.commands.filter { it.category == category }.sortedBy { it.name }
