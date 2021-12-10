@@ -23,7 +23,7 @@ import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
-class Choose : Command(name = "choose", aliases = arrayOf("pick"), arguments = "[@choices:word*]") {
+class Choose : Command(name = "choose", arguments = "[@choices:word*]") {
 
     override suspend fun execute(event: CommandEvent) {
 

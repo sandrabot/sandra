@@ -26,7 +26,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
 @Suppress("unused")
-class Ping : Command(name = "ping", aliases = arrayOf("pong")) {
+class Ping : Command(name = "ping") {
 
     @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {

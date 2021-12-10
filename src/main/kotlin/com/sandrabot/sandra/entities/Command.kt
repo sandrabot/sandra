@@ -25,7 +25,6 @@ import kotlin.reflect.full.isSubclassOf
 
 abstract class Command(
     val name: String,
-    val aliases: Array<String> = emptyArray(),
     arguments: String = "",
     val guildOnly: Boolean = false,
     val ownerOnly: Boolean = false,
@@ -68,9 +67,7 @@ abstract class Command(
         // Attempt to find a child with the first word as the alias
         val firstArg = args.splitSpaces().first()
         val child = children.firstOrNull {
-            arrayOf(it.name, *it.aliases).any { alias ->
-                firstArg.equals(alias, ignoreCase = true)
-            }
+            firstArg.equals(it.name, ignoreCase = true)
         }
         var arguments = args
         // Use recursion to continue walking the command tree
@@ -85,7 +82,7 @@ abstract class Command(
                     recursive.first
                 } else child
             } else child
-        } else child
+        } else null
         return nestedCommand to arguments
     }
 

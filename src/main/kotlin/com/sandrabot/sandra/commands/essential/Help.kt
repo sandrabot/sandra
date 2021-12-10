@@ -25,11 +25,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
 
 @Suppress("unused")
-class Help : Command(
-    name = "help",
-    aliases = arrayOf("about", "discord", "h", "info", "invite", "links", "support"),
-    arguments = "[command] [subcommands:text]"
-) {
+class Help : Command(name = "help", arguments = "[command] [subcommands:text]") {
 
     override suspend fun execute(event: CommandEvent) {
 
@@ -51,7 +47,7 @@ class Help : Command(
                 maybeCommand.findChild(subcommands).first ?: run {
                     // If there are no subcommands to list, just show the parent command
                     if (maybeCommand.children.isEmpty()) return@run maybeCommand
-                    // Otherwise display a list of the available subcommands for this command
+                    // Otherwise, display a list of the available subcommands for this command
                     val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
                     event.replyError(event.translate("available_subcommands", joined))
                     return
@@ -67,18 +63,9 @@ class Help : Command(
             val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
             val descriptionValue = "> ${event.translate(descriptionPath, false)}"
             embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
-            // Display a field listing the aliases if there are any
-            if (command.aliases.isNotEmpty()) {
-                // Combine all the aliases into a string to be displayed
-                val join = command.aliases.joinToString(
-                    separator = "**, **/", prefix = "**/", postfix = "**"
-                )
-                val aliasesValue = "> ${event.translate("you_can_use")} $join"
-                embed.addField("${Emotes.COMMANDS} ${event.translate("aliases_title")}", aliasesValue, false)
-            }
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {
-                // Combine all of the arguments into a string to be displayed
+                // Combine all the arguments into a string to be displayed
                 val join = command.arguments.joinToString(" ") { it.usage }
                 val usageValue = "> **/${command.name}** $join"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)

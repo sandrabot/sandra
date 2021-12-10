@@ -43,9 +43,7 @@ class CommandManager {
         logger.info("Successfully loaded ${commands.size} commands with $childrenSum children")
     }
 
-    operator fun get(name: String): Command? = commands.firstOrNull {
-        name.equals(it.name, ignoreCase = true) || it.aliases.any { alias -> name.equals(alias, ignoreCase = true) }
-    }
+    operator fun get(name: String): Command? = commands.firstOrNull { name.equals(it.name, ignoreCase = true) }
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandManager::class.java)

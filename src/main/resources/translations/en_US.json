@@ -80,9 +80,7 @@
       "available_subcommands": "It looks like that subcommand **does not exist** for this command, however you can try any of these: %1$s",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
       "extra_help": "Need some extra help?",
-      "you_can_use": "You can also use",
       "description_title": "Description",
-      "aliases_title": "Aliases",
       "usage_title": "Usage",
       "info_embed": {
         "title": "Chat with us in Sandra's Hangout",
