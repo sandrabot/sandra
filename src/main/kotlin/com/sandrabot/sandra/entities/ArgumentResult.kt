@@ -35,19 +35,11 @@ class ArgumentResult(val results: Map<String, Any>) {
     operator fun contains(name: String): Boolean = name in results
 
     /**
-     * Returns the argument with the [name] casted as [T].
+     * Returns the argument with the [name] cast as [T].
      * If the wrong type is provided a casting exception will be thrown.
      * If the argument was not parsed null will be returned.
      */
     inline fun <reified T> get(name: String): T? = if (name in results) results[name] as T else null
-
-    /**
-     * Returns the array of type [T] with the name [name].
-     * Note that despite the name, a [List] is returned.
-     */
-    inline fun <reified T> array(name: String): List<T>? = if (name in results) {
-        (results[name] as List<*>).filterIsInstance<T>()
-    } else null
 
     override fun toString(): String = results.toString()
 

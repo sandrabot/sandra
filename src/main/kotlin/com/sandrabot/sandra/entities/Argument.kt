@@ -38,18 +38,16 @@ private val flagRegex = Regex("""!(\S+)""")
  * The internal constructor ensures the rules defined in [compileArguments] are enforced.
  */
 class Argument internal constructor(
-    val name: String, val type: ArgumentType, val isRequired: Boolean, val isArray: Boolean
+    val name: String, val type: ArgumentType, val isRequired: Boolean
 ) {
     val usage = run {
         val (start, end) = if (isRequired) "<" to ">" else "[" to "]"
-        val array = if (isArray) "..." else ""
-        "$start$name$array$end"
+        "$start$name$end"
     }
 
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
-        val array = if (isArray) "*" else ""
-        return "A:$required$name($type)$array"
+        return "A:$required$name($type)"
     }
 }
 
@@ -67,7 +65,6 @@ class Argument internal constructor(
  *  * The name can be used to describe the argument in usage prompts.
  *    If the name is present, the colon must also be present to separate the name and type.
  *  * The type is the name of any entry in the [ArgumentType] enum.
- *  * The `*` denotes the token as an array, where multiple results may be parsed.
  *
  * Required arguments are used by the command system to halt execution if the argument is missing.
  * Commands may assume required arguments will always be present.
@@ -75,17 +72,13 @@ class Argument internal constructor(
  * Tokens must meet these requirements otherwise an [IllegalArgumentException] will be thrown:
  *  * Tokens must not evaluate to [ArgumentType.UNKNOWN]
  *  * Tokens with the type [ArgumentType.FLAG] must not be required
- *  * Tokens with the type [ArgumentType.FLAG] must not be arrays
- *  * Tokens with the type [ArgumentType.TEXT] must not be arrays
  *  * Tokens must not share names
  *
  * Examples:
  *  * `[text]` - Optional argument with the name of "text" and the type of [ArgumentType.TEXT]
  *  * `[@time:duration]` - Required argument with the name of "time" and the type of [ArgumentType.DURATION]
  *  * `[bots:flag]` - Optional argument with the name of "bots" and the type of [ArgumentType.FLAG]
- *  * `[users:user*]` - Optional array of arguments with the name of "users" and the type of [ArgumentType.USER]
  *  * `[something:else]` - Throws [IllegalArgumentException], the type "else" is invalid
- *  * `[text*]` - Throws [IllegalArgumentException], text must not be arrays
  *  * `[@global:flag]` - Throws [IllegalArgumentException], flags must not be required
  *  * `[time:digit] [time:duration]` - Throws [IllegalArgumentException], the name is already used
  */
@@ -93,9 +86,8 @@ class Argument internal constructor(
 fun compileArguments(tokens: String): List<Argument> {
     val arguments = LinkedList<Argument>()
     for (match in tokenRegex.findAll(tokens)) {
-        val (text, atSign, rawName, rawType, asterisk) = match.groupValues
+        val (text, atSign, rawName, rawType) = match.groupValues
         val isRequired = atSign.isNotEmpty()
-        val isArray = asterisk.isNotEmpty()
 
         val type = ArgumentType.fromName(rawType)
         if (type == ArgumentType.UNKNOWN) {
@@ -104,12 +96,6 @@ fun compileArguments(tokens: String): List<Argument> {
         } else if (type == ArgumentType.FLAG && isRequired) {
             // Flag arguments cannot be required
             throw IllegalArgumentException("Flag arguments cannot be required in $text at ${match.range}")
-        } else if (type == ArgumentType.FLAG && isArray) {
-            // Flag arguments cannot be arrays
-            throw IllegalArgumentException("Flag arguments cannot be arrays in $text at ${match.range}")
-        } else if (type == ArgumentType.TEXT && isArray) {
-            // Text arguments cannot be arrays
-            throw IllegalArgumentException("Text arguments cannot be arrays in $text at ${match.range}")
         }
 
         // The name must always be lowercase
@@ -120,7 +106,7 @@ fun compileArguments(tokens: String): List<Argument> {
         if (arguments.any { name.equals(it.name, ignoreCase = true) }) {
             throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
         }
-        arguments.add(Argument(name, type, isRequired, isArray))
+        arguments.add(Argument(name, type, isRequired))
     }
     return arguments
 }
@@ -130,7 +116,7 @@ fun compileArguments(tokens: String): List<Argument> {
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> singleton(event: CommandEvent, args: String, type: ArgumentType): T? {
-    val argument = Argument("singleton", type, isRequired = false, isArray = false)
+    val argument = Argument("singleton", type, isRequired = false)
     return parseArguments(listOf(argument), event, args).results["singleton"] as T?
 }
 
@@ -143,20 +129,20 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
 
     for (arg in arguments) {
         if (remaining.get().isBlank()) break
-        val result: List<Any> = when (arg.type) {
+        val result: Any? = when (arg.type) {
             /*ArgumentType.USER, ArgumentType.CHANNEL, ArgumentType.EMOTE,
             ArgumentType.ROLE, ArgumentType.VOICE -> parseSnowflake(event, remaining, arg)*/
-            ArgumentType.COMMAND -> parseCommand(event, remaining, arg)
-            ArgumentType.DURATION -> parseDuration(remaining, arg)
-            ArgumentType.DIGIT -> parseDigit(remaining, arg)
+            ArgumentType.COMMAND -> parseCommand(event, remaining)
+            ArgumentType.DURATION -> parseDuration(remaining)
+            ArgumentType.DIGIT -> parseDigit(remaining)
             ArgumentType.FLAG -> parseFlag(remaining, arg)
-            ArgumentType.WORD -> parseWord(remaining, arg)
+            ArgumentType.WORD -> parseWord(remaining)
             ArgumentType.TEXT -> parseText(remaining)
             else -> throw AssertionError("No parsing implemented for argument type ${arg.type}")
         }
 
         // Add the parsed values to the map if anything was found
-        if (result.isNotEmpty()) parsedArguments[arg.name] = if (arg.isArray) result else result.first()
+        if (result != null) parsedArguments[arg.name] = result
     }
 
     return ArgumentResult(parsedArguments)
@@ -233,8 +219,7 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
 /**
  * Parses argument type DURATION
  */
-private fun parseDuration(remaining: AtomicReference<String>, argument: Argument): List<Long> {
-    val parsedValues = mutableListOf<Long>()
+private fun parseDuration(remaining: AtomicReference<String>): Long? {
     // Due to regex negative lookahead we need to search using words
     // This also enforces a rule that time units must be in order from days to seconds
     for (word in remaining.get().splitSpaces()) {
@@ -248,35 +233,30 @@ private fun parseDuration(remaining: AtomicReference<String>, argument: Argument
         if (seconds.isNotEmpty()) seconds.toIntOrNull()?.let { durationInSeconds += it }
         // Remove any durations that were matched, but don't use any that are zero
         remaining.getAndUpdate { it.replaceFirst(word, "").removeExtraSpaces() }
-        if (durationInSeconds >= 0) {
-            parsedValues.add(durationInSeconds)
-            if (!argument.isArray) break
-        }
+        if (durationInSeconds >= 0) return durationInSeconds
     }
-    return parsedValues
+    return null
 }
 
 /**
  * Parses argument type DIGIT
  */
-private fun parseDigit(remaining: AtomicReference<String>, argument: Argument): List<Long> {
-    val parsedValues = mutableListOf<Long>()
+private fun parseDigit(remaining: AtomicReference<String>): Long? {
     // Only match entire words, we don't want to pick digits from just anywhere
     for (word in remaining.get().splitSpaces()) {
         val match = digitRegex.matchEntire(word) ?: continue
         // Only keep the match if it can actually fit into a long
-        match.value.toLongOrNull()?.also { parsedValues.add(it) } ?: continue
+        val value = match.value.toLongOrNull() ?: continue
         remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
-        if (!argument.isArray) break
+        return value
     }
-    return parsedValues
+    return null
 }
 
 /**
  * Parses argument type FLAG
  */
-private fun parseFlag(remaining: AtomicReference<String>, argument: Argument): List<Boolean> {
-    // Flags cannot be required nor arrays, this method will always return a singleton
+private fun parseFlag(remaining: AtomicReference<String>, argument: Argument): Boolean {
     var isFlagPresent = false
     // Make sure a flag isn't found in the middle of a word
     for (word in remaining.get().splitSpaces()) {
@@ -288,47 +268,42 @@ private fun parseFlag(remaining: AtomicReference<String>, argument: Argument): L
             break
         }
     }
-    return listOf(isFlagPresent)
+    return isFlagPresent
 }
 
 /**
  * Parses argument type COMMAND
  */
-private fun parseCommand(event: CommandEvent, remaining: AtomicReference<String>, argument: Argument): List<Command> {
-    val parsedValues = mutableListOf<Command>()
+private fun parseCommand(event: CommandEvent, remaining: AtomicReference<String>): Command? {
     // We don't support fuzzy searching commands because it would be too ambiguous with aliases
     for (word in remaining.get().splitSpaces()) {
-        event.sandra.commands[word]?.also { parsedValues.add(it) } ?: continue
+        val value = event.sandra.commands[word] ?: continue
         // If we reach this line, that means a command was found
         remaining.getAndUpdate { it.replaceFirst(word, "").removeExtraSpaces() }
-        if (!argument.isArray) break
+        return value
     }
-    return parsedValues
+    return null
 }
 
 /**
  * Parses argument type WORD
  */
-private fun parseWord(remaining: AtomicReference<String>, argument: Argument): List<String> {
+private fun parseWord(remaining: AtomicReference<String>): String? {
     // Words are considered any characters before the first space, or characters within quotes
-    val parsedValues = mutableListOf<String>()
-    do {
-        // Find the first word or any phrase within quotes in the remaining text
-        val match = wordRegex.find(remaining.get()) ?: break
-        val (_, first, second) = match.groupValues
-        // Since the regex can match single words or entire phrases,
-        // we need to determine the group that was matched
-        parsedValues.add(first.ifBlank { second })
-        remaining.getAndUpdate { it.removeRange(match.range).removeExtraSpaces() }
-    } while (argument.isArray)
-    return parsedValues
+    // Find the first word or any phrase within quotes in the remaining text
+    val match = wordRegex.find(remaining.get()) ?: return null
+    val (_, first, second) = match.groupValues
+    // Since the regex can match single words or entire phrases,
+    // we need to determine the group that was matched
+    val value = first.ifBlank { second }
+    remaining.getAndUpdate { it.removeRange(match.range).removeExtraSpaces() }
+    return value
 }
 
 /**
  * Parses argument type TEXT
  */
-private fun parseText(remaining: AtomicReference<String>): List<String> {
-    // Text is another exception to arrays as it can only return a singleton
+private fun parseText(remaining: AtomicReference<String>): String? {
     // You should probably put this at the very end of your tokens
-    return listOf(remaining.getAndSet(""))
+    return remaining.getAndSet("")
 }
