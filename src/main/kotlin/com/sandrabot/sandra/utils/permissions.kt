@@ -23,10 +23,10 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 
 fun missingPermission(event: CommandEvent, permission: Permission) = !hasPermission(event, permission)
-fun hasPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.selfMember)
+fun hasPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.selfMember!!)
 
 fun missingUserPermission(event: CommandEvent, permission: Permission) = !hasUserPermission(event, permission)
-fun hasUserPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.member)
+fun hasUserPermission(event: CommandEvent, permission: Permission) = check(event, permission, event.member!!)
 
 private fun check(event: CommandEvent, permission: Permission, member: Member): Boolean {
     return if (permission.isChannel) {
