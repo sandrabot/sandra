@@ -19,7 +19,6 @@ package com.sandrabot.sandra.entities
 import net.dv8tion.jda.api.entities.*
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
 /**
@@ -71,7 +70,6 @@ class ArgumentResult(val results: Map<String, Any>) {
     fun text(name: String = "text"): String? = get(name)
     fun word(name: String = "word"): String? = get(name)
 
-    @OptIn(ExperimentalTime::class)
     fun duration(name: String = "duration"): Duration? =
         get<Long>(name)?.toDuration(DurationUnit.SECONDS)
 

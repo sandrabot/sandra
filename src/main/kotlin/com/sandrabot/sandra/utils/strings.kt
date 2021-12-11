@@ -25,7 +25,6 @@ import io.ktor.http.*
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
@@ -46,7 +45,6 @@ fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 
-@OptIn(ExperimentalTime::class)
 fun Duration.toFormattedString(): String = toString().replace(digitRegex, "**$0**")
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()

@@ -22,13 +22,11 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.toFormattedString
 import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
 @Suppress("unused")
 class Ping : Command(name = "ping") {
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
 
         val restPing = event.jda.restPing.await()
