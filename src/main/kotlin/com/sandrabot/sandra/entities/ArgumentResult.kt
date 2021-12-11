@@ -60,7 +60,6 @@ class ArgumentResult(val results: Map<String, Any>) {
     fun digit(name: String = "digit"): Long? = get(name)
     fun flag(name: String = "flag"): Boolean? = get(name)
     fun text(name: String = "text"): String? = get(name)
-    fun word(name: String = "word"): String? = get(name)
 
     fun duration(name: String = "duration"): Duration? =
         get<Long>(name)?.toDuration(DurationUnit.SECONDS)

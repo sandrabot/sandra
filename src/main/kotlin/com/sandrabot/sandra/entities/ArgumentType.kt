@@ -81,11 +81,6 @@ enum class ArgumentType {
     VOICE,
 
     /**
-     * Parses a single word at the beginning of the remaining text. Resolves as a [String].
-     */
-    WORD,
-
-    /**
      * Used to represent invalid argument types.
      */
     UNKNOWN;

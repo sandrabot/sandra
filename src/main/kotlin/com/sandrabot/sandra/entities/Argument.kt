@@ -19,6 +19,7 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.removeExtraSpaces
 import com.sandrabot.sandra.utils.splitSpaces
+import io.ktor.http.cio.websocket.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -136,8 +137,7 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
             ArgumentType.DURATION -> parseDuration(remaining)
             ArgumentType.DIGIT -> parseDigit(remaining)
             ArgumentType.FLAG -> parseFlag(remaining, arg)
-            ArgumentType.WORD -> parseWord(remaining)
-            ArgumentType.TEXT -> parseText(remaining)
+            FrameType.TEXT -> parseText(remaining)
             else -> throw AssertionError("No parsing implemented for argument type ${arg.type}")
         }
 
@@ -283,21 +283,6 @@ private fun parseCommand(event: CommandEvent, remaining: AtomicReference<String>
         return value
     }
     return null
-}
-
-/**
- * Parses argument type WORD
- */
-private fun parseWord(remaining: AtomicReference<String>): String? {
-    // Words are considered any characters before the first space, or characters within quotes
-    // Find the first word or any phrase within quotes in the remaining text
-    val match = wordRegex.find(remaining.get()) ?: return null
-    val (_, first, second) = match.groupValues
-    // Since the regex can match single words or entire phrases,
-    // we need to determine the group that was matched
-    val value = first.ifBlank { second }
-    remaining.getAndUpdate { it.removeRange(match.range).removeExtraSpaces() }
-    return value
 }
 
 /**
