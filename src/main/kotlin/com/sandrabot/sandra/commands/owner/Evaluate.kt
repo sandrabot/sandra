@@ -67,7 +67,8 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
     @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
 
-        if (event.args.isEmpty()) {
+        // TODO Figure out new argument interface
+        if ("text" !in event.arguments) {
             event.reply("you forgot to include the script").queue()
             return
         }
@@ -99,7 +100,8 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
         }
 
         // Strip the command block if present
-        val strippedScript = blockPattern.find(event.args)?.let { it.groupValues[1] } ?: event.args
+        val args = event.arguments.text()!!
+        val strippedScript = blockPattern.find(args)?.let { it.groupValues[1] } ?: args
 
         // Before we begin constructing the script, we need to find any additional imports
         val importLines = strippedScript.lines().takeWhile { it.startsWith("import") }

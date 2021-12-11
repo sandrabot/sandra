@@ -29,7 +29,8 @@ class Help : Command(name = "help", arguments = "[command] [subcommands:text]") 
 
     override suspend fun execute(event: CommandEvent) {
 
-        if (event.args.isNotEmpty()) {
+        // TODO Figure out new argument interface
+        if ("command" in event.arguments) {
 
             // The user may potentially be looking for a subcommand
             val maybeCommand = event.arguments.command() ?: run {
