@@ -18,8 +18,6 @@ package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.ArgumentType
-import com.sandrabot.sandra.entities.singleton
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.Permission
@@ -57,13 +55,10 @@ fun promptAction(
     inputAction(event, message, timeout, unit, expired, consumer)
 }
 
-fun <T> argumentAction(
-    event: CommandEvent, prompt: String, argumentType: ArgumentType,
-    expired: (() -> Unit)? = null, consumer: (T) -> Unit
+fun digitAction(
+    event: CommandEvent, prompt: String, expired: (() -> Unit)? = null, consumer: (Long) -> Unit
 ) = promptAction(event, prompt, expired = expired) {
-    singleton<T>(event, it.message.contentRaw, argumentType)
-        ?.let { argument -> consumer(argument); true }
-        ?: run { expired?.invoke(); false }
+    it.message.contentRaw.toLongOrNull()?.let { digit -> consumer(digit); true } ?: run { expired?.invoke(); false }
 }
 
 private fun checkAndDelete(event: CommandEvent, message: Message) {

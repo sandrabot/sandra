@@ -18,7 +18,7 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.argumentAction
+import com.sandrabot.sandra.utils.digitAction
 import com.sandrabot.sandra.utils.ensurePermissions
 import com.sandrabot.sandra.utils.hasPermissions
 import net.dv8tion.jda.api.EmbedBuilder
@@ -172,8 +172,8 @@ class Paginator(
         // Acknowledge that the prompt button was clicked
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to
-        argumentAction<Long>(
-            event, event.translate("general.page_prompt", false), ArgumentType.INTEGER, { waitForButton() }
+        digitAction(
+            event, event.translate("general.page_prompt", false), { waitForButton() }
         ) { digit ->
             val index = digit.toInt() - 1
             if (index in messages.indices && index != currentPage) {
