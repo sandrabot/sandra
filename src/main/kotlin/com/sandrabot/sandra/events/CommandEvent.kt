@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
+import net.dv8tion.jda.api.interactions.commands.OptionMapping
 
 class CommandEvent(
     val sandra: Sandra, val event: SlashCommandEvent, val command: Command
@@ -38,6 +39,7 @@ class CommandEvent(
     val isFromGuild: Boolean get() = event.isFromGuild
     val isAcknowledged: Boolean get() = event.isAcknowledged
     val interaction: Interaction get() = event.interaction
+    val options: List<OptionMapping> get() = event.options
     val hook: InteractionHook get() = event.hook
 
     val textChannel: TextChannel get() = event.textChannel
@@ -54,7 +56,7 @@ class CommandEvent(
     val commandString: String = event.commandString
     val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
-    val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, "") }
+    val arguments: ArgumentResult by lazy { parseArguments(this, command.arguments) }
     val guildConfig: GuildConfig? by lazy { guild?.let { sandra.config.getGuild(it.idLong) } }
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }

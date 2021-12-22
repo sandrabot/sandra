@@ -52,7 +52,6 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:1.6.4")
     implementation("io.ktor:ktor-client-jackson:1.6.4")
     implementation("io.sentry:sentry-logback:1.7.30")
-    implementation("me.xdrop:fuzzywuzzy:1.3.1")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
     implementation("org.reflections:reflections:0.10.2")

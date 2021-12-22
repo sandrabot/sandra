@@ -29,7 +29,7 @@ import kotlin.time.Duration
 private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
-private val spaceRegex = Regex("""\s+""")
+val spaceRegex = Regex("""\s+""")
 
 fun String.asEmoteUrl() = "https://cdn.discordapp.com/emojis/${emoteRegex.find(this)?.groupValues?.get(1)}.png"
 fun String.asReaction(): String = this.substring(1, lastIndex)

@@ -16,78 +16,93 @@
 
 package com.sandrabot.sandra.entities
 
+import net.dv8tion.jda.api.interactions.commands.OptionType
+
 /**
- * Tokens used to resolve text into objects for consumption by commands.
+ * These types are used to represent object types for arguments consumed by commands.
  * Type safety is achieved by using the corresponding method with the type name in [ArgumentResult].
  */
-enum class ArgumentType {
+enum class ArgumentType(val optionType: OptionType) {
 
     /**
-     * Searches for text channels in guilds. Resolves [net.dv8tion.jda.api.entities.TextChannel] objects.
+     * Resolves a [Boolean] option.
      */
-    CHANNEL,
+    BOOLEAN(OptionType.BOOLEAN),
 
     /**
-     * Searches for commands by name or alias. Resolves [com.sandrabot.sandra.entities.Command] objects.
+     * Searches for command categories. Resolves as a [Category].
      */
-    COMMAND,
+    CATEGORY(OptionType.STRING),
 
     /**
-     * Searches for any digits that fit into a long. Resolves as a [kotlin.time.Duration].
+     * Resolves [net.dv8tion.jda.api.entities.TextChannel] objects.
      */
-    DIGIT,
+    CHANNEL(OptionType.CHANNEL),
 
     /**
-     * Searches for durations and converts them into seconds. Resolves as a [Long].
+     * Searches for commands by name or path. Resolves as a [Command].
      */
-    DURATION,
+    COMMAND(OptionType.STRING),
+
+    /**
+     * Resolves any number between -2^53 and 2^53 as a [Double].
+     */
+    DOUBLE(OptionType.NUMBER),
+
+    /**
+     * Searches for durations. Resolves as a [kotlin.time.Duration].
+     */
+    DURATION(OptionType.STRING),
 
     /**
      * Searches for emotes in guilds. Resolves [net.dv8tion.jda.api.entities.Emote] objects.
      */
-    EMOTE,
+    EMOTE(OptionType.STRING),
 
     /**
-     * Searches for optional command arguments prefixed with an exclamation mark.
-     * Flags cannot be required nor arrays.
-     * Resolves as a [Boolean], whether the flag is present or not.
+     * Resolves any integer between -2^53 and 2^53 as a [Long].
      */
-    FLAG,
+    INTEGER(OptionType.INTEGER),
 
     /**
-     * Searches for items by name. Resolves [com.sandrabot.sandra.entities.ItemType] objects.
+     * Resolves mentionable entities [net.dv8tion.jda.api.entities.Role] and [net.dv8tion.jda.api.entities.User].
      */
-    ITEM,
+    MENTIONABLE(OptionType.MENTIONABLE),
 
     /**
-     * Searches for roles in guilds. Resolves [net.dv8tion.jda.api.entities.Role] objects.
+     * Resolves [net.dv8tion.jda.api.entities.NewsChannel] objects.
      */
-    ROLE,
+    NEWS(OptionType.CHANNEL),
 
     /**
-     * Any remaining text from parsing is consumed.
-     * Text cannot be an array. Resolves as a [String].
+     * Resolves [net.dv8tion.jda.api.entities.Role] objects.
      */
-    TEXT,
+    ROLE(OptionType.ROLE),
 
     /**
-     * Searches for mentioned users. Resolves [net.dv8tion.jda.api.entities.User] objects.
+     * Resolves [net.dv8tion.jda.api.entities.StageChannel] objects.
      */
-    USER,
+    STAGE(OptionType.CHANNEL),
 
     /**
-     * Searches for voice channels in guilds. Resolves [net.dv8tion.jda.api.entities.VoiceChannel] objects.
+     * Resolves a [String] option.
      */
-    VOICE,
+    TEXT(OptionType.STRING),
 
     /**
-     * Used to represent invalid argument types.
+     * Resolves [net.dv8tion.jda.api.entities.User] objects.
      */
-    UNKNOWN;
+    USER(OptionType.USER),
+
+    /**
+     * Resolves [net.dv8tion.jda.api.entities.VoiceChannel] objects.
+     */
+    VOICE(OptionType.CHANNEL);
 
     companion object {
         fun fromName(name: String): ArgumentType {
-            return values().find { name.equals(it.name, ignoreCase = true) } ?: UNKNOWN
+            return values().firstOrNull { name.equals(it.name, ignoreCase = true) }
+                ?: throw IllegalArgumentException("Unknown argument type with name $name")
         }
     }
 
