@@ -19,6 +19,7 @@ package com.sandrabot.sandra.listeners
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.checkCommandBlocklist
@@ -78,6 +79,9 @@ class CommandListener(val sandra: Sandra) {
                 command.execute(event)
             } catch (e: MissingPermissionException) {
                 event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
+            } catch (e: MissingArgumentException) {
+                event.replyError(event.translate("general.missing_argument", false, e.argument.name))
+                    .setEphemeral(true).queue()
             } catch (t: Throwable) {
                 event.replyError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
                 logger.error("An exception occurred while executing a command", t)

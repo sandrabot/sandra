@@ -51,6 +51,7 @@ class CommandEvent(
     val user: User get() = event.user
 
     val commandPath: String = command.path
+    val commandString: String = event.commandString
     val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
     val arguments: ArgumentResult by lazy { parseArguments(command.arguments, this, "") }

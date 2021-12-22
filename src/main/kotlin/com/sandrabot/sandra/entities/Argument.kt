@@ -19,6 +19,7 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.removeExtraSpaces
 import com.sandrabot.sandra.utils.splitSpaces
+import com.sandrabot.sandra.exceptions.MissingArgumentException
 import io.ktor.http.cio.websocket.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -144,6 +145,9 @@ fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String)
         // Add the parsed values to the map if anything was found
         if (result != null) parsedArguments[arg.name] = result
     }
+
+    arguments.firstOrNull { it.isRequired && it.name !in parsedArguments }
+        ?.let { throw MissingArgumentException(event, it) }
 
     return ArgumentResult(parsedArguments)
 }
