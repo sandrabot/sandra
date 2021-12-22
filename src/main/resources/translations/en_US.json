@@ -76,8 +76,7 @@
     },
     "help": {
       "description": "View some basic quick-start information about the bot",
-      "not_found": "Whoops, a command with that name **does not exist**. Try using **/commands** to find what you're looking for.",
-      "available_subcommands": "It looks like that subcommand **does not exist** for this command, however you can try any of these: %1$s",
+      "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
       "extra_help": "Need some extra help?",
       "description_title": "Description",

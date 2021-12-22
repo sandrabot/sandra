@@ -24,7 +24,7 @@ import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.splitSpaces
 
 @Suppress("unused")
-class Choose : Command(name = "choose", arguments = "[@choices:word*]") {
+class Choose : Command(name = "choose", arguments = "[@choices:text]") {
 
     override suspend fun execute(event: CommandEvent) {
 

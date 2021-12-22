@@ -25,35 +25,24 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
 
 @Suppress("unused")
-class Help : Command(name = "help", arguments = "[command] [subcommands:text]") {
+class Help : Command(name = "help", arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        // TODO Figure out new argument interface
         if ("command" in event.arguments) {
 
-            // The user may potentially be looking for a subcommand
-            val maybeCommand = event.arguments.command() ?: run {
-                // The command couldn't be found with the given arguments
+            val command = event.arguments.command() ?: run {
+                // The command couldn't be found with the given path
                 event.replyError(event.translate("not_found")).queue()
                 return
             }
 
-            if (maybeCommand.category == Category.OWNER || maybeCommand.category == Category.CUSTOM) {
+            if (command.category == Category.OWNER || command.category == Category.CUSTOM) {
                 event.replyError(event.translate("not_found")).queue()
                 return
             }
 
-            val command = event.arguments.text("subcommands")?.let { subcommands ->
-                maybeCommand.findChild(subcommands).first ?: run {
-                    // If there are no subcommands to list, just show the parent command
-                    if (maybeCommand.children.isEmpty()) return@run maybeCommand
-                    // Otherwise, display a list of the available subcommands for this command
-                    val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
-                    event.replyError(event.translate("available_subcommands", joined)).queue()
-                    return
-                }
-            } ?: maybeCommand
+            // TODO Category Handling
 
             // Begin putting the embed together, starting with the command path and category
             val author = "${command.path.replace('/', ' ')} • ${command.category.name.lowercase()}"

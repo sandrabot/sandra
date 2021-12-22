@@ -42,7 +42,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 @Suppress("unused")
-class Evaluate : Command(name = "eval", guildOnly = true) {
+class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly = true) {
 
     private val engineContext = SupervisorJob() + Dispatchers.IO
     private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
@@ -66,12 +66,6 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
 
     @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
-
-        // TODO Figure out new argument interface
-        if ("text" !in event.arguments) {
-            event.reply("you forgot to include the script").queue()
-            return
-        }
 
         // Create a map of the variables we might want
         val bindings = listOf(
@@ -100,7 +94,7 @@ class Evaluate : Command(name = "eval", guildOnly = true) {
         }
 
         // Strip the command block if present
-        val args = event.arguments.text()!!
+        val args = event.arguments.text("script")!!
         val strippedScript = blockPattern.find(args)?.let { it.groupValues[1] } ?: args
 
         // Before we begin constructing the script, we need to find any additional imports
