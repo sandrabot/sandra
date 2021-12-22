@@ -59,6 +59,7 @@ class Argument internal constructor(
  * All letters are case-insensitive, however the name and options will always be converted to lowercase.
  *
  *  * The `@` denotes the token as a required argument.
+ *    * Required arguments must be listed first before other arguments.
  *  * The name can be used to describe the argument in usage prompts.
  *    * If the name is present, the colon must also be present to separate the name and type.
  *  * The type is the name of any entry in the [ArgumentType] enum.
@@ -82,6 +83,7 @@ class Argument internal constructor(
  *  * `[@time:duration]` - Required argument with the name of "time" and the type of [ArgumentType.DURATION]
  *  * `[bots:boolean]` - Optional argument with the name of "bots" and the type of [ArgumentType.BOOLEAN]
  *  * `[@days:integer:1,7]` - Required argument with the name "days", type of [ArgumentType.INTEGER], and options "1" or "7"
+ *  * `[minutes:duration] [@reason:text]` - Throws [IllegalArgumentException], the required argument isn't first
  *  * `[something:else]` - Throws [IllegalArgumentException], the type "else" is invalid
  *  * `[time:integer] [time:duration]` - Throws [IllegalArgumentException], the name "time" is already used
  *  * `[quantity:integer:1.0,2.0]` - Throws [IllegalArgumentException], the option type is DOUBLE when INTEGER is required
@@ -118,11 +120,14 @@ fun compileArguments(tokens: String): List<Argument> {
         // The name must always be lowercase
         val name = rawName.ifEmpty { type.name }.lowercase()
 
-        // Arguments cannot share names, if there are two
-        // of the same type they must be named differently
-        if (arguments.any { name == it.name }) {
+        // Arguments must have distinct names, throw if there are duplicates
+        if (arguments.any { name == it.name })
             throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
-        }
+
+        // Required arguments must be listed first
+        if (isRequired && arguments.any { !it.isRequired })
+            throw IllegalArgumentException("Required argument $text at ${match.range} must be listed before other arguments")
+
         arguments.add(Argument(name, type, isRequired, options))
     }
     return arguments
