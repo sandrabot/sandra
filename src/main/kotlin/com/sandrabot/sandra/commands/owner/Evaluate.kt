@@ -58,7 +58,9 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
         // Include some miscellaneous stuff for quality of life
         listOf(
             "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
-            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*",
+            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*", "kotlin.time.Duration",
+            "net.dv8tion.jda.api.interactions.commands.*", "net.dv8tion.jda.api.interactions.commands.build.*",
+            "net.dv8tion.jda.api.interactions.components.*", "net.dv8tion.jda.api.interactions.components.selections.*",
             "net.dv8tion.jda.api.*", "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
         ).forEach { importBuilder.append("import $it\n") }
         imports = importBuilder.append("\n\n").toString()
