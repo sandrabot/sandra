@@ -17,8 +17,6 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.removeExtraSpaces
-import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.Permission
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
@@ -33,20 +31,19 @@ abstract class Command(
 
     val arguments: List<Argument> = compileArguments(arguments)
     val category: Category = Category.fromClass(this::class)
-    val children: List<Command> = this::class.nestedClasses.filter {
-        it.isSubclassOf(Command::class)
-    }.map {
-        (it.createInstance() as Command).also { child -> child.parent = this }
-    }.toList()
+    val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
+        .map { (it.createInstance() as Command).also { child -> child.parent = this } }.toList()
 
+    // Must be lazy so the parent is set before access
     val path: String by lazy {
         var currentCommand = this
-        val builder = StringBuilder()
-        do {
-            builder.insert(0, currentCommand.name + '/')
-            currentCommand = currentCommand.parent ?: break
-        } while (true)
-        builder.substring(0, builder.lastIndex)
+        buildString {
+            do {
+                insert(0, currentCommand.name)
+                currentCommand = currentCommand.parent ?: break
+                insert(0, '/')
+            } while (true)
+        }
     }
 
     var parent: Command? = null
@@ -56,35 +53,6 @@ abstract class Command(
 
     abstract suspend fun execute(event: CommandEvent)
 
-    /**
-     * Finds children of this command by recursively walking the command tree.
-     * The returned pair is the possible child and the remaining arguments.
-     * If no child was found the command will be null.
-     * Otherwise, it is guaranteed that the remaining arguments have changed.
-     */
-    fun findChild(args: String): Pair<Command?, String> {
-        // Attempt to find a child with the first word as the alias
-        val firstArg = args.splitSpaces().first()
-        val child = children.firstOrNull {
-            firstArg.equals(it.name, ignoreCase = true)
-        }
-        var arguments = args
-        // Use recursion to continue walking the command tree
-        val nestedCommand = if (child != null) {
-            arguments = arguments.removePrefix(firstArg).removeExtraSpaces()
-            // If there was only one word there's nothing else to find
-            if (arguments.isNotEmpty()) {
-                val recursive = child.findChild(arguments)
-                // Reassign the arguments if a command was found and a word was used
-                if (recursive.first != null) {
-                    arguments = recursive.second
-                    recursive.first
-                } else child
-            } else child
-        } else null
-        return nestedCommand to arguments
-    }
-
-    override fun toString(): String = "C:" + name.uppercase()
+    override fun toString(): String = "C:$name"
 
 }

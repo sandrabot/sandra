@@ -17,33 +17,43 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.entities.Command
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
 
 class CommandManager {
 
-    val commands: MutableList<Command>
-
-    val size: Int
-        get() = commands.size
+    val commands = mutableMapOf<String, Command>()
 
     init {
         val commandClasses = Reflections("com.sandrabot.sandra.commands").getSubTypesOf(Command::class.java)
         // Filter out subcommand classes, they are instantiated by their parents
-        commands = commandClasses.filterNot { it.isMemberClass }.mapNotNull {
+        commandClasses.filterNot { it.isMemberClass }.mapNotNull {
             try {
-                it.kotlin.createInstance()
+                val command = it.kotlin.createInstance()
+                commands[command.path] = command
             } catch (t: Throwable) {
-                logger.error("Failed to instantiate command $it", t.cause)
+                logger.error("Failed to instantiate command $it", t)
                 null
             }
-        }.toMutableList()
-        val childrenSum = commands.sumOf { it.children.size }
-        logger.info("Successfully loaded ${commands.size} commands with $childrenSum children")
+        }
+        // Create a copy of the values to prevent CME
+        loadChildrenRecursive(commands.values.toList())
+        val childrenSum = commands.count { it.value.isSubcommand }
+        logger.info("Successfully loaded ${commands.size - childrenSum} commands with $childrenSum children")
     }
 
-    operator fun get(name: String): Command? = commands.firstOrNull { name.equals(it.name, ignoreCase = true) }
+    private fun loadChildrenRecursive(list: Collection<Command>) {
+        for (command in list) {
+            command.subcommands.ifNotEmpty {
+                forEach { commands[it.path] = it }
+                loadChildrenRecursive(this)
+            }
+        }
+    }
+
+    operator fun get(path: String): Command? = commands[path]
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandManager::class.java)

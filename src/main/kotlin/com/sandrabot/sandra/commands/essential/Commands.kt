@@ -30,7 +30,7 @@ class Commands : Command(name = "commands") {
         event.deferReply().queue()
         // Sort the commands into their respective categories, also sorted alphabetically
         val sortedCommands = Category.values().associateWith { category ->
-            event.sandra.commands.commands.filter { it.category == category }.sortedBy { it.name }
+            event.sandra.commands.commands.values.filter { it.category == category }.sortedBy { it.name }
         }.filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
 
         val descriptionPages = mutableListOf<String>()
