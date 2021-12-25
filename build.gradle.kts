@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.6.0"
-    kotlin("plugin.serialization") version "1.5.30"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
     id("com.github.ben-manes.versions") version "0.39.0"
-    id("com.github.gmazzo.buildconfig") version "3.0.2"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.gmazzo.buildconfig") version "3.0.3"
+    id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 group = "com.sandrabot"
@@ -42,20 +42,20 @@ dependencies {
     listOf("stdlib", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-alpha.2") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.3") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.7")
+    implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("io.javalin:javalin:4.1.1")
-    implementation("io.ktor:ktor-client-core:1.6.4")
-    implementation("io.ktor:ktor-client-okhttp:1.6.4")
-    implementation("io.ktor:ktor-client-jackson:1.6.4")
+    implementation("io.ktor:ktor-client-core:1.6.7")
+    implementation("io.ktor:ktor-client-okhttp:1.6.7")
+    implementation("io.ktor:ktor-client-jackson:1.6.7")
     implementation("io.sentry:sentry-logback:1.7.30")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:3.6.3")
+    implementation("redis.clients:jedis:3.7.1")
 }
 
 buildConfig {
@@ -69,7 +69,7 @@ buildConfig {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "16"
+compileKotlin.kotlinOptions.jvmTarget = "17"
 compileKotlin.kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 
 fun runCommand(commands: List<String>): String {
