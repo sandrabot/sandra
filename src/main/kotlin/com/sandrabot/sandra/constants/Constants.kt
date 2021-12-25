@@ -29,8 +29,6 @@ object Constants {
 
     const val GUILD_HANGOUT = 340937384239824897L
 
-    const val PREFIX = "s."
-    const val BETA_PREFIX = "b."
     const val TWITCH = "https://twitch.tv/averen"
     const val HASTEBIN = "https://haste.averen.dev"
     const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
