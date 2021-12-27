@@ -19,11 +19,8 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.digitAction
-import com.sandrabot.sandra.utils.ensurePermissions
-import com.sandrabot.sandra.utils.hasPermissions
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -76,7 +73,6 @@ class Paginator(
             throw IllegalStateException("Paginator has already been initialized")
         if (currentPage !in pages.indices)
             throw IllegalStateException("Starting page $currentPage must be within ${pages.indices}")
-        if (event.isFromGuild) ensurePermissions(event, *requiredPermissions)
         renderMessages(pages) // The rendered pages will be added to the messages list
 
         // Only show buttons if there are multiple pages
@@ -138,11 +134,7 @@ class Paginator(
     private fun handleButton(buttonEvent: ButtonClickEvent) {
         when (buttonEvent.componentId) {
             // Only send the prompt if we have permissions to
-            selectButtonId -> if (event.isFromGuild) {
-                if (hasPermissions(event, *requiredPermissions)) {
-                    doPageSelection(buttonEvent)
-                } else buttonEvent.deferEdit().queue { waitForButton() }
-            } else doPageSelection(buttonEvent)
+            selectButtonId -> doPageSelection(buttonEvent)
             // To destroy, just delete our message and escape the recursion
             exitButtonId -> event.hook.editOriginalComponents().queue(null, handler)
             else -> { // Only these buttons immediately change the page
@@ -200,10 +192,6 @@ class Paginator(
 
         // We can't do much if the message was deleted externally, so we just ignore it
         private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE, ErrorResponse.UNKNOWN_WEBHOOK)
-
-        private val requiredPermissions = arrayOf(
-            Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY
-        )
     }
 
 }

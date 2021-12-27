@@ -25,6 +25,7 @@ import com.sandrabot.sandra.utils.checkCommandBlocklist
 import com.sandrabot.sandra.utils.missingPermission
 import com.sandrabot.sandra.utils.missingSelfMessage
 import kotlinx.coroutines.runBlocking
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
 
@@ -46,7 +47,11 @@ class CommandListener(val sandra: Sandra) {
 
         // Do additional checks for guilds, mostly just permission checks
         if (isFromGuild) {
-            // TODO Figure out which permissions we ACTUALLY need with slash commands
+            // Make sure we have all the permissions we need to run correctly
+            requiredPermissions.firstOrNull { missingPermission(event, it) }?.let {
+                event.replyError(missingSelfMessage(event, it)).setEphemeral(true).queue()
+                return
+            }
             // Ensure the required permissions are met for this command
             for (permission in command.requiredPermissions) {
                 if (missingPermission(event, permission)) {
@@ -95,6 +100,7 @@ class CommandListener(val sandra: Sandra) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandListener::class.java)
+        private val requiredPermissions = arrayOf(Permission.MESSAGE_EXT_EMOJI)
     }
 
 }
