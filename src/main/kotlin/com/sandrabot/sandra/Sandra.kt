@@ -50,17 +50,15 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
     val color = if (development) Colors.RED else Colors.BLURPLE
-    val prefix = if (development) Constants.BETA_PREFIX else Constants.PREFIX
 
     val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
+    val locales = LocaleManager()
     val commands = CommandManager(this)
-    val cooldowns = CooldownManager(this)
     val eventManager = EventManager()
     val eventWaiter = EventWaiter()
-    val locales = LocaleManager()
     val messages = MessageManager()
     val patreon = PatreonManager(this)
     val presence = PresenceService(this)
@@ -95,7 +93,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
         // Register event listeners using our event manager
         // The ready listener will remove itself after startup finishes
-        eventManager.register(MessageListener(this), CommandListener(), eventWaiter, ReadyListener(this))
+        eventManager.register(MessageListener(this), CommandListener(this), eventWaiter, ReadyListener(this))
 
         // Block the thread until the first shard signs in
         shards = builder.build()
@@ -103,7 +101,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val self = shards.shardCache.first().selfUser
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
 
-        commands.setMentionPrefixes(self.id)
         if (apiEnabled) api.start()
 
     }
@@ -140,7 +137,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         if (apiEnabled) api.shutdown()
         shards.shutdown()
         blocklist.shutdown()
-        cooldowns.shutdown()
         config.shutdown()
         redis.shutdown()
 

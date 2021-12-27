@@ -28,13 +28,9 @@ import kotlinx.coroutines.withContext
 class Dog : Command(name = "dog") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.channel.sendTyping().await()
-        var imagePath: String
-        do imagePath = httpClient.get("https://random.dog/woof")
-        while (imagePath.endsWith("mp4"))
-        if (!imagePath.endsWith("jpg")) {
-            event.replyError(event.translate("error"))
-        } else event.reply("https://random.dog/$imagePath")
+        event.deferReply().await()
+        val url = httpClient.get<String>("https://random.dog/woof")
+        event.sendMessage("https://random.dog/$url").queue()
     }
 
 }

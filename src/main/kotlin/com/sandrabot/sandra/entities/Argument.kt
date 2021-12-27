@@ -18,326 +18,190 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
-import com.sandrabot.sandra.utils.removeExtraSpaces
-import com.sandrabot.sandra.utils.splitSpaces
-import kotlinx.coroutines.runBlocking
-import me.xdrop.fuzzywuzzy.FuzzySearch
-import net.dv8tion.jda.api.entities.IMentionable
-import net.dv8tion.jda.api.entities.Role
-import net.dv8tion.jda.api.entities.VoiceChannel
+import com.sandrabot.sandra.utils.spaceRegex
+import io.ktor.http.cio.websocket.*
+import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
+import kotlin.time.Duration
 
-private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(\*)?]""")
-private val durationRegex = Regex("""^(?!$)(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$""")
-private val wordRegex = Regex(""""([^"]+?)"|^ *?([^"\s]+)""")
-private val userRegex = Regex("""<@!?(\d{17,19})>""")
-private val channelRegex = Regex("""<#(\d{17,19})>""")
+private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z0-9,.]+))?]""")
+private val durationRegex = Regex("""^(?!$)(?:(\d+)d ?)?(?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?$""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
-private val roleRegex = Regex("""<@&(\d{17,19})>""")
-private val digitRegex = Regex("""\d{1,16}""")
-private val idRegex = Regex("""\d{17,19}""")
-private val flagRegex = Regex("""!(\S+)""")
 
 /**
  * Represents an object that may be parsed from text and consumed by a command as an argument.
  * The internal constructor ensures the rules defined in [compileArguments] are enforced.
  */
 class Argument internal constructor(
-    val name: String, val type: ArgumentType, val isRequired: Boolean, val isArray: Boolean
+    val name: String, val type: ArgumentType, val isRequired: Boolean, val options: List<*>
 ) {
     val usage = run {
         val (start, end) = if (isRequired) "<" to ">" else "[" to "]"
-        val array = if (isArray) "..." else ""
-        "$start$name$array$end"
+        "$start$name$end"
     }
 
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
-        val array = if (isArray) "*" else ""
-        return "A:$required$name($type)$array"
+        val size = if (options.isNotEmpty()) "[${options.size}]" else ""
+        return "Argument:$required$name($type)$size"
     }
 }
 
 /**
  * Compiles the provided token string into a list of arguments.
  *
- * Tokens must follow the format `[@name:type*]`. Only the brackets and type are required.
- * Any text that does not follow the correct pattern will be ignored by this method.
+ * Tokens must follow the format `[@name:type:option,option]`. Only the brackets and type are required.
+ * Any text that does not follow the correct pattern will be ignored by the compiler.
  * If a name isn't supplied, it will default to the name of the type.
  * If multiple tokens have the same type, they must be named differently
  *  to indicate clearly which token is being referred to.
- * All letters are case insensitive, however the name will always be converted to lowercase.
+ * All letters are case-insensitive, however the name and options will always be converted to lowercase.
  *
  *  * The `@` denotes the token as a required argument.
+ *    * Required arguments must be listed first before other arguments.
  *  * The name can be used to describe the argument in usage prompts.
- *    If the name is present, the colon must also be present to separate the name and type.
+ *    * If the name is present, the colon must also be present to separate the name and type.
  *  * The type is the name of any entry in the [ArgumentType] enum.
- *  * The `*` denotes the token as an array, where multiple results may be parsed.
+ *  * The options are a comma delimited list of values a user may pick.
+ *    * If not empty, these are the only possible values.
+ *    * When command data is serialized, the name of the value will be pulled from locale data by index.
+ *    * You may only define a maximum of 25 options due to a restriction applied by Discord.
+ *    * The options must be of the same type as the expected argument.
+ *    * Options may only be applied to [ArgumentType.TEXT], [ArgumentType.INTEGER], or [ArgumentType.DOUBLE].
  *
- * Required arguments are used by the command system to halt execution if the argument is missing.
- * Commands may assume required arguments will always be present.
+ * Required arguments are guaranteed to be present when a command is processed.
+ * While Discord will not allow a required argument to be missing, it may not be resolved if the input is malformed.
  *
- * Tokens must meet these requirements otherwise an [IllegalArgumentException] will be thrown:
- *  * Tokens must not evaluate to [ArgumentType.UNKNOWN]
- *  * Tokens with the type [ArgumentType.FLAG] must not be required
- *  * Tokens with the type [ArgumentType.FLAG] must not be arrays
- *  * Tokens with the type [ArgumentType.TEXT] must not be arrays
- *  * Tokens must not share names
+ * Tokens must meet these requirements, otherwise an [IllegalArgumentException] will be thrown:
+ *  * Tokens must use a type listed in [ArgumentType]
+ *  * Tokens must have distinct names
+ *  * Tokens must not have invalid options
  *
  * Examples:
  *  * `[text]` - Optional argument with the name of "text" and the type of [ArgumentType.TEXT]
  *  * `[@time:duration]` - Required argument with the name of "time" and the type of [ArgumentType.DURATION]
- *  * `[bots:flag]` - Optional argument with the name of "bots" and the type of [ArgumentType.FLAG]
- *  * `[users:user*]` - Optional array of arguments with the name of "users" and the type of [ArgumentType.USER]
+ *  * `[bots:boolean]` - Optional argument with the name of "bots" and the type of [ArgumentType.BOOLEAN]
+ *  * `[@days:integer:1,7]` - Required argument with the name "days", type of [ArgumentType.INTEGER], and options "1" or "7"
+ *  * `[minutes:duration] [@reason:text]` - Throws [IllegalArgumentException], the required argument isn't first
  *  * `[something:else]` - Throws [IllegalArgumentException], the type "else" is invalid
- *  * `[text*]` - Throws [IllegalArgumentException], text must not be arrays
- *  * `[@global:flag]` - Throws [IllegalArgumentException], flags must not be required
- *  * `[time:digit] [time:duration]` - Throws [IllegalArgumentException], the name is already used
+ *  * `[time:integer] [time:duration]` - Throws [IllegalArgumentException], the name "time" is already used
+ *  * `[quantity:integer:1.0,2.0]` - Throws [IllegalArgumentException], the option type is DOUBLE when INTEGER is required
  */
 @Suppress("KDocUnresolvedReference")
 fun compileArguments(tokens: String): List<Argument> {
     val arguments = LinkedList<Argument>()
     for (match in tokenRegex.findAll(tokens)) {
-        val (text, atSign, rawName, rawType, asterisk) = match.groupValues
+        val (text, atSign, rawName, rawType, rawOptions) = match.groupValues
         val isRequired = atSign.isNotEmpty()
-        val isArray = asterisk.isNotEmpty()
-
+        // This will throw if the type is invalid
         val type = ArgumentType.fromName(rawType)
-        if (type == ArgumentType.UNKNOWN) {
-            // Unknown arguments are not permitted
-            throw IllegalArgumentException("Unknown argument type in $text at ${match.range}")
-        } else if (type == ArgumentType.FLAG && isRequired) {
-            // Flag arguments cannot be required
-            throw IllegalArgumentException("Flag arguments cannot be required in $text at ${match.range}")
-        } else if (type == ArgumentType.FLAG && isArray) {
-            // Flag arguments cannot be arrays
-            throw IllegalArgumentException("Flag arguments cannot be arrays in $text at ${match.range}")
-        } else if (type == ArgumentType.TEXT && isArray) {
-            // Text arguments cannot be arrays
-            throw IllegalArgumentException("Text arguments cannot be arrays in $text at ${match.range}")
+
+        // Figure out if options are applicable and validate them
+        val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type) {
+            // Options can only be used with TEXT, INTEGER, and DOUBLE types
+            ArgumentType.TEXT, ArgumentType.INTEGER, ArgumentType.DOUBLE ->
+                // Split by commas with a limit of 25 distinct entries
+                rawOptions.lowercase().split(',').distinct().take(25).let { list ->
+                    when (type) {
+                        ArgumentType.TEXT -> list
+                        ArgumentType.INTEGER -> list.map { int -> int.toLongOrNull() }
+                        ArgumentType.DOUBLE -> list.map { num -> num.toDoubleOrNull() }
+                        else -> throw AssertionError("Illegal option type")
+                    }.also { mappedList ->
+                        // Throw if any options couldn't be converted
+                        if (null in mappedList) throw IllegalArgumentException("Illegal option type for argument type $type")
+                    }
+                }
+            // Throw if options are defined on any other argument type
+            else -> throw IllegalArgumentException("Argument type $type cannot use options")
         }
 
         // The name must always be lowercase
         val name = rawName.ifEmpty { type.name }.lowercase()
 
-        // Arguments cannot share names, if there are two
-        // of the same type they must be named differently
-        if (arguments.any { name.equals(it.name, ignoreCase = true) }) {
+        // Arguments must have distinct names, throw if there are duplicates
+        if (arguments.any { name == it.name })
             throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
-        }
-        arguments.add(Argument(name, type, isRequired, isArray))
+
+        // Required arguments must be listed first
+        if (isRequired && arguments.any { !it.isRequired })
+            throw IllegalArgumentException("Required argument $text at ${match.range} must be listed before other arguments")
+
+        arguments.add(Argument(name, type, isRequired, options))
     }
     return arguments
 }
 
 /**
- * Extracts a single argument from the command context.
- */
-@Suppress("UNCHECKED_CAST")
-fun <T> singleton(event: CommandEvent, args: String, type: ArgumentType): T? {
-    val argument = Argument("singleton", type, isRequired = false, isArray = false)
-    return parseArguments(listOf(argument), event, args).results["singleton"] as T?
-}
-
-/**
  * Parses the arguments provided by the user into objects easily consumed by commands.
  */
-fun parseArguments(arguments: List<Argument>, event: CommandEvent, args: String): ArgumentResult {
+fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResult {
     val parsedArguments = mutableMapOf<String, Any>()
-    val remaining = AtomicReference(args)
+    val options = event.options
 
     for (arg in arguments) {
-        if (remaining.get().isBlank()) break
-        val result: List<Any> = when (arg.type) {
-            ArgumentType.USER, ArgumentType.CHANNEL, ArgumentType.EMOTE,
-            ArgumentType.ROLE, ArgumentType.VOICE -> parseSnowflake(event, remaining, arg)
-            ArgumentType.COMMAND -> parseCommand(event, remaining, arg)
-            ArgumentType.DURATION -> parseDuration(remaining, arg)
-            ArgumentType.DIGIT -> parseDigit(remaining, arg)
-            ArgumentType.FLAG -> parseFlag(remaining, arg)
-            ArgumentType.WORD -> parseWord(remaining, arg)
-            ArgumentType.TEXT -> parseText(remaining)
-            else -> throw AssertionError("No parsing implemented for argument type ${arg.type}")
-        }
+        val result: Any? = when (arg.type) {
+            ArgumentType.BOOLEAN -> findOption(options, arg)?.asBoolean
+            ArgumentType.DOUBLE -> findOption(options, arg)?.asDouble
+            ArgumentType.INTEGER -> findOption(options, arg)?.asLong
+            ArgumentType.MENTIONABLE -> findOption(options, arg)?.asMentionable
+            ArgumentType.ROLE -> findOption(options, arg)?.asRole
+            ArgumentType.TEXT -> findOption(options, arg)?.asString
+            ArgumentType.USER -> findOption(options, arg)?.asUser
 
+            ArgumentType.CHANNEL -> parseChannels<TextChannel>(options, arg)
+            ArgumentType.NEWS -> parseChannels<NewsChannel>(options, arg)
+            ArgumentType.STAGE -> parseChannels<StageChannel>(options, arg)
+            ArgumentType.VOICE -> parseChannels<VoiceChannel>(options, arg)
+
+            ArgumentType.CATEGORY -> parseCategory(options, arg)
+            ArgumentType.COMMAND -> parseCommand(event, options, arg)
+            ArgumentType.DURATION -> parseDuration(options, arg)
+            ArgumentType.EMOTE -> parseEmote(event, options, arg)
+        }
         // Add the parsed values to the map if anything was found
-        if (result.isNotEmpty()) parsedArguments[arg.name] = if (arg.isArray) result else result.first()
+        if (result != null) parsedArguments[arg.name] = result
     }
 
-    // Check for and enforce any missing required arguments
+    // Check for any required arguments that failed to parse
     arguments.firstOrNull { it.isRequired && it.name !in parsedArguments }
         ?.let { throw MissingArgumentException(event, it) }
 
     return ArgumentResult(parsedArguments)
 }
 
-/* ========== Parsing Methods =========== */
+/* ==================== Parsing Methods ===================== */
 
-/**
- * Parses argument types USER, CHANNEL, VOICE, ROLE, and EMOTE
- */
-private fun parseSnowflake(
-    event: CommandEvent, remaining: AtomicReference<String>, argument: Argument
-): List<IMentionable> {
-    val parsedValues = mutableListOf<IMentionable>()
-    // Figure out which regex pattern and list we are going
-    // to need since this method can parse multiple types
-    val (regex, snowflakes) = when (argument.type) {
-        ArgumentType.USER -> userRegex to event.message.mentionedUsers
-        ArgumentType.CHANNEL -> channelRegex to event.message.mentionedChannels
-        ArgumentType.VOICE -> channelRegex to event.guild.voiceChannels
-        ArgumentType.ROLE -> roleRegex to event.message.mentionedRoles
-        ArgumentType.EMOTE -> emoteRegex to event.message.emotes
-        else -> throw AssertionError("Invalid type ${argument.type} for mentionable parsing")
-    }
-    // First look for any mentions that match the regex for the type
-    if (snowflakes.isNotEmpty()) for (match in regex.findAll(remaining.get())) {
-        // Add the match to the parsed values if the id matches a snowflake of the requested type
-        snowflakes.firstOrNull { match.groupValues[1] == it.id }?.also { parsedValues.add(it) } ?: continue
-        // If we reach this line, the mention was validated and we need to remove the matched text
-        remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
-        if (!argument.isArray) break
-    }
-    // If no mentions were found or this is an array, additionally search for ids
-    if (parsedValues.isEmpty() || argument.isArray) {
-        // Find all of the ids at once to properly skip invalid matches
-        for (match in idRegex.findAll(remaining.get())) {
-            // Validate that the id found is the same type as the requested type
-            when (argument.type) {
-                // User lookup is a blocking call, use only within coroutines
-                ArgumentType.USER -> runBlocking { event.sandra.retrieveUser(match.value) }
-                ArgumentType.CHANNEL -> event.guild.getTextChannelById(match.value)
-                ArgumentType.VOICE -> event.guild.getVoiceChannelById(match.value)
-                ArgumentType.ROLE -> event.guild.getRoleById(match.value)
-                ArgumentType.EMOTE -> event.guild.getEmoteById(match.value)
-                else -> throw AssertionError("you should never see this")
-            }?.also { parsedValues.add(it) } ?: continue
-            // If we reach this line, the id was validated and we need to remove the matched text
-            remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
-            if (!argument.isArray) break
-        }
-    }
-    // Fuzzy searching is only used as a last resort for roles and voice channels
-    if (parsedValues.isEmpty() || argument.isArray) {
-        if (argument.type == ArgumentType.ROLE || argument.type == ArgumentType.VOICE) do {
-            // To search lists while tolerating misspellings we can use fuzzy searching
-            // First we need to find a word or phrase to search with, instead of matching the entire remaining
-            val match = wordRegex.find(remaining.get()) ?: break
-            // Since this regex has two groups we need to find the one that was matched
-            val word = match.groupValues.drop(1).firstOrNull { it.isNotEmpty() } ?: break
-            when (argument.type) {
-                // Only extract the top result or break if none match with >= 80% accuracy
-                ArgumentType.ROLE -> FuzzySearch.extractTop(word, event.guild.roles, Role::getName, 85)
-                ArgumentType.VOICE -> FuzzySearch.extractTop(word, event.guild.voiceChannels, VoiceChannel::getName, 85)
-                else -> throw AssertionError("you should never see this")
-            }.firstOrNull()?.also { parsedValues.add(it.referent) } ?: break
-            // Update remaining by removing the word we used if a result was found
-            remaining.getAndUpdate { it.removeRange(match.range).removeExtraSpaces() }
-        } while (argument.isArray)
-    }
-    return parsedValues.distinct()
+private fun findOption(options: List<OptionMapping>, arg: Argument): OptionMapping? =
+    options.firstOrNull { arg.name == it.name && arg.type.optionType == it.type }
+
+private inline fun <reified T : GuildChannel> parseChannels(options: List<OptionMapping>, arg: Argument): T? =
+    findOption(options, arg)?.asGuildChannel?.let { if (it is T) it else null }
+
+private fun parseCategory(options: List<OptionMapping>, arg: Argument): Category? = findOption(options, arg)?.let {
+    Category.values().firstOrNull { category -> category.name == it.asString.uppercase() }
 }
 
-/**
- * Parses argument type DURATION
- */
-private fun parseDuration(remaining: AtomicReference<String>, argument: Argument): List<Long> {
-    val parsedValues = mutableListOf<Long>()
-    // Due to regex negative lookahead we need to search using words
-    // This also enforces a rule that time units must be in order from days to seconds
-    for (word in remaining.get().splitSpaces()) {
-        var durationInSeconds = 0L
-        val match = durationRegex.matchEntire(word) ?: continue
-        // The time units are already in order so that makes this easy enough
-        val (_, days, hours, minutes, seconds) = match.groupValues
-        if (days.isNotEmpty()) days.toIntOrNull()?.let { durationInSeconds += 86400 * it }
-        if (hours.isNotEmpty()) hours.toIntOrNull()?.let { durationInSeconds += 3600 * it }
-        if (minutes.isNotEmpty()) minutes.toIntOrNull()?.let { durationInSeconds += 60 * it }
-        if (seconds.isNotEmpty()) seconds.toIntOrNull()?.let { durationInSeconds += it }
-        // Remove any durations that were matched, but don't use any that are zero
-        remaining.getAndUpdate { it.replaceFirst(word, "").removeExtraSpaces() }
-        if (durationInSeconds >= 0) {
-            parsedValues.add(durationInSeconds)
-            if (!argument.isArray) break
-        }
-    }
-    return parsedValues
+private fun parseCommand(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Command? =
+    findOption(options, arg)?.let { event.sandra.commands[it.asString.replace(spaceRegex, "/")] }
+
+private fun parseDuration(options: List<OptionMapping>, arg: Argument): Duration? {
+    val option = findOption(options, arg) ?: return null
+    // Due to regex negative lookahead we need to match the entire string
+    val match = durationRegex.matchEntire(option.asString) ?: return null
+    // The time units must be in order so that makes this easy enough
+    val (_, days, hours, minutes, seconds) = match.groupValues.map { it.ifBlank { "0" } }
+    // This is sadly the most straightforward way to parse the duration, as
+    // the spaces are required when parsing but optional in the regex
+    val duration = Duration.parseOrNull("${days}d ${hours}h ${minutes}m ${seconds}s")
+    return duration?.let { if (it.inWholeSeconds > 0) duration else null }
 }
 
-/**
- * Parses argument type DIGIT
- */
-private fun parseDigit(remaining: AtomicReference<String>, argument: Argument): List<Long> {
-    val parsedValues = mutableListOf<Long>()
-    // Only match entire words, we don't want to pick digits from just anywhere
-    for (word in remaining.get().splitSpaces()) {
-        val match = digitRegex.matchEntire(word) ?: continue
-        // Only keep the match if it can actually fit into a long
-        match.value.toLongOrNull()?.also { parsedValues.add(it) } ?: continue
-        remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
-        if (!argument.isArray) break
-    }
-    return parsedValues
-}
-
-/**
- * Parses argument type FLAG
- */
-private fun parseFlag(remaining: AtomicReference<String>, argument: Argument): List<Boolean> {
-    // Flags cannot be required nor arrays, this method will always return a singleton
-    var isFlagPresent = false
-    // Make sure a flag isn't found in the middle of a word
-    for (word in remaining.get().splitSpaces()) {
-        val match = flagRegex.matchEntire(word) ?: continue
-        // If the flag name matches the argument name it is considered present
-        if (match.groupValues[1].equals(argument.name, ignoreCase = true)) {
-            remaining.getAndUpdate { it.replaceFirst(match.value, "").removeExtraSpaces() }
-            isFlagPresent = true
-            break
-        }
-    }
-    return listOf(isFlagPresent)
-}
-
-/**
- * Parses argument type COMMAND
- */
-private fun parseCommand(event: CommandEvent, remaining: AtomicReference<String>, argument: Argument): List<Command> {
-    val parsedValues = mutableListOf<Command>()
-    // We don't support fuzzy searching commands because it would be too ambiguous with aliases
-    for (word in remaining.get().splitSpaces()) {
-        event.sandra.commands[word]?.also { parsedValues.add(it) } ?: continue
-        // If we reach this line, that means a command was found
-        remaining.getAndUpdate { it.replaceFirst(word, "").removeExtraSpaces() }
-        if (!argument.isArray) break
-    }
-    return parsedValues
-}
-
-/**
- * Parses argument type WORD
- */
-private fun parseWord(remaining: AtomicReference<String>, argument: Argument): List<String> {
-    // Words are considered any characters before the first space, or characters within quotes
-    val parsedValues = mutableListOf<String>()
-    do {
-        // Find the first word or any phrase within quotes in the remaining text
-        val match = wordRegex.find(remaining.get()) ?: break
-        val (_, first, second) = match.groupValues
-        // Since the regex can match single words or entire phrases,
-        // we need to determine the group that was matched
-        parsedValues.add(first.ifBlank { second })
-        remaining.getAndUpdate { it.removeRange(match.range).removeExtraSpaces() }
-    } while (argument.isArray)
-    return parsedValues
-}
-
-/**
- * Parses argument type TEXT
- */
-private fun parseText(remaining: AtomicReference<String>): List<String> {
-    // Text is another exception to arrays as it can only return a singleton
-    // You should probably put this at the very end of your tokens
-    return listOf(remaining.getAndSet(""))
+private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Emote? {
+    val option = findOption(options, arg) ?: return null
+    // Only match the entire string to be consistent with the other types
+    val match = emoteRegex.matchEntire(option.asString) ?: return null
+    // Check against all guilds, usually the emote isn't from the calling guild
+    return event.sandra.shards.getEmoteById(match.groupValues[1])
 }

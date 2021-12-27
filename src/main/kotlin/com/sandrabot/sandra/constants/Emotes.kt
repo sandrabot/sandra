@@ -27,6 +27,7 @@ object Emotes {
     const val FAVORITE = "<:favorite:788968508016033802>"
     const val HASHTAG = "<:hashtag:788969891956654100>"
     const val INFO = "<:info:788968510843125780>"
+    const val MEMBER = "<:member:788969892782669834>"
     const val MOD_SHIELD = "<:modshield:788968509614325840>"
     const val MUSIC = "<:music:788968511891439616>"
     const val NEXT = "<:next:788968511019417660>"

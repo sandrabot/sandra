@@ -22,8 +22,4 @@ import kotlinx.serialization.Serializable
  * Stores Sandra-specific properties and settings for guilds.
  */
 @Serializable
-class GuildConfig(override val id: Long) : Configuration() {
-
-    val prefixes: MutableList<String> = mutableListOf()
-
-}
+class GuildConfig(override val id: Long) : Configuration()

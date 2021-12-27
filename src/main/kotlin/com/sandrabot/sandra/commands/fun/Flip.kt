@@ -22,16 +22,14 @@ import com.sandrabot.sandra.events.CommandEvent
 import kotlin.random.Random
 
 @Suppress("unused")
-class Flip : Command(name = "flip", aliases = arrayOf("f")) {
+class Flip : Command(name = "flip") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        if (event.userConfig.credits <= 0) {
-            event.replyEmote(event.translate("no_credits"), Emotes.CREDIT)
-        } else {
+        if (event.userConfig.credits > 0) {
             val (emote, side) = if (Random.nextBoolean()) Emotes.CREDIT to "heads" else Emotes.TAILS to "tails"
-            event.replyEmote(event.translate("reply", event.localeContext.get("side_$side", true)), emote)
-        }
+            event.replyEmote(event.translate("reply", event.translate("side_$side")), emote).queue()
+        } else event.replyEmote(event.translate("no_credits"), Emotes.CREDIT).queue()
 
     }
 

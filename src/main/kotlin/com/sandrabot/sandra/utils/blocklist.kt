@@ -28,10 +28,9 @@ import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.MessageChannel
 import org.slf4j.LoggerFactory
 
-fun checkCommandBlocklist(event: CommandEvent): Boolean {
-    val guildId = if (event.isFromGuild) null else event.guild.idLong
-    return checkBlocklist(event.sandra, event.channel, event.author.idLong, guildId, FeatureType.COMMANDS)
-}
+fun checkCommandBlocklist(event: CommandEvent): Boolean = checkBlocklist(
+    event.sandra, event.channel, event.user.idLong, event.guild?.idLong, FeatureType.COMMANDS
+)
 
 fun checkBlocklist(
     sandra: Sandra, channel: MessageChannel, userId: Long, guildId: Long?, featureType: FeatureType

@@ -16,99 +16,83 @@
 
 package com.sandrabot.sandra.listeners
 
-import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
-import com.sandrabot.sandra.utils.*
+import com.sandrabot.sandra.utils.await
+import com.sandrabot.sandra.utils.checkCommandBlocklist
+import com.sandrabot.sandra.utils.missingPermission
+import com.sandrabot.sandra.utils.missingSelfMessage
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
 
-class CommandListener {
+class CommandListener(val sandra: Sandra) {
 
     @Suppress("unused")
-    fun onCommand(event: CommandEvent) {
+    fun onSlashCommand(slashEvent: SlashCommandEvent) {
 
-        val command = event.command
-        val isFromGuild = event.isFromGuild
+        // The command could only be null if it was removed with an eval
+        val command = sandra.commands[slashEvent.commandPath] ?: run {
+            logger.warn("Could not find command path for registered command: ${slashEvent.commandPath}")
+            return
+        }
+        val event = CommandEvent(sandra, slashEvent, command)
+        val isFromGuild = slashEvent.isFromGuild
 
-        // Check the blocklist to prevent processing in active contexts
+        // Check the blocklist to prevent responding to active contexts
         if (checkCommandBlocklist(event)) return
 
-        // Owners are exempt from cooldowns
-        if (event.command.cooldown > 0 && !event.isOwner) {
-            // Apply the cooldown and return if active
-            if (event.sandra.cooldowns.applyCooldown(event)) return
-        }
-
-        // Do additional checks for guilds, mostly permission checks
+        // Do additional checks for guilds, mostly just permission checks
         if (isFromGuild) {
-            when {
-                // Check for basic permissions we might need to reply
-                missingPermission(event, Permission.MESSAGE_SEND) -> {
-                    if (hasPermission(event, Permission.MESSAGE_ADD_REACTION)) {
-                        event.message.addReaction(Unicode.SPEAK_NO_EVIL).queue()
-                    } else logger.info("Cannot execute command: Missing MESSAGE_WRITE")
-                    return
-                }
-                missingPermission(event, Permission.MESSAGE_EXT_EMOJI) -> {
-                    val selfMessage = missingSelfMessage(event, Permission.MESSAGE_EXT_EMOJI)
-                    event.channel.sendMessage(Unicode.CROSS_MARK + Unicode.VERTICAL_LINE + selfMessage).queue()
-                    return
-                }
-                missingPermission(event, Permission.MESSAGE_HISTORY) -> {
-                    val selfMessage = missingSelfMessage(event, Permission.MESSAGE_HISTORY)
-                    event.channel.sendMessage(Emotes.ERROR + Unicode.VERTICAL_LINE + selfMessage).queue()
-                    return
-                }
+            // Make sure we have all the permissions we need to run correctly
+            requiredPermissions.firstOrNull { missingPermission(event, it) }?.let {
+                event.replyError(missingSelfMessage(event, it)).setEphemeral(true).queue()
+                return
             }
-            // Ensure the command permission requirements are met
-            for (permission in command.botPermissions) {
+            // Ensure the required permissions are met for this command
+            for (permission in command.requiredPermissions) {
                 if (missingPermission(event, permission)) {
-                    event.replyError(missingSelfMessage(event, permission))
+                    event.replyError(missingSelfMessage(event, permission)).setEphemeral(true).queue()
                     return
                 }
             }
-            // Owners are exempt from user permission checks
-            if (!event.isOwner) for (permission in command.userPermissions) {
-                if (missingUserPermission(event, permission)) {
-                    event.replyError(missingUserMessage(event, permission))
-                    return
-                }
-            }
+            // TODO User privilege and permissions
         } else if (command.guildOnly) {
-            event.replyError(event.translate("general.guild_only", false))
+            event.replyError(event.translate("general.guild_only", false)).setEphemeral(true).queue()
             return
         }
 
         if (command.ownerOnly && !event.isOwner) {
-            event.replyError(event.translate("general.owner_only", false))
+            event.replyError(event.translate("general.owner_only", false)).setEphemeral(true).queue()
             return
         }
 
-        // Only log the command when it is actually executed
-        val author = "${event.author.asTag} [${event.author.id}]"
-        val channel = if (event.isFromGuild) {
-            "${event.textChannel.name} [${event.textChannel.id}] | ${event.guild.name} [${event.guild.id}]"
+        // Finally, log the command when it is actually executed
+        val user = "${event.user.asTag} [${event.user.id}]"
+        val channel = if (event.guild != null) {
+            "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
         } else "direct message"
-        logger.info("${event.commandPath} | $author | $channel | ${event.message.contentRaw}")
+        logger.info("${event.commandPath} | $user | $channel | ${slashEvent.commandString}")
 
         // Execute the command in a blocking coroutine, execute is a suspended function
+        // We are technically already within a coroutine from the event being fired
         runBlocking {
-            // Ensure that all members are loaded if this command is only for guilds
-            if (command.guildOnly && !event.guild.isLoaded) event.guild.loadMembers().await()
+            // Ensure the guild is loaded if ran from a guild
+            if (command.guildOnly && !event.guild!!.isLoaded) event.guild.loadMembers().await()
             try {
                 command.execute(event)
             } catch (e: MissingPermissionException) {
-                event.replyError(missingSelfMessage(event, e.permission))
+                event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
                 logger.info("Cannot finish executing command due to missing permissions", e)
             } catch (e: MissingArgumentException) {
                 event.replyError(event.translate("general.missing_argument", false, e.argument.name))
-            } catch (e: Throwable) {
-                event.replyError(event.translate("general.command_exception", false))
-                logger.error("An exception occurred while executing a command", e)
+                    .setEphemeral(true).queue()
+            } catch (t: Throwable) {
+                event.sendError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
+                logger.error("An exception occurred while executing a command", t)
             }
         }
 
@@ -116,6 +100,7 @@ class CommandListener {
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandListener::class.java)
+        private val requiredPermissions = arrayOf(Permission.MESSAGE_EXT_EMOJI)
     }
 
 }

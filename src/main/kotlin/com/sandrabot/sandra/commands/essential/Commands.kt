@@ -23,16 +23,14 @@ import com.sandrabot.sandra.entities.Paginator
 import com.sandrabot.sandra.events.CommandEvent
 
 @Suppress("unused")
-class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
+class Commands : Command(name = "commands") {
 
     override suspend fun execute(event: CommandEvent) {
 
+        event.deferReply(ephemeral = true).queue()
         // Sort the commands into their respective categories, also sorted alphabetically
-        val sortedCommands = Category.values().associateWith { category ->
-            event.sandra.commands.commands.filter {
-                it.category == category && !it.ownerOnly
-            }.sortedBy { it.name }
-        }.filterNot { it.key == Category.CUSTOM || it.value.isEmpty() }
+        val sortedCommands = event.sandra.commands.values.sortedBy { it.name }.groupBy { it.category }
+            .filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
 
         val descriptionPages = mutableListOf<String>()
         val builder = StringBuilder()
@@ -43,7 +41,7 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
             builder.append(category.emote).append(" __**").append(category.displayName)
             builder.append(" ").append(event.translate("command_title")).append("**__\n")
             for (command in list) {
-                builder.append("`").append(event.sandra.prefix).append(command.name).append("` - ")
+                builder.append("`/").append(command.name).append("` - ")
                 builder.append(event.translate("commands.${command.name}.description", false)).append("\n")
                 // Wrap the list of commands into pages
                 if (++commandsWritten % 20 == 0) {
@@ -58,7 +56,7 @@ class Commands : Command(name = "commands", aliases = arrayOf("cmds")) {
         // Wrap any remaining text to another page
         if (builder.isNotBlank()) descriptionPages.add(builder.toString())
         val embed = event.embed.setTitle(event.translate("commands.help.extra_help", false), Constants.DIRECT_SUPPORT)
-        embed.setFooter(event.translate("more_information", event.sandra.prefix))
+        embed.setFooter(event.translate("more_information"))
         Paginator(event).paginate(descriptionPages.map { embed.setDescription(it).build() })
 
     }

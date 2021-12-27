@@ -16,44 +16,51 @@
 
 package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.removeExtraSpaces
-import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
 abstract class Command(
     val name: String,
-    val aliases: Array<String> = emptyArray(),
     arguments: String = "",
     val guildOnly: Boolean = false,
-    val ownerOnly: Boolean = false,
-    val cooldown: Int = Constants.DEFAULT_COOLDOWN,
-    val cooldownScope: CooldownScope = CooldownScope.USER,
-    val botPermissions: Array<Permission> = emptyArray(),
+    val group: String? = null,
+    val requiredPermissions: Array<Permission> = emptyArray(),
     val userPermissions: Array<Permission> = emptyArray()
 ) {
 
     val arguments: List<Argument> = compileArguments(arguments)
     val category: Category = Category.fromClass(this::class)
-    val children: List<Command> = this::class.nestedClasses.filter {
-        it.isSubclassOf(Command::class)
-    }.map {
-        (it.createInstance() as Command).also { child -> child.parent = this }
-    }.toList()
+    val ownerOnly: Boolean = category == Category.OWNER
+    val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
+        .map { (it.createInstance() as Command).also { child -> child.parent = this } }
+    val allSubcommands: List<Command> = subcommands + subcommands.flatMap { it.allSubcommands }
 
+    // Must be lazy so parents are set before access
     val path: String by lazy {
-        var currentCommand = this
-        val builder = StringBuilder()
-        do {
-            builder.insert(0, currentCommand.name + ":")
-            currentCommand = currentCommand.parent ?: break
-        } while (true)
-        builder.substring(0, builder.lastIndex)
+        if (!isSubcommand) name else {
+            var topLevelParent = this
+            do topLevelParent = topLevelParent.parent ?: break while (true)
+            buildString {
+                append(topLevelParent.name)
+                if (group != null) append('/', group)
+                append('/', name)
+            }
+        }
     }
 
+    var id: Long = 0L
+        set(value) {
+            // Only allow the field to be set once for top level commands
+            if (field == 0L && !isSubcommand) field = value
+            else throw IllegalStateException("Command ID for $path has already been set to $field")
+        }
     var parent: Command? = null
         internal set
     val isSubcommand: Boolean
@@ -61,37 +68,42 @@ abstract class Command(
 
     abstract suspend fun execute(event: CommandEvent)
 
-    /**
-     * Finds children of this command by recursively walking the command tree.
-     * The returned pair is the possible child and the remaining arguments.
-     * If no child was found the command will be null.
-     * Otherwise, it is guaranteed that the remaining arguments have changed.
-     */
-    fun findChild(args: String): Pair<Command?, String> {
-        // Attempt to find a child with the first word as the alias
-        val firstArg = args.splitSpaces().first()
-        val child = children.firstOrNull {
-            arrayOf(it.name, *it.aliases).any { alias ->
-                firstArg.equals(alias, ignoreCase = true)
+    fun asCommandData(sandra: Sandra): CommandData? {
+        if (isSubcommand) return null // Only root commands may build command data
+        val commandPath = path.replace('/', '.')
+        val data = CommandData(name, sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.description"))
+        if (ownerOnly) data.setDefaultEnabled(false)
+        if (arguments.isNotEmpty()) data.addOptions(arguments.asOptions(sandra, commandPath))
+        if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.group }.forEach { (group, commands) ->
+            val subcommandData = commands.map {
+                val subPath = it.path.replace('/', '.')
+                val description = sandra.locales.get(Locale.DEFAULT, "commands.$subPath.description")
+                val subData = SubcommandData(it.name, description)
+                subData.addOptions(it.arguments.asOptions(sandra, subPath))
+            }
+            if (group == null) data.addSubcommands(subcommandData) else {
+                val description = sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.$group.description")
+                val groupData = SubcommandGroupData(group, description)
+                groupData.addSubcommands(subcommandData)
+                data.addSubcommandGroups(groupData)
             }
         }
-        var arguments = args
-        // Use recursion to continue walking the command tree
-        val nestedCommand = if (child != null) {
-            arguments = arguments.removePrefix(firstArg).removeExtraSpaces()
-            // If there was only one word there's nothing else to find
-            if (arguments.isNotEmpty()) {
-                val recursive = child.findChild(arguments)
-                // Reassign the arguments if a command was found and a word was used
-                if (recursive.first != null) {
-                    arguments = recursive.second
-                    recursive.first
-                } else child
-            } else child
-        } else child
-        return nestedCommand to arguments
+        return data
     }
 
-    override fun toString(): String = "C:" + name.uppercase()
+    private fun List<Argument>.asOptions(sandra: Sandra, path: String): List<OptionData> = map {
+        val translations = sandra.locales.getList(Locale.DEFAULT, "commands.$path.arguments.${it.name}")
+        val optionData = OptionData(it.type.optionType, it.name, translations[0], it.isRequired)
+        it.options.forEachIndexed { index, any ->
+            when (any) {
+                is String -> optionData.addChoice(translations[index + 1], any)
+                is Long -> optionData.addChoice(translations[index + 1], any)
+                is Double -> optionData.addChoice(translations[index + 1], any)
+            }
+        }
+        optionData
+    }
+
+    override fun toString(): String = "Command:$path"
 
 }

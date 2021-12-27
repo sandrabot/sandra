@@ -26,10 +26,11 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 
 @Suppress("unused")
-class Shards : Command(name = "shards", aliases = arrayOf("shard")) {
+class Shards : Command(name = "shards") {
 
     override suspend fun execute(event: CommandEvent) {
 
+        event.deferReply(ephemeral = true).queue()
         val shardFields = event.sandra.shards.shardCache.sortedBy { it.shardInfo.shardId }.map {
             val status = it.status.name.replace("_", " ").capitalizeWords()
             val value = event.translate("status", status, it.gatewayPing.format(), it.guildCache.size().format())

@@ -21,15 +21,16 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.sanitize
+import com.sandrabot.sandra.utils.splitSpaces
 
 @Suppress("unused")
-class Choose : Command(name = "choose", aliases = arrayOf("pick"), arguments = "[@choices:word*]") {
+class Choose : Command(name = "choose", arguments = "[@options:text]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val list = event.arguments.array<String>("choices")!!
-        val reply = event.translate("reply", list.size.format(), list.random().sanitize().take(50))
-        event.reply(Unicode.SCALES + Unicode.VERTICAL_LINE + reply)
+        val list = event.arguments.text("options")!!.splitSpaces()
+        val reply = event.translate("reply", list.size.format(), list.random().sanitize().take(20))
+        event.replyEmote(reply, Unicode.SCALES).allowedMentions(emptyList()).queue()
 
     }
 

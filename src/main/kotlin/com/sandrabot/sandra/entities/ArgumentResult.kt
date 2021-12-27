@@ -18,15 +18,12 @@ package com.sandrabot.sandra.entities
 
 import net.dv8tion.jda.api.entities.*
 import kotlin.time.Duration
-import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
-import kotlin.time.toDuration
 
 /**
- * Wrapper class for casting argument parsing results.
- * Use the method with the corresponding name to the desired type.
- * If no name is given, the type name will be assumed.
- * If the argument was not parsed all methods will return null.
+ * Wrapper class for using the objects provided by [parseArguments].
+ * Use the method with the corresponding name for the desired type.
+ * * If no name is given, the type name will be assumed.
+ * * If the argument was not parsed or failed to parse, any attempt to read it will return `null`.
  */
 class ArgumentResult(val results: Map<String, Any>) {
 
@@ -36,43 +33,37 @@ class ArgumentResult(val results: Map<String, Any>) {
     operator fun contains(name: String): Boolean = name in results
 
     /**
-     * Returns the argument with the [name] casted as [T].
-     * If the wrong type is provided a casting exception will be thrown.
-     * If the argument was not parsed null will be returned.
+     * Returns the argument with the [name] cast as [T].
+     * * If the wrong type is expected, a casting exception will be thrown.
+     *   This is intended to help you find possible bugs.
+     * * If the argument was not parsed or failed to parse, `null` will be returned.
      */
     inline fun <reified T> get(name: String): T? = if (name in results) results[name] as T else null
-
-    /**
-     * Returns the array of type [T] with the name [name].
-     * Note that despite the name, a [List] is returned.
-     */
-    inline fun <reified T> array(name: String): List<T>? = if (name in results) {
-        (results[name] as List<*>).filterIsInstance<T>()
-    } else null
 
     override fun toString(): String = results.toString()
 
     /* JDA Objects */
 
     fun channel(name: String = "channel"): TextChannel? = get(name)
+    fun mentionable(name: String = "mentionable"): IMentionable? = get(name)
     fun emote(name: String = "emote"): Emote? = get(name)
+    fun news(name: String = "news"): NewsChannel? = get(name)
     fun role(name: String = "role"): Role? = get(name)
+    fun stage(name: String = "stage"): StageChannel? = get(name)
     fun user(name: String = "user"): User? = get(name)
     fun voice(name: String = "voice"): VoiceChannel? = get(name)
 
     /* Sandra Objects */
 
     fun command(name: String = "command"): Command? = get(name)
+    fun category(name: String = "category"): Category? = get(name)
 
     /* Native Objects */
 
-    fun digit(name: String = "digit"): Long? = get(name)
-    fun flag(name: String = "flag"): Boolean? = get(name)
+    fun boolean(name: String = "boolean"): Boolean? = get(name)
+    fun double(name: String = "double"): Double? = get(name)
+    fun duration(name: String = "duration"): Duration? = get(name)
+    fun integer(name: String = "integer"): Long? = get(name)
     fun text(name: String = "text"): String? = get(name)
-    fun word(name: String = "word"): String? = get(name)
-
-    @OptIn(ExperimentalTime::class)
-    fun duration(name: String = "duration"): Duration? =
-        get<Long>(name)?.toDuration(DurationUnit.SECONDS)
 
 }

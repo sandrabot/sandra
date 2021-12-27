@@ -22,17 +22,18 @@ import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
-class MemberCount : Command(name = "membercount", aliases = arrayOf("mc", "members"), guildOnly = true) {
+class Members : Command(name = "members", guildOnly = true) {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val memberCount = event.guild.memberCount
+        val memberCount = event.guild!!.memberCount
         val botCount = event.guild.memberCache.count { it.user.isBot }
         val humanCount = memberCount - botCount
-
-        event.translate(
-            "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
-        ).let { event.replyInfo(it) }
+        event.replyInfo(
+            event.translate(
+                "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
+            )
+        ).allowedMentions(emptyList()).queue()
 
     }
 

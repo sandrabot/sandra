@@ -20,8 +20,8 @@ import kotlinx.serialization.json.*
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        "prefixes" in element.jsonObject -> GuildConfig.serializer()
-        else -> UserConfig.serializer()
+        "credits" in element.jsonObject -> UserConfig.serializer()
+        else -> GuildConfig.serializer()
     }
 }
 

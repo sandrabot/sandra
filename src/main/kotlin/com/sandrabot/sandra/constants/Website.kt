@@ -19,7 +19,6 @@ package com.sandrabot.sandra.constants
 object Website {
 
     const val WEBSITE = "https://sandrabot.com"
-    const val DASHBOARD = "$WEBSITE/dashboard"
 
     const val DOCS = "https://docs.sandrabot.com"
 

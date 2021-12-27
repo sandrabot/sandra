@@ -31,8 +31,8 @@ class Clap : Command(name = "clap", arguments = "[text]") {
         val clapText = text.splitSpaces().joinToString(" ${Unicode.CLAPPING_HANDS} ").trim()
 
         if (clapText.length > Message.MAX_CONTENT_LENGTH) {
-            event.replyError(event.translate("max_length"))
-        } else event.message.reply(clapText).allowedMentions(emptyList()).queue()
+            event.replyError(event.translate("max_length")).queue()
+        } else event.reply(clapText).allowedMentions(emptyList()).queue()
 
     }
 

@@ -18,84 +18,62 @@ package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Website
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
+import com.sandrabot.sandra.utils.await
 
 @Suppress("unused")
-class Help : Command(
-    name = "help",
-    aliases = arrayOf("about", "discord", "h", "info", "invite", "links", "support"),
-    arguments = "[command] [subcommands:text]"
-) {
+class Help : Command(name = "help", arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        if (event.args.isNotEmpty()) {
+        if (event.argumentString.isNotEmpty()) {
 
-            // The user may potentially be looking for a subcommand
-            val maybeCommand = event.arguments.command() ?: run {
-                // The command couldn't be found with the given arguments
-                event.replyError(event.translate("not_found", event.sandra.prefix))
+            val command = event.arguments.command() ?: run {
+                // The command couldn't be found with the given path
+                event.replyError(event.translate("not_found")).queue()
                 return
             }
 
-            if (maybeCommand.ownerOnly || maybeCommand.category == Category.CUSTOM) {
-                event.replyError(event.translate("not_found", event.sandra.prefix))
+            if (command.ownerOnly || command.category == Category.CUSTOM) {
+                event.replyError(event.translate("not_found")).queue()
                 return
             }
-
-            val command = event.arguments.text("subcommands")?.let { subcommands ->
-                maybeCommand.findChild(subcommands).first ?: run {
-                    // If there are no subcommands to list, just show the parent command
-                    if (maybeCommand.children.isEmpty()) return@run maybeCommand
-                    // Otherwise display a list of the available subcommands for this command
-                    val joined = maybeCommand.children.joinToString("**, **", "**", "**") { it.name }
-                    event.replyError(event.translate("available_subcommands", joined))
-                    return
-                }
-            } ?: maybeCommand
 
             // Begin putting the embed together, starting with the command path and category
-            val author = "${command.path.replace(':', ' ')} • ${command.category.name.lowercase()}"
+            val commandPath = command.path.replace('/', ' ')
+            val author = "$commandPath • ${command.category.name.lowercase()}"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
             embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
-            val descriptionPath = "commands.${command.path.replace(':', '.')}.description"
+            val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
             val descriptionValue = "> ${event.translate(descriptionPath, false)}"
             embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
-            // Display a field listing the aliases if there are any
-            if (command.aliases.isNotEmpty()) {
-                // Combine all of the aliases into a string to be displayed
-                val join = command.aliases.joinToString(
-                    separator = "**, **${event.sandra.prefix}", prefix = "**${event.sandra.prefix}", postfix = "**"
-                )
-                val aliasesValue = "> ${event.translate("you_can_use")} $join"
-                embed.addField("${Emotes.COMMANDS} ${event.translate("aliases_title")}", aliasesValue, false)
-            }
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {
-                // Combine all of the arguments into a string to be displayed
-                val join = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **${event.sandra.prefix}${command.name}** $join"
+                // Combine all the arguments into a string to be displayed
+                val joined = command.arguments.joinToString(" ") { it.usage }
+                val usageValue = "> **/$commandPath** $joined"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))
             }
-            event.reply(embed.build())
+            event.reply(embed.build()).queue()
             return
         }
 
+        event.deferReply().await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
         val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
-        val configureContent = lang.translate("configure_content", Website.DASHBOARD)
-        val commandsContent = lang.translate("commands_content", event.sandra.prefix)
+        val configureContent = lang.translate("configure_content")
+        val commandsContent = lang.translate("commands_content")
         val inviteContent = lang.translate("invite_content", Constants.DIRECT_INVITE)
         val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
         embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)
@@ -103,7 +81,10 @@ class Help : Command(
         embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
         embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
 
-        event.reply(embed.build())
+        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.joinToString(" and ")
+        embed.setFooter("Built with ${Unicode.HEAVY_BLACK_HEART} by $devs")
+
+        event.sendMessage(embed.build()).queue()
 
     }
 

@@ -24,13 +24,13 @@ import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.interactions.components.Button
 
 @Suppress("unused")
-class Feedback : Command(name = "feedback", aliases = arrayOf("bug", "request", "suggest", "suggestion")) {
+class Feedback : Command(name = "feedback") {
 
     override suspend fun execute(event: CommandEvent) {
 
         val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("button_label"))
         val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
-        event.message.reply(reply).setActionRow(button).queue()
+        event.reply(reply).addActionRow(button).setEphemeral(true).queue()
 
     }
 

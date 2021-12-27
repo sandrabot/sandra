@@ -18,8 +18,6 @@ package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.ArgumentType
-import com.sandrabot.sandra.entities.singleton
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.Permission
@@ -31,14 +29,14 @@ fun inputAction(
     event: CommandEvent, message: Message,
     timeout: Long = 2, unit: TimeUnit = TimeUnit.MINUTES,
     expired: (() -> Unit)? = null, consumer: (MessageReceivedEvent) -> Boolean
-) = event.reply(message, { promptMessage ->
+) = event.sendMessage(message).queue { promptMessage ->
     event.sandra.eventWaiter.waitForEvent(
         MessageReceivedEvent::class, timeout, unit,
         expired = {
             promptMessage.delete().queue()
             if (expired != null) expired()
         }, test = {
-            it.author == event.author && it.channel == event.channel
+            it.author == event.user && it.channel == event.channel
         }, action = { messageEvent ->
             promptMessage.delete().queue()
             consumer(messageEvent).also { shouldDelete ->
@@ -46,7 +44,7 @@ fun inputAction(
             }
         }
     )
-})
+}
 
 fun promptAction(
     event: CommandEvent, prompt: String, emote: String = Emotes.PROMPT,
@@ -57,13 +55,10 @@ fun promptAction(
     inputAction(event, message, timeout, unit, expired, consumer)
 }
 
-fun <T> argumentAction(
-    event: CommandEvent, prompt: String, argumentType: ArgumentType,
-    expired: (() -> Unit)? = null, consumer: (T) -> Unit
+fun digitAction(
+    event: CommandEvent, prompt: String, expired: (() -> Unit)? = null, consumer: (Long) -> Unit
 ) = promptAction(event, prompt, expired = expired) {
-    singleton<T>(event, it.message.contentRaw, argumentType)
-        ?.let { argument -> consumer(argument); true }
-        ?: run { expired?.invoke(); false }
+    it.message.contentRaw.toLongOrNull()?.let { digit -> consumer(digit); true } ?: run { expired?.invoke(); false }
 }
 
 private fun checkAndDelete(event: CommandEvent, message: Message) {

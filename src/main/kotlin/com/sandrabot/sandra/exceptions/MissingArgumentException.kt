@@ -19,6 +19,5 @@ package com.sandrabot.sandra.exceptions
 import com.sandrabot.sandra.entities.Argument
 import com.sandrabot.sandra.events.CommandEvent
 
-class MissingArgumentException(val event: CommandEvent, val argument: Argument) : RuntimeException(
-        "Required argument ${argument.name} is missing in text ${event.args}"
-)
+class MissingArgumentException(event: CommandEvent, val argument: Argument) :
+    RuntimeException("Missing argument $argument in command ${event.commandString}")

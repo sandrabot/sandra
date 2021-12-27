@@ -24,38 +24,34 @@ import kotlin.reflect.full.createInstance
 
 class CommandManager(sandra: Sandra) {
 
-    // Messages cannot start with spaces, so these placeholders require no special handling
-    val prefixes = arrayOf(sandra.prefix, " ", " ")
-    val commands: MutableList<Command>
+    val commands = mutableMapOf<String, Command>()
 
-    val size: Int
-        get() = commands.size
+    val values: MutableCollection<Command>
+        get() = commands.values
 
     init {
         val commandClasses = Reflections("com.sandrabot.sandra.commands").getSubTypesOf(Command::class.java)
         // Filter out subcommand classes, they are instantiated by their parents
-        commands = commandClasses.filterNot { it.isMemberClass }.mapNotNull {
+        commandClasses.filterNot { it.isMemberClass }.mapNotNull {
             try {
-                it.kotlin.createInstance()
+                val command = it.kotlin.createInstance()
+                // Verify that the command data is valid before adding
+                command.asCommandData(sandra)
+                if (command.path in commands)
+                    throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
+                commands[command.path] = command
             } catch (t: Throwable) {
-                logger.error("Failed to instantiate command $it", t.cause)
+                logger.error("Failed to instantiate command $it", t)
                 null
             }
-        }.toMutableList()
-        val childrenSum = commands.sumOf { it.children.size }
-        logger.info("Successfully loaded ${commands.size} commands with $childrenSum children")
+        }
+        // Load all the subcommands into the main command map
+        commands.values.flatMap { it.allSubcommands }.forEach { commands[it.path] = it }
+        val childrenSum = commands.count { it.value.isSubcommand }
+        logger.info("Successfully loaded ${commands.size - childrenSum} commands with $childrenSum children")
     }
 
-    // We need to set the mentions after the bot has signed in because we don't know
-    // which account we are signing in to, while also loading the commands beforehand
-    fun setMentionPrefixes(botId: String) {
-        prefixes[1] = "<@$botId>"
-        prefixes[2] = "<@!$botId>"
-    }
-
-    operator fun get(name: String): Command? = commands.firstOrNull {
-        name.equals(it.name, ignoreCase = true) || it.aliases.any { alias -> name.equals(alias, ignoreCase = true) }
-    }
+    operator fun get(path: String): Command? = commands[path]
 
     companion object {
         private val logger = LoggerFactory.getLogger(CommandManager::class.java)

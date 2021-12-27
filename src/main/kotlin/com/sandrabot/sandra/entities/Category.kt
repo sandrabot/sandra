@@ -27,6 +27,7 @@ enum class Category(val emote: String) {
     GAME(Emotes.CREDIT),
     MODERATION(Emotes.MOD_SHIELD),
     MUSIC(Emotes.MUSIC),
+    OWNER(Emotes.MEMBER),
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
 

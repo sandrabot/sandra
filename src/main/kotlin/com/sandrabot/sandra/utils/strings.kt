@@ -16,23 +16,21 @@
 
 package com.sandrabot.sandra.utils
 
-import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
 import io.ktor.content.*
 import io.ktor.http.*
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
+private val decimalRegex = Regex("""(\d+\.\d{2})\d+(.*)""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
-private val spaceRegex = Regex("""\s+""")
+val spaceRegex = Regex("""\s+""")
 
 fun String.asEmoteUrl() = "https://cdn.discordapp.com/emojis/${emoteRegex.find(this)?.groupValues?.get(1)}.png"
 fun String.asReaction(): String = this.substring(1, lastIndex)
@@ -47,36 +45,24 @@ fun String.capitalizeWords(): String = split(" ").joinToString {
 fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
-
-@OptIn(ExperimentalTime::class)
-fun Duration.toFormattedString(): String = toString().replace(digitRegex, "**$0**")
+fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
-fun getPrefixUsed(sandra: Sandra, content: String, guild: Guild?): String? {
-    val prefixes = if (guild != null) {
-        val customPrefixes = sandra.config.getGuild(guild.idLong).prefixes
-        sandra.commands.prefixes + customPrefixes.toTypedArray()
-    } else sandra.commands.prefixes
-    return prefixes.find { content.startsWith(it, ignoreCase = true) }
-}
-
-fun findLocale(guildConfig: GuildConfig, userConfig: UserConfig): Locale {
-    return if (userConfig.locale == Locale.DEFAULT) {
-        if (guildConfig.locale == Locale.DEFAULT) {
-            Locale.DEFAULT
-        } else guildConfig.locale
-    } else userConfig.locale
+fun findLocale(guildConfig: GuildConfig?, userConfig: UserConfig): Locale {
+    return when {
+        guildConfig == null -> userConfig.locale
+        userConfig.locale != Locale.DEFAULT -> userConfig.locale
+        else -> guildConfig.locale
+    }
 }
 
 fun hastebin(text: String): String? {
-    val response = try {
+    return try {
         postBlocking<Map<String, String>>(
-            "${Constants.HASTEBIN}/documents",
-            TextContent(text, ContentType.Text.Plain)
-        )
-    } catch (t: Throwable) { null }
-    return if (response == null) null else {
-        "${Constants.HASTEBIN}/${response["key"]}"
+            "${Constants.HASTEBIN}/documents", TextContent(text, ContentType.Text.Plain)
+        ).let { "${Constants.HASTEBIN}/${it["key"]}" }
+    } catch (t: Throwable) {
+        null
     }
 }

@@ -3,10 +3,9 @@
     "missing_permission": "I need the **%1$s** permission in this **%2$s** to continue!",
     "missing_user_permission": "You need the **%1$s** permission in this **%2$s** to continue!",
     "guild_only": "This command **can only be used** within servers.",
-    "missing_argument": "It appears the required argument **%1$s** is missing; check the **command usage** and try again.",
+    "missing_argument": "Sorry, I couldn't recognise what you entered for **%1$s**; check the **command usage** and try again.",
     "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
     "command_exception": "Hm, it appears as if **something strange** has happened. Apologies.",
-    "cooldown": "Woah there! You need to wait another %1$ss before doing that again.",
     "page_prompt": "Please respond with the page number you would like to jump to:",
     "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*This message will serve as your notification and you will not receive another.*"
   },
@@ -45,20 +44,31 @@
     },
     "choose": {
       "description": "Randomly picks one of your words from a hat",
+      "arguments": {
+        "options": ["The space separated list of words I will choose from"]
+      },
       "reply": "Out of %1$s options in total, I decided to go with **%2$s**."
     },
     "clap": {
       "description": "Have Sandra emphasize your important arguments",
+      "arguments": {
+        "text": ["The text you would like to emphasize"]
+      },
       "max_length": "Unfortunately, the text you provided is **too long** to be emphasized."
     },
     "commands": {
       "description": "Browse through Sandra's countless commands",
       "command_title": "Commands",
-      "more_information": "Use %1$shelp <command> for more information"
+      "more_information": "Use /help <command> for more information"
     },
     "dog": {
-      "description": "Fetches a dog from the depths of the internet",
-      "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."
+      "description": "Fetches a dog from the depths of the internet"
+    },
+    "eval": {
+      "description": "Evaluate an expression in a REPL environment",
+      "arguments": {
+        "script": ["The expression you want to evaluate"]
+      }
     },
     "feedback": {
       "description": "Submit your feedback to the Sandra developers",
@@ -76,34 +86,34 @@
       "description": "Break open a fortune cookie to reveal your luck"
     },
     "help": {
-      "description": "View some basic quick-start information about the bot",
-      "not_found": "Whoops, a command with that name **does not exist**. Try using **%1$scommands** to find what you're looking for.",
-      "available_subcommands": "It looks like that subcommand **does not exist** for this command, however you can try any of these: %1$s",
+      "description": "View some basic quick-start information about the bot or a command",
+      "arguments": {
+        "command": ["View more information about this command"]
+      },
+      "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
       "extra_help": "Need some extra help?",
-      "you_can_use": "You can also use",
       "description_title": "Description",
-      "aliases_title": "Aliases",
       "usage_title": "Usage",
       "info_embed": {
         "title": "Chat with us in Sandra's Hangout",
         "configure": "%1$s Configure Settings",
-        "configure_content": "> To **configure** my **settings**, use the new **[dashboard](%1$s)**.",
+        "configure_content": "> To **configure** my **settings**, use the new `/config`.",
         "commands": "%1$s Commands",
-        "commands_content": "> To see my **command list**, use `%1$scommands`.",
+        "commands_content": "> To see my **command list**, use `/commands`.",
         "invite": "%1$s Invite Sandra",
         "invite_content": "> Would you like me in **your server**? **[Click to invite me](%1$s)**.",
         "support": "%1$s Support Server",
         "support_content": "> Need **more help**? **[Join my support server](%1$s)**."
       }
     },
-    "membercount": {
-      "description": "View the server's member count",
+    "members": {
+      "description": "View a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
     },
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
-      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
+      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your command**."
     },
     "shards": {
       "description": "View a list of shards and their stats",
@@ -112,6 +122,9 @@
       "shards_connected": "%1$d of %2$d shards connected",
       "server_using": " • This server is using shard %1$d",
       "shard_title": "Shard %1$s"
+    },
+    "snowy": {
+      "description": "Custom command for a good friend of mine"
     }
   }
 }

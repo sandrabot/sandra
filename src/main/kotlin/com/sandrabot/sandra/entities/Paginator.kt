@@ -18,29 +18,26 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.argumentAction
-import com.sandrabot.sandra.utils.ensurePermissions
-import com.sandrabot.sandra.utils.hasPermissions
+import com.sandrabot.sandra.utils.digitAction
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.concurrent.TimeUnit
 
 /**
  * Facilitates the pagination of [MessageEmbed]s to be displayed in the [event] channel.
  *
  * When [showPageNumbers] is enabled, the footer of the embeds will be
- * prepended with a page indicator, ex "Page 1 of 5 • Footer content here".
+ * prepended with a page indicator, ex: "Page 1 of 5 • Footer content here".
  *
- * If [usePagePicker] is enabled, an additional "prompt" button
+ * If [usePagePicker] is enabled, an additional "select page" button
  * will prompt the user for a page number to jump to. While the
  * page number prompt is active, the buttons become unresponsive.
  *
@@ -76,24 +73,24 @@ class Paginator(
             throw IllegalStateException("Paginator has already been initialized")
         if (currentPage !in pages.indices)
             throw IllegalStateException("Starting page $currentPage must be within ${pages.indices}")
-        if (event.isFromGuild) ensurePermissions(event, *requiredPermissions)
         renderMessages(pages) // The rendered pages will be added to the messages list
 
-        // Figure out which buttons we need in this message
+        // Only show buttons if there are multiple pages
         val buttons = mutableListOf<Button>()
         if (messages.size > 1) {
-            buttons.add(previousButton.withDisabled(currentPage == 0))
-            if (usePagePicker) buttons.add(promptButton)
+            // Figure out which buttons we need in this message
+            buttons.add(backButton.withDisabled(currentPage == 0))
+            if (usePagePicker) buttons.add(selectButton)
             buttons.add(nextButton.withDisabled(currentPage == messages.lastIndex))
+            buttons.add(exitButton)
         }
-        buttons.add(destroyButton)
 
-        // Finally send the paginator message as a reply
-        event.message.reply(messages[currentPage])
-            .setActionRows(ActionRow.of(buttons)).queue {
-                messageId = it.idLong
-                waitForButton()
-            }
+        // Finally, send the paginator message as a reply
+        event.sendMessage(messages[currentPage]).applyIf(buttons.isNotEmpty()) { addActionRow(buttons) }.queue {
+            messageId = it.idLong
+            // Only activate the paginator if there are buttons
+            if (buttons.isNotEmpty()) waitForButton()
+        }
     }
 
     private fun renderMessages(pages: List<MessageEmbed>) {
@@ -111,25 +108,25 @@ class Paginator(
 
     private fun waitForButton() {
         event.sandra.eventWaiter.waitForEvent(
-            ButtonClickEvent::class, timeout = 1, unit = TimeUnit.MINUTES,
-            expired = { event.channel.deleteMessageById(messageId).queue(null, handler) },
+            ButtonClickEvent::class, timeout = 5, unit = TimeUnit.MINUTES,
+            expired = { event.hook.editOriginalComponents().queue(null, handler) },
             test = { verifyButton(it) }
         ) { handleButton(it) }
     }
 
     private fun verifyButton(buttonEvent: ButtonClickEvent): Boolean {
         // Never process a button event that doesn't belong to our message
-        if (buttonEvent.message?.idLong != messageId) return false
+        if (buttonEvent.message.idLong != messageId) return false
         // If the user is not the author, only acknowledge it
-        return if (event.author.idLong != buttonEvent.user.idLong) {
+        return if (event.user.idLong != buttonEvent.user.idLong) {
             buttonEvent.deferEdit().queue()
             false
         } else when (buttonEvent.componentId) {
             // Verify the button that was clicked was actually enabled
-            previousButtonId -> currentPage > 0
+            backButtonId -> currentPage > 0
             nextButtonId -> currentPage < messages.lastIndex
-            promptButtonId -> usePagePicker
-            destroyButtonId -> true
+            selectButtonId -> usePagePicker
+            exitButtonId -> true
             else -> false
         }
     }
@@ -137,17 +134,13 @@ class Paginator(
     private fun handleButton(buttonEvent: ButtonClickEvent) {
         when (buttonEvent.componentId) {
             // Only send the prompt if we have permissions to
-            promptButtonId -> if (event.isFromGuild) {
-                if (hasPermissions(event, *requiredPermissions)) {
-                    doPageSelection(buttonEvent)
-                } else buttonEvent.deferEdit().queue { waitForButton() }
-            } else doPageSelection(buttonEvent)
+            selectButtonId -> doPageSelection(buttonEvent)
             // To destroy, just delete our message and escape the recursion
-            destroyButtonId -> event.channel.deleteMessageById(messageId).queue(null, handler)
+            exitButtonId -> event.hook.editOriginalComponents().queue(null, handler)
             else -> { // Only these buttons immediately change the page
                 val previousPage = currentPage
                 when (buttonEvent.componentId) {
-                    previousButtonId -> if (currentPage > 0) currentPage--
+                    backButtonId -> if (currentPage > 0) currentPage--
                     nextButtonId -> if (currentPage < messages.lastIndex) currentPage++
                 }
                 if (previousPage != currentPage) updateMessage(buttonEvent) else waitForButton()
@@ -157,15 +150,15 @@ class Paginator(
 
     private fun updateMessage(buttonEvent: ButtonClickEvent) {
         // The message will never be ephemeral
-        val buttons = buttonEvent.message!!.buttons
+        val buttons = buttonEvent.message.buttons
         // Update the buttons depending on the current page
-        val previousIndex = buttons.indexOfFirst { it.id == previousButtonId }
+        val previousIndex = buttons.indexOfFirst { it.id == backButtonId }
         buttons[previousIndex] = buttons[previousIndex].withDisabled(currentPage == 0)
         val nextIndex = buttons.indexOfFirst { it.id == nextButtonId }
         buttons[nextIndex] = buttons[nextIndex].withDisabled(currentPage == messages.lastIndex)
         // Update the message either way, even if the event was acknowledged
         val action = if (buttonEvent.isAcknowledged) {
-            event.channel.editMessageById(messageId, messages[currentPage]).setActionRow(buttons)
+            event.hook.editMessageById(messageId, messages[currentPage]).setActionRow(buttons)
         } else buttonEvent.editMessage(messages[currentPage]).setActionRow(buttons)
         action.queue { waitForButton() }
     }
@@ -174,8 +167,8 @@ class Paginator(
         // Acknowledge that the prompt button was clicked
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to
-        argumentAction<Long>(
-            event, event.translate("general.page_prompt", false), ArgumentType.DIGIT, { waitForButton() }
+        digitAction(
+            event, event.translate("general.page_prompt", false), { waitForButton() }
         ) { digit ->
             val index = digit.toInt() - 1
             if (index in messages.indices && index != currentPage) {
@@ -186,22 +179,19 @@ class Paginator(
     }
 
     companion object {
-        private const val promptButtonId = "paginator:prompt"
-        private const val previousButtonId = "paginator:previous"
+        private const val selectButtonId = "paginator:select"
+        private const val backButtonId = "paginator:back"
         private const val nextButtonId = "paginator:next"
-        private const val destroyButtonId = "paginator:destroy"
+        private const val exitButtonId = "paginator:exit"
 
-        private val promptButton = Button.secondary(promptButtonId, Emoji.fromMarkdown(Emotes.PROMPT))
-        private val previousButton = Button.primary(previousButtonId, Emoji.fromMarkdown(Emotes.PREVIOUS))
-        private val nextButton = Button.primary(nextButtonId, Emoji.fromMarkdown(Emotes.NEXT))
-        private val destroyButton = Button.danger(destroyButtonId, Emoji.fromMarkdown(Emotes.CLEAR))
+        private val selectButton =
+            Button.secondary(selectButtonId, "Select Page").withEmoji(Emoji.fromMarkdown(Emotes.PROMPT))
+        private val backButton = Button.primary(backButtonId, "Back").withEmoji(Emoji.fromMarkdown(Emotes.PREVIOUS))
+        private val nextButton = Button.primary(nextButtonId, "Next").withEmoji(Emoji.fromMarkdown(Emotes.NEXT))
+        private val exitButton = Button.danger(exitButtonId, "Exit").withEmoji(Emoji.fromMarkdown(Emotes.CLEAR))
 
         // We can't do much if the message was deleted externally, so we just ignore it
-        private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE)
-
-        private val requiredPermissions = arrayOf(
-            Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY
-        )
+        private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE, ErrorResponse.UNKNOWN_WEBHOOK)
     }
 
 }
