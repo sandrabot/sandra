@@ -48,14 +48,13 @@ dependencies {
     }
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("io.javalin:javalin:4.1.1")
-    implementation("io.ktor:ktor-client-core:1.6.7")
     implementation("io.ktor:ktor-client-okhttp:1.6.7")
-    implementation("io.ktor:ktor-client-jackson:1.6.7")
-    implementation("io.sentry:sentry-logback:1.7.30")
+    implementation("io.ktor:ktor-client-serialization:1.6.7")
+    implementation("io.sentry:sentry-logback:5.5.2")
     implementation("net.jodah:expiringmap:0.5.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:3.7.1")
+    implementation("redis.clients:jedis:4.0.0")
 }
 
 buildConfig {

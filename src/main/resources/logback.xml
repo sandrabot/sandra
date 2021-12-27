@@ -37,9 +37,6 @@
     </appender>
 
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
-        </filter>
         <filter class="com.sandrabot.sandra.utils.SentryFilter" />
     </appender>
 

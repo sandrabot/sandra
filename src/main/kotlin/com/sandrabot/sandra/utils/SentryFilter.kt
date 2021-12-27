@@ -19,7 +19,6 @@ package com.sandrabot.sandra.utils
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.filter.Filter
 import ch.qos.logback.core.spi.FilterReply
-import java.util.*
 
 /**
  * This class is used to filter events sent to Sentry and
@@ -28,7 +27,7 @@ import java.util.*
 class SentryFilter : Filter<ILoggingEvent>() {
 
     override fun decide(event: ILoggingEvent): FilterReply {
-        val messages = LinkedList<String>()
+        val messages = mutableListOf<String>()
         // Add all the throwable messages into a list
         if (event.message != null) messages.add(event.message)
         var proxy = event.throwableProxy
@@ -43,7 +42,7 @@ class SentryFilter : Filter<ILoggingEvent>() {
     }
 
     companion object {
-        private val keywords = arrayOf("time out", "timeout", "timed out", "timedout")
+        private val keywords = arrayOf("timeout", "timed out")
     }
 
 }

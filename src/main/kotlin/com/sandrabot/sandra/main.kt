@@ -24,7 +24,6 @@ import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.getResourceAsText
 import io.sentry.Sentry
-import io.sentry.dsn.Dsn
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -97,13 +96,12 @@ fun bootstrap(args: Array<String>): Int {
     }
 
     // Configure the Sentry client, if enabled
-    val dsn = if (sandraConfig.sentryEnabled) sandraConfig.sentryDsn else null
-    val sentry = Sentry.init(dsn ?: Dsn.DEFAULT_DSN)
-    if (sandraConfig.sentryEnabled) {
-        if (dsn == null) logger.warn("Sentry is enabled but the DSN was not found, using noop client")
+    if (sandraConfig.sentryEnabled) Sentry.init {
+        it.dsn = if (sandraConfig.sentryEnabled) sandraConfig.sentryDsn ?: "" else ""
+        if (it.dsn.isNullOrEmpty()) logger.warn("Sentry is enabled but the DSN was not provided, client will be noop")
         // stacktrace.app.packages can only be set in sentry.properties apparently
-        sentry.environment = if (sandraConfig.development) "development" else "production"
-        sentry.release = SandraInfo.COMMIT
+        it.environment = if (sandraConfig.development) "development" else "production"
+        it.release = SandraInfo.COMMIT
     }
 
     // Initialize the credential manager with all the tokens and secrets
