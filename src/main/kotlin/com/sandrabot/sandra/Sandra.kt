@@ -49,6 +49,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
 
     val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
+    val commandUpdates = sandraConfig.commandUpdates
     val color = if (development) Colors.RED else Colors.BLURPLE
 
     val api = SandraAPI(this, sandraConfig.apiPort)

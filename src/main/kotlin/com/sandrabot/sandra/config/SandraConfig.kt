@@ -25,10 +25,10 @@ import kotlinx.serialization.Serializable
 class SandraConfig {
 
     /**
-     * Primarily determines which Discord account this session will sign into.
+     * Primarily determines which Discord account this session will sign in to.
      * It may also be used to determine other behaviors throughout the bot.
      * When set to `true`, the beta account will be used. By using `true` as
-     * the default, we prevent signing into production accounts accidentally.
+     * the default, we prevent signing in to production accounts accidentally.
      */
     var development = true
 
@@ -45,6 +45,13 @@ class SandraConfig {
      * be sent to sentry, whether the DSN is present or not.
      */
     var sentryEnabled = true
+
+    /**
+     * While developing, it may be helpful to inhibit updating slash commands to
+     * prevent "Invalid application command" within Discord when there are no changes.
+     * When disabled, slash commands will not be updated and a warning will be logged.
+     */
+    var commandUpdates = true
 
     /**
      * Determines the host and project sentry events are sent to.

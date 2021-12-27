@@ -42,28 +42,33 @@ class ReadyListener(private val sandra: Sandra) {
                 sandra.botList.start()
             }
 
-            val logger = LoggerFactory.getLogger(ReadyListener::class.java)
-            // Update the global slash command list, so that they always match the commands we have
-            val (owner, global) = sandra.commands.values.partition { it.ownerOnly }
-            event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
-                commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                logger.info("Successfully replaced global command list with ${commands.size} commands")
-            }
-            // Update the owner slash commands in Sandra's Hangout as well as their privileges
-            sandra.shards.getGuildById(Constants.GUILD_HANGOUT)?.let { hangout ->
-                hangout.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
+            if (sandra.commandUpdates) {
+                // Update the global slash command list, so that they always match the commands we have
+                val (owner, global) = sandra.commands.values.partition { it.ownerOnly }
+                event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
                     commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                    val privileges = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
-                    hangout.updateCommandPrivileges(commands.associate { it.id to privileges }).queue()
-                    logger.info("Successfully replaced owner command list with ${commands.size} commands")
+                    logger.info("Successfully replaced global command list with ${commands.size} commands")
                 }
-            }
+                // Update the owner slash commands in Sandra's Hangout as well as their privileges
+                sandra.shards.getGuildById(Constants.GUILD_HANGOUT)?.let { hangout ->
+                    hangout.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
+                        commands.forEach { sandra.commands[it.name]?.id = it.idLong }
+                        val privileges = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
+                        hangout.updateCommandPrivileges(commands.associate { it.id to privileges }).queue()
+                        logger.info("Successfully replaced owner command list with ${commands.size} commands")
+                    }
+                }
+            } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
 
             logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
             // This is the last ready event that will fire, so we don't need this listener anymore
             sandra.eventManager.unregister(this)
         }
 
+    }
+
+    private companion object {
+        private val logger = LoggerFactory.getLogger(ReadyListener::class.java)
     }
 
 }
