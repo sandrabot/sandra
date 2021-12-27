@@ -32,6 +32,17 @@
     "manage_roles": "Manage Roles",
     "manage_permissions": "Manage Permissions"
   },
+  "categories": {
+    "custom": "Custom",
+    "essential": "Essential",
+    "fun": "Fun",
+    "game": "Game",
+    "moderation": "Moderation",
+    "music": "Music",
+    "owner": "Owner",
+    "social": "Social",
+    "utility": "Utility"
+  },
   "commands": {
     "cat": {
       "description": "Gracefully displays a cat for your viewing pleasure",
@@ -58,6 +69,7 @@
     },
     "commands": {
       "description": "Browse through Sandra's countless commands",
+      "select_placeholder": "Select a category to view...",
       "command_title": "Commands",
       "more_information": "Use /help <command> for more information"
     },
@@ -86,7 +98,7 @@
       "description": "Break open a fortune cookie to reveal your luck"
     },
     "help": {
-      "description": "View some basic quick-start information about the bot or a command",
+      "description": "View some basic quick-start information about the bot",
       "arguments": {
         "command": ["View more information about this command"]
       },

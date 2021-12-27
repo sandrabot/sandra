@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import java.util.*
 
 class CommandEvent(
     val sandra: Sandra, val event: SlashCommandEvent, val command: Command
@@ -54,6 +55,8 @@ class CommandEvent(
 
     val commandPath: String = command.path
     val commandString: String = event.commandString
+    val encodedInteraction: String = Base64.getEncoder()
+        .encodeToString("${user.id}:${channel.id}:${interaction.id}".encodeToByteArray())
     val argumentString: String = commandString.substringAfter(" ", missingDelimiterValue = "")
     val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
@@ -74,12 +77,12 @@ class CommandEvent(
     fun reply(message: String) = event.reply(message)
     fun reply(message: Message) = event.reply(message)
     fun reply(embed: MessageEmbed) = event.replyEmbeds(embed)
-    fun reply(vararg embeds: MessageEmbed) = event.replyEmbeds(embeds.asList())
+    fun reply(embeds: List<MessageEmbed>) = event.replyEmbeds(embeds)
 
     fun sendMessage(message: String) = event.hook.sendMessage(message)
     fun sendMessage(message: Message) = event.hook.sendMessage(message)
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
-    fun sendMessage(vararg embeds: MessageEmbed) = event.hook.sendMessageEmbeds(embeds.asList())
+    fun sendMessage(embeds: List<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
 
     fun sendEmote(message: String, emote: String) = sendMessage(emote + Unicode.VERTICAL_LINE + message)
     fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)

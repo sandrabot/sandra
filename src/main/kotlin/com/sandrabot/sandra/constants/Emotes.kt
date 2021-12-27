@@ -32,7 +32,7 @@ object Emotes {
     const val MUSIC = "<:music:788968511891439616>"
     const val NEXT = "<:next:788968511019417660>"
     const val NOTIFY = "<:notify:788968508372680774>"
-    const val PATREON = "<:patreon:788968511602819072>"
+    const val PATREON = "<:patreon:791517903182233662>"
     const val PIN = "<:pin:788968508544516137>"
     const val PREVIOUS = "<:previous:788968511296372767>"
     const val PROMPT = "<:prompt:788968511257968640>"

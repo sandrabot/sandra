@@ -19,46 +19,78 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
-import com.sandrabot.sandra.entities.Paginator
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.utils.asEmoteUrl
+import net.dv8tion.jda.api.entities.Emoji
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent
+import net.dv8tion.jda.api.exceptions.ErrorHandler
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption
+import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu
+import net.dv8tion.jda.api.requests.ErrorResponse
+import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
 class Commands : Command(name = "commands") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.deferReply(ephemeral = true).queue()
-        // Sort the commands into their respective categories, also sorted alphabetically
-        val sortedCommands = event.sandra.commands.values.sortedBy { it.name }.groupBy { it.category }
-            .filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
+        val selectionMenu = getSelectionMenu(event)
+        event.reply(getEmbeds(event, Category.ESSENTIAL)).addActionRow(selectionMenu)
+            .setEphemeral(true).queue({ waitForSelection(event, selectionMenu) }, handler)
 
-        val descriptionPages = mutableListOf<String>()
-        val builder = StringBuilder()
-        var commandsWritten = 0
+    }
 
-        for ((category, list) in sortedCommands) {
-            // Begin by appending the category header
-            builder.append(category.emote).append(" __**").append(category.displayName)
-            builder.append(" ").append(event.translate("command_title")).append("**__\n")
-            for (command in list) {
-                builder.append("`/").append(command.name).append("` - ")
-                builder.append(event.translate("commands.${command.name}.description", false)).append("\n")
-                // Wrap the list of commands into pages
-                if (++commandsWritten % 20 == 0) {
-                    descriptionPages.add(builder.toString())
-                    builder.setLength(0)
-                }
-            }
-            // Append an extra blank line to separate categories
-            builder.append("\n")
+    private fun waitForSelection(event: CommandEvent, selectionMenu: SelectionMenu) {
+        event.sandra.eventWaiter.waitForEvent(SelectionMenuEvent::class,
+            timeout = 2, unit = TimeUnit.MINUTES,
+            expired = { event.hook.editOriginalComponents().queue(null, handler) },
+            test = { it.componentId == componentPrefix + event.encodedInteraction && it.user.idLong == event.user.idLong }
+        ) {
+            val embeds = getEmbeds(event, Category.valueOf(it.values.first()))
+            it.editMessageEmbeds(embeds).queue { waitForSelection(event, selectionMenu) }
         }
+    }
 
-        // Wrap any remaining text to another page
-        if (builder.isNotBlank()) descriptionPages.add(builder.toString())
-        val embed = event.embed.setTitle(event.translate("commands.help.extra_help", false), Constants.DIRECT_SUPPORT)
-        embed.setFooter(event.translate("more_information"))
-        Paginator(event).paginate(descriptionPages.map { embed.setDescription(it).build() })
+    private companion object {
+        private const val componentPrefix = "commands:select:"
+        private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTERACTION)
+        private val embeds = mutableMapOf<Category, List<MessageEmbed>>()
+        private var menuBuilder: SelectionMenu.Builder? = null
 
+        private fun Category.path() = "categories." + name.lowercase()
+
+        private fun getSelectionMenu(event: CommandEvent): SelectionMenu = (menuBuilder ?: run {
+            SelectionMenu.create(componentPrefix).setPlaceholder(event.translate("select_placeholder"))
+                .addOptions(event.sandra.commands.values.groupBy { it.category }.filterNot { (category, list) ->
+                    category == Category.CUSTOM || category == Category.OWNER || list.isEmpty()
+                }.toSortedMap().map { (category, _) ->
+                    val displayName = event.translate(category.path(), false)
+                    SelectOption.of(displayName + " " + event.translate("command_title"), category.name)
+                        .withEmoji(Emoji.fromMarkdown(category.emote))
+                }).also { menuBuilder = it }
+        }).setId(componentPrefix + event.encodedInteraction).build()
+
+        private fun getEmbeds(event: CommandEvent, category: Category): List<MessageEmbed> =
+            embeds.getOrPut(category) { buildEmbeds(event, category) }
+
+        private fun buildEmbeds(event: CommandEvent, category: Category): List<MessageEmbed> {
+            // Filter for top level commands that are from this category
+            val commands = event.sandra.commands.values.filter {
+                it.category == category && !it.isSubcommand
+            }.sortedBy { it.name }
+            val embedDescriptions = commands.map {
+                // Append each command to the embed description
+                val commandDescription = event.translate("commands.${it.name}.description", false)
+                buildString { append("`/", it.name, "` - ", commandDescription, "\n") }
+            }.chunked(20).map { it.joinToString("") } // Chunk the commands into groups and combine them
+            val title = event.translate("commands.help.extra_help", false)
+            val author = event.translate(category.path(), false) + " " + event.translate("command_title")
+            val embed = event.embed.setTitle(title, Constants.DIRECT_SUPPORT).setThumbnail(event.selfUser.effectiveAvatarUrl)
+            embed.setAuthor(author, null, category.emote.asEmoteUrl()).setFooter(event.translate("more_information"))
+            // Build each page using the embed template and its own description
+            return embedDescriptions.map { embed.setDescription(it).build() }
+        }
     }
 
 }
