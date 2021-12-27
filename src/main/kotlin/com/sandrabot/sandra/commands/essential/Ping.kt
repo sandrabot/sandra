@@ -28,7 +28,7 @@ class Ping : Command(name = "ping") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         val (rest, websocket) = arrayOf(event.jda.restPing.await(), event.jda.gatewayPing).map { ping ->
             val formatted = ping.milliseconds.toFormattedString()
             if (ping > 250) "${Emotes.WARN} $formatted" else formatted
