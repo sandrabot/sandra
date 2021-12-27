@@ -54,17 +54,23 @@ class LocaleManager {
         }
     }
 
-    fun get(locale: Locale, path: String): String {
+    private fun getAny(locale: Locale, path: String): Any {
         // All locales must be loaded or the bot will fail to start
         val map = translationMap[locale] ?: throw AssertionError("Missing translation for $locale")
-        val value = map[path] ?: if (locale != Locale.DEFAULT) get(Locale.DEFAULT, path) else {
+        return map[path] ?: if (locale != Locale.DEFAULT) get(Locale.DEFAULT, path) else {
             throw MissingTranslationException("Missing translation path $path")
         }
-        return when (value) {
-            is String -> value
-            is Array<*> -> value.random() as String
-            else -> throw AssertionError("Path $path refers to object $value of type ${value::class}")
-        }
+    }
+
+    fun getList(locale: Locale, path: String): List<String> = getAny(locale, path).let {
+        if (it is Array<*>) it.filterIsInstance<String>() else
+            throw IllegalArgumentException("Path $path of value $it is not an array: ${it::class}")
+    }
+
+    fun get(locale: Locale, path: String): String = when (val value = getAny(locale, path)) {
+        is String -> value
+        is Array<*> -> value.random() as String
+        else -> throw AssertionError("Path $path refers to object $value of type ${value::class}")
     }
 
 }

@@ -29,9 +29,9 @@ class Commands : Command(name = "commands") {
 
         event.deferReply(ephemeral = true).queue()
         // Sort the commands into their respective categories, also sorted alphabetically
-        val sortedCommands = Category.values().associateWith { category ->
-            event.sandra.commands.commands.values.filter { it.category == category }.sortedBy { it.name }
-        }.filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
+
+        val sortedCommands = event.sandra.commands.values.sortedBy { it.name }.groupBy { it.category }
+            .filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
 
         val descriptionPages = mutableListOf<String>()
         val builder = StringBuilder()

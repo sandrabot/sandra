@@ -16,15 +16,18 @@
 
 package com.sandrabot.sandra.managers
 
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Command
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
 
-class CommandManager {
+class CommandManager(sandra: Sandra) {
 
     val commands = mutableMapOf<String, Command>()
+
+    val values: MutableCollection<Command>
+        get() = commands.values
 
     init {
         val commandClasses = Reflections("com.sandrabot.sandra.commands").getSubTypesOf(Command::class.java)
@@ -32,25 +35,18 @@ class CommandManager {
         commandClasses.filterNot { it.isMemberClass }.mapNotNull {
             try {
                 val command = it.kotlin.createInstance()
+                // Verify that the command data is valid before adding
+                command.asCommandData(sandra)
                 commands[command.path] = command
             } catch (t: Throwable) {
                 logger.error("Failed to instantiate command $it", t)
                 null
             }
         }
-        // Create a copy of the values to prevent CME
-        loadChildrenRecursive(commands.values.toList())
+        // Create a copy of the values to prevent CME while loading all subcommands
+        for (command in commands.values.toList()) command.allSubcommands.forEach { commands[it.path] = it }
         val childrenSum = commands.count { it.value.isSubcommand }
         logger.info("Successfully loaded ${commands.size - childrenSum} commands with $childrenSum children")
-    }
-
-    private fun loadChildrenRecursive(list: Collection<Command>) {
-        for (command in list) {
-            command.subcommands.ifNotEmpty {
-                forEach { commands[it.path] = it }
-                loadChildrenRecursive(this)
-            }
-        }
     }
 
     operator fun get(path: String): Command? = commands[path]

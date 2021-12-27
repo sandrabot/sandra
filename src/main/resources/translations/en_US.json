@@ -44,10 +44,16 @@
     },
     "choose": {
       "description": "Randomly picks one of your words from a hat",
+      "arguments": {
+        "options": ["The space separated list of words I will choose from"]
+      },
       "reply": "Out of %1$s options in total, I decided to go with **%2$s**."
     },
     "clap": {
       "description": "Have Sandra emphasize your important arguments",
+      "arguments": {
+        "text": ["The text you would like to emphasize"]
+      },
       "max_length": "Unfortunately, the text you provided is **too long** to be emphasized."
     },
     "commands": {
@@ -57,6 +63,12 @@
     },
     "dog": {
       "description": "Fetches a dog from the depths of the internet"
+    },
+    "eval": {
+      "description": "Evaluate an expression in a REPL environment",
+      "arguments": {
+        "script": ["The expression you want to evaluate"]
+      }
     },
     "feedback": {
       "description": "Submit your feedback to the Sandra developers",
@@ -75,6 +87,9 @@
     },
     "help": {
       "description": "View some basic quick-start information about the bot or a command",
+      "arguments": {
+        "command": ["View more information about this command"]
+      },
       "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
       "extra_help": "Need some extra help?",
@@ -107,6 +122,9 @@
       "shards_connected": "%1$d of %2$d shards connected",
       "server_using": " • This server is using shard %1$d",
       "shard_title": "Shard %1$s"
+    },
+    "snowy": {
+      "description": "Custom command for a good friend of mine"
     }
   }
 }

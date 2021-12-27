@@ -16,8 +16,13 @@
 
 package com.sandrabot.sandra.entities
 
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
@@ -25,6 +30,7 @@ abstract class Command(
     val name: String,
     arguments: String = "",
     val guildOnly: Boolean = false,
+    val group: String? = null,
     val requiredPermissions: Array<Permission> = emptyArray(),
     val userPermissions: Array<Permission> = emptyArray()
 ) {
@@ -34,19 +40,27 @@ abstract class Command(
     val ownerOnly: Boolean = category == Category.OWNER
     val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
         .map { (it.createInstance() as Command).also { child -> child.parent = this } }.toList()
+    val allSubcommands: List<Command> = subcommands + subcommands.flatMap { it.allSubcommands }
 
     // Must be lazy so the parent is set before access
     val path: String by lazy {
-        var currentCommand = this
-        buildString {
-            do {
-                insert(0, currentCommand.name)
-                currentCommand = currentCommand.parent ?: break
-                insert(0, '/')
-            } while (true)
+        if (!isSubcommand) name else {
+            var topLevelParent = this
+            do topLevelParent = topLevelParent.parent ?: break while (true)
+            buildString {
+                append(topLevelParent.name)
+                if (group != null) append('/', group)
+                append('/', name)
+            }
         }
     }
 
+    var id: Long = 0L
+        set(value) {
+            // Only allow the field to be set once for top level commands
+            if (field == 0L && !isSubcommand) field = value
+            else throw IllegalStateException("Command ID for $path has already been set to $field")
+        }
     var parent: Command? = null
         internal set
     val isSubcommand: Boolean
@@ -54,6 +68,42 @@ abstract class Command(
 
     abstract suspend fun execute(event: CommandEvent)
 
-    override fun toString(): String = "C:$name"
+    fun asCommandData(sandra: Sandra): CommandData? {
+        if (isSubcommand) return null // Only root commands may build command data
+        val commandPath = path.replace('/', '.')
+        val data = CommandData(name, sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.description"))
+        if (ownerOnly) data.setDefaultEnabled(false)
+        if (arguments.isNotEmpty()) data.addOptions(arguments.asOptions(sandra, commandPath))
+        if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.group }.forEach { (group, commands) ->
+            val subcommandData = commands.map {
+                val subPath = it.path.replace('/', '.')
+                val description = sandra.locales.get(Locale.DEFAULT, "commands.$subPath.description")
+                val subData = SubcommandData(it.name, description)
+                subData.addOptions(it.arguments.asOptions(sandra, subPath))
+            }
+            if (group == null) data.addSubcommands(subcommandData) else {
+                val description = sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.$group.description")
+                val groupData = SubcommandGroupData(group, description)
+                groupData.addSubcommands(subcommandData)
+                data.addSubcommandGroups(groupData)
+            }
+        }
+        return data
+    }
+
+    private fun List<Argument>.asOptions(sandra: Sandra, path: String): List<OptionData> = map {
+        val translations = sandra.locales.getList(Locale.DEFAULT, "commands.$path.arguments.${it.name}")
+        val optionData = OptionData(it.type.optionType, it.name, translations[0], it.isRequired)
+        it.options.forEachIndexed { index, any ->
+            when (any) {
+                is String -> optionData.addChoice(translations[index + 1], any)
+                is Long -> optionData.addChoice(translations[index + 1], any)
+                is Double -> optionData.addChoice(translations[index + 1], any)
+            }
+        }
+        optionData
+    }
+
+    override fun toString(): String = "Command:$path"
 
 }
