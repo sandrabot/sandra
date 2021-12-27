@@ -1,7 +1,7 @@
-<img alt="Sandra" src="https://cdn.sandrabot.com/8b243bdde4c57616a48561fa212a09c0.png" />
+![Sandra](https://cdn.sandrabot.com/8b243bdde4c57616a48561fa212a09c0.png)
 
 # Sandra: Discord Bot
-Sandra is a powerful multi-purpose Discord bot focused on form and function with users in mind.
+Sandra is a powerful multipurpose Discord bot focused on form and function with users in mind.
 
 Add Sandra to your own server by clicking [here](https://sandrabot.com/invite) and enjoy all of her features!
 
@@ -31,7 +31,7 @@ If you wish to use code from this repository, you must include the [license](htt
 We don't mind if you gain inspiration from us, but **do not blatantly copy the source code**.
 
 ## License
-Copyright 2017-2020 **Avery Carroll** / **averen** and **Logan Devecka** / **legolog3**
+Copyright 2017-2022 **Avery Carroll** / **averen** and **Logan Devecka** / **legolog3**
 
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
