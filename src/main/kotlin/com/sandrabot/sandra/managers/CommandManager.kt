@@ -37,14 +37,16 @@ class CommandManager(sandra: Sandra) {
                 val command = it.kotlin.createInstance()
                 // Verify that the command data is valid before adding
                 command.asCommandData(sandra)
+                if (command.path in commands)
+                    throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
                 commands[command.path] = command
             } catch (t: Throwable) {
                 logger.error("Failed to instantiate command $it", t)
                 null
             }
         }
-        // Create a copy of the values to prevent CME while loading all subcommands
-        for (command in commands.values.toList()) command.allSubcommands.forEach { commands[it.path] = it }
+        // Load all the subcommands into the main command map
+        commands.values.flatMap { it.allSubcommands }.forEach { commands[it.path] = it }
         val childrenSum = commands.count { it.value.isSubcommand }
         logger.info("Successfully loaded ${commands.size - childrenSum} commands with $childrenSum children")
     }

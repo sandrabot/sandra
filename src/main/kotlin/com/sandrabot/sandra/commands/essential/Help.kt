@@ -44,7 +44,8 @@ class Help : Command(name = "help", arguments = "[command]") {
             }
 
             // Begin putting the embed together, starting with the command path and category
-            val author = "${command.path.replace('/', ' ')} • ${command.category.name.lowercase()}"
+            val commandPath = command.path.replace('/', ' ')
+            val author = "$commandPath • ${command.category.name.lowercase()}"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
             embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
@@ -56,7 +57,7 @@ class Help : Command(name = "help", arguments = "[command]") {
             if (command.arguments.isNotEmpty()) {
                 // Combine all the arguments into a string to be displayed
                 val joined = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **/${command.name}** $joined"
+                val usageValue = "> **/$commandPath** $joined"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))

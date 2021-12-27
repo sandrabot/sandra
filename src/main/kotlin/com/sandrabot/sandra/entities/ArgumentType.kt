@@ -40,7 +40,7 @@ enum class ArgumentType(val optionType: OptionType) {
     CHANNEL(OptionType.CHANNEL),
 
     /**
-     * Searches for commands by name or path. Resolves as a [Command].
+     * Searches for commands by path. Resolves as a [Command].
      */
     COMMAND(OptionType.STRING),
 

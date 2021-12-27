@@ -39,10 +39,10 @@ abstract class Command(
     val category: Category = Category.fromClass(this::class)
     val ownerOnly: Boolean = category == Category.OWNER
     val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
-        .map { (it.createInstance() as Command).also { child -> child.parent = this } }.toList()
+        .map { (it.createInstance() as Command).also { child -> child.parent = this } }
     val allSubcommands: List<Command> = subcommands + subcommands.flatMap { it.allSubcommands }
 
-    // Must be lazy so the parent is set before access
+    // Must be lazy so parents are set before access
     val path: String by lazy {
         if (!isSubcommand) name else {
             var topLevelParent = this

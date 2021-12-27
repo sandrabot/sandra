@@ -81,6 +81,7 @@ class CommandListener(val sandra: Sandra) {
                 command.execute(event)
             } catch (e: MissingPermissionException) {
                 event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
+                logger.info("Cannot finish executing command due to missing permissions", e)
             } catch (e: MissingArgumentException) {
                 event.replyError(event.translate("general.missing_argument", false, e.argument.name))
                     .setEphemeral(true).queue()

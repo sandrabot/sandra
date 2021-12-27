@@ -44,7 +44,7 @@ class Argument internal constructor(
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
         val size = if (options.isNotEmpty()) "[${options.size}]" else ""
-        return "A:$required$name($type)$size"
+        return "Argument:$required$name($type)$size"
     }
 }
 

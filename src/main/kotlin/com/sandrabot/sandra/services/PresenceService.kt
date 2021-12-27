@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Activity
 
 /**
- * This class updates the bot's presence every minute.
+ * This class updates the bots' presence every minute.
  */
 class PresenceService(private val sandra: Sandra) : Service(60) {
 
@@ -38,7 +38,7 @@ class PresenceService(private val sandra: Sandra) : Service(60) {
     var overrideActivity: Activity? = null
 
     /**
-     * This is used to control the bot's online status. When this
+     * This is used to control the bots' online status. When this
      * value is changed, it will only update on the next [execute].
      */
     var status = OnlineStatus.ONLINE

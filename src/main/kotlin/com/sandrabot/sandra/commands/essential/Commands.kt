@@ -29,7 +29,6 @@ class Commands : Command(name = "commands") {
 
         event.deferReply(ephemeral = true).queue()
         // Sort the commands into their respective categories, also sorted alphabetically
-
         val sortedCommands = event.sandra.commands.values.sortedBy { it.name }.groupBy { it.category }
             .filterNot { it.key == Category.CUSTOM || it.key == Category.OWNER || it.value.isEmpty() }
 
