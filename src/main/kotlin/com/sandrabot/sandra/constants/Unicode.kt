@@ -25,6 +25,7 @@ object Unicode {
     const val CLAPPING_HANDS = "\uD83D\uDC4F"
     const val CROSS_MARK = "\u274C"
     const val FORTUNE_COOKIE = "\uD83E\uDD60"
+    const val HEAVY_BLACK_HEART = "\u2764"
     const val SCALES = "\u2696"
     const val SPEAK_NO_EVIL = "\uD83D\uDE4A"
     const val VERTICAL_LINE = "\uFF5C"

@@ -31,6 +31,7 @@ abstract class Command(
 
     val arguments: List<Argument> = compileArguments(arguments)
     val category: Category = Category.fromClass(this::class)
+    val ownerOnly: Boolean = category == Category.OWNER
     val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
         .map { (it.createInstance() as Command).also { child -> child.parent = this } }.toList()
 

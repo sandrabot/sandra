@@ -32,21 +32,19 @@ val httpClient = HttpClient(OkHttp) {
     }
 }
 
-inline fun <reified T> getBlocking(url: String, crossinline block: HttpRequestBuilder.() -> Unit = {}): T {
-    return runBlocking(Dispatchers.IO) {
-        httpClient.get(url) {
-            apply(block)
-        }
+inline fun <reified T> getBlocking(
+    url: String, crossinline block: HttpRequestBuilder.() -> Unit = {}
+): T = runBlocking(Dispatchers.IO) {
+    httpClient.get(url) {
+        apply(block)
     }
 }
 
 inline fun <reified T> postBlocking(
     url: String, content: Any, crossinline block: HttpRequestBuilder.() -> Unit = {}
-): T {
-    return runBlocking(Dispatchers.IO) {
-        httpClient.post(url) {
-            body = content
-            apply(block)
-        }
+): T = runBlocking(Dispatchers.IO) {
+    httpClient.post(url) {
+        body = content
+        apply(block)
     }
 }

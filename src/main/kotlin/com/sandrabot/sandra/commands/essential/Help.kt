@@ -18,18 +18,19 @@ package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Website
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
+import com.sandrabot.sandra.utils.await
 
 @Suppress("unused")
 class Help : Command(name = "help", arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        if ("command" in event.arguments) {
+        if (event.argumentString.isNotEmpty()) {
 
             val command = event.arguments.command() ?: run {
                 // The command couldn't be found with the given path
@@ -37,12 +38,10 @@ class Help : Command(name = "help", arguments = "[command]") {
                 return
             }
 
-            if (command.category == Category.OWNER || command.category == Category.CUSTOM) {
+            if (command.ownerOnly || command.category == Category.CUSTOM) {
                 event.replyError(event.translate("not_found")).queue()
                 return
             }
-
-            // TODO Category Handling
 
             // Begin putting the embed together, starting with the command path and category
             val author = "${command.path.replace('/', ' ')} • ${command.category.name.lowercase()}"
@@ -56,8 +55,8 @@ class Help : Command(name = "help", arguments = "[command]") {
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {
                 // Combine all the arguments into a string to be displayed
-                val join = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **/${command.name}** $join"
+                val joined = command.arguments.joinToString(" ") { it.usage }
+                val usageValue = "> **/${command.name}** $joined"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))
@@ -66,12 +65,13 @@ class Help : Command(name = "help", arguments = "[command]") {
             return
         }
 
+        event.deferReply().await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
         val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
-        val configureContent = lang.translate("configure_content", Website.DASHBOARD)
+        val configureContent = lang.translate("configure_content")
         val commandsContent = lang.translate("commands_content")
         val inviteContent = lang.translate("invite_content", Constants.DIRECT_INVITE)
         val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
@@ -80,7 +80,10 @@ class Help : Command(name = "help", arguments = "[command]") {
         embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
         embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
 
-        event.reply(embed.build()).queue()
+        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.joinToString(" and ")
+        embed.setFooter("Built with ${Unicode.HEAVY_BLACK_HEART} by $devs")
+
+        event.sendMessage(embed.build()).queue()
 
     }
 

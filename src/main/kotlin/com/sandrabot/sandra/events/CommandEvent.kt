@@ -54,6 +54,7 @@ class CommandEvent(
 
     val commandPath: String = command.path
     val commandString: String = event.commandString
+    val argumentString: String = commandString.substringAfter(" ", missingDelimiterValue = "")
     val isOwner: Boolean = user.idLong in Constants.DEVELOPERS
 
     val arguments: ArgumentResult by lazy { parseArguments(this, command.arguments) }
@@ -79,6 +80,10 @@ class CommandEvent(
     fun sendMessage(message: Message) = event.hook.sendMessage(message)
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(vararg embeds: MessageEmbed) = event.hook.sendMessageEmbeds(embeds.asList())
+
+    fun sendEmote(message: String, emote: String) = sendMessage(emote + Unicode.VERTICAL_LINE + message)
+    fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)
+    fun sendError(message: String) = sendEmote(message, Emotes.ERROR)
 
     fun replyEmote(message: String, emote: String) = reply(emote + Unicode.VERTICAL_LINE + message)
     fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)

@@ -56,8 +56,7 @@
       "more_information": "Use /help <command> for more information"
     },
     "dog": {
-      "description": "Fetches a dog from the depths of the internet",
-      "error": "Sadly, something appears to have **gone wrong** while fetching the doggo."
+      "description": "Fetches a dog from the depths of the internet"
     },
     "feedback": {
       "description": "Submit your feedback to the Sandra developers",
@@ -75,7 +74,7 @@
       "description": "Break open a fortune cookie to reveal your luck"
     },
     "help": {
-      "description": "View some basic quick-start information about the bot",
+      "description": "View some basic quick-start information about the bot or a command",
       "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
       "extra_help": "Need some extra help?",
@@ -84,7 +83,7 @@
       "info_embed": {
         "title": "Chat with us in Sandra's Hangout",
         "configure": "%1$s Configure Settings",
-        "configure_content": "> To **configure** my **settings**, use the new **[dashboard](%1$s)**.",
+        "configure_content": "> To **configure** my **settings**, use the new `/config`.",
         "commands": "%1$s Commands",
         "commands_content": "> To see my **command list**, use `/commands`.",
         "invite": "%1$s Invite Sandra",
@@ -93,13 +92,13 @@
         "support_content": "> Need **more help**? **[Join my support server](%1$s)**."
       }
     },
-    "membercount": {
-      "description": "View the server's member count",
+    "members": {
+      "description": "View a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
     },
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
-      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your message**."
+      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your command**."
     },
     "shards": {
       "description": "View a list of shards and their stats",

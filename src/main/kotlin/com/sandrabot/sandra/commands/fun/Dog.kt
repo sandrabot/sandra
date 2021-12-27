@@ -18,6 +18,7 @@ package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.httpClient
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
@@ -27,11 +28,9 @@ import kotlinx.coroutines.withContext
 class Dog : Command(name = "dog") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.deferReply().queue()
-        var imagePath: String
-        do imagePath = httpClient.get("https://random.dog/woof") while (imagePath.endsWith("mp4"))
-        if (imagePath.endsWith("jpg")) event.reply("https://random.dog/$imagePath").queue()
-        else event.replyError(event.translate("error")).queue()
+        event.deferReply().await()
+        val url = httpClient.get<String>("https://random.dog/woof")
+        event.sendMessage("https://random.dog/$url").queue()
     }
 
 }

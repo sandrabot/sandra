@@ -17,7 +17,6 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
@@ -35,7 +34,10 @@ class CommandListener(val sandra: Sandra) {
     fun onSlashCommand(slashEvent: SlashCommandEvent) {
 
         // The command could only be null if it was removed with an eval
-        val command = sandra.commands[slashEvent.commandPath] ?: return
+        val command = sandra.commands[slashEvent.commandPath] ?: run {
+            logger.warn("Could not find command path for registered command: ${slashEvent.commandPath}")
+            return
+        }
         val event = CommandEvent(sandra, slashEvent, command)
         val isFromGuild = slashEvent.isFromGuild
 
@@ -58,7 +60,7 @@ class CommandListener(val sandra: Sandra) {
             return
         }
 
-        if (command.category == Category.OWNER && !event.isOwner) {
+        if (command.ownerOnly && !event.isOwner) {
             event.replyError(event.translate("general.owner_only", false)).setEphemeral(true).queue()
             return
         }
@@ -83,7 +85,7 @@ class CommandListener(val sandra: Sandra) {
                 event.replyError(event.translate("general.missing_argument", false, e.argument.name))
                     .setEphemeral(true).queue()
             } catch (t: Throwable) {
-                event.replyError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
+                event.sendError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
                 logger.error("An exception occurred while executing a command", t)
             }
         }

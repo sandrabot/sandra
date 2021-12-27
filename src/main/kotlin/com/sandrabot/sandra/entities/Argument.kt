@@ -164,6 +164,7 @@ fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResu
         if (result != null) parsedArguments[arg.name] = result
     }
 
+    // Check for any required arguments that failed to parse
     arguments.firstOrNull { it.isRequired && it.name !in parsedArguments }
         ?.let { throw MissingArgumentException(event, it) }
 

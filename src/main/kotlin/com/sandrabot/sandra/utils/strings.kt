@@ -59,14 +59,11 @@ fun findLocale(guildConfig: GuildConfig?, userConfig: UserConfig): Locale {
 }
 
 fun hastebin(text: String): String? {
-    val response = try {
+    return try {
         postBlocking<Map<String, String>>(
             "${Constants.HASTEBIN}/documents", TextContent(text, ContentType.Text.Plain)
-        )
+        ).let { "${Constants.HASTEBIN}/${it["key"]}" }
     } catch (t: Throwable) {
         null
-    }
-    return if (response == null) null else {
-        "${Constants.HASTEBIN}/${response["key"]}"
     }
 }
