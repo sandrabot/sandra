@@ -24,8 +24,8 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
 import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
+import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hastebin
-import com.sandrabot.sandra.utils.toFormattedString
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -122,7 +122,7 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
             }
         }
 
-        val duration = timedResult.duration.toFormattedString()
+        val duration = timedResult.duration.format()
         val result = timedResult.value?.toString() ?: run {
             event.sendMessage("evaluated in $duration with no returns").queue()
             return
