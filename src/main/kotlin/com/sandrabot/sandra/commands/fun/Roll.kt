@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.constants
+package com.sandrabot.sandra.commands.`fun`
 
-/**
- * A central place to keep track of unicode characters used throughout the bot.
- * The names will typically be related to the official unicode description.
- */
-object Unicode {
+import com.sandrabot.sandra.constants.Unicode
+import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.events.CommandEvent
 
-    const val CLAPPING_HANDS = "\uD83D\uDC4F"
-    const val CROSS_MARK = "\u274C"
-    const val FORTUNE_COOKIE = "\uD83E\uDD60"
-    const val GAME_DIE = "\uD83C\uDFB2"
-    const val HEAVY_BLACK_HEART = "\u2764"
-    const val SCALES = "\u2696"
-    const val VERTICAL_LINE = "\uFF5C"
+@Suppress("unused")
+class Roll : Command(name = "roll", arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]") {
+
+    override suspend fun execute(event: CommandEvent) {
+
+        val dice = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
+        val result = (1..dice).random()
+        event.replyEmote(event.translate("reply", result), Unicode.GAME_DIE).queue()
+
+    }
 
 }

@@ -123,9 +123,23 @@
       "description": "View a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
     },
+    "mock": {
+      "description": "tHiS cOmMaNd Is SuCh A gOoD iDeA",
+      "arguments": {
+        "text": ["tHe TeXt YoU wAnT tO mOcK"]
+      }
+    },
     "ping": {
       "description": "Sends a ping to test Sandra's connection to Discord",
       "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your command**."
+    },
+    "roll": {
+      "description": "Test your luck and roll an imaginary 1d20",
+      "arguments": {
+        "sides": ["The number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
+        "max": ["The maximum possible number"]
+      },
+      "reply": "You took a chance and rolled a **%d**."
     },
     "shards": {
       "description": "View a list of shards and their stats",
