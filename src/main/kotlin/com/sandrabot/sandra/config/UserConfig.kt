@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
  * Stores Sandra-specific properties and settings for users.
  */
 @Serializable
-class UserConfig(override val id: Long) : Configuration() {
+class UserConfig(override val id: Long) : ExperienceConfig() {
 
     var locale: Locale = Locale.DEFAULT
 

@@ -16,18 +16,14 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
 /**
- * Stores Sandra-specific properties and settings for guilds.
+ * Stores Sandra-specific properties and settings for members.
  */
 @Serializable
-class GuildConfig(override val id: Long) : Configuration() {
+class MemberConfig(override val id: Long) : ExperienceConfig() {
 
-    val members = mutableListOf<MemberConfig>()
-    var locale: Locale = Locale.DEFAULT
-
-    override fun toString(): String = "GuildConfig:$id"
+    override fun toString(): String = "MemberConfig:$id"
 
 }
