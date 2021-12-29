@@ -16,11 +16,9 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Configuration {
+abstract class Configuration {
     abstract val id: Long
-    var locale: Locale = Locale.DEFAULT
 }

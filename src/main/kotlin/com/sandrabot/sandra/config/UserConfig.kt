@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,6 +25,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 class UserConfig(override val id: Long) : Configuration() {
 
+    var locale: Locale = Locale.DEFAULT
+
     var credits: Long = 0
+
+    override fun toString(): String = "UserConfig:$id"
 
 }
