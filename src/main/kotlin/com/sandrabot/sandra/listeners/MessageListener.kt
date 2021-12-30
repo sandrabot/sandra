@@ -17,6 +17,11 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.entities.blocklist.FeatureType
+import com.sandrabot.sandra.utils.awardExperience
+import com.sandrabot.sandra.utils.canExperience
+import com.sandrabot.sandra.utils.checkBlocklist
+import com.sandrabot.sandra.utils.randomExperience
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
@@ -60,8 +65,42 @@ class MessageListener(private val sandra: Sandra) {
     }
 
     private fun handleGuildMessage(event: MessageReceivedEvent) {
-        // TODO Feature: Sever Experience
-        // TODO Feature: Global Experience
+        val authorId = event.author.idLong
+        val guildId = event.guild.idLong
+
+        // Check the blocklist to prevent responding to active contexts
+        if (checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.MESSAGES)) return
+
+        val guildConfig = sandra.config.getGuild(guildId)
+        // The member is never null since we ignore webhooks
+        val memberConfig = guildConfig.getMember(event.member!!)
+
+        // TODO Feature: AFK Messages
+
+        // Feature: Server Experience
+        // TODO Channel Config: Is Experience Allowed
+        if (guildConfig.isExperienceEnabled && memberConfig.canExperience()) {
+            // Award a random amount of experience between 15 and 25
+            // TODO Feature: Experience Multipliers
+            if (memberConfig.awardExperience(randomExperience())) {
+                // TODO Feature: Level Up Notifications with custom Messages
+                // TODO Feature: Level Up Rewards
+            }
+        }
+
+        // Feature: Global Experience
+        // Check to make sure this user is allowed to gain global experience
+        if (!checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.GLOBAL_EXPERIENCE)) {
+            val userConfig = sandra.config.getUser(authorId)
+            // Check to see if this user can receive experience
+            if (userConfig.canExperience()) {
+                // Award a random amount of experience between 15 and 25
+                if (userConfig.awardExperience(randomExperience())) {
+                    // TODO Feature: Global Level Up Notifications and Rewards
+                }
+            }
+        }
+
         // TODO Feature: Message Replies
     }
 

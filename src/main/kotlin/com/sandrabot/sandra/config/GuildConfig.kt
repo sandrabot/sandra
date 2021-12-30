@@ -29,6 +29,8 @@ class GuildConfig(override val id: Long) : Configuration() {
     val members = mutableListOf<MemberConfig>()
     var locale: Locale = Locale.DEFAULT
 
+    var isExperienceEnabled: Boolean = true
+
     fun getMember(member: Member): MemberConfig = getMember(member.idLong)
     fun getMember(id: Long): MemberConfig = synchronized(members) {
         members.find { it.id == id } ?: MemberConfig(id).also { members += it }

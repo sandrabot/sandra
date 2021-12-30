@@ -22,5 +22,5 @@ import kotlinx.serialization.Serializable
 abstract class ExperienceConfig : Configuration() {
     var experienceLast: Long = 0
     var experience: Long = 0
-    var level: Long = 0
+    var level: Int = 0
 }

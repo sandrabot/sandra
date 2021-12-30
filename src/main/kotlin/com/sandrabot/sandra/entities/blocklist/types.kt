@@ -18,7 +18,7 @@ package com.sandrabot.sandra.entities.blocklist
 
 enum class FeatureType {
 
-    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_LEADERBOARD
+    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_EXPERIENCE, MESSAGES
 
 }
 
