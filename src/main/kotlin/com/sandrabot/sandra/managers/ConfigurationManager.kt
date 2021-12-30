@@ -22,10 +22,10 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.jodah.expiringmap.ExpirationListener
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
@@ -33,34 +33,38 @@ import java.util.concurrent.TimeUnit
 /**
  * Stores configuration objects in memory to prevent overhead of recreating objects too often.
  */
-class ConfigurationManager(private val sandra: Sandra) : Service(30) {
+class ConfigurationManager(private val sandra: Sandra) : Service(30), ExpirationListener<Long, Configuration> {
 
     private val json = Json { encodeDefaults = true }
     private val accessedKeys = mutableSetOf<Long>()
     private val configs: ExpiringMap<Long, Configuration> =
-        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.DAYS).build()
+        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.DAYS)
+            .asyncExpirationListener(this).build()
 
     init {
         start()
     }
+
+    fun countGuilds() = configs.count { it.value is GuildConfig }
+    fun countUsers() = configs.count { it.value is UserConfig }
 
     override fun shutdown() {
         super.shutdown()
         execute()
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override fun execute() {
-        synchronized(accessedKeys) { accessedKeys.toList().also { accessedKeys.clear() } }.forEach {
-            when (val config = configs[it]) {
-                is GuildConfig -> sandra.redis["${RedisPrefix.GUILD}$it"] = json.encodeToString(config)
-                is UserConfig -> sandra.redis["${RedisPrefix.USER}$it"] = json.encodeToString(config)
-            }
+    override fun execute() = synchronized(accessedKeys) {
+        accessedKeys.toList().also { accessedKeys.clear() }
+    }.forEach { store(it, configs[it] ?: return@forEach) }
+
+    override fun expired(key: Long, value: Configuration) = store(key, value)
+
+    private fun store(id: Long, config: Configuration) {
+        when (config) {
+            is GuildConfig -> sandra.redis["${RedisPrefix.GUILD}$id"] = json.encodeToString(config)
+            is UserConfig -> sandra.redis["${RedisPrefix.USER}$id"] = json.encodeToString(config)
         }
     }
-
-    fun countGuilds() = configs.count { it.value is GuildConfig }
-    fun countUsers() = configs.count { it.value is UserConfig }
 
     fun getGuild(id: Long) = get<GuildConfig>(id)
     fun getUser(id: Long) = get<UserConfig>(id)
