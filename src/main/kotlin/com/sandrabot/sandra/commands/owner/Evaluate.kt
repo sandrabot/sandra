@@ -18,6 +18,7 @@ package com.sandrabot.sandra.commands.owner
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
@@ -59,6 +60,7 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
         listOf(
             "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
             "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*", "kotlin.time.Duration",
+            "kotlinx.serialization.json.Json", "kotlinx.serialization.encodeToString", "kotlinx.serialization.decodeFromString",
             "net.dv8tion.jda.api.interactions.commands.*", "net.dv8tion.jda.api.interactions.commands.build.*",
             "net.dv8tion.jda.api.interactions.components.*", "net.dv8tion.jda.api.interactions.components.selections.*",
             "net.dv8tion.jda.api.*", "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
@@ -73,12 +75,14 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
         val bindings = listOf(
             Triple("event", event, CommandEvent::class),
             Triple("user", event.user, User::class),
+            Triple("id", event.user.idLong, Long::class),
             Triple("member", event.member, Member::class),
             Triple("channel", event.textChannel, TextChannel::class),
             Triple("guild", event.guild, Guild::class),
             // This command can only be used within guilds, so guild will never be null
-            Triple("id", event.guild!!.id, String::class),
+            Triple("gid", event.guild!!.idLong, Long::class),
             Triple("gc", event.guildConfig, GuildConfig::class),
+            Triple("mc", event.memberConfig, MemberConfig::class),
             Triple("uc", event.userConfig, UserConfig::class),
             Triple("sandra", event.sandra, Sandra::class),
             Triple("shards", event.sandra.shards, ShardManager::class),
