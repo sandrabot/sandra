@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.events
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
@@ -63,7 +64,8 @@ class CommandEvent(
 
     val arguments: ArgumentResult by lazy { parseArguments(this, command.arguments) }
     val guildConfig: GuildConfig? by lazy { guild?.let { sandra.config.getGuild(it.idLong) } }
-    val memberConfig: MemberConfig? by lazy { guildConfig?.let { it.getMember(user.idLong) } }
+    val channelConfig: ChannelConfig? by lazy { guildConfig?.getChannel(textChannel.idLong) }
+    val memberConfig: MemberConfig? by lazy { guildConfig?.getMember(user.idLong) }
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }
     val localeContext: LocaleContext by lazy {

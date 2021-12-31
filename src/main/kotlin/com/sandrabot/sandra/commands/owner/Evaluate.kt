@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.commands.owner
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
@@ -82,6 +83,7 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
             // This command can only be used within guilds, so guild will never be null
             Triple("gid", event.guild!!.idLong, Long::class),
             Triple("gc", event.guildConfig, GuildConfig::class),
+            Triple("cc", event.channelConfig, ChannelConfig::class),
             Triple("mc", event.memberConfig, MemberConfig::class),
             Triple("uc", event.userConfig, UserConfig::class),
             Triple("sandra", event.sandra, Sandra::class),
