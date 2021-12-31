@@ -13,10 +13,12 @@ jobs:
       - name: Verify that the code still compiles
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: current
           arguments: build
       - name: Verify there are no regressions
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: current
           arguments: test
       - name: Upload development artifacts
         uses: actions/upload-artifact@v2
