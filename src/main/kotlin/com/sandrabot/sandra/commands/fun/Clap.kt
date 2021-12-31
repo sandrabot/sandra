@@ -23,16 +23,17 @@ import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.entities.Message
 
 @Suppress("unused")
-class Clap : Command(name = "clap", arguments = "[text]") {
+class Clap : Command(name = "clap", arguments = "[@text]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val text = event.arguments.text() ?: Unicode.CLAPPING_HANDS
-        val clapText = text.splitSpaces().joinToString(" ${Unicode.CLAPPING_HANDS} ").trim()
+        val clapText = event.arguments.text()!!.splitSpaces().joinToString(
+            separator = " ${Unicode.CLAPPING_HANDS} ", postfix = " " + Unicode.CLAPPING_HANDS
+        ).trim()
 
         if (clapText.length > Message.MAX_CONTENT_LENGTH) {
             event.replyError(event.translate("max_length")).queue()
-        } else event.reply(clapText).allowedMentions(emptyList()).queue()
+        } else event.reply(clapText).allowedMentions(emptyList()).setEphemeral(true).queue()
 
     }
 

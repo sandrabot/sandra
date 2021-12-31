@@ -25,9 +25,8 @@ class Roll : Command(name = "roll", arguments = "[sides:integer:4,6,8,10,12,20] 
 
     override suspend fun execute(event: CommandEvent) {
 
-        val dice = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
-        val result = (1..dice).random()
-        event.replyEmote(event.translate("reply", result), Unicode.GAME_DIE).queue()
+        val bound = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
+        event.replyEmote(event.translate("reply", (1..bound).random()), Unicode.GAME_DIE).queue()
 
     }
 

@@ -33,7 +33,7 @@ class Members : Command(name = "members", guildOnly = true) {
             event.translate(
                 "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
             )
-        ).allowedMentions(emptyList()).queue()
+        ).allowedMentions(emptyList()).setEphemeral(true).queue()
 
     }
 
