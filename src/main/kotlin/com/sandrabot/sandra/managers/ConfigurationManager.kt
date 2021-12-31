@@ -60,10 +60,8 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
     override fun expired(key: Long, value: Configuration) = store(key, value)
 
     private fun store(id: Long, config: Configuration) {
-        when (config) {
-            is GuildConfig -> sandra.redis["${RedisPrefix.GUILD}$id"] = json.encodeToString(config)
-            is UserConfig -> sandra.redis["${RedisPrefix.USER}$id"] = json.encodeToString(config)
-        }
+        val prefix = if (config is GuildConfig) RedisPrefix.GUILD else RedisPrefix.USER
+        sandra.redis["$prefix$id"] = json.encodeToString(config)
     }
 
     fun getGuild(id: Long) = get<GuildConfig>(id)

@@ -18,23 +18,25 @@ package com.sandrabot.sandra.config
 
 import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
-import net.dv8tion.jda.api.entities.Member
 
 /**
  * Stores Sandra-specific properties and settings for guilds.
  */
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable
 class GuildConfig(override val id: Long) : Configuration() {
 
-    val members = mutableListOf<MemberConfig>()
+    @Serializable(with = ConfigMapTransformer::class)
+    val channels = mutableMapOf<Long, ChannelConfig>()
+
+    @Serializable(with = ConfigMapTransformer::class)
+    val members = mutableMapOf<Long, MemberConfig>()
+
     var locale: Locale = Locale.DEFAULT
+    var experienceEnabled: Boolean = true
 
-    var isExperienceEnabled: Boolean = true
-
-    fun getMember(member: Member): MemberConfig = getMember(member.idLong)
-    fun getMember(id: Long): MemberConfig = synchronized(members) {
-        members.find { it.id == id } ?: MemberConfig(id).also { members += it }
-    }
+    fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
+    fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }
 
     override fun toString(): String = "GuildConfig:$id"
 

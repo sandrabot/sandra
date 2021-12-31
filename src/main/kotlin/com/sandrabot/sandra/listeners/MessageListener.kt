@@ -73,13 +73,13 @@ class MessageListener(private val sandra: Sandra) {
 
         val guildConfig = sandra.config.getGuild(guildId)
         // The member is never null since we ignore webhooks
-        val memberConfig = guildConfig.getMember(event.member!!)
+        val memberConfig = guildConfig.getMember(authorId)
 
         // TODO Feature: AFK Messages
 
         // Feature: Server Experience
         // TODO Channel Config: Is Experience Allowed
-        if (guildConfig.isExperienceEnabled && memberConfig.canExperience()) {
+        if (guildConfig.experienceEnabled && memberConfig.canExperience()) {
             // Award a random amount of experience between 15 and 25
             // TODO Feature: Experience Multipliers
             if (memberConfig.awardExperience(randomExperience())) {

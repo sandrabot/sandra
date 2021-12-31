@@ -18,7 +18,7 @@ package com.sandrabot.sandra.config
 
 import kotlinx.serialization.Serializable
 
-@Serializable
+@Serializable(with = ConfigSerializer::class)
 abstract class Configuration {
     abstract val id: Long
 }
