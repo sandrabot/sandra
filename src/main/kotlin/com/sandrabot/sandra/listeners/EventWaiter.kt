@@ -40,7 +40,7 @@ class EventWaiter {
             waitingEvents.clear()
             return
         } else if (event is ShutdownEvent) {
-            // A ShutdownEvent signifies that JDA has shutdown and we should too
+            // A ShutdownEvent signifies that JDA has shutdown, and that we should too
             executor.shutdown()
             return
         }
@@ -51,7 +51,7 @@ class EventWaiter {
                 synchronized(eventSet) {
                     // Prevent CME by removing successful attempts in bulk
                     val toRemove = eventSet.filter { it.attempt(event) }
-                    eventSet.removeAll(toRemove)
+                    eventSet.removeAll(toRemove.toSet())
                 }
             }
             // Walk the class hierarchy to find generic events as well
