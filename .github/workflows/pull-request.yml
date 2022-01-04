@@ -16,11 +16,7 @@ jobs:
           gradle-version: current
           arguments: build
       - name: Get the short commit sha
-        uses: actions/github-script@v5
-        with:
-          script: |
-            const short_sha = context.sha.substring(0, 7)
-            core.exportVariable('GITHUB_SHA_SHORT', short_sha)
+        run: echo "GITHUB_SHA_SHORT=$(echo ${{GITHUB_SHA}} | cut -d 1-7)" >> $GITHUB_ENV
       - name: Upload development artifacts
         uses: actions/upload-artifact@v2
         with:
