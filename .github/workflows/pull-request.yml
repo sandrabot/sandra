@@ -11,7 +11,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      - name: Verify there are no regressions
+      - name: Verify the tests still pass
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: current
@@ -27,12 +27,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      - name: Verify the code still compiles
+      - name: Make sure it still compiles
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: current
           arguments: build
-      - name: Get the short commit sha
+      - name: Set the short commit sha
         run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -b 1-7)" >> $GITHUB_ENV
       - name: Upload development artifacts
         uses: actions/upload-artifact@v2
