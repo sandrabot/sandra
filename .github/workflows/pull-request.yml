@@ -4,6 +4,8 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GHITHUB_SHA_SHORT: 0000000
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
@@ -16,7 +18,7 @@ jobs:
           gradle-version: current
           arguments: build
       - name: Get the short commit sha
-        run: echo "GITHUB_SHA_SHORT=$(echo ${{GITHUB_SHA}} | cut -d 1-7)" >> $GITHUB_ENV
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -d 1-7)" >> $GITHUB_ENV
       - name: Upload development artifacts
         uses: actions/upload-artifact@v2
         with:
