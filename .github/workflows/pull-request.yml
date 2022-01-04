@@ -19,7 +19,7 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            const sha = context.sha.substring(0, 7)
+            const short_sha = context.sha.substring(0, 7)
             core.exportVariable('GITHUB_SHA_SHORT', short_sha)
       - name: Upload development artifacts
         uses: actions/upload-artifact@v2
