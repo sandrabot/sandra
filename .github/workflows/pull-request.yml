@@ -5,7 +5,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GHITHUB_SHA_SHORT: 0000000
+      GITHUB_SHA_SHORT: 0000000
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
