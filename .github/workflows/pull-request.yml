@@ -2,7 +2,7 @@ name: Pull Request Validation
 on: pull_request
 
 jobs:
-  test-changes:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,13 +15,24 @@ jobs:
         with:
           gradle-version: current
           arguments: build
+      - name: Get the short commit sha
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const sha = context.sha.substring(0, 7)
+            core.exportVariable('GITHUB_SHA_SHORT', short_sha)
+      - name: Upload development artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: latest-$GITHUB_SHA_SHORT
+          path: build/libs
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Verify there are no regressions
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: current
           arguments: test
-      - name: Upload development artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: latest-build
-          path: build/libs
