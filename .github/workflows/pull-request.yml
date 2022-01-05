@@ -6,4 +6,4 @@ jobs:
     name: Test and build
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/test-build@master
+      - uses: ./.github/workflows/test-build.yml@master
