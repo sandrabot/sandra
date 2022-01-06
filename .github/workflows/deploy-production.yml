@@ -21,4 +21,4 @@ jobs:
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: 'environment=production&runId=${{ github.run_id }}&token=${{ github.token }}'
+          data: 'environment=production&token=${{ github.token }}'
