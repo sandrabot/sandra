@@ -2,6 +2,6 @@ name: Pull Request Validation
 on: pull_request
 
 jobs:
-  test-and-build:
-    name: Test and build
+  test-build:
+    name: Reusable workflow
     uses: sandrabot/sandra/.github/workflows/test-build.yml@6ca0327bcb5d44a5e0a22c1010379507011dd828
