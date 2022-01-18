@@ -147,7 +147,7 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
         val signature = "sha256=" + mac.doFinal(context.bodyAsBytes()).joinToString("") { "%02x".format(it) }
         if ("X-Hub-Signature-256" !in context.headerMap()) throw UnauthorizedResponse("Missing signature header")
         if (context.header("X-Hub-Signature-256") != signature) throw ForbiddenResponse("Invalid signature header")
-        val runId = context.queryParam("runId")?.toIntOrNull() ?: throw BadRequestResponse("Missing runId parameter")
+        val runId = context.formParam("runId")?.toIntOrNull() ?: throw BadRequestResponse("Missing runId parameter")
         logger.info("Verified request to deploy update from GitHub action $runId")
         deployScope.launch { doDeploy(runId) }
         createResponse(context, 202) {
