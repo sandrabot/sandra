@@ -38,5 +38,5 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: build-${{ env.COMMIT_SHA }}
+          name: build-libs
           path: build/libs
