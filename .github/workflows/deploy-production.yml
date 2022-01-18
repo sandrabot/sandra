@@ -15,9 +15,10 @@ jobs:
     concurrency: production
     needs: build
     steps:
-      - name: Invoke deployment webook
+      - name: Invoke deployment webhook
         uses: distributhor/workflow-webhook@v2
         env:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          webhook_type: 'form-urlencoded'
+          webhook_url: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
           data: 'runId=${{ github.run_id }}'
