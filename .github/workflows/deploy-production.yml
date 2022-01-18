@@ -6,15 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-build:
-    name: Reusable workflow
-    uses: sandrabot/sandra/.github/workflows/test-build.yml@master
+  build:
+    uses: sandrabot/sandra/.github/workflows/build.yml@master
 
   deploy-production:
     runs-on: ubuntu-latest
     environment: production
     concurrency: production
-    needs: test-build
+    needs: build
     steps:
       - name: Invoke deployment webook
         uses: distributhor/workflow-webhook@v2
