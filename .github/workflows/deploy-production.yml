@@ -1,0 +1,23 @@
+name: Deploy to production
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: sandrabot/sandra/.github/workflows/build.yml@master
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    needs: build
+    steps:
+      - name: Invoke deployment webook
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          data: 'runId=${{ github.run_id }}'

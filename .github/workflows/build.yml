@@ -1,0 +1,22 @@
+name: Verify and build changes
+on: workflow_call
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+      - name: Compile the source code
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: current
+          arguments: build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-libs
+          path: build/libs
