@@ -4,4 +4,4 @@ on: pull_request
 jobs:
   test-build:
     name: Reusable workflow
-    uses: sandrabot/sandra/.github/workflows/test-build.yml@1e0ba1c57a16442d0770da72c519278bba095c3a
+    uses: sandrabot/sandra/.github/workflows/test-build.yml@939bc2fe821bdd41557a817b7dbd5be79d2cbbd8
