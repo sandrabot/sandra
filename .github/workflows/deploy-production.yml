@@ -8,7 +8,7 @@ on:
 jobs:
   test-build:
     name: Reusable workflow
-    uses: sandrabot/sandra/.github/workflows/test-build.yml@852be73f3d4e7af73a218757483ec2a624c846b3
+    uses: sandrabot/sandra/.github/workflows/test-build.yml@master
 
   deploy-production:
     runs-on: ubuntu-latest
