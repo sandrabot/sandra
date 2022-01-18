@@ -24,55 +24,65 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CredentialManager(
 
-        /* ========== Discord Tokens ========== */
+    /* ========== Discord Tokens ========== */
 
-        /**
-         * The token for the production bot account.
-         */
-        val token: String,
+    /**
+     * The token for the production bot account.
+     */
+    val token: String,
 
-        /**
-         * The token for the development bot account.
-         */
-        val betaToken: String,
+    /**
+     * The token for the development bot account.
+     */
+    val betaToken: String,
 
-        /* ======= Miscellaneous Secrets ======= */
+    /* ======= Miscellaneous Secrets ======= */
 
-        /**
-         * The creator's access token for your patreon client.
-         */
-        val patreonToken: String,
+    /**
+     * The secret that is used to validate webhook payloads from GitHub.
+     */
+    val githubSecret: String,
 
-        /* ========== Bot List Tokens ========== */
+    /**
+     * The token that is used to interact with the GitHub api.
+     */
+    val githubToken: String,
 
-        /**
-         * The token for using the API at https://botlist.space
-         */
-        val spaceToken: String,
+    /**
+     * The creator's access token for your patreon client.
+     */
+    val patreonToken: String,
 
-        /**
-         * The token for using the API at https://bots.ondiscord.xyz
-         */
-        val bodToken: String,
+    /* ========== Bot List Tokens ========== */
 
-        /**
-         * The token for using the API at https://discord.boats
-         */
-        val boatToken: String,
+    /**
+     * The token for using the API at https://botlist.space
+     */
+    val spaceToken: String,
 
-        /**
-         * The token for using the API at https://discordbotlist.com
-         */
-        val dblToken: String,
+    /**
+     * The token for using the API at https://bots.ondiscord.xyz
+     */
+    val bodToken: String,
 
-        /**
-         * The token for using the API at https://discord.bots.gg
-         */
-        val dbgToken: String,
+    /**
+     * The token for using the API at https://discord.boats
+     */
+    val boatToken: String,
 
-        /**
-         * The token for using the api at https://top.gg
-         */
-        val topGgToken: String
+    /**
+     * The token for using the API at https://discordbotlist.com
+     */
+    val dblToken: String,
+
+    /**
+     * The token for using the API at https://discord.bots.gg
+     */
+    val dbgToken: String,
+
+    /**
+     * The token for using the api at https://top.gg
+     */
+    val topGgToken: String
 
 )
