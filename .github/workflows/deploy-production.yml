@@ -8,7 +8,7 @@ on:
 jobs:
   test-build:
     name: Reusable workflow
-    uses: sandrabot/sandra/.github/workflows/test-build.yml@1e0ba1c57a16442d0770da72c519278bba095c3a
+    uses: sandrabot/sandra/.github/workflows/test-build.yml@852be73f3d4e7af73a218757483ec2a624c846b3
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -21,4 +21,4 @@ jobs:
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: 'environment=production&token=${{ github.token }}'
+          data: 'runId=${{ github.run_id }}'
