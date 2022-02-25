@@ -77,5 +77,6 @@ fun findTranslationKey(permission: Permission) = when (permission) {
     Permission.NICKNAME_MANAGE -> "manage_nicknames"
     Permission.MANAGE_ROLES -> "manage_roles"
     Permission.MANAGE_PERMISSIONS -> "manage_permissions"
+    Permission.MODERATE_MEMBERS -> "moderate_members"
     else -> throw MissingTranslationException("Missing translation for permission $permission")
 }
