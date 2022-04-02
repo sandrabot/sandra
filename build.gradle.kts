@@ -42,19 +42,19 @@ dependencies {
     listOf("stdlib", "reflect", "script-util", "script-runtime",
             "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-alpha.4") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.9") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.10")
-    implementation("io.javalin:javalin:4.2.0")
-    implementation("io.ktor:ktor-client-okhttp:1.6.7")
-    implementation("io.ktor:ktor-client-serialization:1.6.7")
-    implementation("io.sentry:sentry-logback:5.5.2")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("io.javalin:javalin:4.4.0")
+    implementation("io.ktor:ktor-client-okhttp:1.6.8")
+    implementation("io.ktor:ktor-client-serialization:1.6.8")
+    implementation("io.sentry:sentry-logback:5.7.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.0.1")
+    implementation("redis.clients:jedis:4.2.0")
 }
 
 buildConfig {

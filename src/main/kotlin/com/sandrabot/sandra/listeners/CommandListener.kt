@@ -26,13 +26,13 @@ import com.sandrabot.sandra.utils.missingPermission
 import com.sandrabot.sandra.utils.missingSelfMessage
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
 
 class CommandListener(val sandra: Sandra) {
 
     @Suppress("unused")
-    fun onSlashCommand(slashEvent: SlashCommandEvent) {
+    fun onSlashCommand(slashEvent: SlashCommandInteractionEvent) {
 
         // The command could only be null if it was removed with an eval
         val command = sandra.commands[slashEvent.commandPath] ?: run {

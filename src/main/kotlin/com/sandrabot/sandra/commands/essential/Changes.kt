@@ -21,7 +21,7 @@ import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.constants.Website
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import net.dv8tion.jda.api.interactions.components.Button
+import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 @Suppress("unused")
 class Changes : Command(name = "changes") {

@@ -31,7 +31,7 @@
     "manage_nicknames": "Manage Nicknames",
     "manage_roles": "Manage Roles",
     "manage_permissions": "Manage Permissions",
-    "moderate_members": "Timeout Members",
+    "moderate_members": "Timeout Members"
   },
   "categories": {
     "custom": "Custom",
