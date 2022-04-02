@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.config
+package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.entities.Privilege
-import com.sandrabot.sandra.utils.isAllowed
-import kotlinx.serialization.Serializable
+import com.sandrabot.sandra.events.CommandEvent
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.GuildChannel
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-/**
- * Stores Sandra-specific properties and settings for channels within guilds.
- */
-@Serializable
-class ChannelConfig(override val id: Long) : Configuration() {
-
-    val experiencePrivileges = mutableListOf<Privilege>()
-    var experienceAllowed: Boolean = true
-
-    fun isExperienceAllowed(event: MessageReceivedEvent): Boolean =
-        experienceAllowed && experiencePrivileges.isAllowed(event)
-
-    override fun toString(): String = "ChannelConfig:$id"
-
-}
+fun List<Privilege>.isAllowed(event: CommandEvent) = isAllowed(event.guildChannel, event.guild, event.member)
+fun List<Privilege>.isAllowed(event: MessageReceivedEvent) = isAllowed(event.guildChannel, event.guild, event.member)
+// TODO: Privilege permission checks
+fun List<Privilege>.isAllowed(channel: GuildChannel, guild: Guild?, member: Member?): Boolean = true

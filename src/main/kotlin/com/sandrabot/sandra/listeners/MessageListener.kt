@@ -67,6 +67,7 @@ class MessageListener(private val sandra: Sandra) {
     private fun handleGuildMessage(event: MessageReceivedEvent) {
         val authorId = event.author.idLong
         val guildId = event.guild.idLong
+        val channelId = event.channel.idLong
 
         // Check the blocklist to prevent responding to active contexts
         if (checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.MESSAGES)) return
@@ -74,12 +75,12 @@ class MessageListener(private val sandra: Sandra) {
         val guildConfig = sandra.config.getGuild(guildId)
         // The member is never null since we ignore webhooks
         val memberConfig = guildConfig.getMember(authorId)
+        val channelConfig = guildConfig.getChannel(channelId)
 
         // TODO Feature: AFK Messages
 
         // Feature: Server Experience
-        // TODO Channel Config: Is Experience Allowed
-        if (guildConfig.experienceEnabled && memberConfig.canExperience()) {
+        if (guildConfig.experienceEnabled && memberConfig.canExperience() && channelConfig.isExperienceAllowed(event)) {
             // Award a random amount of experience between 15 and 25
             // TODO Feature: Experience Multipliers
             if (memberConfig.awardExperience(randomExperience())) {

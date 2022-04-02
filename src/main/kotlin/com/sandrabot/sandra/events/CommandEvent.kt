@@ -46,6 +46,7 @@ class CommandEvent(
     val hook: InteractionHook get() = event.hook
 
     val textChannel: TextChannel get() = event.textChannel
+    val guildChannel: GuildChannel get() = event.guildChannel
     val channel: MessageChannel get() = event.channel
     val embed: EmbedBuilder get() = sandra.createEmbed()
 

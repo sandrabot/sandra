@@ -34,5 +34,10 @@ object ConfigMapTransformer : JsonTransformingSerializer<Map<Long, Configuration
 }
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
-    override fun selectDeserializer(element: JsonElement) = Configuration.serializer()
+    override fun selectDeserializer(element: JsonElement) = when {
+        "credits" in element.jsonObject -> UserConfig.serializer()
+        "members" in element.jsonObject -> GuildConfig.serializer()
+        "experience" in element.jsonObject -> MemberConfig.serializer()
+        else -> ChannelConfig.serializer()
+    }
 }
