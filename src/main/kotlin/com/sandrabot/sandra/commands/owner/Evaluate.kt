@@ -30,10 +30,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
@@ -50,25 +47,23 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
 
     init {
         setIdeaIoUseFallback()
-        val importBuilder = StringBuilder()
-        // Import every sandra package, excluding commands
-        Package.getPackages().map { it.name }.filter {
-            it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
-        }.forEach { importBuilder.append("import ").append(it).append(".*\n") }
-        // Include some miscellaneous stuff for quality of life
-        listOf(
-            "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
-            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*", "kotlin.time.Duration",
-            "net.dv8tion.jda.api.interactions.commands.*", "net.dv8tion.jda.api.interactions.commands.build.*",
-            "net.dv8tion.jda.api.interactions.components.*", "net.dv8tion.jda.api.interactions.components.buttons.*",
-            "net.dv8tion.jda.api.interactions.components.selections.*", "net.dv8tion.jda.api.*",
-            "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
-        ).forEach { importBuilder.append("import $it\n") }
-        imports = importBuilder.append("\n\n").toString()
+        imports = buildString {
+            // Import every Sandra package, excluding commands
+            Package.getPackages().map { it.name }.filter {
+                it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
+            }.forEach { append("import ", it, ".*\n") }
+            // Include some miscellaneous imports for quality of life
+            additionalImports.forEach { append("import ", it, "\n") }
+            append("\n\n")
+        }
     }
 
     @OptIn(ExperimentalTime::class)
     override suspend fun execute(event: CommandEvent) {
+
+        // Display "bot is thinking" while a result is calculated
+        // Don't wait to call this because the script engine takes a while to start up at first
+        event.deferReply().queue()
 
         // Create a map of the variables we might want
         val bindings = listOf(
@@ -104,9 +99,6 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
         val importLines = strippedScript.lines().takeWhile { it.startsWith("import") }
         val additionalImports = importLines.joinToString("\n", postfix = "\n\n")
         val script = strippedScript.lines().filterNot { it in importLines }.joinToString("\n")
-
-        // Defer the reply so we can actually reply later
-        event.deferReply().queue()
         val handler = CoroutineExceptionHandler { _, throwable ->
             handleResult(event, "**unknown** with unhandled exception", throwable.stackTraceToString())
         }
@@ -135,8 +127,8 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
     private fun handleResult(event: CommandEvent, duration: String, result: String) {
         // Check the result length, if it's too large attempt to upload it to hastebin
         val formatted = "evaluated in $duration\n```\n$result\n```"
-        if (formatted.length > 2000) {
-            // If the upload failed print it to stdout
+        if (formatted.length > Message.MAX_CONTENT_LENGTH) {
+            // If the upload failed, print it to the console
             val hastebin = hastebin(result) ?: run {
                 event.sendMessage("upload failed, result was logged").queue()
                 logger.info("Evaluation result failed to upload:\n$result")
@@ -146,9 +138,17 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
         } else event.sendMessage(formatted).queue()
     }
 
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(Evaluate::class.java)
         private val blockPattern = Regex("""```\S*\n(.*)```""", RegexOption.DOT_MATCHES_ALL)
+        private val additionalImports = arrayOf(
+            "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
+            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*", "kotlin.time.Duration",
+            "net.dv8tion.jda.api.interactions.commands.*", "net.dv8tion.jda.api.interactions.commands.build.*",
+            "net.dv8tion.jda.api.interactions.components.*", "net.dv8tion.jda.api.interactions.components.buttons.*",
+            "net.dv8tion.jda.api.interactions.components.selections.*", "net.dv8tion.jda.api.*",
+            "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
+        )
     }
 
 }
