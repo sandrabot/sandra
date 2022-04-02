@@ -24,9 +24,9 @@ import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.Button
+import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.concurrent.TimeUnit
@@ -108,13 +108,13 @@ class Paginator(
 
     private fun waitForButton() {
         event.sandra.eventWaiter.waitForEvent(
-            ButtonClickEvent::class, timeout = 5, unit = TimeUnit.MINUTES,
+            ButtonInteractionEvent::class, timeout = 5, unit = TimeUnit.MINUTES,
             expired = { event.hook.editOriginalComponents().queue(null, handler) },
             test = { verifyButton(it) }
         ) { handleButton(it) }
     }
 
-    private fun verifyButton(buttonEvent: ButtonClickEvent): Boolean {
+    private fun verifyButton(buttonEvent: ButtonInteractionEvent): Boolean {
         // Never process a button event that doesn't belong to our message
         if (buttonEvent.message.idLong != messageId) return false
         // If the user is not the author, only acknowledge it
@@ -131,7 +131,7 @@ class Paginator(
         }
     }
 
-    private fun handleButton(buttonEvent: ButtonClickEvent) {
+    private fun handleButton(buttonEvent: ButtonInteractionEvent) {
         when (buttonEvent.componentId) {
             // Only send the prompt if we have permissions to
             selectButtonId -> doPageSelection(buttonEvent)
@@ -148,7 +148,7 @@ class Paginator(
         }
     }
 
-    private fun updateMessage(buttonEvent: ButtonClickEvent) {
+    private fun updateMessage(buttonEvent: ButtonInteractionEvent) {
         // The message will never be ephemeral
         val buttons = buttonEvent.message.buttons
         // Update the buttons depending on the current page
@@ -163,7 +163,7 @@ class Paginator(
         action.queue { waitForButton() }
     }
 
-    private fun doPageSelection(buttonEvent: ButtonClickEvent) {
+    private fun doPageSelection(buttonEvent: ButtonInteractionEvent) {
         // Acknowledge that the prompt button was clicked
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to

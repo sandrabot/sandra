@@ -19,10 +19,7 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import net.dv8tion.jda.api.interactions.commands.build.OptionData
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData
+import net.dv8tion.jda.api.interactions.commands.build.*
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
@@ -71,8 +68,8 @@ abstract class Command(
     fun asCommandData(sandra: Sandra): CommandData? {
         if (isSubcommand) return null // Only root commands may build command data
         val commandPath = path.replace('/', '.')
-        val data = CommandData(name, sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.description"))
-        if (ownerOnly) data.setDefaultEnabled(false)
+        val data = Commands.slash(name, sandra.locales.get(Locale.DEFAULT, "commands.$commandPath.description"))
+        if (ownerOnly) data.isDefaultEnabled = false
         if (arguments.isNotEmpty()) data.addOptions(arguments.asOptions(sandra, commandPath))
         if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.group }.forEach { (group, commands) ->
             val subcommandData = commands.map {

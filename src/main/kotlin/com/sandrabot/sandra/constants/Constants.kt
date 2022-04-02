@@ -34,7 +34,7 @@ object Constants {
     const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
     const val DIRECT_SUPPORT = "https://discord.com/invite/ybuvfZR"
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?" +
-            "client_id=$APPLICATION_ID&permissions=473296087&scope=bot"
+            "client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
 
     val DEVELOPERS = arrayOf(AVERY, LOGAN)
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"

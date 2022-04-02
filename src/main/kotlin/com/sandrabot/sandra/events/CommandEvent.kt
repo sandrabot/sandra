@@ -28,14 +28,14 @@ import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
 
 class CommandEvent(
-    val sandra: Sandra, val event: SlashCommandEvent, val command: Command
+    val sandra: Sandra, val event: SlashCommandInteractionEvent, val command: Command
 ) {
 
     val jda: JDA get() = event.jda

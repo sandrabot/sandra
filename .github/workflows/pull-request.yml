@@ -1,0 +1,6 @@
+name: Pull Request Validation
+on: pull_request
+
+jobs:
+  build:
+    uses: sandrabot/sandra/.github/workflows/build.yml@master
