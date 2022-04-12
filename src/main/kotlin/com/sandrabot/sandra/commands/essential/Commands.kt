@@ -61,12 +61,12 @@ class Commands : Command(name = "commands") {
         private fun Category.path() = "categories." + name.lowercase()
 
         private fun getSelectionMenu(event: CommandEvent): SelectMenu = (menuBuilder ?: run {
-            SelectMenu.create(componentPrefix).setPlaceholder(event.translate("select_placeholder"))
+            SelectMenu.create(componentPrefix).setPlaceholder(event.get("select_placeholder"))
                 .addOptions(event.sandra.commands.values.groupBy { it.category }.filterNot { (category, list) ->
                     category == Category.CUSTOM || category == Category.OWNER || list.isEmpty()
                 }.toSortedMap().map { (category, _) ->
-                    val displayName = event.translate(category.path(), false)
-                    SelectOption.of(displayName + " " + event.translate("command_title"), category.name)
+                    val displayName = event.getAny(category.path())
+                    SelectOption.of(displayName + " " + event.get("command_title"), category.name)
                         .withEmoji(Emoji.fromMarkdown(category.emote))
                 }).also { menuBuilder = it }
         }).setId(componentPrefix + event.encodedInteraction).build()
@@ -81,13 +81,13 @@ class Commands : Command(name = "commands") {
             }.sortedBy { it.name }
             val embedDescriptions = commands.map {
                 // Append each command to the embed description
-                val commandDescription = event.translate("commands.${it.name}.description", false)
+                val commandDescription = event.getAny("commands.${it.name}.description")
                 buildString { append("`/", it.name, "` - ", commandDescription, "\n") }
             }.chunked(20).map { it.joinToString("") } // Chunk the commands into groups and combine them
-            val title = event.translate("commands.help.extra_help", false)
-            val author = event.translate(category.path(), false) + " " + event.translate("command_title")
+            val title = event.getAny("commands.help.extra_help")
+            val author = event.getAny(category.path()) + " " + event.get("command_title")
             val embed = event.embed.setTitle(title, Constants.DIRECT_SUPPORT).setThumbnail(event.selfUser.effectiveAvatarUrl)
-            embed.setAuthor(author, null, category.emote.asEmoteUrl()).setFooter(event.translate("more_information"))
+            embed.setAuthor(author, null, category.emote.asEmoteUrl()).setFooter(event.get("more_information"))
             // Build each page using the embed template and its own description
             return embedDescriptions.map { embed.setDescription(it).build() }
         }

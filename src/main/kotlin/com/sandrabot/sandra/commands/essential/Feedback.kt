@@ -28,8 +28,8 @@ class Feedback : Command(name = "feedback") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
+        val button = Button.link(Constants.DIRECT_SUPPORT, event.get("button_label"))
+        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.get("reply")
         event.reply(reply).addActionRow(button).setEphemeral(true).queue()
 
     }

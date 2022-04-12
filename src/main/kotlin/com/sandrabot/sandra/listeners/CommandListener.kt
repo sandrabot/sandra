@@ -61,12 +61,12 @@ class CommandListener(val sandra: Sandra) {
             }
             // TODO User privilege and permissions
         } else if (command.guildOnly) {
-            event.replyError(event.translate("general.guild_only", false)).setEphemeral(true).queue()
+            event.replyError(event.getAny("general.guild_only")).setEphemeral(true).queue()
             return
         }
 
         if (command.ownerOnly && !event.isOwner) {
-            event.replyError(event.translate("general.owner_only", false)).setEphemeral(true).queue()
+            event.replyError(event.getAny("general.owner_only")).setEphemeral(true).queue()
             return
         }
 
@@ -88,10 +88,10 @@ class CommandListener(val sandra: Sandra) {
                 event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
                 logger.info("Cannot finish executing command due to missing permissions", e)
             } catch (e: MissingArgumentException) {
-                event.replyError(event.translate("general.missing_argument", false, e.argument.name))
+                event.replyError(event.getAny("general.missing_argument", e.argument.name))
                     .setEphemeral(true).queue()
             } catch (t: Throwable) {
-                event.sendError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
+                event.sendError(event.getAny("general.command_exception")).setEphemeral(true).queue()
                 logger.error("An exception occurred while executing a command", t)
             }
         }

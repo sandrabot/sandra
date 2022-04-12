@@ -32,7 +32,7 @@ class Clap : Command(name = "clap", arguments = "[@text]") {
         ).trim()
 
         if (clapText.length > Message.MAX_CONTENT_LENGTH) {
-            event.replyError(event.translate("max_length")).queue()
+            event.replyError(event.get("max_length")).queue()
         } else event.reply(clapText).allowedMentions(emptyList()).setEphemeral(true).queue()
 
     }

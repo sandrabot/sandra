@@ -16,61 +16,66 @@
 
 package com.sandrabot.sandra.managers
 
-import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.exceptions.MissingTranslationException
 import com.sandrabot.sandra.utils.getResourceAsText
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
+import java.io.File
+import java.util.*
 
 @OptIn(ExperimentalSerializationApi::class)
 class LocaleManager {
 
-    private val translationMap = mutableMapOf<Locale, Map<String, Any>>()
+    private val translations: Map<Locale, Map<String, Any>>
 
     init {
-        for (it in Locale.values()) {
-            val jsonObject = try {
-                val text = getResourceAsText("/translations/${it.identifier}.json")
-                    ?: throw IllegalStateException("Translation file for ${it.identifier} is missing")
-                Json.decodeFromString<JsonObject>(text)
+        val directoryPath = object {}.javaClass.getResource("/translations")?.file
+        val translationDir = File(directoryPath ?: throw IllegalStateException("Translation directory is missing"))
+        if (!translationDir.isDirectory) throw IllegalStateException("$translationDir is not a directory")
+        translations = translationDir.listFiles()?.associate { file ->
+            val identifier = file.nameWithoutExtension.replace('_', '-')
+            val jsonObject: JsonObject = try {
+                val path = file.toRelativeString(translationDir.parentFile)
+                val translationJson = getResourceAsText("/$path")
+                    ?: throw IllegalStateException("File for $identifier is missing, expected at $path")
+                Json.decodeFromString(translationJson)
             } catch (t: Throwable) {
-                throw IllegalArgumentException("Failed to parse translation file for ${it.identifier}", t)
+                throw IllegalStateException("Failed to parse translation file for $identifier", t)
             }
             val pathMap = mutableMapOf<String, Any>()
             loadRecursive("", pathMap, jsonObject)
-            translationMap[it] = pathMap
-        }
+            Locale.forLanguageTag(identifier) to pathMap
+        } ?: throw IllegalStateException("Failed to initialize translations")
     }
 
-    private fun loadRecursive(root: String, paths: MutableMap<String, Any>, obj: JsonObject) {
-        for (it in obj.entries) {
-            val newRoot = if (root.isEmpty()) it.key else "$root.${it.key}"
-            when (val value = it.value) {
-                is JsonObject -> loadRecursive(newRoot, paths, value)
-                is JsonArray -> paths[newRoot] = value.jsonArray.map { it.jsonPrimitive.content }.toTypedArray()
-                is JsonPrimitive -> paths[newRoot] = value.content
+    private fun loadRecursive(root: String, pathMap: MutableMap<String, Any>, jsonObject: JsonObject) {
+        for (entry in jsonObject.entries) {
+            val newRoot = if (root.isEmpty()) entry.key else "$root.${entry.key}"
+            when (val value = entry.value) {
+                is JsonObject -> loadRecursive(newRoot, pathMap, value)
+                is JsonPrimitive -> pathMap[newRoot] = value.content
+                is JsonArray -> pathMap[newRoot] = value.jsonArray.map { it.jsonPrimitive.content }.toList()
             }
         }
     }
 
     private fun getAny(locale: Locale, path: String): Any {
-        // All locales must be loaded or the bot will fail to start
-        val map = translationMap[locale] ?: throw AssertionError("Missing translation for $locale")
-        return map[path] ?: if (locale != Locale.DEFAULT) get(Locale.DEFAULT, path) else {
-            throw MissingTranslationException("Missing translation path $path")
-        }
+        val translation = translations[if (locale in translations) locale else Locale.US]
+            ?: throw AssertionError("Missing translation map for $locale and ${Locale.US}")
+        return translation[path] ?: throw MissingTranslationException("Missing translation path $path for $locale")
     }
 
     fun getList(locale: Locale, path: String): List<String> = getAny(locale, path).let {
-        if (it is Array<*>) it.filterIsInstance<String>() else
-            throw IllegalArgumentException("Path $path of value $it is not an array: ${it::class}")
+        if (it is List<*>) it.filterIsInstance<String>() else {
+            throw IllegalArgumentException("Translation $path for $locale is not a list")
+        }
     }
 
     fun get(locale: Locale, path: String): String = when (val value = getAny(locale, path)) {
         is String -> value
-        is Array<*> -> value.random() as String
-        else -> throw AssertionError("Path $path refers to object $value of type ${value::class}")
+        is List<*> -> value.random() as String
+        else -> throw AssertionError("Translation $path for $locale is type ${value::class}")
     }
 
 }

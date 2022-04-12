@@ -16,14 +16,12 @@
 
 package com.sandrabot.sandra.utils
 
-import com.sandrabot.sandra.config.GuildConfig
-import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.entities.Locale
 import io.ktor.content.*
 import io.ktor.http.*
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
+import java.util.*
 import kotlin.time.Duration
 
 private val digitRegex = Regex("""\d+""")
@@ -47,15 +45,10 @@ fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
 
-fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
+fun User.probableLocale(): Locale? =
+    mutualGuilds.groupBy { it.locale }.maxByOrNull { it.value.size }?.value?.firstOrNull()?.locale
 
-fun findLocale(guildConfig: GuildConfig?, userConfig: UserConfig): Locale {
-    return when {
-        guildConfig == null -> userConfig.locale
-        userConfig.locale != Locale.DEFAULT -> userConfig.locale
-        else -> guildConfig.locale
-    }
-}
+fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
 fun hastebin(text: String): String? {
     return try {

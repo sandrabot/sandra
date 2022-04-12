@@ -17,44 +17,50 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.config.GuildConfig
-import com.sandrabot.sandra.config.UserConfig
-import com.sandrabot.sandra.utils.findLocale
+import net.dv8tion.jda.api.entities.Guild
+import java.util.*
 
 /**
- * Wrapper class for conveniently retrieving translation keys.
+ * Utility class for conveniently handling translations.
  */
-class LocaleContext(
-    private val sandra: Sandra,
-    val locale: Locale,
-    val root: String? = null
-) {
+class LocaleContext(private val sandra: Sandra, val locale: Locale, val root: String? = null) {
 
-    constructor(sandra: Sandra, guildConfig: GuildConfig?, userConfig: UserConfig, root: String? = null) :
-            this(sandra, findLocale(guildConfig, userConfig), root)
+    constructor(sandra: Sandra, guild: Guild?, locale: Locale, root: String? = null) : this(
+        sandra, when {
+            guild == null -> locale
+            locale != guild.locale -> locale
+            else -> guild.locale
+        }, root
+    )
 
     /**
-     * Returns a new context with the new root.
+     * Creates a new context with the specified root.
      */
     fun withRoot(root: String?) = LocaleContext(sandra, locale, root)
 
     /**
-     * Returns the raw translation. The lookup path will
-     * include the root when [withRoot] is `true`.
+     * Returns the unchanged string template from the translation.
+     * If [withRoot] is `true`, the context root will be prefixed to the [path].
+     *
+     * @see get
+     * @see getAny
      */
-    fun get(path: String, withRoot: Boolean) = sandra.locales.get(
+    fun getTemplate(path: String, withRoot: Boolean): String = sandra.locales.get(
         locale, if (root == null || !withRoot) path else "$root.$path"
     )
 
     /**
-     * Formats the translation with the [args] provided.
+     * Formats the translation template at [root] + [path] with the [args].
+     *
+     * @see getAny
      */
-    fun translate(path: String, vararg args: Any?) = translate(path, true, *args)
+    fun get(path: String, vararg args: Any?) = getTemplate(path, true).format(locale, *args)
 
     /**
-     * Formats the translation with the [args] provided.
-     * If [withRoot] is `true` the context root will be used for lookup.
+     * Formats any translation template at [path], without the root.
+     *
+     * @see get
      */
-    fun translate(path: String, withRoot: Boolean, vararg args: Any?) = get(path, withRoot).format(*args)
+    fun getAny(path: String, vararg args: Any?) = getTemplate(path, false).format(locale, *args)
 
 }

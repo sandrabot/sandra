@@ -40,7 +40,7 @@ class Cat : Command(name = "cat") {
         if (response.status == HttpStatusCode.OK) {
             val url = Json.decodeFromString<JsonObject>(response.receive()).string("url")
             event.sendMessage("https://cataas.com$url").queue()
-        } else event.sendError(event.translate("error")).queue()
+        } else event.sendError(event.get("error")).queue()
     }
 
 }

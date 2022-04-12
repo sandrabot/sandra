@@ -33,7 +33,7 @@ class Ping : Command(name = "ping") {
             val formatted = ping.milliseconds.format()
             if (ping > 250) "${Emotes.WARN} $formatted" else formatted
         }
-        event.sendInfo(event.translate("reply", rest, websocket)).queue()
+        event.sendInfo(event.get("reply", rest, websocket)).queue()
 
     }
 

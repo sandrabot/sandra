@@ -29,7 +29,7 @@ class Choose : Command(name = "choose", arguments = "[@options:text]") {
     override suspend fun execute(event: CommandEvent) {
 
         val list = event.arguments.text("options")!!.splitSpaces()
-        val reply = event.translate("reply", list.size.format(), list.random().sanitize().take(20))
+        val reply = event.get("reply", list.size.format(), list.random().sanitize().take(20))
         event.replyEmote(reply, Unicode.SCALES).allowedMentions(emptyList()).queue()
 
     }

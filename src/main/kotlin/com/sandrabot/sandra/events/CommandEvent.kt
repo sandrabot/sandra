@@ -65,12 +65,11 @@ class CommandEvent(
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }
     val localeContext: LocaleContext by lazy {
-        LocaleContext(sandra, guildConfig, userConfig, "commands.${command.name}")
+        LocaleContext(sandra, guild, interaction.userLocale, "commands.${command.name}")
     }
 
-    fun translate(path: String, vararg args: Any?): String = translate(path, true, *args)
-    fun translate(path: String, withRoot: Boolean, vararg args: Any?): String =
-        localeContext.translate(path, withRoot, *args)
+    fun get(path: String, vararg args: Any?): String = localeContext.get(path, *args)
+    fun getAny(path: String, vararg args: Any?): String = localeContext.getAny(path, *args)
 
     fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 

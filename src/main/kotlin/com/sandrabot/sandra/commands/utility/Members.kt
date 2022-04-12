@@ -18,22 +18,21 @@ package com.sandrabot.sandra.commands.utility
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
-import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
 class Members : Command(name = "members", guildOnly = true) {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val memberCount = event.guild!!.memberCount
-        val botCount = event.guild.memberCache.count { it.user.isBot }
-        val humanCount = memberCount - botCount
-        event.replyInfo(
-            event.translate(
-                "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
-            )
-        ).allowedMentions(emptyList()).setEphemeral(true).queue()
+        event.deferReply(ephemeral = true).await()
+        val members = event.guild!!.memberCount
+        // This is more accurate than checking the member cache
+        val bots = event.guild.findMembers { it.user.isBot }.await().size
+        val humans = (members - bots).format()
+        val reply = event.get("reply", event.guild.name, humans, bots.format(), members.format())
+        event.sendInfo(reply).allowedMentions(emptyList()).queue()
 
     }
 

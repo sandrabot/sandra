@@ -168,7 +168,7 @@ class Paginator(
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to
         digitAction(
-            event, event.translate("general.page_prompt", false), { waitForButton() }
+            event, event.getAny("general.page_prompt"), { waitForButton() }
         ) { digit ->
             val index = digit.toInt() - 1
             if (index in messages.indices && index != currentPage) {
