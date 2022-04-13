@@ -16,7 +16,10 @@
 
 package com.sandrabot.sandra.utils
 
+import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.ExperienceConfig
+import com.sandrabot.sandra.config.GuildConfig
+import kotlin.math.roundToInt
 
 val experienceLevelGoals: List<Int> = run {
     var increment = 100
@@ -29,7 +32,13 @@ val experienceLevelGoals: List<Int> = run {
     }.take(1000).toList()
 }
 
-fun randomExperience() = (15..25).random()
+fun randomExperience(multiplier: Double = 1.0): Int = ((15..25).random() * multiplier).roundToInt()
+
+fun GuildConfig.computeMultiplier(channel: ChannelConfig): Double = when {
+    experienceCompounds -> experienceMultiplier * channel.experienceMultiplier
+    channel.experienceMultiplier != 1.0 -> channel.experienceMultiplier
+    else -> experienceMultiplier
+}
 
 fun ExperienceConfig.canExperience() = System.currentTimeMillis() >= experienceLast + 60_000
 

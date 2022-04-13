@@ -18,10 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.blocklist.FeatureType
-import com.sandrabot.sandra.utils.awardExperience
-import com.sandrabot.sandra.utils.canExperience
-import com.sandrabot.sandra.utils.checkBlocklist
-import com.sandrabot.sandra.utils.randomExperience
+import com.sandrabot.sandra.utils.*
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
@@ -82,8 +79,9 @@ class MessageListener(private val sandra: Sandra) {
         // Feature: Server Experience
         if (guildConfig.experienceEnabled && memberConfig.canExperience() && channelConfig.isExperienceAllowed(event)) {
             // Award a random amount of experience between 15 and 25
-            // TODO Feature: Experience Multipliers
-            if (memberConfig.awardExperience(randomExperience())) {
+            // Multiply the amount based on the multiplier configuration
+            val multiplier = guildConfig.computeMultiplier(channelConfig)
+            if (memberConfig.awardExperience(randomExperience(multiplier))) {
                 // TODO Feature: Level Up Notifications with custom Messages
                 // TODO Feature: Level Up Rewards
             }

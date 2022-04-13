@@ -29,6 +29,7 @@ class ChannelConfig(override val id: Long) : Configuration() {
 
     val experiencePrivileges = mutableListOf<Privilege>()
     var experienceAllowed: Boolean = true
+    var experienceMultiplier: Double = 1.0
 
     fun isExperienceAllowed(event: MessageReceivedEvent): Boolean =
         experienceAllowed && experiencePrivileges.isAllowed(event)
