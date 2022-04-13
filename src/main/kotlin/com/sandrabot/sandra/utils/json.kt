@@ -16,11 +16,9 @@
 
 package com.sandrabot.sandra.utils
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 
-@OptIn(ExperimentalSerializationApi::class)
 fun Map<*, *>.toJson(json: Json = Json) = json.encodeToString(toJsonObject())
 
 fun Map<*, *>.toJsonObject(): JsonObject = JsonObject(map {

@@ -20,7 +20,6 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.*
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
@@ -48,7 +47,6 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30) {
         execute()
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun execute() {
         val copyOfKeys = synchronized(accessedKeys) {
             LinkedList(accessedKeys).also { accessedKeys.clear() }
@@ -73,7 +71,6 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30) {
     fun get(id: Long, redisPrefix: RedisPrefix) =
         (configs[id] ?: getOrDefault(id, redisPrefix)).also { synchronized(accessedKeys) { accessedKeys.add(id) } }
 
-    @OptIn(ExperimentalSerializationApi::class)
     private fun getOrDefault(id: Long, redisPrefix: RedisPrefix) = (sandra.redis["$redisPrefix$id"]
         ?.let { json.decodeFromString(ConfigSerializer, it) } ?: when (redisPrefix) {
         RedisPrefix.GUILD -> GuildConfig(id)
