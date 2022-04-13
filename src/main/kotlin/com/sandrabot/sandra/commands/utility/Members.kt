@@ -20,6 +20,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
+import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
 class Members : Command(name = "members", guildOnly = true) {
@@ -31,7 +32,7 @@ class Members : Command(name = "members", guildOnly = true) {
         // This is more accurate than checking the member cache
         val bots = event.guild.findMembers { it.user.isBot }.await().size
         val humans = (members - bots).format()
-        val reply = event.get("reply", event.guild.name, humans, bots.format(), members.format())
+        val reply = event.get("reply", event.guild.name.sanitize(), humans, bots.format(), members.format())
         event.sendInfo(reply).allowedMentions(emptyList()).queue()
 
     }
