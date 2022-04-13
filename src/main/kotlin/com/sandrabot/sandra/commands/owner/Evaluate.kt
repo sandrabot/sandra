@@ -24,6 +24,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
 import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
+import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hastebin
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -63,7 +64,7 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
 
         // Display "bot is thinking" while a result is calculated
         // Don't wait to call this because the script engine takes a while to start up at first
-        event.deferReply().queue()
+        event.deferReply().await()
 
         // Create a map of the variables we might want
         val bindings = listOf(
