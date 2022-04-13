@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
+    kotlin("plugin.serialization") version "1.6.20"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("com.github.gmazzo.buildconfig") version "3.0.3"
     id("com.github.johnrengelman.shadow") version "7.1.0"
@@ -39,8 +39,8 @@ repositories {
 }
 
 dependencies {
-    listOf("stdlib", "reflect", "script-util", "script-runtime",
-            "scripting-compiler-embeddable", "compiler-embeddable"
+    listOf(
+        "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
     implementation("net.dv8tion:JDA:5.0.0-alpha.9") {
         // We don't need this because lavaplayer will always send opus for us
@@ -48,13 +48,14 @@ dependencies {
     }
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("io.javalin:javalin:4.4.0")
-    implementation("io.ktor:ktor-client-okhttp:1.6.8")
-    implementation("io.ktor:ktor-client-serialization:1.6.8")
-    implementation("io.sentry:sentry-logback:5.7.0")
+    implementation("io.ktor:ktor-client-okhttp:2.0.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
+    implementation("io.sentry:sentry-logback:5.7.2")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.2.0")
+    implementation("redis.clients:jedis:4.2.1")
 }
 
 buildConfig {

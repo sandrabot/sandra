@@ -19,13 +19,12 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.spaceRegex
-import io.ktor.http.cio.websocket.*
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
 import kotlin.time.Duration
 
-private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z0-9,.]+))?]""")
+private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z\d,.]+))?]""")
 private val durationRegex = Regex("""^(?!$)(?:(\d+)d ?)?(?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?$""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 

@@ -20,8 +20,7 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Locale
-import io.ktor.content.*
-import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import kotlin.time.Duration
@@ -57,12 +56,10 @@ fun findLocale(guildConfig: GuildConfig?, userConfig: UserConfig): Locale {
     }
 }
 
-fun hastebin(text: String): String? {
-    return try {
-        postBlocking<Map<String, String>>(
-            "${Constants.HASTEBIN}/documents", TextContent(text, ContentType.Text.Plain)
-        ).let { "${Constants.HASTEBIN}/${it["key"]}" }
-    } catch (t: Throwable) {
-        null
+fun hastebin(text: String): String? = try {
+    postBlocking<JsonObject>("${Constants.HASTEBIN}/documents", text).let {
+        "${Constants.HASTEBIN}/${it.string("key")}"
     }
+} catch (t: Throwable) {
+    null
 }
