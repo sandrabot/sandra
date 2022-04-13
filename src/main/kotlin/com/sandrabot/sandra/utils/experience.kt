@@ -34,7 +34,8 @@ val experienceLevelGoals: List<Int> = run {
 
 fun randomExperience(multiplier: Double = 1.0): Int = ((15..25).random() * multiplier).roundToInt()
 
-fun GuildConfig.computeMultiplier(channel: ChannelConfig): Double = when {
+fun GuildConfig.computeMultiplier(channel: ChannelConfig? = null): Double = when {
+    channel == null -> experienceMultiplier
     experienceCompounds -> experienceMultiplier * channel.experienceMultiplier
     channel.experienceMultiplier != 1.0 -> channel.experienceMultiplier
     else -> experienceMultiplier
