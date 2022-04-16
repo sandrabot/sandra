@@ -23,7 +23,7 @@ import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.sanitize
 
 @Suppress("unused")
-class Members : Command(name = "members", guildOnly = true) {
+class Members : Command(guildOnly = true) {
 
     override suspend fun execute(event: CommandEvent) {
 

@@ -20,7 +20,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 
 @Suppress("unused")
-class Mock : Command(name = "mock", arguments = "[@text]") {
+class Mock : Command(arguments = "[@text]") {
 
     override suspend fun execute(event: CommandEvent) {
 

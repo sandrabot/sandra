@@ -23,7 +23,7 @@ import com.sandrabot.sandra.utils.splitSpaces
 import net.dv8tion.jda.api.entities.Message
 
 @Suppress("unused")
-class Clap : Command(name = "clap", arguments = "[@text]") {
+class Clap : Command(arguments = "[@text]") {
 
     override suspend fun execute(event: CommandEvent) {
 

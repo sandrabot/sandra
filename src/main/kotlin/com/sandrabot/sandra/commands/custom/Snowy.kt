@@ -20,7 +20,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 
 @Suppress("unused")
-class Snowy : Command(name = "snowy") {
+class Snowy : Command() {
 
     override suspend fun execute(event: CommandEvent) = event.reply("\uD83D\uDD95").setEphemeral(true).queue()
 

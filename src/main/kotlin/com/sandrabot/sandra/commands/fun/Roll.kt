@@ -21,7 +21,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 
 @Suppress("unused")
-class Roll : Command(name = "roll", arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]") {
+class Roll : Command(arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]") {
 
     override suspend fun execute(event: CommandEvent) {
 

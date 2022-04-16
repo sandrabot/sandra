@@ -36,11 +36,11 @@ class CommandManager(sandra: Sandra) {
         commandClasses.filterNot { it.isMemberClass }.mapNotNull {
             try {
                 val command = it.kotlin.createInstance()
-                // Verify that the command data is valid before adding
+                // Verify that the command data is valid before loading
                 command.asCommandData(sandra)
-                if (command.path in commands)
+                if (command.path in commands) {
                     throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
-                commands[command.path] = command
+                } else commands[command.path] = command
             } catch (t: Throwable) {
                 logger.error("Failed to instantiate command $it", t)
                 null

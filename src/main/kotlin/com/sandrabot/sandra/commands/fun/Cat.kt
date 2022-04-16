@@ -32,7 +32,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 @Suppress("unused")
-class Cat : Command(name = "cat") {
+class Cat : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply().await()

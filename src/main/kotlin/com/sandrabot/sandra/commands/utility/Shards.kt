@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 
 @Suppress("unused")
-class Shards : Command(name = "shards") {
+class Shards : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 

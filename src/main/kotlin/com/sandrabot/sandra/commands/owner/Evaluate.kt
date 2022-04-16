@@ -39,7 +39,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 @Suppress("unused")
-class Evaluate : Command(name = "evaluate", arguments = "[@script:text]", guildOnly = true) {
+class Evaluate : Command(arguments = "[@script:text]", guildOnly = true) {
 
     private val engineContext = SupervisorJob() + Dispatchers.IO
     private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine

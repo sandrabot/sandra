@@ -24,7 +24,7 @@ import com.sandrabot.sandra.utils.format
 import kotlin.time.Duration.Companion.milliseconds
 
 @Suppress("unused")
-class Ping : Command(name = "ping") {
+class Ping : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 

@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.requests.ErrorResponse
 import java.util.concurrent.TimeUnit
 
 @Suppress("unused")
-class Commands : Command(name = "commands") {
+class Commands : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 

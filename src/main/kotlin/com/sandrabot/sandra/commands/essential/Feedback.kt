@@ -24,7 +24,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 @Suppress("unused")
-class Feedback : Command(name = "feedback") {
+class Feedback : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 

@@ -22,7 +22,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import kotlin.random.Random
 
 @Suppress("unused")
-class Flip : Command(name = "flip") {
+class Flip : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 

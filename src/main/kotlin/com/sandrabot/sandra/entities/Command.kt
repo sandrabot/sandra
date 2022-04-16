@@ -22,7 +22,6 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
 abstract class Command(
-    val name: String,
     arguments: String = "",
     val guildOnly: Boolean = false,
     val group: String? = null,
@@ -32,6 +31,7 @@ abstract class Command(
 
     val arguments: List<Argument> = compileArguments(arguments)
     val category: Category = Category.fromClass(this::class)
+    val name: String = this::class.simpleName!!.lowercase()
     val ownerOnly: Boolean = category == Category.OWNER
     val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
         .map { (it.createInstance() as Command).also { child -> child.parent = this } }

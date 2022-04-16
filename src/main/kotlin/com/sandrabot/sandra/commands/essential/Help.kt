@@ -26,7 +26,7 @@ import com.sandrabot.sandra.utils.asEmoteUrl
 import com.sandrabot.sandra.utils.await
 
 @Suppress("unused")
-class Help : Command(name = "help", arguments = "[command]") {
+class Help : Command(arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 

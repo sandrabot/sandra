@@ -22,7 +22,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.getResourceAsText
 
 @Suppress("unused")
-class Fortune : Command(name = "fortune") {
+class Fortune : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
