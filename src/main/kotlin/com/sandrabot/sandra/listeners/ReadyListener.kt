@@ -18,6 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.utils.asCommandData
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege
 import org.slf4j.LoggerFactory

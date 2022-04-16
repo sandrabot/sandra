@@ -46,49 +46,67 @@
   },
   "commands": {
     "cat": {
+      "name": "cat",
       "description": "Gracefully displays a cat for your viewing pleasure",
       "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
     },
     "changes": {
+      "name": "changes",
       "description": "Learn more about Sandra's latest changes",
       "reply": "You can read about the latest releases from the documentation on our website.",
       "button_label": "Learn More"
     },
     "choose": {
+      "name": "choose",
       "description": "Randomly picks one of your words from a hat",
       "arguments": {
-        "options": ["The space separated list of words I will choose from"]
+        "options": [
+          "options",
+          "The space separated list of words I will choose from"
+        ]
       },
       "reply": "Out of %1$s options in total, I decided to go with **%2$s**."
     },
     "clap": {
+      "name": "clap",
       "description": "Have Sandra emphasize your important arguments",
       "arguments": {
-        "text": ["The text you would like to emphasize"]
+        "text": [
+          "text",
+          "The text you would like to emphasize"
+        ]
       },
       "max_length": "Unfortunately, the text you provided is **too long** to be emphasized."
     },
     "commands": {
+      "name": "commands",
       "description": "Browse through Sandra's countless commands",
       "select_placeholder": "Select a category to view...",
       "command_title": "Commands",
       "more_information": "Use /help <command> for more information"
     },
     "dog": {
+      "name": "dog",
       "description": "Fetches a dog from the depths of the internet"
     },
-    "eval": {
+    "evaluate": {
+      "name": "evaluate",
       "description": "Evaluate an expression in a REPL environment",
       "arguments": {
-        "script": ["The expression you want to evaluate"]
+        "script": [
+          "script",
+          "The expression you want to evaluate"
+        ]
       }
     },
     "feedback": {
+      "name": "feedback",
       "description": "Submit your feedback to the Sandra developers",
       "reply": "Please join our support server to discuss your concerns directly with the **Sandra developers**.",
       "button_label": "Join Sandra's Hangout"
     },
     "flip": {
+      "name": "flip",
       "description": "Toss one of your coins to settle your bets",
       "no_credits": "Because you are broke, you don't have any coins to flip.",
       "reply": "Your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards.",
@@ -96,12 +114,17 @@
       "side_tails": "tails"
     },
     "fortune": {
+      "name": "fortune",
       "description": "Break open a fortune cookie to reveal your luck"
     },
     "help": {
+      "name": "help",
       "description": "View some basic quick-start information about the bot",
       "arguments": {
-        "command": ["View more information about this command"]
+        "command": [
+          "command",
+          "View more information about this command"
+        ]
       },
       "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
       "required_arguments": "Any arguments that are enclosed with <> are required.",
@@ -121,28 +144,48 @@
       }
     },
     "members": {
+      "name": "members",
       "description": "View a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
     },
     "mock": {
+      "name": "mock",
       "description": "tHiS cOmMaNd Is SuCh A gOoD iDeA",
       "arguments": {
-        "text": ["tHe TeXt YoU wAnT tO mOcK"]
+        "text": [
+          "text",
+          "tHe TeXt YoU wAnT tO mOcK"
+        ]
       }
     },
     "ping": {
+      "name": "ping",
       "description": "Sends a ping to test Sandra's connection to Discord",
       "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your command**."
     },
     "roll": {
+      "name": "roll",
       "description": "Test your luck and roll an imaginary 1d20",
       "arguments": {
-        "sides": ["The number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
-        "max": ["The maximum possible number"]
+        "sides": [
+          "sides",
+          "The number of sides your dice has",
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ],
+        "max": [
+          "max",
+          "The maximum possible number"
+        ]
       },
       "reply": "You took a chance and rolled a **%d**."
     },
     "shards": {
+      "name": "shards",
       "description": "View a list of shards and their stats",
       "having_issues": "Having issues? Join Sandra Support",
       "status": "Status: **%1$s**\nPing: %2$sms\nServers: %3$s",
@@ -151,6 +194,7 @@
       "shard_title": "Shard %1$s"
     },
     "snowy": {
+      "name": "snowy",
       "description": "Custom command for a good friend of mine"
     }
   }

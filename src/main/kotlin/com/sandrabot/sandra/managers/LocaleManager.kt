@@ -28,6 +28,7 @@ import java.util.*
 class LocaleManager {
 
     private val translations: Map<Locale, Map<String, Any>>
+    val availableLocales: Set<Locale>
 
     init {
         val directoryPath = object {}.javaClass.getResource("/translations")?.file
@@ -47,6 +48,7 @@ class LocaleManager {
             loadRecursive("", pathMap, jsonObject)
             Locale.forLanguageTag(identifier) to pathMap
         } ?: throw IllegalStateException("Failed to initialize translations")
+        availableLocales = translations.keys
     }
 
     private fun loadRecursive(root: String, pathMap: MutableMap<String, Any>, jsonObject: JsonObject) {

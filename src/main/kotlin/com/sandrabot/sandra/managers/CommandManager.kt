@@ -18,6 +18,7 @@ package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.utils.asCommandData
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
