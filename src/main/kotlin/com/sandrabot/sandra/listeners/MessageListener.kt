@@ -77,7 +77,7 @@ class MessageListener(private val sandra: Sandra) {
         // TODO Feature: AFK Messages
 
         // Feature: Server Experience
-        if (guildConfig.experienceEnabled && memberConfig.canExperience() && channelConfig.isExperienceAllowed(event)) {
+        if (guildConfig.experienceEnabled && memberConfig.canExperience() && guildConfig.isExperienceAllowed(event)) {
             // Award a random amount of experience between 15 and 25
             // Multiply the amount based on the multiplier configuration
             val multiplier = guildConfig.computeMultiplier(channelConfig)

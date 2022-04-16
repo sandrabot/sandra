@@ -16,10 +16,7 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.Privilege
-import com.sandrabot.sandra.utils.isAllowed
 import kotlinx.serialization.Serializable
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
 /**
  * Stores Sandra-specific properties and settings for channels within guilds.
@@ -27,12 +24,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 @Serializable
 class ChannelConfig(override val id: Long) : Configuration() {
 
-    val experiencePrivileges = mutableListOf<Privilege>()
-    var experienceAllowed: Boolean = true
     var experienceMultiplier: Double = 1.0
-
-    fun isExperienceAllowed(event: MessageReceivedEvent): Boolean =
-        experienceAllowed && experiencePrivileges.isAllowed(event)
 
     override fun toString(): String = "ChannelConfig:$id"
 

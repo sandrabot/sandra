@@ -16,14 +16,18 @@
 
 package com.sandrabot.sandra.utils
 
+import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.entities.Privilege
 import com.sandrabot.sandra.events.CommandEvent
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.GuildChannel
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-fun List<Privilege>.isAllowed(event: CommandEvent) = isAllowed(event.guildChannel, event.guild, event.member)
-fun List<Privilege>.isAllowed(event: MessageReceivedEvent) = isAllowed(event.guildChannel, event.guild, event.member)
+fun GuildConfig.isExperienceAllowed(event: MessageReceivedEvent) = experiencePrivileges.isAllowed(event)
+fun GuildConfig.isExperienceAllowed(event: CommandEvent) = experiencePrivileges.isAllowed(event)
+
+fun List<Privilege>.isAllowed(event: CommandEvent): Boolean = isAllowed(event.guildChannel, event.member)
+fun List<Privilege>.isAllowed(event: MessageReceivedEvent): Boolean = isAllowed(event.guildChannel, event.member)
+
 // TODO: Privilege permission checks
-fun List<Privilege>.isAllowed(channel: GuildChannel, guild: Guild?, member: Member?): Boolean = true
+fun List<Privilege>.isAllowed(channel: GuildChannel, member: Member?): Boolean = true

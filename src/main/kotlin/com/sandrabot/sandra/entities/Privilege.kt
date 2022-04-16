@@ -19,14 +19,17 @@ package com.sandrabot.sandra.entities
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Privilege(val type: Type, val id: Long, val allowed: Boolean) {
+sealed class Privilege {
+    abstract val type: PrivilegeType
+    abstract val id: Long
+    abstract val allowed: Boolean
+}
 
-    override fun toString(): String {
-        return "Privilege:$type:$id($allowed)"
-    }
+@Serializable
+data class ExperiencePrivilege(
+    override val type: PrivilegeType, override val id: Long, override val allowed: Boolean
+) : Privilege()
 
-    enum class Type {
-        CATEGORY, CHANNEL, ROLE, USER
-    }
-
+enum class PrivilegeType {
+    EVERYONE, ROLE, USER, CATEGORY, CHANNEL
 }
