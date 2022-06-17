@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ChannelConfig(override val id: Long) : Configuration() {
 
+    var experienceNotifyEnabled: Boolean = true
     var experienceMultiplier: Double = 1.0
 
     override fun toString(): String = "ChannelConfig:$id"

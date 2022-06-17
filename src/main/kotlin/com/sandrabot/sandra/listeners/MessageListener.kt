@@ -17,62 +17,64 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
+import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.events.message.MessageUpdateEvent
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
 
 /**
- * Class for handling features related to message content.
+ * Event listener that deals with features relating to messages and their content.
  */
 class MessageListener(private val sandra: Sandra) {
 
+    /**
+     * Handles all [MessageReceivedEvent] dispatched by JDA.
+     * Messages sent by bots, webhooks, or system are ignored.
+     */
     @Suppress("unused")
     fun onMessageReceived(event: MessageReceivedEvent) {
 
+        // TODO Feature: Internal Metrics
         sandra.statistics.incrementMessageCount()
 
         // Ignore messages from bots and webhooks. We don't check the
-        // blocklist here so users aren't exempt from auto moderation
+        // blocklist here so that users aren't exempt from auto moderation
         if (event.author.isBot || event.isWebhookMessage) return
 
         // We can safely ignore any system messages
         if (event.message.type != MessageType.DEFAULT) return
 
-        // If this message was sent from a guild, handle any moderation features
-        if (event.isFromGuild) {
-            sandra.messages.put(event.message)
-            if (handleAntiAdvertising(event)) return
-        }
+        // If this message was sent from a guild, add it to our cache
+        if (event.isFromGuild) sandra.messages.put(event.message)
 
-        // Handle specific features for where the message was sent
+        // Handle specific features depending on where the message was sent
         if (event.isFromGuild) handleGuildMessage(event) else handlePrivateMessage(event)
 
     }
 
-    @Suppress("unused")
-    fun onMessageUpdate(event: MessageUpdateEvent) {
-        if (!event.isFromGuild) return
-        val message = event.message
-        // Once again ignore messages from bots or webhooks
-        if (event.author.isBot || message.isWebhookMessage) return
-        // TODO Recheck the message for invites and handle anti-advertise
-    }
-
+    /**
+     * Processes all messages received within all guild channels.
+     */
     private fun handleGuildMessage(event: MessageReceivedEvent) {
         val authorId = event.author.idLong
         val guildId = event.guild.idLong
         val channelId = event.channel.idLong
 
-        // Check the blocklist to prevent responding to active contexts
+        // Check the blocklist to prevent responding in actively blocked contexts
         if (checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.MESSAGES)) return
 
         val guildConfig = sandra.config.getGuild(guildId)
-        // The member is never null since we ignore webhooks
         val memberConfig = guildConfig.getMember(authorId)
         val channelConfig = guildConfig.getChannel(channelId)
+
+        // I literally can't wait to merge the new locale changes, this sucks
+        val userConfig = sandra.config.getUser(authorId)
+        val localeContext = LocaleContext(sandra, guildConfig, userConfig)
 
         // TODO Feature: AFK Messages
 
@@ -82,7 +84,25 @@ class MessageListener(private val sandra: Sandra) {
             // Multiply the amount based on the multiplier configuration
             val multiplier = guildConfig.computeMultiplier(channelConfig)
             if (memberConfig.awardExperience(randomExperience(multiplier))) {
-                // TODO Feature: Level Up Notifications with custom Messages
+                // Check if the guild has level up notifications enabled
+                if (guildConfig.experienceNotifyEnabled) {
+                    // Check if the guild has a specific channel for notifications
+                    // Otherwise, check if this channel can receive notifications
+                    val notifyChannel = if (guildConfig.experienceNotifyChannel != 0L) {
+                        event.guild.getGuildChannelById(guildConfig.experienceNotifyChannel)
+                    } else if (channelConfig.experienceNotifyEnabled) event.guildChannel else null
+                    // Make sure we have the permissions to send messages in the channel
+                    if (notifyChannel is GuildMessageChannel && notifyChannel.canTalk()) {
+                        // Figure out which template to use and format it with the correct details
+                        val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.translate(
+                            "general.experience_notify", withRoot = false, Emotes.FAVORITE
+                        )
+                        // Member will never be null since we always ignore bots and webhooks
+                        val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
+                        // If the notification channel is not where the message was sent, the reference will do nothing
+                        notifyChannel.sendMessage(formattedTemplate).reference(event.message).queue()
+                    }
+                }
                 // TODO Feature: Level Up Rewards
             }
         }
@@ -90,7 +110,6 @@ class MessageListener(private val sandra: Sandra) {
         // Feature: Global Experience
         // Check to make sure this user is allowed to gain global experience
         if (!checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.GLOBAL_EXPERIENCE)) {
-            val userConfig = sandra.config.getUser(authorId)
             // Check to see if this user can receive experience
             if (userConfig.canExperience()) {
                 // Award a random amount of experience between 15 and 25
@@ -103,21 +122,17 @@ class MessageListener(private val sandra: Sandra) {
         // TODO Feature: Message Replies
     }
 
+    /**
+     * Processes any private messages that the bot receives.
+     */
     private fun handlePrivateMessage(event: MessageReceivedEvent) {
-        // Hi this looks nicer than declaring them individually :)
-        val (author, message) = event.author to event.message
-        logger.info("Direct Message: ${author.asTag} [${author.id}] | ${message.contentDisplay}")
-        message.attachments.forEach {
-            logger.info("Direct Message Attachment: ${author.asTag} [${author.id}] | ${it.url}")
-        }
+        val attachments = event.message.attachments.ifNotEmpty {
+            joinToString(separator = "\n", prefix = "\n") { "Direct Message Attachment: ${it.url}" }
+        } ?: ""
+        logger.info("Direct Message: ${event.author.asTag} [${event.author.id}] | ${event.message.contentDisplay}$attachments")
     }
 
-    private fun handleAntiAdvertising(event: MessageReceivedEvent): Boolean {
-        // TODO Check the message for any foreign invites and delete them
-        return false
-    }
-
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(MessageListener::class.java)
     }
 

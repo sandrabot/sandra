@@ -37,8 +37,11 @@ class GuildConfig(override val id: Long) : Configuration() {
 
     var locale: Locale = Locale.DEFAULT
     var experienceEnabled: Boolean = true
-    var experienceCompounds: Boolean = false
+    var experienceCompounds: Boolean = true
     var experienceMultiplier: Double = 1.0
+    var experienceNotifyEnabled: Boolean = true
+    var experienceNotifyTemplate: String? = null
+    var experienceNotifyChannel: Long = 0L
 
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
     fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }

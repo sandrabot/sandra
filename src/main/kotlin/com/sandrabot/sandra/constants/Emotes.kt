@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.constants
 
+@Suppress("SpellCheckingInspection")
 object Emotes {
 
     const val BUBBLES = "<:bubbles:788968504417714196>"
@@ -24,7 +25,7 @@ object Emotes {
     const val CONFIG = "<:config:788968505349111868>"
     const val CREDIT = "<:credit:788969112386011139>"
     const val ERROR = "<:error:788968505332596737>"
-    const val FAVORITE = "<:favorite:788968508016033802>"
+    const val FAVORITE = "<:favorite:987497027174805524>"
     const val HASHTAG = "<:hashtag:788969891956654100>"
     const val INFO = "<:info:788968510843125780>"
     const val MEMBER = "<:member:788969892782669834>"
