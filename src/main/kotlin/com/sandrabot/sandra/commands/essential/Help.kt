@@ -81,8 +81,8 @@ class Help : Command(name = "help", arguments = "[command]") {
         embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
         embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
 
-        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.joinToString(" and ")
-        embed.setFooter("Built with ${Unicode.HEAVY_BLACK_HEART} by $devs")
+        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
+        embed.setFooter(lang.translate("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).queue()
 
