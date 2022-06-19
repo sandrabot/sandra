@@ -86,10 +86,10 @@ class CommandEvent(
 
     fun sendEmote(message: String, emote: String) = sendMessage(emote + Unicode.VERTICAL_LINE + message)
     fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)
-    fun sendError(message: String) = sendEmote(message, Emotes.ERROR)
+    fun sendError(message: String) = sendEmote(message, Emotes.FAILURE)
 
     fun replyEmote(message: String, emote: String) = reply(emote + Unicode.VERTICAL_LINE + message)
     fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)
-    fun replyError(message: String) = replyEmote(message, Emotes.ERROR)
+    fun replyError(message: String) = replyEmote(message, Emotes.FAILURE)
 
 }

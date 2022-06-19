@@ -185,10 +185,10 @@ class Paginator(
         private const val exitButtonId = "paginator:exit"
 
         private val selectButton =
-            Button.secondary(selectButtonId, "Select Page").withEmoji(Emoji.fromMarkdown(Emotes.PROMPT))
-        private val backButton = Button.primary(backButtonId, "Back").withEmoji(Emoji.fromMarkdown(Emotes.PREVIOUS))
-        private val nextButton = Button.primary(nextButtonId, "Next").withEmoji(Emoji.fromMarkdown(Emotes.NEXT))
-        private val exitButton = Button.danger(exitButtonId, "Exit").withEmoji(Emoji.fromMarkdown(Emotes.CLEAR))
+            Button.secondary(selectButtonId, "Select Page").withEmoji(Emoji.fromMarkdown(Emotes.NUMBER))
+        private val backButton = Button.primary(backButtonId, "Back").withEmoji(Emoji.fromMarkdown(Emotes.ARROW_LEFT))
+        private val nextButton = Button.primary(nextButtonId, "Next").withEmoji(Emoji.fromMarkdown(Emotes.ARROW_RIGHT))
+        private val exitButton = Button.danger(exitButtonId, "Exit").withEmoji(Emoji.fromMarkdown(Emotes.RETURN))
 
         // We can't do much if the message was deleted externally, so we just ignore it
         private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE, ErrorResponse.UNKNOWN_WEBHOOK)

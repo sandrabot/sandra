@@ -78,8 +78,8 @@ class Help : Command(name = "help", arguments = "[command]") {
         val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
         embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)
         embed.addField(lang.translate("commands", Emotes.COMMANDS), commandsContent, false)
-        embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
-        embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
+        embed.addField(lang.translate("invite", Emotes.INVITE), inviteContent, false)
+        embed.addField(lang.translate("support", Emotes.CHAT), supportContent, false)
 
         val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
         embed.setFooter(lang.translate("built", Unicode.HEAVY_BLACK_HEART, *devs))

@@ -31,7 +31,7 @@ class Ping : Command(name = "ping") {
         event.deferReply(ephemeral = true).await()
         val (rest, websocket) = arrayOf(event.jda.restPing.await(), event.jda.gatewayPing).map { ping ->
             val formatted = ping.milliseconds.format()
-            if (ping > 250) "${Emotes.WARN} $formatted" else formatted
+            if (ping > 250) "${Emotes.NOTICE} $formatted" else formatted
         }
         event.sendInfo(event.translate("reply", rest, websocket)).queue()
 
