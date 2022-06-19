@@ -118,7 +118,7 @@
         "invite_content": "> Would you like me in **your server**? **[Click to invite me](%1$s)**.",
         "support": "%1$s Support Server",
         "support_content": "> Need **more help**? **[Join my support server](%1$s)**.",
-        "built": "Build with %1$s by %2$s, %3$s, and %4$s"
+        "built": "Built with %1$s by %2$s, %3$s, and %4$s"
       }
     },
     "members": {
