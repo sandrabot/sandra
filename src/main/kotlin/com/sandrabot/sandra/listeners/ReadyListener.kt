@@ -33,14 +33,11 @@ class ReadyListener(private val sandra: Sandra) {
 
         shardsReady++
         // Update the shard's presence, it is currently set to idle
-        sandra.presence.update(event.jda)
+        event.jda.presence.setStatus(sandra.status)
         val shardInfo = event.jda.shardInfo
         // The last shard to finish loading initializes most of the bot
         if (shardsReady == shardInfo.shardTotal) {
-            if (!sandra.development) {
-                sandra.presence.start()
-                sandra.botList.start()
-            }
+            if (!sandra.development) sandra.botList.start()
 
             if (sandra.commandUpdates) {
                 // Update the global slash command list, so that they always match the commands we have

@@ -26,7 +26,6 @@ import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
-import com.sandrabot.sandra.services.PresenceService
 import com.sandrabot.sandra.utils.await
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
@@ -50,6 +49,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
     val commandUpdates = sandraConfig.commandUpdates
+    val status = if (development) OnlineStatus.DO_NOT_DISTURB else OnlineStatus.ONLINE
     val color = if (development) Colors.WELL_READ else Colors.SEA_SERPENT
 
     val api = SandraAPI(this, sandraConfig.apiPort)
@@ -62,7 +62,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val eventWaiter = EventWaiter()
     val messages = MessageManager()
     val patreon = PatreonManager(this)
-    val presence = PresenceService(this)
     val statistics = StatisticsManager()
 
     val shards: ShardManager
@@ -70,9 +69,6 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     private val logger = LoggerFactory.getLogger(Sandra::class.java)
 
     init {
-
-        // Configure the development presence, if enabled
-        if (development) presence.setDevelopment()
 
         // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
         val disabledMentioned = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
