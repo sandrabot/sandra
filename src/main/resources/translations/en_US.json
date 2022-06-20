@@ -7,7 +7,7 @@
     "owner_only": "this command **can only be used** by **bot owners**. nice try",
     "command_exception": "hm, it appears as if **something strange** has happened. apologies",
     "page_prompt": "please respond with the page number you would like to jump to",
-    "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*this message will serve as your notification and you will not receive another*"
+    "blocked": "**%1$s** is no longer be able to use this feature. you have been blocked because of: **%2$s**\nthis message is considered fyi and you will not receive another"
   },
   "permissions": {
     "create_invite": "create invite",
