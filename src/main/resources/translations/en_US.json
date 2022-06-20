@@ -49,7 +49,7 @@
       "description": "gracefully displays a cat for your viewing pleasure"
     },
     "changes": {
-      "description": "learn more about sandra's latest changes",
+      "description": "learn more about my latest changes",
       "reply": "you can learn more about the latest releases reading the documentation on our website",
       "button_label": "learn more"
     },
@@ -61,14 +61,14 @@
       "reply": "out of %1$s options in total, i decided to go with **%2$s**"
     },
     "clap": {
-      "description": "have sandra emphasize your important arguments",
+      "description": "let me help you emphasize your important arguments",
       "arguments": {
         "text": ["the text you would like to emphasize"]
       },
       "max_length": "whoops, looks like what you said is **too long**"
     },
     "commands": {
-      "description": "look through sandra's commands & categories",
+      "description": "wander through all my commands & categories",
       "select_placeholder": "pick a category to view..",
       "command_title": "commands",
       "more_information": "use /help <command> for more info"
@@ -121,7 +121,7 @@
       }
     },
     "members": {
-      "description": "gander a breakdown of the server's member count",
+      "description": "gander at a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
     "mock": {
