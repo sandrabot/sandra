@@ -1,13 +1,13 @@
 {
   "general": {
-    "missing_permission": "i need the **%1$s** permission in this **%2$s** to continue!",
-    "missing_user_permission": "you need the **%1$s** permission in this **%2$s** to continue!",
-    "guild_only": "this command **can only be used** within servers.",
-    "missing_argument": "sorry, i couldn't recognise what you entered for **%1$s**; check the **command usage** and try again.",
-    "owner_only": "this command **can only be used** by **bot owners**. nice try.",
-    "command_exception": "hm, it appears as if **something strange** has happened. apologies.",
-    "page_prompt": "please respond with the page number you would like to jump to:",
-    "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*this message will serve as your notification and you will not receive another.*"
+    "missing_permission": "i need the **%1$s** permission in this **%2$s** to continue",
+    "missing_user_permission": "you need the **%1$s** permission in this **%2$s** to continue",
+    "guild_only": "this command **can only be used** within servers",
+    "missing_argument": "sorry, i couldn't recognise what you entered for **%1$s**; check the **command usage** and try again",
+    "owner_only": "this command **can only be used** by **bot owners**. nice try",
+    "command_exception": "hm, it appears as if **something strange** has happened. apologies",
+    "page_prompt": "please respond with the page number you would like to jump to",
+    "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*this message will serve as your notification and you will not receive another*"
   },
   "permissions": {
     "create_invite": "create invite",
@@ -47,11 +47,11 @@
   "commands": {
     "cat": {
       "description": "gracefully displays a cat for your viewing pleasure",
-      "error": "sadly, something appears to have **gone wrong** while fetching the cat."
+      "error": "sadly, something appears to have **gone wrong** while fetching the cat"
     },
     "changes": {
       "description": "learn more about sandra's latest changes",
-      "reply": "you can read about the latest releases from the documentation on our website.",
+      "reply": "you can read about the latest releases from the documentation on our website",
       "button_label": "learn more"
     },
     "choose": {
@@ -59,18 +59,18 @@
       "arguments": {
         "options": ["the space separated list of words i will choose from"]
       },
-      "reply": "out of %1$s options in total, i decided to go with **%2$s**."
+      "reply": "out of %1$s options in total, i decided to go with **%2$s**"
     },
     "clap": {
       "description": "have sandra emphasize your important arguments",
       "arguments": {
         "text": ["the text you would like to emphasize"]
       },
-      "max_length": "unfortunately, the text you provided is **too long** to be emphasized."
+      "max_length": "unfortunately, the text you provided is **too long** to be emphasized"
     },
     "commands": {
       "description": "browse through sandra's countless commands",
-      "select_placeholder": "select a category to view...",
+      "select_placeholder": "select a category to view..",
       "command_title": "commands",
       "more_information": "use /help <command> for more information"
     },
@@ -85,13 +85,13 @@
     },
     "feedback": {
       "description": "submit your feedback to the sandra developers",
-      "reply": "please join our support server to discuss your concerns directly with the **sandra developers**.",
+      "reply": "please join our support server to discuss your concerns directly with the **sandra developers**",
       "button_label": "join sandra's hangout"
     },
     "flip": {
       "description": "toss one of your coins to settle your bets",
-      "no_credits": "because you are broke, you don't have any coins to flip.",
-      "reply": "your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards.",
+      "no_credits": "because you are broke, you don't have any coins to flip",
+      "reply": "your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards",
       "side_heads": "heads",
       "side_tails": "tails"
     },
@@ -103,26 +103,26 @@
       "arguments": {
         "command": ["view more information about this command"]
       },
-      "not_found": "whoops, a command with that path **does not exist**. try using **/commands** to find what you're looking for.",
-      "required_arguments": "any arguments that are enclosed with <> are required.",
+      "not_found": "whoops, a command with that path **does not exist**. try using **/commands** to find what you're looking for",
+      "required_arguments": "any arguments that are enclosed with <> are required",
       "extra_help": "need some extra help?",
       "description_title": "description",
       "usage_title": "usage",
       "info_embed": {
         "configure": "%1$s configure settings",
-        "configure_content": "> to **configure** my **settings**, use `/config`.",
+        "configure_content": "> to **configure** my **settings**, use `/config`",
         "commands": "%1$s commands",
-        "commands_content": "> to see my **command list**, use `/commands`.",
+        "commands_content": "> to see my **command list**, use `/commands`",
         "invite": "%1$s invite sandra",
-        "invite_content": "> would you like me in **your server**? **[click to invite me](%1$s)**.",
+        "invite_content": "> would you like me in **your server**? **[click to invite me](%1$s)**",
         "support": "%1$s support server",
-        "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**.",
+        "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
         "built": "built with %1$s by %2$s, %3$s, and %4$s"
       }
     },
     "members": {
       "description": "view a breakdown of the server's member count",
-      "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
+      "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
     "mock": {
       "description": "this command is such a good idea",
@@ -132,7 +132,7 @@
     },
     "ping": {
       "description": "sends a ping to test sandra's connection to discord",
-      "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**."
+      "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
     "roll": {
       "description": "test your luck and roll an imaginary 1d20",
@@ -140,7 +140,7 @@
         "sides": ["the number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
         "max": ["the maximum possible number"]
       },
-      "reply": "you took a chance and rolled a **%d**."
+      "reply": "you took a chance and rolled a **%d**"
     },
     "shards": {
       "description": "view a list of shards and their stats",
