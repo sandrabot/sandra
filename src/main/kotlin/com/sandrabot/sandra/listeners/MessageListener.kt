@@ -95,7 +95,7 @@ class MessageListener(private val sandra: Sandra) {
                     if (notifyChannel is GuildMessageChannel && notifyChannel.canTalk()) {
                         // Figure out which template to use and format it with the correct details
                         val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.translate(
-                            "general.experience_notify", withRoot = false, Emotes.FAVORITE
+                            "general.experience_notify", withRoot = false, Emotes.LEVEL_UP
                         )
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
