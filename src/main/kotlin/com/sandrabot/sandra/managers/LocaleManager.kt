@@ -19,11 +19,9 @@ package com.sandrabot.sandra.managers
 import com.sandrabot.sandra.entities.Locale
 import com.sandrabot.sandra.exceptions.MissingTranslationException
 import com.sandrabot.sandra.utils.getResourceAsText
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
 
-@OptIn(ExperimentalSerializationApi::class)
 class LocaleManager {
 
     private val translationMap = mutableMapOf<Locale, Map<String, Any>>()

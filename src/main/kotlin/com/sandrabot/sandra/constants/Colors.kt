@@ -20,8 +20,7 @@ import java.awt.Color
 
 object Colors {
 
-    val BLURPLE = Color(0x7289DA)
-    val DARK_GREY = Color(0x36393F)
-    val RED = Color(0xF04747)
+    val SEA_SERPENT = Color(0x44CBCB)
+    val WELL_READ = Color(0XBB3434)
 
 }

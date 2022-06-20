@@ -25,9 +25,11 @@ object Constants {
 
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L
+    const val BLAIR = 825279016679505920L
     const val GABBY = 276856260253712384L
 
     const val GUILD_HANGOUT = 340937384239824897L
+    const val GUILD_DEVELOPMENT = 987427184308260874L
 
     const val TWITCH = "https://twitch.tv/averen"
     const val HASTEBIN = "https://haste.averen.dev"
@@ -36,7 +38,7 @@ object Constants {
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?" +
             "client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
 
-    val DEVELOPERS = arrayOf(AVERY, LOGAN)
+    val DEVELOPERS = arrayOf(AVERY, LOGAN, BLAIR)
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
     val USER_AGENT = "Sandra/$VERSION (+${Website.WEBSITE})"
 

@@ -23,12 +23,9 @@ import com.sandrabot.sandra.utils.httpClient
 import com.sandrabot.sandra.utils.string
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 @Suppress("unused")
@@ -36,9 +33,9 @@ class Cat : Command(name = "cat") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply().await()
-        val response = httpClient.get<HttpResponse>("https://cataas.com/cat?json=true")
+        val response = httpClient.get("https://cataas.com/cat?json=true")
         if (response.status == HttpStatusCode.OK) {
-            val url = Json.decodeFromString<JsonObject>(response.receive()).string("url")
+            val url = response.body<JsonObject>().string("url")
             event.sendMessage("https://cataas.com$url").queue()
         } else event.sendError(event.translate("error")).queue()
     }

@@ -66,11 +66,10 @@ class Help : Command(name = "help", arguments = "[command]") {
             return
         }
 
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
-        embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
+        val embed = event.embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
         val configureContent = lang.translate("configure_content")
         val commandsContent = lang.translate("commands_content")
@@ -78,11 +77,11 @@ class Help : Command(name = "help", arguments = "[command]") {
         val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
         embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)
         embed.addField(lang.translate("commands", Emotes.COMMANDS), commandsContent, false)
-        embed.addField(lang.translate("invite", Emotes.NOTIFY), inviteContent, false)
-        embed.addField(lang.translate("support", Emotes.BUBBLES), supportContent, false)
+        embed.addField(lang.translate("invite", Emotes.INVITE), inviteContent, false)
+        embed.addField(lang.translate("support", Emotes.CHAT), supportContent, false)
 
-        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.joinToString(" and ")
-        embed.setFooter("Built with ${Unicode.HEAVY_BLACK_HEART} by $devs")
+        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
+        embed.setFooter(lang.translate("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).queue()
 

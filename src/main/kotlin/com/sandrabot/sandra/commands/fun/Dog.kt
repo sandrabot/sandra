@@ -21,6 +21,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.httpClient
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -29,7 +30,7 @@ class Dog : Command(name = "dog") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply().await()
-        val url = httpClient.get<String>("https://random.dog/woof")
+        val url = httpClient.get("https://random.dog/woof").bodyAsText()
         event.sendMessage("https://random.dog/$url").queue()
     }
 

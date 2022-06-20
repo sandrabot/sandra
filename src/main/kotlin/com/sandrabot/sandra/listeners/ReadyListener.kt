@@ -33,30 +33,33 @@ class ReadyListener(private val sandra: Sandra) {
 
         shardsReady++
         // Update the shard's presence, it is currently set to idle
-        sandra.presence.update(event.jda)
+        event.jda.presence.setStatus(sandra.status)
         val shardInfo = event.jda.shardInfo
         // The last shard to finish loading initializes most of the bot
         if (shardsReady == shardInfo.shardTotal) {
-            if (!sandra.development) {
-                sandra.presence.start()
-                sandra.botList.start()
-            }
+            if (!sandra.development) sandra.botList.start()
 
             if (sandra.commandUpdates) {
                 // Update the global slash command list, so that they always match the commands we have
                 val (owner, global) = sandra.commands.values.partition { it.ownerOnly }
-                event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
-                    commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                    logger.info("Successfully replaced global command list with ${commands.size} commands")
-                }
-                // Update the owner slash commands in Sandra's Hangout as well as their privileges
-                sandra.shards.getGuildById(Constants.GUILD_HANGOUT)?.let { hangout ->
-                    hangout.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) }).queue { commands ->
+                event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) })
+                    .queue { commands ->
                         commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                        val privileges = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
-                        hangout.updateCommandPrivileges(commands.associate { it.id to privileges }).queue()
-                        logger.info("Successfully replaced owner command list with ${commands.size} commands")
+                        logger.info("Successfully replaced global command list with ${commands.size} commands")
                     }
+
+                // Update the owner slash commands for any of Sandra's development servers
+                val privilegeData = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
+                arrayOf(Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT).mapNotNull {
+                    sandra.shards.getGuildById(it)
+                }.forEachIndexed { index, guild ->
+                    guild.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) })
+                        .queue { commands ->
+                            if (index == 0) commands.forEach { sandra.commands[it.name]?.id = it.idLong }
+                            // TODO Slash command default permissions are currently broken in JDA
+                            // guild.updateCommandPrivileges(commands.associate { it.id to privilegeData }).queue()
+                            logger.info("Successfully replaced owner commands with ${commands.size} commands for ${guild.id}")
+                        }
                 }
             } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
 

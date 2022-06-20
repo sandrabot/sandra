@@ -23,11 +23,11 @@ enum class Category(val emote: String) {
 
     CUSTOM(Emotes.PATREON),
     ESSENTIAL(Emotes.PIN),
-    FUN(Emotes.FAVORITE),
+    FUN(Emotes.FUN),
     GAME(Emotes.CREDIT),
-    MODERATION(Emotes.MOD_SHIELD),
+    MODERATION(Emotes.MOD),
     MUSIC(Emotes.MUSIC),
-    OWNER(Emotes.MEMBER),
+    OWNER(Emotes.USER),
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
 

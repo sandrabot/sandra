@@ -110,15 +110,15 @@
       "description_title": "Description",
       "usage_title": "Usage",
       "info_embed": {
-        "title": "Chat with us in Sandra's Hangout",
         "configure": "%1$s Configure Settings",
-        "configure_content": "> To **configure** my **settings**, use the new `/config`.",
+        "configure_content": "> To **configure** my **settings**, use `/config`.",
         "commands": "%1$s Commands",
         "commands_content": "> To see my **command list**, use `/commands`.",
         "invite": "%1$s Invite Sandra",
         "invite_content": "> Would you like me in **your server**? **[Click to invite me](%1$s)**.",
         "support": "%1$s Support Server",
-        "support_content": "> Need **more help**? **[Join my support server](%1$s)**."
+        "support_content": "> Need **more help**? Chat with us in **[Sandra's Hangout](%1$s)**.",
+        "built": "Built with %1$s by %2$s, %3$s, and %4$s"
       }
     },
     "members": {
