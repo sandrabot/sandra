@@ -21,7 +21,6 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
@@ -84,11 +83,11 @@ class CommandEvent(
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(embeds: List<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
 
-    fun sendEmote(message: String, emote: String) = sendMessage(emote + Unicode.VERTICAL_LINE + message)
+    fun sendEmote(message: String, emote: String) = sendMessage(emote + " " + message)
     fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)
     fun sendError(message: String) = sendEmote(message, Emotes.FAILURE)
 
-    fun replyEmote(message: String, emote: String) = reply(emote + Unicode.VERTICAL_LINE + message)
+    fun replyEmote(message: String, emote: String) = reply(emote + " " + message)
     fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)
     fun replyError(message: String) = replyEmote(message, Emotes.FAILURE)
 
