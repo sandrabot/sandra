@@ -66,11 +66,10 @@ class Help : Command(name = "help", arguments = "[command]") {
             return
         }
 
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.translate("title"), Constants.DIRECT_SUPPORT)
-        embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
+        val embed = event.embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
         val configureContent = lang.translate("configure_content")
         val commandsContent = lang.translate("commands_content")

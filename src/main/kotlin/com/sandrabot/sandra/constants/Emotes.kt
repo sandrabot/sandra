@@ -26,7 +26,7 @@ object Emotes {
     const val BIN = "<:bin:987946764361404416>"
     const val CHAT = "<:chat:987950926545444864>"
     const val COMMANDS = "<:commands:987913791671005275>"
-    const val CONFIG = "<:config:987914299873828888>"
+    const val CONFIG = "<:config:988525871986016367>"
     const val CREDIT = "<:credit:788969112386011139>"
     const val DISABLED = "<:disabled:987916007676973076>"
     const val ENABLED = "<:enabled:987912422612402176>"
