@@ -96,7 +96,8 @@
       "side_tails": "tails"
     },
     "fortune": {
-      "description": "break open a fortune cookie to reveal your luck"
+      "description": "break open a fortune cookie to reveal your luck",
+      "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
     },
     "help": {
       "description": "view some basic quick-start information about the bot",
