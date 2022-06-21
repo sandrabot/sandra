@@ -31,8 +31,6 @@ enum class Category(val emote: String) {
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
 
-    val displayName = name.lowercase().replaceFirstChar { it.uppercase() }
-
     companion object {
         fun fromClass(clazz: KClass<out Command>): Category {
             if (clazz.qualifiedName?.startsWith("com.sandrabot.sandra.commands.") == false)
