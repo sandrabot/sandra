@@ -110,9 +110,9 @@
       "usage_title": "usage",
       "info_embed": {
         "configure": "%1$s configure settings",
-        "configure_content": "> to **configure** my **settings**, use `/config`",
+        "configure_content": "> if you need to **configure** my **settings**, use `/config`",
         "commands": "%1$s commands",
-        "commands_content": "> to see my **command list**, use `/commands`",
+        "commands_content": "> or if you want to see my **command list**, use `/commands`",
         "invite": "%1$s invite sandra",
         "invite_content": "> would you like me to join **your server**? **[click to invite me](%1$s)**",
         "support": "%1$s support server",
