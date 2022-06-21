@@ -125,9 +125,9 @@
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
     "mock": {
-      "description": "this command is such a good idea",
+      "description": "tHiS cOmMaNd Is SuCh A gOoD iDeA",
       "arguments": {
-        "text": ["the text you want to mock"]
+        "text": ["tHe TeXt YoU wAnT tO mOcK"]
       }
     },
     "ping": {
