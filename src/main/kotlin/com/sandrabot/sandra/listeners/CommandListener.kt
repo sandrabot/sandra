@@ -91,7 +91,7 @@ class CommandListener(val sandra: Sandra) {
                 event.replyError(event.translate("general.missing_argument", false, e.argument.name))
                     .setEphemeral(true).queue()
             } catch (t: Throwable) {
-                event.sendError(event.translate("general.command_exception", false)).setEphemeral(true).queue()
+                event.sendError(event.translate("general.interaction_error", false)).setEphemeral(true).queue()
                 logger.error("An exception occurred while executing a command", t)
             }
         }

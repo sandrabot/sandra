@@ -17,7 +17,6 @@
 package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.constants.Website
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
@@ -29,7 +28,7 @@ class Changes : Command(name = "changes") {
     override suspend fun execute(event: CommandEvent) {
 
         val button = Button.link(Website.DOCS, event.translate("button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
+        val reply = Emotes.INFO + " " + event.translate("reply")
         event.reply(reply).addActionRow(button).setEphemeral(true).queue()
 
     }

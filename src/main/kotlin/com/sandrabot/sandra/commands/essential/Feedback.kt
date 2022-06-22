@@ -18,7 +18,6 @@ package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
@@ -29,7 +28,7 @@ class Feedback : Command(name = "feedback") {
     override suspend fun execute(event: CommandEvent) {
 
         val button = Button.link(Constants.DIRECT_SUPPORT, event.translate("button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
+        val reply = Emotes.INFO + " " + event.translate("reply")
         event.reply(reply).addActionRow(button).setEphemeral(true).queue()
 
     }
