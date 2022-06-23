@@ -16,11 +16,9 @@
 
 package com.sandrabot.sandra.commands.essential
 
-import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.asEmoteUrl
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
@@ -84,10 +82,9 @@ class Commands : Command(name = "commands") {
                 val commandDescription = event.translate("commands.${it.name}.description", false)
                 buildString { append("`/", it.name, "` - ", commandDescription, "\n") }
             }.chunked(20).map { it.joinToString("") } // Chunk the commands into groups and combine them
-            val title = event.translate("commands.help.extra_help", false)
-            val author = event.translate(category.path(), false) + " " + event.translate("command_title")
-            val embed = event.embed.setTitle(title, Constants.DIRECT_SUPPORT).setThumbnail(event.selfUser.effectiveAvatarUrl)
-            embed.setAuthor(author, null, category.emote.asEmoteUrl()).setFooter(event.translate("more_information"))
+            val embed = event.embed.setTitle(
+                "${category.emote} ${event.translate(category.path(), false)} ${event.translate("command_title")}"
+            ).setThumbnail(event.selfUser.effectiveAvatarUrl).setFooter(event.translate("more_information"))
             // Build each page using the embed template and its own description
             return embedDescriptions.map { embed.setDescription(it).build() }
         }

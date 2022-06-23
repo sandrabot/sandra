@@ -44,10 +44,11 @@ class Help : Command(name = "help", arguments = "[command]") {
             }
 
             // Begin putting the embed together, starting with the command path and category
-            val commandPath = command.path.replace('/', ' ')
-            val author = "$commandPath • ${command.category.name.lowercase()}"
+            val readablePath = command.path.replace('/', ' ')
+            val wordCommands = event.translate("commands.commands.command_title", false)
+            val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
-            val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
+            val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())
             embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
             val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
@@ -57,19 +58,20 @@ class Help : Command(name = "help", arguments = "[command]") {
             if (command.arguments.isNotEmpty()) {
                 // Combine all the arguments into a string to be displayed
                 val joined = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **/$commandPath** $joined"
+                val usageValue = "> **/$readablePath** $joined"
                 embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.translate("required_arguments"))
             }
-            event.reply(embed.build()).queue()
+            event.reply(embed.build()).setEphemeral(true).queue()
             return
         }
 
         event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
+        val embed = event.embed.setTitle(lang.translate("title"))
+        embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
         val configureContent = lang.translate("configure_content")
         val commandsContent = lang.translate("commands_content")
