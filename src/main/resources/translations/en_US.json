@@ -63,13 +63,6 @@
         "script": ["the expression you want to evaluate"]
       }
     },
-    "flip": {
-      "description": "toss one of your coins to settle your bets",
-      "no_credits": "because you're broke, you don't have any coins to flip",
-      "reply": "your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards",
-      "side_heads": "heads",
-      "side_tails": "tails"
-    },
     "fortune": {
       "description": "break open a fortune cookie to reveal your luck",
       "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
@@ -120,6 +113,16 @@
       "shards_connected": "%1$d of %2$d shards connected",
       "server_using": " • this server is using shard %1$d",
       "shard_title": "shard %1$s"
+    },
+    "toss": {
+      "description": "toss a coin and settle your bets",
+      "reply": [
+        "spinning like a top, the coin dances before you and finally settles on __**%1$s**__",
+        "you toss the coin and catch it in mid air, slapping it down on your wrist revealing __**%1$s**__",
+        "the coin tumbles from your fingers, clattering on the ground and landing on __**%1$s**__"
+      ],
+      "heads": "heads",
+      "tails": "tails"
     }
   }
 }
