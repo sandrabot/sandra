@@ -48,25 +48,6 @@
     "cat": {
       "description": "gracefully displays a cat for your viewing pleasure"
     },
-    "changes": {
-      "description": "learn more about my latest changes",
-      "reply": "you can learn more about the latest releases reading the documentation on our website",
-      "button_label": "learn more"
-    },
-    "choose": {
-      "description": "randomly picks one of your words from a hat",
-      "arguments": {
-        "options": ["the space separated list of words i will choose from"]
-      },
-      "reply": "out of %1$s options in total, i decided to go with **%2$s**"
-    },
-    "clap": {
-      "description": "let me help you emphasize your important arguments",
-      "arguments": {
-        "text": ["the text you would like to emphasize"]
-      },
-      "max_length": "whoops, looks like what you said is **too long**"
-    },
     "commands": {
       "description": "glance through all my commands & categories",
       "select_placeholder": "pick a category to view..",
@@ -81,11 +62,6 @@
       "arguments": {
         "script": ["the expression you want to evaluate"]
       }
-    },
-    "feedback": {
-      "description": "submit your feedback to the sandra developers",
-      "reply": "please join our support server and talk about your concerns directly with **my developers**!!",
-      "button_label": "join sandra's hangout"
     },
     "flip": {
       "description": "toss one of your coins to settle your bets",
@@ -125,12 +101,6 @@
       "description": "gander at a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
-    "mock": {
-      "description": "tHiS cOmMaNd Is SuCh A gOoD iDeA",
-      "arguments": {
-        "text": ["tHe TeXt YoU wAnT tO mOcK"]
-      }
-    },
     "ping": {
       "description": "sends a ping to test sandra's connection to discord",
       "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
@@ -150,9 +120,6 @@
       "shards_connected": "%1$d of %2$d shards connected",
       "server_using": " • this server is using shard %1$d",
       "shard_title": "shard %1$s"
-    },
-    "snowy": {
-      "description": "custom command for a good friend of mine"
     }
   }
 }
