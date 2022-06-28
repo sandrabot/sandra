@@ -32,7 +32,7 @@ import kotlinx.serialization.json.JsonObject
 class Cat : Command(name = "cat") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         val response = httpClient.get("https://cataas.com/cat?json=true")
         if (response.status == HttpStatusCode.OK) {
             val url = response.body<JsonObject>().string("url")

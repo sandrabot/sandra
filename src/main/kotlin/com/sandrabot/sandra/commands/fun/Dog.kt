@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 class Dog : Command(name = "dog") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         val url = httpClient.get("https://random.dog/woof").bodyAsText()
         event.sendMessage("https://random.dog/$url").queue()
     }

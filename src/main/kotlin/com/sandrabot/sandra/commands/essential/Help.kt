@@ -34,12 +34,12 @@ class Help : Command(name = "help", arguments = "[command]") {
 
             val command = event.arguments.command() ?: run {
                 // The command couldn't be found with the given path
-                event.replyError(event.translate("not_found")).queue()
+                event.replyError(event.translate("not_found")).setEphemeral(true).queue()
                 return
             }
 
             if (command.ownerOnly || command.category == Category.CUSTOM) {
-                event.replyError(event.translate("not_found")).queue()
+                event.replyError(event.translate("not_found")).setEphemeral(true).queue()
                 return
             }
 
@@ -85,7 +85,7 @@ class Help : Command(name = "help", arguments = "[command]") {
         val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
         embed.setFooter(lang.translate("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
-        event.sendMessage(embed.build()).queue()
+        event.sendMessage(embed.build()).setEphemeral(true).queue()
 
     }
 
