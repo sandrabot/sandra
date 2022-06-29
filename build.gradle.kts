@@ -29,7 +29,7 @@ plugins {
 group = "com.sandrabot"
 version = "5.0.0-SNAPSHOT"
 
-// Needed for shadowJar and application since they wanted to deprecate it
+// Defines the program entry point for shadowJar and application
 setProperty("mainClassName", "com.sandrabot.sandra.MainKt")
 
 repositories {
@@ -47,8 +47,8 @@ dependencies {
     }
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("io.javalin:javalin:4.6.1")
-    implementation("io.ktor:ktor-client-okhttp:2.0.2")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.2")
+    implementation("io.ktor:ktor-client-okhttp:2.0.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.2")
     implementation("io.sentry:sentry-logback:6.0.0")
     implementation("net.jodah:expiringmap:0.5.10")
@@ -59,8 +59,8 @@ dependencies {
 
 buildConfig {
     className("SandraInfo")
-    val commit = runCommand(listOf("git", "rev-parse", "HEAD"))
-    val changes = runCommand(listOf("git", "diff", "--shortstat"))
+    val commit = runCommand("git", "rev-parse", "HEAD")
+    val changes = runCommand("git", "diff", "--shortstat")
     buildConfigField("String", "VERSION", "\"$version\"")
     buildConfigField("String", "COMMIT", "\"$commit\"")
     buildConfigField("String", "LOCAL_CHANGES", "\"$changes\"")
@@ -69,12 +69,12 @@ buildConfig {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "17"
-compileKotlin.kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 
-fun runCommand(commands: List<String>): String {
+fun runCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine = commands
+        commandLine = parts.asList()
         standardOutput = stdout
     }
     return stdout.toString("utf-8").trim()
