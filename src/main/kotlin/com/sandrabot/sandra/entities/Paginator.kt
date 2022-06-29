@@ -21,9 +21,9 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.digitAction
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.components.buttons.Button
@@ -185,10 +185,10 @@ class Paginator(
         private const val exitButtonId = "paginator:exit"
 
         private val selectButton =
-            Button.secondary(selectButtonId, "Select Page").withEmoji(Emoji.fromMarkdown(Emotes.NUMBER))
-        private val backButton = Button.primary(backButtonId, "Back").withEmoji(Emoji.fromMarkdown(Emotes.ARROW_LEFT))
-        private val nextButton = Button.primary(nextButtonId, "Next").withEmoji(Emoji.fromMarkdown(Emotes.ARROW_RIGHT))
-        private val exitButton = Button.danger(exitButtonId, "Exit").withEmoji(Emoji.fromMarkdown(Emotes.RETURN))
+            Button.secondary(selectButtonId, "Select Page").withEmoji(Emoji.fromFormatted(Emotes.NUMBER))
+        private val backButton = Button.primary(backButtonId, "Back").withEmoji(Emoji.fromFormatted(Emotes.ARROW_LEFT))
+        private val nextButton = Button.primary(nextButtonId, "Next").withEmoji(Emoji.fromFormatted(Emotes.ARROW_RIGHT))
+        private val exitButton = Button.danger(exitButtonId, "Exit").withEmoji(Emoji.fromFormatted(Emotes.RETURN))
 
         // We can't do much if the message was deleted externally, so we just ignore it
         private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE, ErrorResponse.UNKNOWN_WEBHOOK)

@@ -19,7 +19,6 @@ package com.sandrabot.sandra.listeners
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import net.dv8tion.jda.api.events.ReadyEvent
-import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege
 import org.slf4j.LoggerFactory
 
 class ReadyListener(private val sandra: Sandra) {
@@ -49,15 +48,12 @@ class ReadyListener(private val sandra: Sandra) {
                     }
 
                 // Update the owner slash commands for any of Sandra's development servers
-                val privilegeData = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
                 arrayOf(Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT).mapNotNull {
                     sandra.shards.getGuildById(it)
                 }.forEachIndexed { index, guild ->
                     guild.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) })
                         .queue { commands ->
                             if (index == 0) commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                            // TODO Slash command default permissions are currently broken in JDA
-                            // guild.updateCommandPrivileges(commands.associate { it.id to privilegeData }).queue()
                             logger.info("Successfully replaced owner commands with ${commands.size} commands for ${guild.id}")
                         }
                 }

@@ -19,8 +19,8 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
@@ -65,7 +65,7 @@ class Commands : Command(name = "commands") {
                 }.toSortedMap().map { (category, _) ->
                     val displayName = event.translate(category.path(), false)
                     SelectOption.of(displayName + " " + event.translate("command_title"), category.name)
-                        .withEmoji(Emoji.fromMarkdown(category.emote))
+                        .withEmoji(Emoji.fromFormatted(category.emote))
                 }).also { menuBuilder = it }
         }).setId(componentPrefix + event.encodedInteraction).build()
 
