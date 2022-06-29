@@ -42,7 +42,7 @@ class CommandEvent(
     val options: List<OptionMapping> get() = event.options
     val hook: InteractionHook get() = event.hook
 
-    val textChannel: TextChannel get() = event.textChannel
+    val guildChannel: GuildMessageChannel get() = event.guildChannel
     val channel: MessageChannel get() = event.channel
     val embed: EmbedBuilder get() = sandra.createEmbed()
 

@@ -71,7 +71,7 @@ class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly 
             Triple("event", event, CommandEvent::class),
             Triple("user", event.user, User::class),
             Triple("member", event.member, Member::class),
-            Triple("channel", event.textChannel, TextChannel::class),
+            Triple("channel", event.guildChannel, GuildMessageChannel::class),
             Triple("guild", event.guild, Guild::class),
             // This command can only be used within guilds, so guild will never be null
             Triple("id", event.guild!!.id, String::class),
