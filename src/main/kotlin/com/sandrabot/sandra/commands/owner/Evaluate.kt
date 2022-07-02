@@ -17,7 +17,9 @@
 package com.sandrabot.sandra.commands.owner
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
@@ -124,6 +126,8 @@ class Evaluate : Command(name = "evaluate", guildOnly = true) {
             Triple("config", commandEvent.sandra.config, ConfigurationManager::class),
             Triple("gc", commandEvent.sandra.config.getGuild(event.guild.idLong), GuildConfig::class),
             Triple("uc", commandEvent.sandra.config.getUser(event.author.idLong), UserConfig::class),
+            Triple("mc", commandEvent.memberConfig, MemberConfig::class),
+            Triple("cc", commandEvent.channelConfig, ChannelConfig::class),
             Triple("ce", commandEvent, CommandEvent::class),
             Triple("event", event, MessageReceivedEvent::class),
             Triple("guild", event.guild, Guild::class),

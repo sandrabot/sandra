@@ -17,6 +17,8 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
@@ -38,8 +40,8 @@ private val templateTokens = mapOf<String, KFunction<*>>(
     "user.tag" to UserImpl::getAsTag,
     "user.age" to MemberImpl::getTimeCreated,
     "user.created" to UserImpl::getTimeCreated,
-    "user.exp" to UserConfig::experience.getter,
-    "user.level" to UserConfig::level.getter,
+    "user.exp" to MemberConfig::experience.getter,
+    "user.level" to MemberConfig::level.getter,
     "user.money" to UserConfig::credits.getter,
     "server.id" to GuildImpl::getId,
     "server.name" to GuildImpl::getName,
@@ -58,6 +60,8 @@ fun String.formatTemplate(sandra: Sandra, guild: Guild, member: Member): String 
             MemberImpl::class.javaObjectType -> member
             UserImpl::class.javaObjectType -> member.user
             UserConfig::class.javaObjectType -> sandra.config.getUser(member.idLong)
+            GuildConfig::class.javaObjectType -> sandra.config.getGuild(guild.idLong)
+            MemberConfig::class.javaObjectType -> sandra.config.getGuild(guild.idLong).getMember(member.idLong)
             else -> throw IllegalArgumentException("Function type is of $type for ${it.value}")
         }
         it.range to when (val result = kFunction.call(instance)) {
