@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.ExperiencePrivilege
 import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
@@ -32,8 +31,6 @@ class GuildConfig(override val id: Long) : Configuration() {
 
     @Serializable(with = ConfigMapTransformer::class)
     val members = mutableMapOf<Long, MemberConfig>()
-
-    val experiencePrivileges = mutableListOf<ExperiencePrivilege>()
 
     var locale: Locale = Locale.DEFAULT
     var experienceEnabled: Boolean = true

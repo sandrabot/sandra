@@ -21,12 +21,12 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
+import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
 
 /**
@@ -86,7 +86,7 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
         // TODO Feature: AFK Messages
 
         // Feature: Server Experience
-        if (guildConfig.experienceEnabled && memberConfig.canExperience() && guildConfig.isExperienceAllowed(event)) {
+        if (guildConfig.experienceEnabled && memberConfig.canExperience() && channelConfig.experienceEnabled) {
             // Award a random amount of experience between 15 and 25
             // Multiply the amount based on the multiplier configuration
             val multiplier = guildConfig.computeMultiplier(channelConfig)
@@ -107,7 +107,7 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
                         // If the notification channel is not where the message was sent, the reference will do nothing
-                        notifyChannel.sendMessage(formattedTemplate).reference(event.message).queue()
+                        notifyChannel.sendMessage(formattedTemplate).reference(event.message).await()
                     }
                 }
                 // TODO Feature: Level Up Rewards
@@ -133,10 +133,11 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
      * Processes any private messages that the bot receives.
      */
     private fun handlePrivateMessage(event: MessageReceivedEvent) {
-        val attachments = event.message.attachments.ifNotEmpty {
-            joinToString(separator = "\n", prefix = "\n") { "Direct Message Attachment: ${it.url}" }
-        } ?: ""
-        logger.info("Direct Message: ${event.author.asTag} [${event.author.id}] | ${event.message.contentDisplay}$attachments")
+        val logUser = "${event.author.asTag} [${event.author.id}]"
+        val attachments = event.message.attachments.joinToString("\n", prefix = "\n") {
+            "Direct Message Attachment: ${it.url}"
+        }
+        logger.info("Direct Message: $logUser | ${event.message.contentDisplay}$attachments")
     }
 
     private companion object {

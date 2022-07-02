@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ChannelConfig(override val id: Long) : Configuration() {
 
+    var experienceEnabled: Boolean = true
     var experienceNotifyEnabled: Boolean = true
     var experienceMultiplier: Double = 1.0
 
