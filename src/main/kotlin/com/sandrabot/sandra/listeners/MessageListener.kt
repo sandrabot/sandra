@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
 
 /**
@@ -130,9 +131,9 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
      */
     private fun handlePrivateMessage(event: MessageReceivedEvent) {
         val logUser = "${event.author.asTag} [${event.author.id}]"
-        val attachments = event.message.attachments.joinToString("\n", prefix = "\n") {
-            "Direct Message Attachment: ${it.url}"
-        }
+        val attachments = event.message.attachments.ifNotEmpty {
+            joinToString("\n", prefix = "\n") { "Direct Message Attachment: ${it.url}" }
+        } ?: ""
         logger.info("Direct Message: $logUser | ${event.message.contentDisplay}$attachments")
     }
 
