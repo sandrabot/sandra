@@ -38,7 +38,7 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
     private val json = Json { encodeDefaults = true }
     private val accessedKeys = mutableSetOf<Long>()
     private val configs: ExpiringMap<Long, Configuration> =
-        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.DAYS)
+        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.HOURS)
             .asyncExpirationListener(this).build()
 
     init {
