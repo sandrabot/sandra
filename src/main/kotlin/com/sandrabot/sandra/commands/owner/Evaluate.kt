@@ -24,9 +24,9 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
 import com.sandrabot.sandra.managers.ConfigurationManager
 import com.sandrabot.sandra.managers.RedisManager
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hastebin
+import dev.minn.jda.ktx.coroutines.await
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

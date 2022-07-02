@@ -20,8 +20,8 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.Paginator
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
+import dev.minn.jda.ktx.coroutines.await
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 

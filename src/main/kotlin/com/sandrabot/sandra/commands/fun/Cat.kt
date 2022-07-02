@@ -18,9 +18,9 @@ package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.httpClient
 import com.sandrabot.sandra.utils.string
+import dev.minn.jda.ktx.coroutines.await
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*

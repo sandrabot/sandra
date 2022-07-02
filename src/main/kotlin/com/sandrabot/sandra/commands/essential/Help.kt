@@ -23,7 +23,7 @@ import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
-import com.sandrabot.sandra.utils.await
+import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Help : Command(name = "help", arguments = "[command]") {

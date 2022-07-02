@@ -17,7 +17,9 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
+import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.entities.MessageType
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
 import org.slf4j.LoggerFactory
@@ -25,10 +27,19 @@ import org.slf4j.LoggerFactory
 /**
  * Class for handling features related to message content.
  */
-class MessageListener(private val sandra: Sandra) {
+class MessageListener(private val sandra: Sandra): CoroutineEventListener {
 
-    @Suppress("unused")
-    fun onMessageReceived(event: MessageReceivedEvent) {
+    override suspend fun onEvent(event: GenericEvent) {
+        when (event) {
+            is MessageReceivedEvent -> onMessageReceived(event)
+            is MessageUpdateEvent -> onMessageUpdate(event)
+        }
+    }
+
+    /**
+     * Handler for all [MessageReceivedEvent] events.
+     */
+    private suspend fun onMessageReceived(event: MessageReceivedEvent) {
 
         sandra.statistics.incrementMessageCount()
 
@@ -79,7 +90,7 @@ class MessageListener(private val sandra: Sandra) {
         return false
     }
 
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(MessageListener::class.java)
     }
 
