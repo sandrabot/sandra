@@ -22,14 +22,14 @@ import com.sandrabot.sandra.config.GuildConfig
 import kotlin.math.roundToInt
 
 val experienceLevelGoals: List<Int> = run {
-    var increment = 100
-    var step = 55
+    var (increment, step) = 100 to 55
     generateSequence {
-        increment.also {
+        val goal = increment.also {
             increment += step
             step += 10
         }
-    }.take(1000).toList()
+        if (goal < 0) null else goal
+    }.toList()
 }
 
 fun randomExperience(multiplier: Double = 1.0): Int = ((15..25).random() * multiplier).roundToInt()
@@ -50,7 +50,7 @@ fun ExperienceConfig.awardExperience(amount: Int): Boolean {
     // Check if the new experience amount reached this goal
     return if (experience >= goal) {
         experience -= goal // Reset the experience counter and keep any rollover
-        level++ // Increase the current level
+        level += 1 // Increase the current level
         true // Signify to the caller there was a level up
     } else false
 }
