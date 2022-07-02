@@ -31,10 +31,9 @@ object Constants {
     const val GUILD_HANGOUT = 340937384239824897L
     const val GUILD_DEVELOPMENT = 987427184308260874L
 
-    const val TWITCH = "https://twitch.tv/averen"
     const val HASTEBIN = "https://haste.averen.dev"
     const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
-    const val DIRECT_SUPPORT = "https://discord.com/invite/ybuvfZR"
+    const val DIRECT_SUPPORT = "https://discord.gg/sandra"
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?" +
             "client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
 

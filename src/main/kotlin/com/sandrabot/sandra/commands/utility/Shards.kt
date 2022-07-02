@@ -20,9 +20,8 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.Paginator
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
-import com.sandrabot.sandra.utils.capitalizeWords
 import com.sandrabot.sandra.utils.format
+import dev.minn.jda.ktx.coroutines.await
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 
@@ -33,7 +32,7 @@ class Shards : Command(name = "shards") {
 
         event.deferReply(ephemeral = true).await()
         val shardFields = event.sandra.shards.shardCache.sortedBy { it.shardInfo.shardId }.map {
-            val status = it.status.name.replace("_", " ").capitalizeWords()
+            val status = it.status.name.replace("_", " ").lowercase()
             val value = event.translate("status", status, it.gatewayPing.format(), it.guildCache.size().format())
             MessageEmbed.Field(event.translate("shard_title", it.shardInfo.shardId), value, true)
         }

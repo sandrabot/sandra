@@ -1,158 +1,125 @@
 {
   "general": {
-    "missing_permission": "I need the **%1$s** permission in this **%2$s** to continue!",
-    "missing_user_permission": "You need the **%1$s** permission in this **%2$s** to continue!",
-    "guild_only": "This command **can only be used** within servers.",
-    "missing_argument": "Sorry, I couldn't recognise what you entered for **%1$s**; check the **command usage** and try again.",
-    "owner_only": "This command **can only be used** by **bot owners**. Nice try.",
-    "command_exception": "Hm, it appears as if **something strange** has happened. Apologies.",
-    "page_prompt": "Please respond with the page number you would like to jump to:",
+    "missing_permission": "i need the **%1$s** permission in this **%2$s** to do that",
+    "missing_user_permission": "you need the **%1$s** permission in this **%2$s** to do that",
+    "missing_argument": "i couldn't figure out what you said for **%1$s**, try checking the **command usage**",
+    "owner_only": "this command **can only be used** by **my owners**. nice try",
+    "interaction_error": "uh oh, it looks like something **went wrong** behind the scenes. sorry about that",
+    "page_prompt": "why don't you tell me what page you want to see?",
     "experience_notify": "%1$s {@user} leveled up to **LVL {user.level}**",
-    "blocked": "**%1$s** has been **blocked** from using this feature for reason: **%2$s**.\n*This message will serve as your notification and you will not receive another.*"
+    "blocked": "**%1$s** is no longer be able to use this feature. you have been blocked because of: **%2$s**\nthis message is considered fyi and you will not receive another"
   },
   "permissions": {
-    "create_invite": "Create Invite",
-    "kick": "Kick Members",
-    "ban": "Ban Members",
-    "administrator": "Administrator",
-    "manage_channels": "Manage Channels",
-    "add_reactions": "Add Reactions",
-    "view_audit_logs": "View Audit Logs",
-    "view_channel": "View Channel",
-    "send_messages": "Send Messages",
-    "manage_messages": "Manage Messages",
-    "embed_links": "Embed Links",
-    "attach_files": "Attach Files",
-    "read_history": "Read History",
-    "external_emojis": "Use External Emojis",
-    "voice_connect": "Connect",
-    "voice_speak": "Speak",
-    "voice_activity": "Use Voice Activity",
-    "change_nickname": "Change Nickname",
-    "manage_nicknames": "Manage Nicknames",
-    "manage_roles": "Manage Roles",
-    "manage_permissions": "Manage Permissions",
-    "moderate_members": "Timeout Members"
+    "create_invite": "create invite",
+    "kick": "kick members",
+    "ban": "ban members",
+    "administrator": "administrator",
+    "manage_channels": "manage channels",
+    "add_reactions": "add reactions",
+    "view_audit_logs": "view audit logs",
+    "view_channel": "view channel",
+    "send_messages": "send messages",
+    "manage_messages": "manage messages",
+    "embed_links": "embed links",
+    "attach_files": "attach files",
+    "read_history": "read history",
+    "external_emojis": "use external emojis",
+    "voice_connect": "connect",
+    "voice_speak": "speak",
+    "voice_activity": "use voice activity",
+    "change_nickname": "change nickname",
+    "manage_nicknames": "manage nicknames",
+    "manage_roles": "manage roles",
+    "manage_permissions": "manage permissions",
+    "moderate_members": "timeout members"
   },
   "categories": {
-    "custom": "Custom",
-    "essential": "Essential",
-    "fun": "Fun",
-    "game": "Game",
-    "moderation": "Moderation",
-    "music": "Music",
-    "owner": "Owner",
-    "social": "Social",
-    "utility": "Utility"
+    "custom": "custom",
+    "essential": "essential",
+    "fun": "fun",
+    "game": "game",
+    "moderation": "moderation",
+    "music": "music",
+    "owner": "owner",
+    "social": "social",
+    "utility": "utility"
   },
   "commands": {
     "cat": {
-      "description": "Gracefully displays a cat for your viewing pleasure",
-      "error": "Sadly, something appears to have **gone wrong** while fetching the cat."
-    },
-    "changes": {
-      "description": "Learn more about Sandra's latest changes",
-      "reply": "You can read about the latest releases from the documentation on our website.",
-      "button_label": "Learn More"
-    },
-    "choose": {
-      "description": "Randomly picks one of your words from a hat",
-      "arguments": {
-        "options": ["The space separated list of words I will choose from"]
-      },
-      "reply": "Out of %1$s options in total, I decided to go with **%2$s**."
-    },
-    "clap": {
-      "description": "Have Sandra emphasize your important arguments",
-      "arguments": {
-        "text": ["The text you would like to emphasize"]
-      },
-      "max_length": "Unfortunately, the text you provided is **too long** to be emphasized."
+      "description": "gracefully displays a cat for your viewing pleasure"
     },
     "commands": {
-      "description": "Browse through Sandra's countless commands",
-      "select_placeholder": "Select a category to view...",
-      "command_title": "Commands",
-      "more_information": "Use /help <command> for more information"
+      "description": "glance through all my commands & categories",
+      "select_placeholder": "pick a category to view..",
+      "command_title": "commands",
+      "more_information": "use /help [command] for more info"
     },
     "dog": {
-      "description": "Fetches a dog from the depths of the internet"
+      "description": "fetches a dog from the depths of the internet"
     },
-    "eval": {
-      "description": "Evaluate an expression in a REPL environment",
-      "arguments": {
-        "script": ["The expression you want to evaluate"]
-      }
-    },
-    "feedback": {
-      "description": "Submit your feedback to the Sandra developers",
-      "reply": "Please join our support server to discuss your concerns directly with the **Sandra developers**.",
-      "button_label": "Join Sandra's Hangout"
-    },
-    "flip": {
-      "description": "Toss one of your coins to settle your bets",
-      "no_credits": "Because you are broke, you don't have any coins to flip.",
-      "reply": "Your coin sparkled in the light as it danced along the ground until it landed with **%1$s** facing upwards.",
-      "side_heads": "heads",
-      "side_tails": "tails"
+    "evaluate": {
+      "description": "start a global kotlin repl session (developers only)"
     },
     "fortune": {
-      "description": "Break open a fortune cookie to reveal your luck"
+      "description": "break open a fortune cookie to reveal your luck",
+      "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
     },
     "help": {
-      "description": "View some basic quick-start information about the bot",
+      "description": "look at some basic & essential info about me",
       "arguments": {
-        "command": ["View more information about this command"]
+        "command": ["the command you want to take a closer look at"]
       },
-      "not_found": "Whoops, a command with that path **does not exist**. Try using **/commands** to find what you're looking for.",
-      "required_arguments": "Any arguments that are enclosed with <> are required.",
-      "extra_help": "Need some extra help?",
-      "description_title": "Description",
-      "usage_title": "Usage",
+      "not_found": "whoops, i **couldn't find** that command. try using **/commands** to find what you're looking for",
+      "required_arguments": "any options that are surrounded by <> are required",
+      "extra_help": "need some extra help? chat with us",
+      "description_title": "description",
+      "usage_title": "usage",
       "info_embed": {
-        "configure": "%1$s Configure Settings",
-        "configure_content": "> To **configure** my **settings**, use `/config`.",
-        "commands": "%1$s Commands",
-        "commands_content": "> To see my **command list**, use `/commands`.",
-        "invite": "%1$s Invite Sandra",
-        "invite_content": "> Would you like me in **your server**? **[Click to invite me](%1$s)**.",
-        "support": "%1$s Support Server",
-        "support_content": "> Need **more help**? Chat with us in **[Sandra's Hangout](%1$s)**.",
-        "built": "Built with %1$s by %2$s, %3$s, and %4$s"
+        "title": "*your favorite neighborhood robot* <:fun:987918991135764542>",
+        "configure": "%1$s configure settings",
+        "configure_content": "> if you need to **configure** my **settings**, use `/config`",
+        "commands": "%1$s commands",
+        "commands_content": "> or if you want to see my **command list**, use `/commands`",
+        "invite": "%1$s invite sandra",
+        "invite_content": "> would you like me to join **your server**? **[click to invite me](%1$s)**",
+        "support": "%1$s support server",
+        "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
+        "built": "built with %1$s by %2$s, %3$s, and %4$s"
       }
     },
     "members": {
-      "description": "View a breakdown of the server's member count",
-      "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members."
-    },
-    "mock": {
-      "description": "tHiS cOmMaNd Is SuCh A gOoD iDeA",
-      "arguments": {
-        "text": ["tHe TeXt YoU wAnT tO mOcK"]
-      }
+      "description": "gander at a breakdown of the server's member count",
+      "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
     "ping": {
-      "description": "Sends a ping to test Sandra's connection to Discord",
-      "reply": "It took me %1$s to **ping Discord** and about %2$s to **receive your command**."
+      "description": "sends a ping to test sandra's connection to discord",
+      "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
     "roll": {
-      "description": "Test your luck and roll an imaginary 1d20",
+      "description": "test your luck with an imaginary dice set",
       "arguments": {
-        "sides": ["The number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
-        "max": ["The maximum possible number"]
+        "sides": ["the number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
+        "max": ["the maximum possible number"]
       },
-      "reply": "You took a chance and rolled a **%d**."
+      "reply": "you took a chance and rolled a %1$s out of %2$s"
     },
     "shards": {
-      "description": "View a list of shards and their stats",
-      "having_issues": "Having issues? Join Sandra Support",
-      "status": "Status: **%1$s**\nPing: %2$sms\nServers: %3$s",
+      "description": "view a list of shards and their stats",
+      "having_issues": "having issues? join sandra's hangout",
+      "status": "status: **%1$s**\nping: %2$sms\nservers: %3$s",
       "shards_connected": "%1$d of %2$d shards connected",
-      "server_using": " • This server is using shard %1$d",
-      "shard_title": "Shard %1$s"
+      "server_using": " • this server is using shard %1$d",
+      "shard_title": "shard %1$s"
     },
-    "snowy": {
-      "description": "Custom command for a good friend of mine"
+    "toss": {
+      "description": "toss a coin and settle your bets",
+      "reply": [
+        "spinning like a top, the coin dances before you and finally settles on __**%1$s**__",
+        "you toss the coin and catch it in mid air, slapping it down on your wrist revealing __**%1$s**__",
+        "the coin tumbles from your fingers, clattering on the ground and landing on __**%1$s**__"
+      ],
+      "heads": "heads",
+      "tails": "tails"
     }
   }
 }

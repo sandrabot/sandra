@@ -29,11 +29,10 @@ class Members : Command(name = "members", guildOnly = true) {
         val memberCount = event.guild!!.memberCount
         val botCount = event.guild.memberCache.count { it.user.isBot }
         val humanCount = memberCount - botCount
-        event.replyInfo(
-            event.translate(
-                "reply", event.guild.name.sanitize(), humanCount.format(), botCount.format(), memberCount.format()
-            )
-        ).allowedMentions(emptyList()).setEphemeral(true).queue()
+
+        val name = event.guild.name.sanitize()
+        val reply = event.translate("reply", name, humanCount.format(), botCount.format(), memberCount.format())
+        event.replyInfo(reply).setEphemeral(true).queue()
 
     }
 

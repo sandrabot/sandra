@@ -17,50 +17,25 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.events.CommandEvent
+import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.events.await
 import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import java.util.concurrent.TimeUnit
 
-fun inputAction(
-    event: CommandEvent, message: Message,
-    timeout: Long = 2, unit: TimeUnit = TimeUnit.MINUTES,
-    expired: (() -> Unit)? = null, consumer: (MessageReceivedEvent) -> Boolean
-) = event.sendMessage(message).queue { promptMessage ->
-    event.sandra.eventWaiter.waitForEvent(
-        MessageReceivedEvent::class, timeout, unit,
-        expired = {
-            promptMessage.delete().queue()
-            if (expired != null) expired()
-        }, test = {
-            it.author == event.user && it.channel == event.channel
-        }, action = { messageEvent ->
-            promptMessage.delete().queue()
-            consumer(messageEvent).also { shouldDelete ->
-                if (shouldDelete) checkAndDelete(event, messageEvent.message)
-            }
-        }
-    )
+suspend fun inputAction(
+    commandEvent: CommandEvent, message: Message
+): MessageReceivedEvent = commandEvent.sendMessage(message).await().let { promptMessage ->
+    val messageEvent = commandEvent.sandra.shards.await<MessageReceivedEvent> { messageEvent ->
+        commandEvent.user == messageEvent.author && commandEvent.channel == messageEvent.channel
+    }
+    promptMessage.delete().await()
+    return messageEvent
 }
 
-fun promptAction(
-    event: CommandEvent, prompt: String, emote: String = Emotes.PROMPT,
-    timeout: Long = 2, unit: TimeUnit = TimeUnit.MINUTES,
-    expired: (() -> Unit)? = null, consumer: (MessageReceivedEvent) -> Boolean
-) {
-    val message = MessageBuilder(emote + Unicode.VERTICAL_LINE + prompt).build()
-    inputAction(event, message, timeout, unit, expired, consumer)
-}
+suspend fun promptAction(event: CommandEvent, prompt: String, emote: String = Emotes.PROMPT) =
+    inputAction(event, MessageBuilder("$emote $prompt").build())
 
-fun digitAction(
-    event: CommandEvent, prompt: String, expired: (() -> Unit)? = null, consumer: (Long) -> Unit
-) = promptAction(event, prompt, expired = expired) {
-    it.message.contentRaw.toLongOrNull()?.let { digit -> consumer(digit); true } ?: run { expired?.invoke(); false }
-}
-
-private fun checkAndDelete(event: CommandEvent, message: Message) {
-    if (event.isFromGuild && hasPermission(event, Permission.MESSAGE_MANAGE)) message.delete().queue()
-}
+suspend fun digitAction(event: CommandEvent, prompt: String) =
+    promptAction(event, prompt).message.contentRaw.toLongOrNull()

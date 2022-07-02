@@ -22,6 +22,7 @@ import com.sandrabot.sandra.utils.*
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import io.javalin.http.*
+import io.javalin.jetty.JettyUtil
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -63,6 +64,8 @@ class SandraAPI(private val sandra: Sandra, private val port: Int) {
     }
 
     init {
+
+        JettyUtil.logIfNotStarted = false
 
         api.before {
             logger.info("Received ${it.method()} ${it.url()} from ${it.ip()} ${it.userAgent()}")

@@ -29,29 +29,32 @@ plugins {
 group = "com.sandrabot"
 version = "5.0.0-SNAPSHOT"
 
-// Needed for shadowJar and application since they wanted to deprecate it
+// Defines the program entry point for shadowJar and application
 setProperty("mainClassName", "com.sandrabot.sandra.MainKt")
 
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
+    maven("https://jitpack.io/")
 }
 
 dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-alpha.12") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.13") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
     implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("com.github.minndevelopment:jda-ktx:d5c5d9d")
     implementation("io.javalin:javalin:4.6.1")
-    implementation("io.ktor:ktor-client-okhttp:2.0.2")
     implementation("io.ktor:ktor-client-content-negotiation:2.0.2")
+    implementation("io.ktor:ktor-client-okhttp:2.0.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.2")
     implementation("io.sentry:sentry-logback:6.0.0")
     implementation("net.jodah:expiringmap:0.5.10")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     implementation("org.reflections:reflections:0.10.2")
     implementation("redis.clients:jedis:4.2.3")
@@ -59,8 +62,8 @@ dependencies {
 
 buildConfig {
     className("SandraInfo")
-    val commit = runCommand(listOf("git", "rev-parse", "HEAD"))
-    val changes = runCommand(listOf("git", "diff", "--shortstat"))
+    val commit = runCommand("git", "rev-parse", "HEAD")
+    val changes = runCommand("git", "diff", "--shortstat")
     buildConfigField("String", "VERSION", "\"$version\"")
     buildConfigField("String", "COMMIT", "\"$commit\"")
     buildConfigField("String", "LOCAL_CHANGES", "\"$changes\"")
@@ -69,12 +72,12 @@ buildConfig {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "17"
-compileKotlin.kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 
-fun runCommand(commands: List<String>): String {
+fun runCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine = commands
+        commandLine = parts.asList()
         standardOutput = stdout
     }
     return stdout.toString("utf-8").trim()

@@ -18,9 +18,9 @@ package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.httpClient
 import com.sandrabot.sandra.utils.string
+import dev.minn.jda.ktx.coroutines.await
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -32,12 +32,12 @@ import kotlinx.serialization.json.JsonObject
 class Cat : Command(name = "cat") {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         val response = httpClient.get("https://cataas.com/cat?json=true")
         if (response.status == HttpStatusCode.OK) {
             val url = response.body<JsonObject>().string("url")
             event.sendMessage("https://cataas.com$url").queue()
-        } else event.sendError(event.translate("error")).queue()
+        } else event.sendError(event.translate("general.interaction_error", withRoot = false)).queue()
     }
 
 }

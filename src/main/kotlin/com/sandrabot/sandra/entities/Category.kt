@@ -24,14 +24,12 @@ enum class Category(val emote: String) {
     CUSTOM(Emotes.PATREON),
     ESSENTIAL(Emotes.PIN),
     FUN(Emotes.FUN),
-    GAME(Emotes.CREDIT),
+    GAME(Emotes.SANDOLLAR),
     MODERATION(Emotes.MOD),
     MUSIC(Emotes.MUSIC),
     OWNER(Emotes.USER),
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
-
-    val displayName = name.lowercase().replaceFirstChar { it.uppercase() }
 
     companion object {
         fun fromClass(clazz: KClass<out Command>): Category {

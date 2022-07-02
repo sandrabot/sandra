@@ -18,56 +18,50 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
+import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.events.CoroutineEventListener
+import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.ReadyEvent
-import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege
 import org.slf4j.LoggerFactory
 
-class ReadyListener(private val sandra: Sandra) {
+class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
 
-    // We need this to track the shards that have
-    // finished, shards may disconnect during startup
+    // keep a total number of shards that have finished loading
     private var shardsReady = 0
 
-    @Suppress("unused")
-    fun onReady(event: ReadyEvent) {
+    override suspend fun onEvent(event: GenericEvent) {
+        if (event is ReadyEvent) onReady(event)
+    }
 
-        shardsReady++
-        // Update the shard's presence, it is currently set to idle
-        event.jda.presence.setStatus(sandra.status)
+    private suspend fun onReady(event: ReadyEvent) {
+        shardsReady += 1
+        // change the status from idle to something else to signify the shard is ready
+        event.jda.presence.setStatus(if (sandra.development) OnlineStatus.DO_NOT_DISTURB else OnlineStatus.ONLINE)
         val shardInfo = event.jda.shardInfo
-        // The last shard to finish loading initializes most of the bot
+        // only the last shard to load will initialize the rest of our services
         if (shardsReady == shardInfo.shardTotal) {
             if (!sandra.development) sandra.botList.start()
-
-            if (sandra.commandUpdates) {
-                // Update the global slash command list, so that they always match the commands we have
+            // if command updates are enabled, now is the time to perform the updates
+            if (sandra.sandraConfig.commandUpdates) {
+                // update the global slash command list, this makes sure the commands match our local commands
                 val (owner, global) = sandra.commands.values.partition { it.ownerOnly }
-                event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) })
-                    .queue { commands ->
-                        commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                        logger.info("Successfully replaced global command list with ${commands.size} commands")
-                    }
-
-                // Update the owner slash commands for any of Sandra's development servers
-                val privilegeData = Constants.DEVELOPERS.map { CommandPrivilege.enableUser(it) }
+                val commands = event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) }).await()
+                commands.forEach { sandra.commands[it.name]?.id = it.idLong }
+                logger.info("Successfully updated global command list with ${commands.size} commands")
+                // update the command list for all of our development servers
                 arrayOf(Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT).mapNotNull {
                     sandra.shards.getGuildById(it)
                 }.forEachIndexed { index, guild ->
-                    guild.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) })
-                        .queue { commands ->
-                            if (index == 0) commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                            // TODO Slash command default permissions are currently broken in JDA
-                            // guild.updateCommandPrivileges(commands.associate { it.id to privilegeData }).queue()
-                            logger.info("Successfully replaced owner commands with ${commands.size} commands for ${guild.id}")
-                        }
+                    val await = guild.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) }).await()
+                    if (index == 0) await.forEach { sandra.commands[it.name]?.id = it.idLong }
+                    logger.info("Successfully updated owner commands with ${await.size} commands for ${guild.id}")
                 }
             } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
-
-            logger.info("Shard ${shardInfo.shardId} has finished starting additional items")
-            // This is the last ready event that will fire, so we don't need this listener anymore
+            logger.info("Shard ${shardInfo.shardString} has finished loading additional items")
+            // this is the last ready event we will ever care about, so we don't need this listener anymore
             sandra.eventManager.unregister(this)
         }
-
     }
 
     private companion object {

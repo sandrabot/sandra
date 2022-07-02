@@ -59,7 +59,7 @@ fun blocklistNotify(
         user.name.sanitize() to sandra.config.getUser(userId).locale
     }
     val reason = entry.getReason(featureType)
-    val blockedMessage = Unicode.CROSS_MARK + Unicode.VERTICAL_LINE +
+    val blockedMessage = Unicode.CROSS_MARK + " " +
             LocaleContext(sandra, locale).translate("general.blocked", false, entryName, reason)
     channel.sendMessage(blockedMessage).queue {
         entry.recordNotify(featureType, channel.idLong, it.idLong)

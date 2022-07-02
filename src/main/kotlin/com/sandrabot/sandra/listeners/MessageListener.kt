@@ -21,8 +21,10 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
+import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.MessageType
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
@@ -30,14 +32,19 @@ import org.slf4j.LoggerFactory
 /**
  * Event listener that deals with features relating to messages and their content.
  */
-class MessageListener(private val sandra: Sandra) {
+class MessageListener(private val sandra: Sandra): CoroutineEventListener {
+
+    override suspend fun onEvent(event: GenericEvent) {
+        when (event) {
+            is MessageReceivedEvent -> onMessageReceived(event)
+        }
+    }
 
     /**
-     * Handles all [MessageReceivedEvent] dispatched by JDA.
+     * Handler for all [MessageReceivedEvent] events.
      * Messages sent by bots, webhooks, or system are ignored.
      */
-    @Suppress("unused")
-    fun onMessageReceived(event: MessageReceivedEvent) {
+    private suspend fun onMessageReceived(event: MessageReceivedEvent) {
 
         // TODO Feature: Internal Metrics
         sandra.statistics.incrementMessageCount()
@@ -60,7 +67,7 @@ class MessageListener(private val sandra: Sandra) {
     /**
      * Processes all messages received within all guild channels.
      */
-    private fun handleGuildMessage(event: MessageReceivedEvent) {
+    private suspend fun handleGuildMessage(event: MessageReceivedEvent) {
         val authorId = event.author.idLong
         val guildId = event.guild.idLong
         val channelId = event.channel.idLong

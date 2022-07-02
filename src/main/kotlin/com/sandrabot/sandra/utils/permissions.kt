@@ -30,7 +30,7 @@ fun hasUserPermission(event: CommandEvent, permission: Permission) = check(event
 
 private fun check(event: CommandEvent, permission: Permission, member: Member): Boolean {
     return if (permission.isChannel) {
-        member.hasPermission(event.textChannel, permission)
+        member.hasPermission(event.guildChannel, permission)
     } else member.hasPermission(permission)
 }
 

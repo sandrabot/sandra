@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.commands.essential
+package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.constants.Website
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import net.dv8tion.jda.api.interactions.components.buttons.Button
+import kotlin.random.Random
 
 @Suppress("unused")
-class Changes : Command(name = "changes") {
+class Toss : Command(name = "toss") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val button = Button.link(Website.DOCS, event.translate("button_label"))
-        val reply = Emotes.INFO + Unicode.VERTICAL_LINE + event.translate("reply")
-        event.reply(reply).addActionRow(button).setEphemeral(true).queue()
+        val (emote, side) = if (Random.nextBoolean()) Emotes.SANDOLLAR to "heads" else Emotes.TAILS to "tails"
+        val reply = event.translate("reply", event.localeContext.get(side, withRoot = true))
+        event.replyEmote(reply, emote).setEphemeral(true).queue()
 
     }
 
