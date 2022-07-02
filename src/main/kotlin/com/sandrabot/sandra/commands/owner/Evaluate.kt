@@ -19,6 +19,8 @@ package com.sandrabot.sandra.commands.owner
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
+import com.sandrabot.sandra.constants.Constants
+import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.CommandManager
@@ -27,11 +29,13 @@ import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.hastebin
 import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.events.await
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
@@ -39,116 +43,125 @@ import org.slf4j.LoggerFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
-@Suppress("unused")
-class Evaluate : Command(name = "eval", arguments = "[@script:text]", guildOnly = true) {
+@OptIn(ExperimentalTime::class)
+class Evaluate : Command(name = "evaluate", guildOnly = true) {
 
     private val engineContext = SupervisorJob() + Dispatchers.IO
-    private val engine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
-    private val imports: String
+    private val scriptEngine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
+    private val persistentImports = mutableSetOf<String>()
+    private var isRunning = false
 
     init {
         setIdeaIoUseFallback()
-        imports = buildString {
-            // Import every Sandra package, excluding commands
-            Package.getPackages().map { it.name }.filter {
-                it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
-            }.forEach { append("import ", it, ".*\n") }
-            // Include some miscellaneous imports for quality of life
-            additionalImports.forEach { append("import ", it, "\n") }
-            append("\n\n")
-        }
+        persistentImports += Package.getPackages().map { it.name }.filter {
+            it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
+        }.map { "$it.*" }.sorted()
+        persistentImports += additionalImports.sorted()
     }
 
-    @OptIn(ExperimentalTime::class)
-    override suspend fun execute(event: CommandEvent) {
+    override suspend fun execute(event: CommandEvent) = if (isRunning) {
+        event.reply("so, it looks like the engine is already running").setEphemeral(true).queue()
+    } else {
+        isRunning = true
+        event.reply("great, i'm ready whenever you are").setEphemeral(true).await()
+        waitForMessage(event)
+    }
 
-        // Display "bot is thinking" while a result is calculated
-        // Don't wait to call this because the script engine takes a while to start up at first
-        event.deferReply().await()
+    private suspend fun waitForMessage(event: CommandEvent) = event.sandra.shards.await<MessageReceivedEvent> {
+        it.author.idLong in Constants.DEVELOPERS && it.message.contentRaw.matches(snippetPattern)
+    }.let { process(it, event) }
 
-        // Create a map of the variables we might want
-        val bindings = listOf(
-            Triple("event", event, CommandEvent::class),
-            Triple("user", event.user, User::class),
-            Triple("member", event.member, Member::class),
-            Triple("channel", event.guildChannel, GuildMessageChannel::class),
-            Triple("guild", event.guild, Guild::class),
-            // This command can only be used within guilds, so guild will never be null
-            Triple("id", event.guild!!.id, String::class),
-            Triple("gc", event.guildConfig, GuildConfig::class),
-            Triple("uc", event.userConfig, UserConfig::class),
-            Triple("sandra", event.sandra, Sandra::class),
-            Triple("shards", event.sandra.shards, ShardManager::class),
-            Triple("commands", event.sandra.commands, CommandManager::class),
-            Triple("redis", event.sandra.redis, RedisManager::class),
-            Triple("config", event.sandra.config, ConfigurationManager::class),
-        )
+    private suspend fun process(event: MessageReceivedEvent, commandEvent: CommandEvent) {
+        // send a response, so we actually know when the engine is thinking
+        val reply = event.message.reply("${Emotes.LOADING} hold on a sec while i crunch the numbers").await()
+        // start parsing and building the snippet into a script
+        val snippetMatch = snippetPattern.matchEntire(event.message.contentRaw) ?: throw AssertionError("No match")
+        val rawSnippet = snippetMatch.groupValues.drop(1).first { it.isNotBlank() }
+        // find and rearrange any additional imports. we should also persist these across executions
+        val importLines = rawSnippet.lines().takeWhile { it.startsWith("import") }
+        persistentImports += importLines.map { it.substringAfter("import ") }
+        // now we can actually start building the script
+        val variables = buildVariables(event, commandEvent)
+        val snippet = rawSnippet.lines().filterNot { it in importLines }.joinToString("\n")
+        val allImports = persistentImports.joinToString("\n", postfix = "\n\n") { "import $it" }
+        val (value, duration) = execute(allImports + variables + snippet, CoroutineExceptionHandler { _, throwable ->
+            handle(reply, "**unknown** with unhandled exception", throwable.stackTraceToString())
+        })
+        if (value == null) {
+            reply.editMessage("evaluated in ${duration.format()} with no returns").await()
+        } else handle(reply, duration.format(), value.toString())
+        waitForMessage(commandEvent)
+    }
 
-        // Insert them into the script engine
-        bindings.forEach { engine.put(it.first, it.second) }
-
-        // Prepend the variables to the script, so we don't have to use bindings["name"]
-        val variables = bindings.joinToString("\n", postfix = "\n\n") {
-            """val ${it.first} = bindings["${it.first}"] as ${it.third.qualifiedName}"""
-        }
-
-        // Strip the command block if present
-        val args = event.arguments.text("script")!!
-        val strippedScript = blockPattern.find(args)?.let { it.groupValues[1] } ?: args
-
-        // Before we begin constructing the script, we need to find any additional imports
-        val importLines = strippedScript.lines().takeWhile { it.startsWith("import") }
-        val additionalImports = importLines.joinToString("\n", postfix = "\n\n")
-        val script = strippedScript.lines().filterNot { it in importLines }.joinToString("\n")
-        val handler = CoroutineExceptionHandler { _, throwable ->
-            handleResult(event, "**unknown** with unhandled exception", throwable.stackTraceToString())
-        }
-
-        // Measure how long it takes to evaluate the script
-        val timedResult = measureTimedValue {
-            // We still need to catch any unexpected coroutine exceptions
-            withContext(engineContext + handler) {
-                try {
-                    engine.eval(imports + additionalImports + variables + script)
-                } catch (throwable: Throwable) {
-                    throwable
-                }
+    private suspend fun execute(script: String, handler: CoroutineExceptionHandler) = measureTimedValue {
+        withContext(engineContext + handler) {
+            try {
+                scriptEngine.eval(script)
+            } catch (throwable: Throwable) {
+                throwable
             }
         }
-
-        val duration = timedResult.duration.format()
-        val result = timedResult.value?.toString() ?: run {
-            event.sendMessage("evaluated in $duration with no returns").queue()
-            return
-        }
-        handleResult(event, duration, result)
-
     }
 
-    private fun handleResult(event: CommandEvent, duration: String, result: String) {
-        // Check the result length, if it's too large attempt to upload it to hastebin
+    private fun handle(message: Message, duration: String, result: String) {
+        // format the result and make sure it isn't too long to send
         val formatted = "evaluated in $duration\n```\n$result\n```"
         if (formatted.length > Message.MAX_CONTENT_LENGTH) {
-            // If the upload failed, print it to the console
-            val hastebin = hastebin(result) ?: run {
-                event.sendMessage("upload failed, result was logged").queue()
+            // upload it to hastebin and send the link since it's too big
+            hastebin(result)?.let { link ->
+                message.editMessage("evaluated in $duration $link").queue()
+            } ?: run {
+                message.editMessage("upload failed, result was logged").queue()
                 logger.info("Evaluation result failed to upload:\n$result")
-                return
             }
-            event.sendMessage("evaluated in $duration $hastebin").queue()
-        } else event.sendMessage(formatted).queue()
+        } else message.editMessage(formatted).queue()
+    }
+
+    private fun buildVariables(event: MessageReceivedEvent, commandEvent: CommandEvent): String {
+        val bindings = listOf(
+            Triple("channel", event.guildChannel, GuildMessageChannel::class),
+            Triple("commands", commandEvent.sandra.commands, CommandManager::class),
+            Triple("config", commandEvent.sandra.config, ConfigurationManager::class),
+            Triple("gc", commandEvent.sandra.config.getGuild(event.guild.idLong), GuildConfig::class),
+            Triple("uc", commandEvent.sandra.config.getUser(event.author.idLong), UserConfig::class),
+            Triple("ce", commandEvent, CommandEvent::class),
+            Triple("event", event, MessageReceivedEvent::class),
+            Triple("guild", event.guild, Guild::class),
+            Triple("id", event.guild.id, String::class),
+            Triple("member", event.member, Member::class),
+            Triple("redis", commandEvent.sandra.redis, RedisManager::class),
+            Triple("sandra", commandEvent.sandra, Sandra::class),
+            Triple("shards", commandEvent.sandra.shards, ShardManager::class),
+            Triple("user", event.author, User::class),
+        )
+        // insert the variables into the script engine
+        bindings.forEach { scriptEngine.put(it.first, it.second) }
+        return bindings.joinToString("\n", postfix = "\n\n") {
+            """val ${it.first} = bindings["${it.first}"] as ${it.third.qualifiedName}"""
+        }
     }
 
     private companion object {
         private val logger = LoggerFactory.getLogger(Evaluate::class.java)
-        private val blockPattern = Regex("""```\S*\n(.*)```""", RegexOption.DOT_MATCHES_ALL)
-        private val additionalImports = arrayOf(
-            "java.awt.Color", "java.util.*", "java.util.concurrent.TimeUnit",
-            "java.time.OffsetDateTime", "kotlin.coroutines.*", "kotlinx.coroutines.*", "kotlin.time.Duration",
-            "net.dv8tion.jda.api.interactions.commands.*", "net.dv8tion.jda.api.interactions.commands.build.*",
-            "net.dv8tion.jda.api.interactions.components.*", "net.dv8tion.jda.api.interactions.components.buttons.*",
-            "net.dv8tion.jda.api.interactions.components.selections.*", "net.dv8tion.jda.api.*",
-            "net.dv8tion.jda.api.entities.*", "redis.clients.jedis.*"
+        private val snippetPattern = Regex("""^```kotlin\n(.+)\n```|^`([^`]+)""", RegexOption.DOT_MATCHES_ALL)
+        private val additionalImports = listOf(
+            "java.awt.Color",
+            "java.io.InputStream",
+            "java.time.OffsetDateTime",
+            "java.util.*",
+            "kotlin.coroutines.*",
+            "kotlin.time.Duration",
+            "kotlinx.coroutines.*",
+            "net.dv8tion.jda.api.*",
+            "net.dv8tion.jda.api.entities.*",
+            "net.dv8tion.jda.api.interactions.commands.*",
+            "net.dv8tion.jda.api.interactions.commands.build.*",
+            "net.dv8tion.jda.api.interactions.components.*",
+            "net.dv8tion.jda.api.interactions.components.buttons.*",
+            "net.dv8tion.jda.api.interactions.components.selections.*",
+            "net.dv8tion.jda.api.interactions.components.text.*",
+            "net.dv8tion.jda.api.interactions.modals.*",
+            "redis.clients.jedis.*"
         )
     }
 
