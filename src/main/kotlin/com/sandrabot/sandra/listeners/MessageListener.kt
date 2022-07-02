@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.LoggerFactory
 
 /**
- * Event listener that deals with features relating to messages and their content.
+ * Event listener that processes events related to message content.
  */
 class MessageListener(private val sandra: Sandra): CoroutineEventListener {
 
@@ -118,12 +118,8 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
         // Check to make sure this user is allowed to gain global experience
         if (!checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.GLOBAL_EXPERIENCE)) {
             // Check to see if this user can receive experience
-            if (userConfig.canExperience()) {
-                // Award a random amount of experience between 15 and 25
-                if (userConfig.awardExperience(randomExperience())) {
-                    // TODO Feature: Global Level Up Notifications and Rewards
-                }
-            }
+            // Award a random amount of experience between 15 and 25
+            if (userConfig.canExperience()) userConfig.awardExperience(randomExperience())
         }
 
         // TODO Feature: Message Replies
