@@ -54,7 +54,8 @@ private val templateTokens = mapOf<String, KFunction<*>>(
 fun String.formatTemplate(sandra: Sandra, guild: Guild, member: Member): String {
     var formattedText = this
     templateRegex.findAll(this).filter { it.groupValues[1] in templateTokens }.mapNotNull {
-        val kFunction = templateTokens[it.groupValues[1]] ?: return@mapNotNull null
+        val token = it.groupValues[1]
+        val kFunction = templateTokens[token] ?: return@mapNotNull null
         val instance: Any = when (val type = kFunction.instanceParameter?.type?.javaType) {
             GuildImpl::class.javaObjectType -> guild
             MemberImpl::class.javaObjectType -> member
@@ -67,7 +68,7 @@ fun String.formatTemplate(sandra: Sandra, guild: Guild, member: Member): String 
         it.range to when (val result = kFunction.call(instance)) {
             is Number -> "%,d".format(result)
             is String -> result.sanitize()
-            is OffsetDateTime -> if (it.groupValues[1].contains("age")) "<t:${result.toEpochSecond()}:R>" else "<t:${result.toEpochSecond()}>"
+            is OffsetDateTime -> "<t:${result.toEpochSecond()}${if (token.contains("age")) ":R" else ""}>"
             else -> throw IllegalArgumentException("Function for ${it.value} returned $result")
         }
     }.toList().asReversed().forEach { (range, value) ->
