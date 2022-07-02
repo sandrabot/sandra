@@ -120,14 +120,16 @@ class Evaluate : Command(name = "evaluate", guildOnly = true) {
     }
 
     private fun buildVariables(event: MessageReceivedEvent, commandEvent: CommandEvent): String {
+        val guildConfig = commandEvent.sandra.config.getGuild(event.guild.idLong)
+        val userConfig = commandEvent.sandra.config.getUser(event.author.idLong)
         val bindings = listOf(
             Triple("channel", event.guildChannel, GuildMessageChannel::class),
             Triple("commands", commandEvent.sandra.commands, CommandManager::class),
             Triple("config", commandEvent.sandra.config, ConfigurationManager::class),
-            Triple("gc", commandEvent.sandra.config.getGuild(event.guild.idLong), GuildConfig::class),
-            Triple("uc", commandEvent.sandra.config.getUser(event.author.idLong), UserConfig::class),
-            Triple("mc", commandEvent.memberConfig, MemberConfig::class),
-            Triple("cc", commandEvent.channelConfig, ChannelConfig::class),
+            Triple("gc", guildConfig, GuildConfig::class),
+            Triple("uc", userConfig, UserConfig::class),
+            Triple("mc", guildConfig.getMember(event.author.idLong), MemberConfig::class),
+            Triple("cc", guildConfig.getChannel(event.channel.idLong), ChannelConfig::class),
             Triple("ce", commandEvent, CommandEvent::class),
             Triple("event", event, MessageReceivedEvent::class),
             Triple("guild", event.guild, Guild::class),
