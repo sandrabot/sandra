@@ -23,21 +23,30 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.internal.entities.GuildImpl
 import net.dv8tion.jda.internal.entities.MemberImpl
 import net.dv8tion.jda.internal.entities.UserImpl
+import java.time.OffsetDateTime
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.instanceParameter
 import kotlin.reflect.jvm.javaType
 
 private val templateRegex = Regex("""\{([\S.]+)}""")
 private val templateTokens = mapOf<String, KFunction<*>>(
-    // TODO: Expand and implement more tokens
     "@user" to MemberImpl::getAsMention,
     "user.name" to UserImpl::getName,
+    "user.nickname" to MemberImpl::getEffectiveName,
     "user.dis" to UserImpl::getDiscriminator,
     "user.id" to MemberImpl::getId,
     "user.tag" to UserImpl::getAsTag,
+    "user.age" to MemberImpl::getTimeCreated,
+    "user.created" to UserImpl::getTimeCreated,
+    "user.exp" to UserConfig::experience.getter,
     "user.level" to UserConfig::level.getter,
+    "user.money" to UserConfig::credits.getter,
+    "server.id" to GuildImpl::getId,
     "server.name" to GuildImpl::getName,
-    "server.count" to GuildImpl::getMemberCount
+    "server.members" to GuildImpl::getMemberCount,
+    "server.boosts" to GuildImpl::getBoostCount,
+    "server.created" to GuildImpl::getTimeCreated,
+    "server.age" to GuildImpl::getTimeCreated,
 )
 
 fun String.formatTemplate(sandra: Sandra, guild: Guild, member: Member): String {
@@ -54,6 +63,7 @@ fun String.formatTemplate(sandra: Sandra, guild: Guild, member: Member): String 
         it.range to when (val result = kFunction.call(instance)) {
             is Number -> "%,d".format(result)
             is String -> result.sanitize()
+            is OffsetDateTime -> if (it.groupValues[1].contains("age")) "<t:${result.toEpochSecond()}:R>" else "<t:${result.toEpochSecond()}>"
             else -> throw IllegalArgumentException("Function for ${it.value} returned $result")
         }
     }.toList().asReversed().forEach { (range, value) ->
