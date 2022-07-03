@@ -45,7 +45,7 @@ class Help : Command(arguments = "[command]") {
 
             // Begin putting the embed together, starting with the command path and category
             val readablePath = command.path.replace('/', ' ')
-            val wordCommands = event.get("commands.commands.command_title")
+            val wordCommands = event.getAny("commands.commands.command_title")
             val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())

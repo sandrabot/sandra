@@ -27,8 +27,7 @@ class Toss : Command() {
     override suspend fun execute(event: CommandEvent) {
 
         val (emote, side) = if (Random.nextBoolean()) Emotes.SANDOLLAR to "heads" else Emotes.TAILS to "tails"
-        val reply = event.get("reply", event.localeContext.get(side))
-        event.replyEmote(reply, emote).setEphemeral(true).queue()
+        event.replyEmote(event.get("reply", event.get(side)), emote).setEphemeral(true).queue()
 
     }
 

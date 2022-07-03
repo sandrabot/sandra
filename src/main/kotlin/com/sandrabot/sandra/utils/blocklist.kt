@@ -26,7 +26,6 @@ import com.sandrabot.sandra.managers.BlocklistManager
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.MessageChannel
 import org.slf4j.LoggerFactory
-import java.util.*
 
 fun checkCommandBlocklist(event: CommandEvent): Boolean = checkBlocklist(
     event.sandra, event.channel, event.user.idLong, event.guild?.idLong, FeatureType.COMMANDS
@@ -56,7 +55,7 @@ fun blocklistNotify(
         guild.name.sanitize() to guild.locale
     } else {
         val user = sandra.shards.getUserById(userId) ?: return
-        user.name.sanitize() to (user.probableLocale() ?: Locale.US)
+        user.name.sanitize() to user.probableLocale()
     }
     val reason = entry.getReason(featureType)
     val blockedMessage = Unicode.CROSS_MARK + " " +

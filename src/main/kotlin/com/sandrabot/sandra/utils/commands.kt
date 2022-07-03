@@ -29,8 +29,7 @@ fun Command.asCommandData(sandra: Sandra): SlashCommandData? {
     // TODO Replace with localization maps
     val topNames = available.associateWith { sandra.locales.get(it, "commands.$commandPath.name") }
     val topDescriptions = available.associateWith { sandra.locales.get(it, "commands.$commandPath.description") }
-    val data = Commands.slash(topNames[Locale.US]!!, topDescriptions[Locale.US]!!)
-    if (ownerOnly) data.isDefaultEnabled = false
+    val data = Commands.slash(topNames[Locale.US]!!, topDescriptions[Locale.US]!!).setGuildOnly(guildOnly)
     if (arguments.isNotEmpty()) data.addOptions(arguments.map { it.asOptionData(sandra, commandPath) })
     if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.group }.forEach { (group, commands) ->
         val subcommandData = commands.map { subcommand ->

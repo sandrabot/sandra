@@ -44,7 +44,7 @@ fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
 
-fun User.probableLocale(): Locale? = mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key
+fun User.probableLocale(): Locale = mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: Locale.US
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
