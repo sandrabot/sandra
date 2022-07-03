@@ -26,7 +26,7 @@ class Fortune : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.replyEmote(fortunes.random(), Unicode.FORTUNE_COOKIE).setEphemeral(true).queue()
+        event.replyEmote(event.get("reply", fortunes.random()), Unicode.FORTUNE_COOKIE).setEphemeral(true).queue()
 
     }
 

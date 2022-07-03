@@ -17,8 +17,7 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Constants
-import io.ktor.content.*
-import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.util.*
@@ -49,12 +48,10 @@ fun User.probableLocale(): Locale? = mutualGuilds.groupingBy { it.locale }.eachC
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 
-fun hastebin(text: String): String? {
-    return try {
-        postBlocking<Map<String, String>>(
-            "${Constants.HASTEBIN}/documents", TextContent(text, ContentType.Text.Plain)
-        ).let { "${Constants.HASTEBIN}/${it["key"]}" }
-    } catch (t: Throwable) {
-        null
+fun hastebin(text: String): String? = try {
+    postBlocking<JsonObject>("${Constants.HASTEBIN}/documents", text).let {
+        "${Constants.HASTEBIN}/${it.string("key")}"
     }
+} catch (t: Throwable) {
+    null
 }

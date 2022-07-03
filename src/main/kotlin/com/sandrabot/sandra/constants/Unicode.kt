@@ -28,6 +28,5 @@ object Unicode {
     const val GAME_DIE = "\uD83C\uDFB2"
     const val HEAVY_BLACK_HEART = "\u2764"
     const val SCALES = "\u2696"
-    const val VERTICAL_LINE = "\uFF5C"
 
 }

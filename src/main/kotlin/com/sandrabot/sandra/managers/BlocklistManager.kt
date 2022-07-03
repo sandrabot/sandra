@@ -19,7 +19,6 @@ package com.sandrabot.sandra.managers
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.blocklist.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -27,7 +26,6 @@ import kotlinx.serialization.json.Json
 /**
  * Keeps track of blocked features and offence history.
  */
-@OptIn(ExperimentalSerializationApi::class)
 class BlocklistManager(private val sandra: Sandra) {
 
     private val entries = mutableMapOf<Long, BlocklistEntry>()

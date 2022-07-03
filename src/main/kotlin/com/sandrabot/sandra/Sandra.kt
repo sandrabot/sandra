@@ -20,14 +20,13 @@ import com.sandrabot.sandra.api.SandraAPI
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.listeners.CommandListener
-import com.sandrabot.sandra.listeners.EventWaiter
+import com.sandrabot.sandra.listeners.InteractionListener
 import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
-import com.sandrabot.sandra.services.PresenceService
-import com.sandrabot.sandra.utils.await
+import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.events.CoroutineEventManager
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Message
@@ -45,12 +44,11 @@ import java.util.*
  * This class is the heart and soul of the bot. To avoid static abuse,
  * it must be used to access other systems throughout the codebase.
  */
-class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credentials: CredentialManager) {
+class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val credentials: CredentialManager) {
 
-    val apiEnabled = sandraConfig.apiEnabled
     val development = sandraConfig.development
-    val commandUpdates = sandraConfig.commandUpdates
-    val color = if (development) Colors.RED else Colors.BLURPLE
+    val color = if (development) Colors.WELL_READ else Colors.SEA_SERPENT
+    val shards: ShardManager
 
     val api = SandraAPI(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
@@ -58,21 +56,12 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
     val config = ConfigurationManager(this)
     val locales = LocaleManager()
     val commands = CommandManager(this)
-    val eventManager = EventManager()
-    val eventWaiter = EventWaiter()
+    val eventManager = CoroutineEventManager()
     val messages = MessageManager()
     val patreon = PatreonManager(this)
-    val presence = PresenceService(this)
     val statistics = StatisticsManager()
 
-    val shards: ShardManager
-
-    private val logger = LoggerFactory.getLogger(Sandra::class.java)
-
     init {
-
-        // Configure the development presence, if enabled
-        if (development) presence.setDevelopment()
 
         // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
         val disabledMentioned = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
@@ -88,13 +77,15 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         builder.setChunkingFilter(ChunkingFilter.include(Constants.GUILD_HANGOUT))
         builder.setShardsTotal(sandraConfig.shardsTotal)
         builder.setStatus(OnlineStatus.IDLE)
-        builder.addEventListeners(eventManager)
+        builder.setEventManagerProvider { eventManager }
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setEnableShutdownHook(false)
 
-        // Register event listeners using our event manager
-        // The ready listener will remove itself after startup finishes
-        eventManager.register(MessageListener(this), CommandListener(this), eventWaiter, ReadyListener(this))
+        // Register our listeners so we actually receive the events
+        builder.addEventListeners(
+            // The ready listener will remove itself after startup finishes
+            InteractionListener(this), MessageListener(this), ReadyListener(this)
+        )
 
         // Block the thread until the first shard signs in
         shards = builder.build()
@@ -102,7 +93,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val self = shards.shardCache.first().selfUser
         logger.info("Signed into Discord as ${self.asTag} (${self.id})")
 
-        if (apiEnabled) api.start()
+        if (sandraConfig.apiEnabled) api.start()
 
     }
 
@@ -135,7 +126,7 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         }
         logger.info("Shutdown called by $caller with restart: $restart")
 
-        if (apiEnabled) api.shutdown()
+        if (sandraConfig.apiEnabled) api.shutdown()
         shards.shutdown()
         blocklist.shutdown()
         config.shutdown()
@@ -144,6 +135,10 @@ class Sandra(sandraConfig: SandraConfig, val redis: RedisManager, val credential
         val code = if (restart) 2 else 0
         logger.info("Finished shutting down, halting runtime with code $code")
         Runtime.getRuntime().halt(code)
+    }
+
+    private companion object {
+        private val logger = LoggerFactory.getLogger(Sandra::class.java)
     }
 
 }

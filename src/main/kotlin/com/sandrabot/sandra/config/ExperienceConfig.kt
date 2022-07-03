@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.commands.custom
+package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.Command
-import com.sandrabot.sandra.events.CommandEvent
+import kotlinx.serialization.Serializable
 
-@Suppress("unused")
-class Snowy : Command() {
-
-    override suspend fun execute(event: CommandEvent) = event.reply("\uD83D\uDD95").setEphemeral(true).queue()
-
+@Serializable
+abstract class ExperienceConfig : Configuration() {
+    var experienceLast: Long = 0
+    var experience: Long = 0
+    var level: Int = 0
 }

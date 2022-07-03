@@ -19,13 +19,13 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.spaceRegex
-import io.ktor.http.cio.websocket.*
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
 import kotlin.time.Duration
 
-private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z0-9,.]+))?]""")
+private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z\d,.]+))?]""")
 private val durationRegex = Regex("""^(?!$)(?:(\d+)d ?)?(?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?$""")
 private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 
@@ -198,10 +198,10 @@ private fun parseDuration(options: List<OptionMapping>, arg: Argument): Duration
     return duration?.let { if (it.inWholeSeconds > 0) duration else null }
 }
 
-private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Emote? {
+private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Emoji? {
     val option = findOption(options, arg) ?: return null
     // Only match the entire string to be consistent with the other types
     val match = emoteRegex.matchEntire(option.asString) ?: return null
     // Check against all guilds, usually the emote isn't from the calling guild
-    return event.sandra.shards.getEmoteById(match.groupValues[1])
+    return event.sandra.shards.getEmojiById(match.groupValues[1])
 }

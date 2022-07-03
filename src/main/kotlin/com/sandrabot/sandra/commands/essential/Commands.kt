@@ -16,19 +16,18 @@
 
 package com.sandrabot.sandra.commands.essential
 
-import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.asEmoteUrl
-import net.dv8tion.jda.api.entities.Emoji
+import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.events.onSelection
 import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
+import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import net.dv8tion.jda.api.requests.ErrorResponse
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 
 @Suppress("unused")
 class Commands : Command() {
@@ -36,20 +35,18 @@ class Commands : Command() {
     override suspend fun execute(event: CommandEvent) {
 
         val selectionMenu = getSelectionMenu(event)
-        event.reply(getEmbeds(event, Category.ESSENTIAL)).addActionRow(selectionMenu)
-            .setEphemeral(true).queue({ waitForSelection(event, selectionMenu) }, handler)
+        event.reply(getEmbeds(event, Category.ESSENTIAL)).addActionRow(selectionMenu).setEphemeral(true).await()
+        waitForSelection(event)
 
     }
 
-    private fun waitForSelection(event: CommandEvent, selectionMenu: SelectMenu) {
-        event.sandra.eventWaiter.waitForEvent(SelectMenuInteractionEvent::class,
-            timeout = 2, unit = TimeUnit.MINUTES,
-            expired = { event.hook.editOriginalComponents().queue(null, handler) },
-            test = { it.componentId == componentPrefix + event.encodedInteraction && it.user.idLong == event.user.idLong }
-        ) {
-            val embeds = getEmbeds(event, Category.valueOf(it.values.first()))
-            it.editMessageEmbeds(embeds).queue { waitForSelection(event, selectionMenu) }
-        }
+    private fun waitForSelection(event: CommandEvent) = event.sandra.shards.onSelection(
+        componentPrefix + event.encodedInteraction, timeout = 2.minutes
+    ) { selectEvent ->
+        // only process this event if it's from the author of the interaction
+        if (selectEvent.user != event.user) return@onSelection
+        val embeds = getEmbeds(event, Category.valueOf(selectEvent.values[0]))
+        selectEvent.editMessageEmbeds(embeds).await()
     }
 
     private companion object {
@@ -67,7 +64,7 @@ class Commands : Command() {
                 }.toSortedMap().map { (category, _) ->
                     val displayName = event.getAny(category.path())
                     SelectOption.of(displayName + " " + event.get("command_title"), category.name)
-                        .withEmoji(Emoji.fromMarkdown(category.emote))
+                        .withEmoji(Emoji.fromFormatted(category.emote))
                 }).also { menuBuilder = it }
         }).setId(componentPrefix + event.encodedInteraction).build()
 
@@ -84,10 +81,9 @@ class Commands : Command() {
                 val commandDescription = event.getAny("commands.${it.name}.description")
                 buildString { append("`/", it.name, "` - ", commandDescription, "\n") }
             }.chunked(20).map { it.joinToString("") } // Chunk the commands into groups and combine them
-            val title = event.getAny("commands.help.extra_help")
-            val author = event.getAny(category.path()) + " " + event.get("command_title")
-            val embed = event.embed.setTitle(title, Constants.DIRECT_SUPPORT).setThumbnail(event.selfUser.effectiveAvatarUrl)
-            embed.setAuthor(author, null, category.emote.asEmoteUrl()).setFooter(event.get("more_information"))
+            val embed = event.embed.setTitle(
+                "${category.emote} ${event.getAny(category.path())} ${event.get("command_title")}"
+            ).setThumbnail(event.selfUser.effectiveAvatarUrl).setFooter(event.get("more_information"))
             // Build each page using the embed template and its own description
             return embedDescriptions.map { embed.setDescription(it).build() }
         }

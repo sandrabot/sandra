@@ -19,8 +19,8 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.await
 import com.sandrabot.sandra.utils.format
+import dev.minn.jda.ktx.coroutines.await
 import kotlin.time.Duration.Companion.milliseconds
 
 @Suppress("unused")
@@ -31,7 +31,7 @@ class Ping : Command() {
         event.deferReply(ephemeral = true).await()
         val (rest, websocket) = arrayOf(event.jda.restPing.await(), event.jda.gatewayPing).map { ping ->
             val formatted = ping.milliseconds.format()
-            if (ping > 250) "${Emotes.WARN} $formatted" else formatted
+            if (ping > 250) "${Emotes.NOTICE} $formatted" else formatted
         }
         event.sendInfo(event.get("reply", rest, websocket)).queue()
 

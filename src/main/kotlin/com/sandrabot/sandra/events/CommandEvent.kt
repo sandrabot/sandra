@@ -17,11 +17,12 @@
 package com.sandrabot.sandra.events
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
-import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
@@ -43,7 +44,7 @@ class CommandEvent(
     val options: List<OptionMapping> get() = event.options
     val hook: InteractionHook get() = event.hook
 
-    val textChannel: TextChannel get() = event.textChannel
+    val guildChannel: GuildMessageChannel get() = event.guildChannel
     val channel: MessageChannel get() = event.channel
     val embed: EmbedBuilder get() = sandra.createEmbed()
 
@@ -62,6 +63,8 @@ class CommandEvent(
 
     val arguments: ArgumentResult by lazy { parseArguments(this, command.arguments) }
     val guildConfig: GuildConfig? by lazy { guild?.let { sandra.config.getGuild(it.idLong) } }
+    val channelConfig: ChannelConfig? by lazy { guildConfig?.getChannel(guildChannel.idLong) }
+    val memberConfig: MemberConfig? by lazy { guildConfig?.getMember(user.idLong) }
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }
     val localeContext: LocaleContext by lazy {
@@ -83,12 +86,12 @@ class CommandEvent(
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(embeds: List<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
 
-    fun sendEmote(message: String, emote: String) = sendMessage(emote + Unicode.VERTICAL_LINE + message)
+    fun sendEmote(message: String, emote: String) = sendMessage(emote + " " + message)
     fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)
-    fun sendError(message: String) = sendEmote(message, Emotes.ERROR)
+    fun sendError(message: String) = sendEmote(message, Emotes.FAILURE)
 
-    fun replyEmote(message: String, emote: String) = reply(emote + Unicode.VERTICAL_LINE + message)
+    fun replyEmote(message: String, emote: String) = reply(emote + " " + message)
     fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)
-    fun replyError(message: String) = replyEmote(message, Emotes.ERROR)
+    fun replyError(message: String) = replyEmote(message, Emotes.FAILURE)
 
 }

@@ -23,7 +23,7 @@ import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.asEmoteUrl
-import com.sandrabot.sandra.utils.await
+import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Help : Command(arguments = "[command]") {
@@ -34,20 +34,21 @@ class Help : Command(arguments = "[command]") {
 
             val command = event.arguments.command() ?: run {
                 // The command couldn't be found with the given path
-                event.replyError(event.get("not_found")).queue()
+                event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }
 
             if (command.ownerOnly || command.category == Category.CUSTOM) {
-                event.replyError(event.get("not_found")).queue()
+                event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }
 
             // Begin putting the embed together, starting with the command path and category
-            val commandPath = command.path.replace('/', ' ')
-            val author = "$commandPath • ${command.category.name.lowercase()}"
+            val readablePath = command.path.replace('/', ' ')
+            val wordCommands = event.get("commands.commands.command_title")
+            val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
-            val embed = event.embed.setAuthor(author, null, command.category.emote.asEmoteUrl())
+            val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())
             embed.setTitle(event.get("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
             val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
@@ -57,19 +58,19 @@ class Help : Command(arguments = "[command]") {
             if (command.arguments.isNotEmpty()) {
                 // Combine all the arguments into a string to be displayed
                 val joined = command.arguments.joinToString(" ") { it.usage }
-                val usageValue = "> **/$commandPath** $joined"
+                val usageValue = "> **/$readablePath** $joined"
                 embed.addField("${Emotes.INFO} ${event.get("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
                 embed.setFooter(event.get("required_arguments"))
             }
-            event.reply(embed.build()).queue()
+            event.reply(embed.build()).setEphemeral(true).queue()
             return
         }
 
-        event.deferReply().await()
+        event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.get("title"), Constants.DIRECT_SUPPORT)
+        val embed = event.embed.setTitle(lang.get("title"))
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
         val configureContent = lang.get("configure_content")
@@ -78,13 +79,13 @@ class Help : Command(arguments = "[command]") {
         val supportContent = lang.get("support_content", Constants.DIRECT_SUPPORT)
         embed.addField(lang.get("configure", Emotes.CONFIG), configureContent, false)
         embed.addField(lang.get("commands", Emotes.COMMANDS), commandsContent, false)
-        embed.addField(lang.get("invite", Emotes.NOTIFY), inviteContent, false)
-        embed.addField(lang.get("support", Emotes.BUBBLES), supportContent, false)
+        embed.addField(lang.get("invite", Emotes.INVITE), inviteContent, false)
+        embed.addField(lang.get("support", Emotes.CHAT), supportContent, false)
 
-        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.joinToString(" and ")
-        embed.setFooter("Built with ${Unicode.HEAVY_BLACK_HEART} by $devs")
+        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
+        embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
-        event.sendMessage(embed.build()).queue()
+        event.sendMessage(embed.build()).setEphemeral(true).queue()
 
     }
 
