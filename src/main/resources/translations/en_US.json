@@ -73,7 +73,10 @@
       "name": "help",
       "description": "look at some basic & essential info about me",
       "arguments": {
-        "command": ["command", "the command you want to take a closer look at"]
+        "command": {
+          "name": "command",
+          "description": "the command you want to take a closer look at"
+        }
       },
       "not_found": "whoops, i **couldn't find** that command. try using **/commands** to find what you're looking for",
       "required_arguments": "any options that are surrounded by <> are required",
@@ -107,8 +110,15 @@
       "name": "roll",
       "description": "test your luck with an imaginary dice set",
       "arguments": {
-        "sides": ["sides", "the number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
-        "max": ["max", "the maximum possible number"]
+        "sides": {
+          "name": "sides",
+          "description": "the number of sides your dice has",
+          "choices": ["d4", "d6", "d8", "d10", "d12", "d20"]
+        },
+        "max": {
+          "name": "max",
+          "description": "the maximum possible number"
+        }
       },
       "reply": "you took a chance and rolled a %1$s out of %2$s"
     },
