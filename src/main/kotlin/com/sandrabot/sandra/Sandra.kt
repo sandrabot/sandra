@@ -54,7 +54,7 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
-    val locales = LocaleManager()
+    val lang = TranslationManager()
     val commands = CommandManager(this)
     val eventManager = CoroutineEventManager()
     val messages = MessageManager()

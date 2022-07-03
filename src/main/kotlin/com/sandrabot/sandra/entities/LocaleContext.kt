@@ -45,7 +45,7 @@ class LocaleContext(private val sandra: Sandra, val locale: Locale, val root: St
      * @see get
      * @see getAny
      */
-    fun getTemplate(path: String, withRoot: Boolean): String = sandra.locales.get(
+    fun getTemplate(path: String, withRoot: Boolean): String = sandra.lang.get(
         locale, if (root == null || !withRoot) path else "$root.$path"
     )
 

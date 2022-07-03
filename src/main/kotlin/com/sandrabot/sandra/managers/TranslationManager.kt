@@ -23,7 +23,10 @@ import kotlinx.serialization.json.*
 import java.io.File
 import java.util.*
 
-class LocaleManager {
+/**
+ * Deals with loading and retrieving translation keys from the language files.
+ */
+class TranslationManager {
 
     private val translations: Map<Locale, Map<String, Any>>
     val availableLocales: Set<Locale>
@@ -66,12 +69,19 @@ class LocaleManager {
         return translation[path] ?: throw MissingTranslationException("Missing translation path $path for $locale")
     }
 
+    /**
+     * Allows you to retrieve the entire list of possible keys for this path.
+     */
     fun getList(locale: Locale, path: String): List<String> = getAny(locale, path).let {
         if (it is List<*>) it.filterIsInstance<String>() else {
             throw IllegalArgumentException("Translation $path for $locale is not a list")
         }
     }
 
+    /**
+     * Retrieves the translation key located at [path].
+     * If the target is a list, a random entry from the list will be returned.
+     */
     fun get(locale: Locale, path: String): String = when (val value = getAny(locale, path)) {
         is String -> value
         is List<*> -> value.random() as String
