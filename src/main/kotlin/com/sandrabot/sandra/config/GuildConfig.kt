@@ -16,10 +16,33 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.entities.Locale
 import kotlinx.serialization.Serializable
 
 /**
  * Stores Sandra-specific properties and settings for guilds.
  */
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable
-class GuildConfig(override val id: Long) : Configuration()
+class GuildConfig(override val id: Long) : Configuration() {
+
+    @Serializable(with = ConfigMapTransformer::class)
+    val channels = mutableMapOf<Long, ChannelConfig>()
+
+    @Serializable(with = ConfigMapTransformer::class)
+    val members = mutableMapOf<Long, MemberConfig>()
+
+    var locale: Locale = Locale.DEFAULT
+    var experienceEnabled: Boolean = true
+    var experienceCompounds: Boolean = true
+    var experienceMultiplier: Double = 1.0
+    var experienceNotifyEnabled: Boolean = true
+    var experienceNotifyTemplate: String? = null
+    var experienceNotifyChannel: Long = 0L
+
+    fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
+    fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }
+
+    override fun toString(): String = "GuildConfig:$id"
+
+}

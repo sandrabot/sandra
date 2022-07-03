@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities.blocklist
+package com.sandrabot.sandra.config
 
-enum class FeatureType {
+import kotlinx.serialization.Serializable
 
-    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_EXPERIENCE, MESSAGES
+/**
+ * Stores Sandra-specific properties and settings for channels within guilds.
+ */
+@Serializable
+class ChannelConfig(override val id: Long) : Configuration() {
 
-}
+    var experienceEnabled: Boolean = true
+    var experienceNotifyEnabled: Boolean = true
+    var experienceMultiplier: Double = 1.0
 
-enum class TargetType {
-
-    GUILD, USER
+    override fun toString(): String = "ChannelConfig:$id"
 
 }

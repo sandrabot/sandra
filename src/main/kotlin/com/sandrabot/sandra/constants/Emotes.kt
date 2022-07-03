@@ -38,7 +38,7 @@ object Emotes {
     const val INVITE = "<:invite:987955716386074674>"
     const val JOIN = "<:join:987915114449621065>"
     const val LEAVE = "<:leave:987915206195814470>"
-    const val LEVELUP = "<:levelup:987913267026485278>"
+    const val LEVEL_UP = "<:levelup:987913267026485278>"
     const val LOADING = "<a:loading:987959612349251584>"
     const val MOD = "<:mod:987919856785559622>"
     const val MUSIC = "<:music:987921840238391317>"

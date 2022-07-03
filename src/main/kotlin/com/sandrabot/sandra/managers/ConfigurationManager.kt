@@ -17,65 +17,63 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.config.*
+import com.sandrabot.sandra.config.Configuration
+import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.jodah.expiringmap.ExpirationListener
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
  * Stores configuration objects in memory to prevent overhead of recreating objects too often.
  */
-class ConfigurationManager(private val sandra: Sandra) : Service(30) {
+class ConfigurationManager(private val sandra: Sandra) : Service(30), ExpirationListener<Long, Configuration> {
 
     private val json = Json { encodeDefaults = true }
     private val accessedKeys = mutableSetOf<Long>()
-    private val configs: ExpiringMap<Long, Configuration> = ExpiringMap.builder()
-        .expirationPolicy(ExpirationPolicy.ACCESSED)
-        .expiration(1, TimeUnit.DAYS)
-        .build()
+    private val configs: ExpiringMap<Long, Configuration> =
+        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.HOURS)
+            .asyncExpirationListener(this).build()
 
     init {
         start()
     }
+
+    fun countGuilds() = configs.count { it.value is GuildConfig }
+    fun countUsers() = configs.count { it.value is UserConfig }
 
     override fun shutdown() {
         super.shutdown()
         execute()
     }
 
-    override fun execute() {
-        val copyOfKeys = synchronized(accessedKeys) {
-            LinkedList(accessedKeys).also { accessedKeys.clear() }
-        }
-        for (key in copyOfKeys) {
-            when (val configuration = configs[key]) {
-                is GuildConfig -> sandra.redis["${RedisPrefix.GUILD}$key"] =
-                    json.encodeToString(ConfigTransformer, configuration)
-                is UserConfig -> sandra.redis["${RedisPrefix.USER}$key"] =
-                    json.encodeToString(ConfigTransformer, configuration)
-                else -> {}
-            }
-        }
+    override fun execute() = synchronized(accessedKeys) {
+        accessedKeys.toList().also { accessedKeys.clear() }
+    }.forEach { store(it, configs[it] ?: return@forEach) }
+
+    override fun expired(key: Long, value: Configuration) = store(key, value)
+
+    private fun store(id: Long, config: Configuration) {
+        val prefix = if (config is GuildConfig) RedisPrefix.GUILD else RedisPrefix.USER
+        sandra.redis["$prefix$id"] = json.encodeToString(config)
     }
 
-    fun countGuilds() = configs.count { it.value is GuildConfig }
-    fun countUsers() = configs.count { it.value is UserConfig }
+    fun getGuild(id: Long) = get<GuildConfig>(id)
+    fun getUser(id: Long) = get<UserConfig>(id)
 
-    fun getGuild(id: Long) = get(id, RedisPrefix.GUILD) as GuildConfig
-    fun getUser(id: Long) = get(id, RedisPrefix.USER) as UserConfig
-
-    fun get(id: Long, redisPrefix: RedisPrefix) =
-        (configs[id] ?: getOrDefault(id, redisPrefix)).also { synchronized(accessedKeys) { accessedKeys.add(id) } }
-
-    private fun getOrDefault(id: Long, redisPrefix: RedisPrefix) = (sandra.redis["$redisPrefix$id"]
-        ?.let { json.decodeFromString(ConfigSerializer, it) } ?: when (redisPrefix) {
-        RedisPrefix.GUILD -> GuildConfig(id)
-        RedisPrefix.USER -> UserConfig(id)
-        else -> throw AssertionError()
-    }).also { configs[id] = it }
+    private inline fun <reified T : Configuration> get(id: Long): T = configs.getOrPut(id) {
+        val prefix = if (T::class == GuildConfig::class) RedisPrefix.GUILD else RedisPrefix.USER
+        sandra.redis["$prefix$id"]?.let { json.decodeFromString<T>(it) } ?: when (T::class) {
+            GuildConfig::class -> GuildConfig(id)
+            UserConfig::class -> UserConfig(id)
+            else -> throw AssertionError("Illegal configuration type")
+        }
+    }.also { synchronized(accessedKeys) { accessedKeys += id } } as T
 
 }

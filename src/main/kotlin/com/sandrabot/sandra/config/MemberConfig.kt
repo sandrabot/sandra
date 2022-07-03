@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities.blocklist
+package com.sandrabot.sandra.config
 
-enum class FeatureType {
+import kotlinx.serialization.Serializable
 
-    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_EXPERIENCE, MESSAGES
+/**
+ * Stores Sandra-specific properties and settings for members.
+ */
+@Serializable
+class MemberConfig(override val id: Long) : ExperienceConfig() {
 
-}
-
-enum class TargetType {
-
-    GUILD, USER
+    override fun toString(): String = "MemberConfig:$id"
 
 }

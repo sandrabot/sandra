@@ -16,16 +16,28 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.utils.string
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
+
+object ConfigMapTransformer : JsonTransformingSerializer<Map<Long, Configuration>>(
+    MapSerializer(Long.serializer(), ConfigSerializer)
+) {
+    // Convert the map into a list of only values
+    override fun transformSerialize(element: JsonElement): JsonElement =
+        buildJsonArray { element.jsonObject.map { add(it.value) } }
+
+    // Convert the list back to a map with the id as they key
+    override fun transformDeserialize(element: JsonElement): JsonElement =
+        buildJsonObject { element.jsonArray.map { put(it.jsonObject.string("id")!!, it.jsonObject) } }
+}
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
     override fun selectDeserializer(element: JsonElement) = when {
         "credits" in element.jsonObject -> UserConfig.serializer()
-        else -> GuildConfig.serializer()
+        "members" in element.jsonObject -> GuildConfig.serializer()
+        "experience" in element.jsonObject -> MemberConfig.serializer()
+        else -> ChannelConfig.serializer()
     }
-}
-
-object ConfigTransformer : JsonTransformingSerializer<Configuration>(ConfigSerializer) {
-    override fun transformSerialize(element: JsonElement): JsonElement =
-        JsonObject(element.jsonObject.filterNot { (k, _) -> k == "type" })
 }

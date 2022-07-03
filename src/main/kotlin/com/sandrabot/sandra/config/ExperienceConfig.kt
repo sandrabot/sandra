@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities.blocklist
+package com.sandrabot.sandra.config
 
-enum class FeatureType {
+import kotlinx.serialization.Serializable
 
-    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_EXPERIENCE, MESSAGES
-
-}
-
-enum class TargetType {
-
-    GUILD, USER
-
+@Serializable
+abstract class ExperienceConfig : Configuration() {
+    var experienceLast: Long = 0
+    var experience: Long = 0
+    var level: Int = 0
 }

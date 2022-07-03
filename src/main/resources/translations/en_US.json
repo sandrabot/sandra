@@ -6,6 +6,7 @@
     "owner_only": "this command **can only be used** by **my owners**. nice try",
     "interaction_error": "uh oh, it looks like something **went wrong** behind the scenes. sorry about that",
     "page_prompt": "why don't you tell me what page you want to see?",
+    "experience_notify": "%1$s {@user} leveled up to **LVL {user.level}**",
     "blocked": "**%1$s** is no longer be able to use this feature. you have been blocked because of: **%2$s**\nthis message is considered fyi and you will not receive another"
   },
   "permissions": {
