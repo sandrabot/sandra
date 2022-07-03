@@ -18,7 +18,6 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.utils.asCommandData
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.OnlineStatus
@@ -46,17 +45,19 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
             // if command updates are enabled, now is the time to perform the updates
             if (sandra.sandraConfig.commandUpdates) {
                 // update the global slash command list, this makes sure the commands match our local commands
-                val (owner, global) = sandra.commands.values.partition { it.ownerOnly }
-                val commands = event.jda.updateCommands().addCommands(global.mapNotNull { it.asCommandData(sandra) }).await()
-                commands.forEach { sandra.commands[it.name]?.id = it.idLong }
-                logger.info("Successfully updated global command list with ${commands.size} commands")
-                // update the command list for all of our development servers
-                arrayOf(Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT).mapNotNull {
-                    sandra.shards.getGuildById(it)
-                }.forEachIndexed { index, guild ->
-                    val await = guild.updateCommands().addCommands(owner.mapNotNull { it.asCommandData(sandra) }).await()
-                    if (index == 0) await.forEach { sandra.commands[it.name]?.id = it.idLong }
-                    logger.info("Successfully updated owner commands with ${await.size} commands for ${guild.id}")
+                val (owner, global) = sandra.commands.values.partition { it.ownerOnly }.toList().map { list ->
+                    list.map { command -> sandra.commands.commandData[command.path] }
+                }
+                val globalCommands = event.jda.updateCommands().addCommands(global).await()
+                // discord returns us a list of metadata, so we can use it to figure out the discord command's id
+                globalCommands.forEach { sandra.commands[it.name]?.id = it.idLong }
+                logger.info("Successfully updated global command list with ${globalCommands.size} commands")
+                // update the owner command list for all of our development servers
+                arrayOf(
+                    Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT
+                ).mapNotNull { sandra.shards.getGuildById(it) }.forEach { guild ->
+                    val ownerCommands = guild.updateCommands().addCommands(owner).await()
+                    logger.info("Successfully updated owner command list with ${ownerCommands.size} commands for ${guild.id}")
                 }
             } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
             logger.info("Shard ${shardInfo.shardString} has finished loading additional items")

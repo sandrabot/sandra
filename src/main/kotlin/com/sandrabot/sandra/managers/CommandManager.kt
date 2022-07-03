@@ -19,42 +19,62 @@ package com.sandrabot.sandra.managers
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.utils.asCommandData
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
 import kotlin.reflect.full.createInstance
 
+/**
+ * Loads and stores all [Command] objects that are available at runtime.
+ */
 class CommandManager(sandra: Sandra) {
 
-    val commands = mutableMapOf<String, Command>()
+    private val commands = mutableMapOf<String, Command>()
 
+    /**
+     * Contains accurate [SlashCommandData] metadata for all top-level commands.
+     * Use this collection when updating the Discord commands at startup.
+     */
+    val commandData = mutableMapOf<String, SlashCommandData>()
+
+    /**
+     * Shorthand for retrieving the list of current commands.
+     * Please note this collection is **mutable**, any changes should be done with care.
+     */
     val values: MutableCollection<Command>
         get() = commands.values
 
     init {
-        val commandClasses = Reflections("com.sandrabot.sandra.commands").getSubTypesOf(Command::class.java)
-        // Filter out subcommand classes, they are instantiated by their parents
-        commandClasses.filterNot { it.isMemberClass }.mapNotNull {
+        val reflections = Reflections("com.sandrabot.sandra.commands").getSubTypesOf(Command::class.java)
+        // filter out any subcommand classes, since they are initialized by their parents
+        reflections.filterNot { it.isMemberClass }.mapNotNull { clazz ->
             try {
-                val command = it.kotlin.createInstance()
-                // Verify that the command data is valid before loading
-                command.asCommandData(sandra)
-                if (command.path in commands) {
+                // attempt to load and create an instance of this command
+                val command = clazz.kotlin.createInstance()
+                // validate the command's metadata before allowing it to be used
+                commandData[command.path] = command.asCommandData(sandra)
+                    ?: throw AssertionError("Command data was null for top level command")
+                if (command.path in commands)
                     throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
-                } else commands[command.path] = command
+                commands[command.path] = command
             } catch (t: Throwable) {
-                logger.error("Failed to instantiate command $it", t)
+                logger.error("An exception occurred while loading command $clazz", t)
                 null
             }
         }
-        // Load all the subcommands into the main command map
+        // add all the subcommands into the main command map
+        // this allows them to be retrieved much easier by the command listener
         commands.values.flatMap { it.allSubcommands }.forEach { commands[it.path] = it }
-        val childrenSum = commands.count { it.value.isSubcommand }
-        logger.info("Successfully loaded ${commands.size - childrenSum} commands with $childrenSum children")
+        val children = commands.count { it.value.isSubcommand }
+        logger.info("Successfully loaded ${commands.size - children} commands with $children subcommands")
     }
 
+    /**
+     * Returns the command at [path], or `null` if the command does not exist.
+     */
     operator fun get(path: String): Command? = commands[path]
 
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(CommandManager::class.java)
     }
 

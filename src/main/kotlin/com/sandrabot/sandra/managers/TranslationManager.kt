@@ -29,15 +29,23 @@ import java.util.*
 class TranslationManager {
 
     private val translations: Map<Locale, Map<String, Any>>
+
+    /**
+     * A collection of locales that have been loaded and are available for use.
+     */
     val availableLocales: Set<Locale>
 
     init {
+        // start loading the translation files by getting a list of resource files
         val directoryPath = object {}.javaClass.getResource("/translations")?.file
         val translationDir = File(directoryPath ?: throw IllegalStateException("Translation directory is missing"))
         if (!translationDir.isDirectory) throw IllegalStateException("$translationDir is not a directory")
         translations = translationDir.listFiles()?.associate { file ->
+            // this is the identifier used by other applications to describe this locale
             val identifier = file.nameWithoutExtension.replace('_', '-')
             val jsonObject: JsonObject = try {
+                // since we don't know the *exact* path for this file, we need to ask for it
+                // this allows us to load it regardless of how the code is executed
                 val path = file.toRelativeString(translationDir.parentFile)
                 val translationJson = getResourceAsText("/$path")
                     ?: throw IllegalStateException("File for $identifier is missing, expected at $path")
@@ -46,24 +54,26 @@ class TranslationManager {
                 throw IllegalStateException("Failed to parse translation file for $identifier", t)
             }
             val pathMap = mutableMapOf<String, Any>()
+            // recursively load all translation paths and values into maps
             loadRecursive("", pathMap, jsonObject)
             Locale.forLanguageTag(identifier) to pathMap
         } ?: throw IllegalStateException("Failed to initialize translations")
         availableLocales = translations.keys
     }
 
-    private fun loadRecursive(root: String, pathMap: MutableMap<String, Any>, jsonObject: JsonObject) {
-        for (entry in jsonObject.entries) {
-            val newRoot = if (root.isEmpty()) entry.key else "$root.${entry.key}"
-            when (val value = entry.value) {
-                is JsonObject -> loadRecursive(newRoot, pathMap, value)
-                is JsonPrimitive -> pathMap[newRoot] = value.content
-                is JsonArray -> pathMap[newRoot] = value.jsonArray.map { it.jsonPrimitive.content }.toList()
-            }
+    private fun loadRecursive(
+        root: String, pathMap: MutableMap<String, Any>, jsonObject: JsonObject
+    ): Unit = jsonObject.entries.forEach { (key, value) ->
+        val path = if (root.isEmpty()) key else "$root.$key"
+        when (value) {
+            is JsonObject -> loadRecursive(path, pathMap, value)
+            is JsonPrimitive -> pathMap[path] = value.content
+            is JsonArray -> pathMap[path] = value.jsonArray.map { it.jsonPrimitive.content }.toList()
         }
     }
 
     private fun getAny(locale: Locale, path: String): Any {
+        // if this locale isn't available, fall back to the default instead of throwing
         val translation = translations[if (locale in translations) locale else Locale.US]
             ?: throw AssertionError("Missing translation map for $locale and ${Locale.US}")
         return translation[path] ?: throw MissingTranslationException("Missing translation path $path for $locale")
