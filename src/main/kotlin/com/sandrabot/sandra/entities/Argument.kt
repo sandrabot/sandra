@@ -20,7 +20,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.spaceRegex
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
 import kotlin.time.Duration
@@ -142,9 +142,11 @@ fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResu
 
     for (arg in arguments) {
         val result: Any? = when (arg.type) {
+            ArgumentType.ATTACHMENT -> findOption(options, arg)?.asAttachment
             ArgumentType.BOOLEAN -> findOption(options, arg)?.asBoolean
             ArgumentType.DOUBLE -> findOption(options, arg)?.asDouble
             ArgumentType.INTEGER -> findOption(options, arg)?.asLong
+            ArgumentType.MEMBER -> findOption(options, arg)?.asMember
             ArgumentType.MENTIONABLE -> findOption(options, arg)?.asMentionable
             ArgumentType.ROLE -> findOption(options, arg)?.asRole
             ArgumentType.TEXT -> findOption(options, arg)?.asString
@@ -198,7 +200,7 @@ private fun parseDuration(options: List<OptionMapping>, arg: Argument): Duration
     return duration?.let { if (it.inWholeSeconds > 0) duration else null }
 }
 
-private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Emoji? {
+private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): RichCustomEmoji? {
     val option = findOption(options, arg) ?: return null
     // Only match the entire string to be consistent with the other types
     val match = emoteRegex.matchEntire(option.asString) ?: return null

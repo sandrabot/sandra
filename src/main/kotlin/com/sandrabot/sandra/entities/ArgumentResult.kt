@@ -17,7 +17,7 @@
 package com.sandrabot.sandra.entities
 
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import kotlin.time.Duration
 
 /**
@@ -45,9 +45,11 @@ class ArgumentResult(val results: Map<String, Any>) {
 
     /* JDA Objects */
 
+    fun attachment(name: String = "attachment"): Message.Attachment? = get(name)
     fun channel(name: String = "channel"): TextChannel? = get(name)
     fun mentionable(name: String = "mentionable"): IMentionable? = get(name)
-    fun emote(name: String = "emote"): Emoji? = get(name)
+    fun emote(name: String = "emote"): RichCustomEmoji? = get(name)
+    fun member(name: String = "member"): Member? = get(name)
     fun news(name: String = "news"): NewsChannel? = get(name)
     fun role(name: String = "role"): Role? = get(name)
     fun stage(name: String = "stage"): StageChannel? = get(name)

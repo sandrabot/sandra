@@ -25,6 +25,11 @@ import net.dv8tion.jda.api.interactions.commands.OptionType
 enum class ArgumentType(val optionType: OptionType) {
 
     /**
+     * Resolves [net.dv8tion.jda.api.entities.Message.Attachment] objects.
+     */
+    ATTACHMENT(OptionType.ATTACHMENT),
+
+    /**
      * Resolves a [Boolean] option.
      */
     BOOLEAN(OptionType.BOOLEAN),
@@ -55,7 +60,7 @@ enum class ArgumentType(val optionType: OptionType) {
     DURATION(OptionType.STRING),
 
     /**
-     * Searches for emotes in guilds. Resolves [net.dv8tion.jda.api.entities.Emote] objects.
+     * Searches for emotes in guilds. Resolves [net.dv8tion.jda.api.entities.emoji.RichCustomEmoji] objects.
      */
     EMOTE(OptionType.STRING),
 
@@ -63,6 +68,11 @@ enum class ArgumentType(val optionType: OptionType) {
      * Resolves any integer between -2^53 and 2^53 as a [Long].
      */
     INTEGER(OptionType.INTEGER),
+
+    /**
+     * Resolves [net.dv8tion.jda.api.entities.Member] objects.
+     */
+    MEMBER(OptionType.USER),
 
     /**
      * Resolves mentionable entities [net.dv8tion.jda.api.entities.Role] and [net.dv8tion.jda.api.entities.User].
@@ -100,10 +110,8 @@ enum class ArgumentType(val optionType: OptionType) {
     VOICE(OptionType.CHANNEL);
 
     companion object {
-        fun fromName(name: String): ArgumentType {
-            return values().firstOrNull { name.equals(it.name, ignoreCase = true) }
-                ?: throw IllegalArgumentException("Unknown argument type with name $name")
-        }
+        fun fromName(name: String): ArgumentType = values().firstOrNull { name.equals(it.name, ignoreCase = true) }
+            ?: throw IllegalArgumentException("Unknown argument type $name")
     }
 
 }
