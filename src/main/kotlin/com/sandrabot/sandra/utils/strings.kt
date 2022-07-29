@@ -19,8 +19,8 @@ package com.sandrabot.sandra.utils
 import com.sandrabot.sandra.constants.Constants
 import kotlinx.serialization.json.JsonObject
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
-import java.util.*
 import kotlin.time.Duration
 
 private val digitRegex = Regex("""\d+""")
@@ -44,7 +44,8 @@ fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
 
-fun User.probableLocale(): Locale = mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: Locale.US
+fun User.probableLocale(): DiscordLocale =
+    mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: DiscordLocale.ENGLISH_US
 
 fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
 

@@ -18,14 +18,14 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.Sandra
 import net.dv8tion.jda.api.entities.Guild
-import java.util.*
+import net.dv8tion.jda.api.interactions.DiscordLocale
 
 /**
  * Utility class for conveniently handling translations.
  */
-class LocaleContext(private val sandra: Sandra, val locale: Locale, val root: String? = null) {
+class LocaleContext(private val sandra: Sandra, val locale: DiscordLocale, val root: String? = null) {
 
-    constructor(sandra: Sandra, guild: Guild?, locale: Locale, root: String? = null) : this(
+    constructor(sandra: Sandra, guild: Guild?, locale: DiscordLocale, root: String? = null) : this(
         sandra, when {
             guild == null -> locale
             locale != guild.locale -> locale

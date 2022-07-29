@@ -21,7 +21,9 @@ import com.sandrabot.sandra.entities.Argument
 import com.sandrabot.sandra.entities.Command
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.commands.build.*
-import java.util.*
+
+// i know this is lame but these lines are already long enough
+private val ENGLISH = DiscordLocale.ENGLISH_US
 
 /**
  * Converts and collects all metadata for this [Command]
@@ -33,11 +35,10 @@ fun Command.asCommandData(sandra: Sandra): SlashCommandData? {
     val available = sandra.lang.availableLocales
     // compute a map of all possible names and descriptions for this command
     val commandNames = available.associateWith { sandra.lang.get(it, "$path.name") }
-    val commandDescriptions = available.associateWith { sandra.lang.get(it, "$path.description") }
-    val data = Commands.slash(commandNames[Locale.US]!!, commandDescriptions[Locale.US]!!).setGuildOnly(guildOnly)
+    val commandDesc = available.associateWith { sandra.lang.get(it, "$path.description") }
+    val data = Commands.slash(commandNames[ENGLISH]!!, commandDesc[ENGLISH]!!).setGuildOnly(guildOnly)
     // convert locales to discord locales and set the translations for the command
-    data.setNameLocalizations(commandNames.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
-    data.setDescriptionLocalizations(commandDescriptions.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
+    data.setNameLocalizations(commandNames).setDescriptionLocalizations(commandDesc)
     // add the argument data here if applicable
     if (arguments.isNotEmpty()) data.addOptions(arguments.map { it.asOptionData(sandra, path) })
     // process any subcommands this command may have
@@ -46,21 +47,19 @@ fun Command.asCommandData(sandra: Sandra): SlashCommandData? {
             val subPath = "commands." + subcommand.path.replace('/', '.')
             // retrieve a map of all possible names and descriptions
             val subNames = available.associateWith { sandra.lang.get(it, "$subPath.name") }
-            val subDescriptions = available.associateWith { sandra.lang.get(it, "$subPath.description") }
-            val subData = SubcommandData(subNames[Locale.US]!!, subDescriptions[Locale.US]!!)
+            val subDesc = available.associateWith { sandra.lang.get(it, "$subPath.description") }
+            val subData = SubcommandData(subNames[ENGLISH]!!, subDesc[ENGLISH]!!)
             // convert locales to discord locales and set the translations for the subcommand
-            subData.setNameLocalizations(subNames.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
-            subData.setDescriptionLocalizations(subDescriptions.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
+            subData.setNameLocalizations(subNames).setDescriptionLocalizations(subDesc)
             subData.addOptions(subcommand.arguments.map { it.asOptionData(sandra, subPath) })
         }
         if (group == null) data.addSubcommands(subcommandData) else {
             // retrieve a map of all possible names and descriptions
             val groupNames = available.associateWith { sandra.lang.get(it, "$path.$group.name") }
-            val groupDescriptions = available.associateWith { sandra.lang.get(it, "$path.$group.description") }
-            val groupData = SubcommandGroupData(groupNames[Locale.US]!!, groupDescriptions[Locale.US]!!)
+            val groupDesc = available.associateWith { sandra.lang.get(it, "$path.$group.description") }
+            val groupData = SubcommandGroupData(groupNames[ENGLISH]!!, groupDesc[ENGLISH]!!)
             // convert locales to discord locales and set the translations for the subcommand group
-            groupData.setNameLocalizations(groupNames.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
-            groupData.setDescriptionLocalizations(groupDescriptions.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
+            groupData.setNameLocalizations(groupNames).setDescriptionLocalizations(groupDesc)
             groupData.addSubcommands(subcommandData)
             data.addSubcommandGroups(groupData)
         }
@@ -73,15 +72,14 @@ fun Argument.asOptionData(sandra: Sandra, commandPath: String): OptionData {
     val available = sandra.lang.availableLocales
     // compute a map of all possible names and descriptions for this option
     val optionNames = available.associateWith { sandra.lang.get(it, "$path.name") }
-    val optionDescriptions = available.associateWith { sandra.lang.get(it, "$path.description") }
-    val data = OptionData(type.optionType, optionNames[Locale.US]!!, optionDescriptions[Locale.US]!!, isRequired)
+    val optionDesc = available.associateWith { sandra.lang.get(it, "$path.description") }
+    val data = OptionData(type.optionType, optionNames[ENGLISH]!!, optionDesc[ENGLISH]!!, isRequired)
     if (choices.isNotEmpty()) {
         val choiceNames = available.associateWith { sandra.lang.getList(it, "$path.choices") }
-        choices.forEachIndexed { index, any -> data.addChoice(choiceNames[Locale.US]?.get(index)!!, any!!) }
+        choices.forEachIndexed { index, any -> data.addChoice(choiceNames[ENGLISH]?.get(index)!!, any!!) }
     }
     // convert locales to discord locales and set the translations for the option
-    data.setNameLocalizations(optionNames.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
-    data.setDescriptionLocalizations(optionDescriptions.mapKeys { (locale, _) -> DiscordLocale.from(locale) })
+    data.setNameLocalizations(optionNames).setDescriptionLocalizations(optionDesc)
     return data
 }
 

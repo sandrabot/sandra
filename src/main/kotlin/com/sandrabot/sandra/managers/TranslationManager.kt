@@ -20,20 +20,20 @@ import com.sandrabot.sandra.exceptions.MissingTranslationException
 import com.sandrabot.sandra.utils.getResourceAsText
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.*
+import net.dv8tion.jda.api.interactions.DiscordLocale
 import java.io.File
-import java.util.*
 
 /**
  * Deals with loading and retrieving translation keys from the language files.
  */
 class TranslationManager {
 
-    private val translations: Map<Locale, Map<String, Any>>
+    private val translations: Map<DiscordLocale, Map<String, Any>>
 
     /**
      * A collection of locales that have been loaded and are available for use.
      */
-    val availableLocales: Set<Locale>
+    val availableLocales: Set<DiscordLocale>
 
     init {
         // start loading the translation files by getting a list of resource files
@@ -56,7 +56,7 @@ class TranslationManager {
             val pathMap = mutableMapOf<String, Any>()
             // recursively load all translation paths and values into maps
             loadRecursive("", pathMap, jsonObject)
-            Locale.forLanguageTag(identifier) to pathMap
+            DiscordLocale.from(identifier) to pathMap
         } ?: throw IllegalStateException("Failed to initialize translations")
         availableLocales = translations.keys
     }
@@ -72,19 +72,19 @@ class TranslationManager {
         }
     }
 
-    private fun getAny(locale: Locale, path: String): Any {
+    private fun getAny(locale: DiscordLocale, path: String): Any {
         // if this locale isn't available, fall back to the default instead of throwing
-        val translation = translations[if (locale in translations) locale else Locale.US]
-            ?: throw AssertionError("Missing translation map for $locale and ${Locale.US}")
+        val translation = translations[if (locale in translations) locale else DiscordLocale.ENGLISH_US]
+            ?: throw AssertionError("Missing default translation map")
         return translation[path] ?: throw MissingTranslationException("Missing translation path $path for $locale")
     }
 
     /**
      * Allows you to retrieve the entire list of possible keys for this path.
      */
-    fun getList(locale: Locale, path: String): List<String> = getAny(locale, path).let {
+    fun getList(locale: DiscordLocale, path: String): List<String> = getAny(locale, path).let {
         if (it is List<*>) it.filterIsInstance<String>() else {
-            throw IllegalArgumentException("Translation $path for $locale is not a list")
+            throw IllegalArgumentException("Translation path $path for $locale is not a list")
         }
     }
 
@@ -92,10 +92,10 @@ class TranslationManager {
      * Retrieves the translation key located at [path].
      * If the target is a list, a random entry from the list will be returned.
      */
-    fun get(locale: Locale, path: String): String = when (val value = getAny(locale, path)) {
+    fun get(locale: DiscordLocale, path: String): String = when (val value = getAny(locale, path)) {
         is String -> value
         is List<*> -> value.random() as String
-        else -> throw AssertionError("Translation $path for $locale is type ${value::class}")
+        else -> throw AssertionError("Translation path $path for $locale is type ${value::class}")
     }
 
 }
