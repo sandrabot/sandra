@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
 
 @Suppress("unused")
-class Cat : Command(name = "cat") {
+class Cat : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply(ephemeral = true).await()
@@ -37,7 +37,7 @@ class Cat : Command(name = "cat") {
         if (response.status == HttpStatusCode.OK) {
             val url = response.body<JsonObject>().string("url")
             event.sendMessage("https://cataas.com$url").queue()
-        } else event.sendError(event.translate("general.interaction_error", withRoot = false)).queue()
+        } else event.sendError(event.getAny("general.interaction_error")).queue()
     }
 
 }

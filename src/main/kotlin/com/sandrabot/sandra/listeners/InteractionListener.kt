@@ -64,7 +64,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             // TODO user privileges and permissions
         } // we don't need to check guild only anymore, thanks discord
         if (command.ownerOnly && !event.isOwner) {
-            event.replyError(event.translate("general.owner_only", withRoot = false))
+            event.replyError(event.getAny("general.owner_only"))
             return
         }
         // and now we can log the command and execute it
@@ -82,10 +82,10 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).await()
             logger.debug("Couldn't finish command execution due to missing permissions", e)
         } catch (e: MissingArgumentException) {
-            event.replyError(event.translate("general.missing_argument", withRoot = false, e.argument.name))
+            event.replyError(event.getAny("general.missing_argument", e.argument.name))
                 .setEphemeral(true).await()
         } catch (t: Throwable) {
-            event.sendError(event.translate("general.interaction_error", withRoot = false)).setEphemeral(true).await()
+            event.sendError(event.getAny("general.interaction_error")).setEphemeral(true).await()
             logger.error("An exception occurred while executing a command", t)
         }
     }

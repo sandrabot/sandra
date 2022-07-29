@@ -46,7 +46,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 @OptIn(ExperimentalTime::class)
-class Evaluate : Command(name = "evaluate", guildOnly = true) {
+class Evaluate : Command(guildOnly = true) {
 
     private val engineContext = SupervisorJob() + Dispatchers.IO
     private val scriptEngine = KotlinJsr223JvmLocalScriptEngineFactory().scriptEngine
@@ -160,6 +160,7 @@ class Evaluate : Command(name = "evaluate", guildOnly = true) {
             "kotlinx.coroutines.*",
             "net.dv8tion.jda.api.*",
             "net.dv8tion.jda.api.entities.*",
+            "net.dv8tion.jda.api.interactions.*",
             "net.dv8tion.jda.api.interactions.commands.*",
             "net.dv8tion.jda.api.interactions.commands.build.*",
             "net.dv8tion.jda.api.interactions.components.*",

@@ -26,21 +26,21 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.MessageEmbed
 
 @Suppress("unused")
-class Shards : Command(name = "shards") {
+class Shards : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
         event.deferReply(ephemeral = true).await()
         val shardFields = event.sandra.shards.shardCache.sortedBy { it.shardInfo.shardId }.map {
             val status = it.status.name.replace("_", " ").lowercase()
-            val value = event.translate("status", status, it.gatewayPing.format(), it.guildCache.size().format())
-            MessageEmbed.Field(event.translate("shard_title", it.shardInfo.shardId), value, true)
+            val value = event.get("status", status, it.gatewayPing.format(), it.guildCache.size().format())
+            MessageEmbed.Field(event.get("shard_title", it.shardInfo.shardId), value, true)
         }
         val size = event.sandra.shards.shardCache.size()
         val connected = event.sandra.shards.shardCache.count { it.status == JDA.Status.CONNECTED }
-        val embed = event.embed.setTitle(event.translate("having_issues"), Constants.DIRECT_SUPPORT)
-        embed.setFooter(event.translate("shards_connected", connected, size) + if (event.isFromGuild)
-            event.translate("server_using", event.jda.shardInfo.shardId) else ""
+        val embed = event.embed.setTitle(event.get("having_issues"), Constants.DIRECT_SUPPORT)
+        embed.setFooter(event.get("shards_connected", connected, size) + if (event.isFromGuild)
+            event.get("server_using", event.jda.shardInfo.shardId) else ""
         )
         Paginator(event).paginate(shardFields.chunked(9).map { chunk ->
             embed.clearFields().also { it.fields.addAll(chunk) }.build()

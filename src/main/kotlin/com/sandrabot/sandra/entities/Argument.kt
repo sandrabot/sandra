@@ -34,7 +34,7 @@ private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
  * The internal constructor ensures the rules defined in [compileArguments] are enforced.
  */
 class Argument internal constructor(
-    val name: String, val type: ArgumentType, val isRequired: Boolean, val options: List<*>
+    val name: String, val type: ArgumentType, val isRequired: Boolean, val choices: List<*>
 ) {
     val usage = run {
         val (start, end) = if (isRequired) "<" to ">" else "[" to "]"
@@ -43,7 +43,7 @@ class Argument internal constructor(
 
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
-        val size = if (options.isNotEmpty()) "[${options.size}]" else ""
+        val size = if (choices.isNotEmpty()) "[${choices.size}]" else ""
         return "Argument:$required$name($type)$size"
     }
 }
@@ -179,7 +179,7 @@ private fun findOption(options: List<OptionMapping>, arg: Argument): OptionMappi
     options.firstOrNull { arg.name == it.name && arg.type.optionType == it.type }
 
 private inline fun <reified T : GuildChannel> parseChannels(options: List<OptionMapping>, arg: Argument): T? =
-    findOption(options, arg)?.asGuildChannel?.let { if (it is T) it else null }
+    findOption(options, arg)?.asChannel?.let { if (it is T) it else null }
 
 private fun parseCategory(options: List<OptionMapping>, arg: Argument): Category? = findOption(options, arg)?.let {
     Category.values().firstOrNull { category -> category.name == it.asString.uppercase() }

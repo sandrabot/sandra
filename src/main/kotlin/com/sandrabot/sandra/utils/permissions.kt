@@ -48,13 +48,11 @@ fun ensurePermission(event: CommandEvent, permission: Permission) {
 
 fun missingSelfMessage(event: CommandEvent, permission: Permission) = missingMessage(event, permission, true)
 fun missingUserMessage(event: CommandEvent, permission: Permission) = missingMessage(event, permission, false)
-private fun missingMessage(event: CommandEvent, permission: Permission, self: Boolean): String {
-    val context = if (permission.isChannel) "channel" else "server"
-    return event.translate(
-        "general." + if (self) "missing_permission" else "missing_user_permission", false,
-        event.localeContext.get("permissions.${findTranslationKey(permission)}", false), context
-    )
-}
+private fun missingMessage(event: CommandEvent, permission: Permission, self: Boolean): String = event.getAny(
+    "general." + if (self) "missing_permission" else "missing_user_permission",
+    event.localeContext.getAny("permissions.${findTranslationKey(permission)}"),
+    if (permission.isChannel) "channel" else "server"
+)
 
 fun findTranslationKey(permission: Permission) = when (permission) {
     Permission.CREATE_INSTANT_INVITE -> "create_invite"

@@ -18,7 +18,6 @@ package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.BlocklistEntry
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.entities.blocklist.TargetType
@@ -53,14 +52,13 @@ fun blocklistNotify(
         val guild = sandra.shards.getGuildById(guildId ?: return) ?: return
         // If this channel is in a guild, make sure we have permissions to even continue
         if (!guild.selfMember.hasPermission(Permission.MESSAGE_SEND)) return
-        guild.name.sanitize() to sandra.config.getGuild(guildId).locale
+        guild.name.sanitize() to guild.locale
     } else {
         val user = sandra.shards.getUserById(userId) ?: return
-        user.name.sanitize() to sandra.config.getUser(userId).locale
+        user.name.sanitize() to user.probableLocale()
     }
     val reason = entry.getReason(featureType)
-    val blockedMessage = Unicode.CROSS_MARK + " " +
-            LocaleContext(sandra, locale).translate("general.blocked", false, entryName, reason)
+    val blockedMessage = Unicode.CROSS_MARK + " " + sandra.lang.get(locale, "general.blocked").format(entryName, reason)
     channel.sendMessage(blockedMessage).queue {
         entry.recordNotify(featureType, channel.idLong, it.idLong)
         LoggerFactory.getLogger(BlocklistManager::class.java).info(

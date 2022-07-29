@@ -22,13 +22,12 @@ import com.sandrabot.sandra.events.CommandEvent
 import kotlin.random.Random
 
 @Suppress("unused")
-class Toss : Command(name = "toss") {
+class Toss : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
         val (emote, side) = if (Random.nextBoolean()) Emotes.SANDOLLAR to "heads" else Emotes.TAILS to "tails"
-        val reply = event.translate("reply", event.localeContext.get(side, withRoot = true))
-        event.replyEmote(reply, emote).setEphemeral(true).queue()
+        event.replyEmote(event.get("reply", event.get(side)), emote).setEphemeral(true).queue()
 
     }
 

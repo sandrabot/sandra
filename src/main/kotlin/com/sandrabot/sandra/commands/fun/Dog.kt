@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Suppress("unused")
-class Dog : Command(name = "dog") {
+class Dog : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply(ephemeral = true).await()

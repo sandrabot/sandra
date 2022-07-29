@@ -80,9 +80,8 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
         val memberConfig = guildConfig.getMember(authorId)
         val channelConfig = guildConfig.getChannel(channelId)
 
-        // I literally can't wait to merge the new locale changes, this sucks
         val userConfig = sandra.config.getUser(authorId)
-        val localeContext = LocaleContext(sandra, guildConfig, userConfig)
+        val localeContext = LocaleContext(sandra, event.guild, event.author.probableLocale())
 
         // TODO Feature: AFK Messages
 
@@ -102,8 +101,8 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
                     // Make sure we have the permissions to send messages in the channel
                     if (notifyChannel is GuildMessageChannel && notifyChannel.canTalk()) {
                         // Figure out which template to use and format it with the correct details
-                        val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.translate(
-                            "general.experience_notify", withRoot = false, Emotes.LEVEL_UP
+                        val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.getAny(
+                            "general.experience_notify", Emotes.LEVEL_UP
                         )
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)

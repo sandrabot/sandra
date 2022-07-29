@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.7.0"
-    kotlin("plugin.serialization") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     id("com.github.gmazzo.buildconfig") version "3.0.3"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -42,7 +42,7 @@ dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-alpha.13") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.17") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }

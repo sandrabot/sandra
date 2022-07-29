@@ -24,7 +24,7 @@ import dev.minn.jda.ktx.coroutines.await
 import kotlin.time.Duration.Companion.milliseconds
 
 @Suppress("unused")
-class Ping : Command(name = "ping") {
+class Ping : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
@@ -33,7 +33,7 @@ class Ping : Command(name = "ping") {
             val formatted = ping.milliseconds.format()
             if (ping > 250) "${Emotes.NOTICE} $formatted" else formatted
         }
-        event.sendInfo(event.translate("reply", rest, websocket)).queue()
+        event.sendInfo(event.get("reply", rest, websocket)).queue()
 
     }
 

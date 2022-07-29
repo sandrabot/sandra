@@ -46,28 +46,37 @@
   },
   "commands": {
     "cat": {
+      "name": "cat",
       "description": "gracefully displays a cat for your viewing pleasure"
     },
     "commands": {
+      "name": "commands",
       "description": "glance through all my commands & categories",
       "select_placeholder": "pick a category to view..",
       "command_title": "commands",
       "more_information": "use /help [command] for more info"
     },
     "dog": {
+      "name": "dog",
       "description": "fetches a dog from the depths of the internet"
     },
     "evaluate": {
+      "name": "evaluate",
       "description": "start a global kotlin repl session (developers only)"
     },
     "fortune": {
+      "name": "fortune",
       "description": "break open a fortune cookie to reveal your luck",
       "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
     },
     "help": {
+      "name": "help",
       "description": "look at some basic & essential info about me",
       "arguments": {
-        "command": ["the command you want to take a closer look at"]
+        "command": {
+          "name": "command",
+          "description": "the command you want to take a closer look at"
+        }
       },
       "not_found": "whoops, i **couldn't find** that command. try using **/commands** to find what you're looking for",
       "required_arguments": "any options that are surrounded by <> are required",
@@ -88,22 +97,33 @@
       }
     },
     "members": {
+      "name": "members",
       "description": "gander at a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
     "ping": {
+      "name": "ping",
       "description": "sends a ping to test sandra's connection to discord",
       "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
     "roll": {
+      "name": "roll",
       "description": "test your luck with an imaginary dice set",
       "arguments": {
-        "sides": ["the number of sides your dice has", "d4", "d6", "d8", "d10", "d12", "d20"],
-        "max": ["the maximum possible number"]
+        "sides": {
+          "name": "sides",
+          "description": "the number of sides your dice has",
+          "choices": ["d4", "d6", "d8", "d10", "d12", "d20"]
+        },
+        "max": {
+          "name": "max",
+          "description": "the maximum possible number"
+        }
       },
       "reply": "you took a chance and rolled a %1$s out of %2$s"
     },
     "shards": {
+      "name": "shards",
       "description": "view a list of shards and their stats",
       "having_issues": "having issues? join sandra's hangout",
       "status": "status: **%1$s**\nping: %2$sms\nservers: %3$s",
@@ -112,6 +132,7 @@
       "shard_title": "shard %1$s"
     },
     "toss": {
+      "name": "toss",
       "description": "toss a coin and settle your bets",
       "reply": [
         "spinning like a top, the coin dances before you and finally settles on __**%1$s**__",

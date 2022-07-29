@@ -158,7 +158,7 @@ class Paginator(
         // Acknowledge that the prompt button was clicked
         buttonEvent.deferEdit().queue()
         // Prompt the user for the page number to jump to
-        digitAction(event, event.translate("general.page_prompt", withRoot = false))?.let { digit ->
+        digitAction(event, event.getAny("general.page_prompt"))?.let { digit ->
             val index = digit.toInt() - 1
             if (index in messages.indices && index != currentPage) {
                 currentPage = index

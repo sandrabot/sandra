@@ -26,7 +26,7 @@ import com.sandrabot.sandra.utils.asEmoteUrl
 import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
-class Help : Command(name = "help", arguments = "[command]") {
+class Help : Command(arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 
@@ -34,34 +34,34 @@ class Help : Command(name = "help", arguments = "[command]") {
 
             val command = event.arguments.command() ?: run {
                 // The command couldn't be found with the given path
-                event.replyError(event.translate("not_found")).setEphemeral(true).queue()
+                event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }
 
             if (command.ownerOnly || command.category == Category.CUSTOM) {
-                event.replyError(event.translate("not_found")).setEphemeral(true).queue()
+                event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }
 
             // Begin putting the embed together, starting with the command path and category
             val readablePath = command.path.replace('/', ' ')
-            val wordCommands = event.translate("commands.commands.command_title", false)
+            val wordCommands = event.getAny("commands.commands.command_title")
             val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())
-            embed.setTitle(event.translate("extra_help"), Constants.DIRECT_SUPPORT)
+            embed.setTitle(event.get("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
             val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
-            val descriptionValue = "> ${event.translate(descriptionPath, false)}"
-            embed.addField("${Emotes.PROMPT} ${event.translate("description_title")}", descriptionValue, false)
+            val descriptionValue = "> ${event.getAny(descriptionPath)}"
+            embed.addField("${Emotes.PROMPT} ${event.get("description_title")}", descriptionValue, false)
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {
                 // Combine all the arguments into a string to be displayed
                 val joined = command.arguments.joinToString(" ") { it.usage }
                 val usageValue = "> **/$readablePath** $joined"
-                embed.addField("${Emotes.INFO} ${event.translate("usage_title")}", usageValue, false)
+                embed.addField("${Emotes.INFO} ${event.get("usage_title")}", usageValue, false)
                 // Set the footer as well for context about arguments
-                embed.setFooter(event.translate("required_arguments"))
+                embed.setFooter(event.get("required_arguments"))
             }
             event.reply(embed.build()).setEphemeral(true).queue()
             return
@@ -70,20 +70,20 @@ class Help : Command(name = "help", arguments = "[command]") {
         event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.translate("title"))
+        val embed = event.embed.setTitle(lang.get("title"))
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
 
-        val configureContent = lang.translate("configure_content")
-        val commandsContent = lang.translate("commands_content")
-        val inviteContent = lang.translate("invite_content", Constants.DIRECT_INVITE)
-        val supportContent = lang.translate("support_content", Constants.DIRECT_SUPPORT)
-        embed.addField(lang.translate("configure", Emotes.CONFIG), configureContent, false)
-        embed.addField(lang.translate("commands", Emotes.COMMANDS), commandsContent, false)
-        embed.addField(lang.translate("invite", Emotes.INVITE), inviteContent, false)
-        embed.addField(lang.translate("support", Emotes.CHAT), supportContent, false)
+        val configureContent = lang.get("configure_content")
+        val commandsContent = lang.get("commands_content")
+        val inviteContent = lang.get("invite_content", Constants.DIRECT_INVITE)
+        val supportContent = lang.get("support_content", Constants.DIRECT_SUPPORT)
+        embed.addField(lang.get("configure", Emotes.CONFIG), configureContent, false)
+        embed.addField(lang.get("commands", Emotes.COMMANDS), commandsContent, false)
+        embed.addField(lang.get("invite", Emotes.INVITE), inviteContent, false)
+        embed.addField(lang.get("support", Emotes.CHAT), supportContent, false)
 
         val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
-        embed.setFooter(lang.translate("built", Unicode.HEAVY_BLACK_HEART, *devs))
+        embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).setEphemeral(true).queue()
 

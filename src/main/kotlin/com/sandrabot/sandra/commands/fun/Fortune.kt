@@ -22,11 +22,11 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.getResourceAsText
 
 @Suppress("unused")
-class Fortune : Command(name = "fortune") {
+class Fortune : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.replyEmote(event.translate("reply", fortunes.random()), Unicode.FORTUNE_COOKIE).setEphemeral(true).queue()
+        event.replyEmote(event.get("reply", fortunes.random()), Unicode.FORTUNE_COOKIE).setEphemeral(true).queue()
 
     }
 

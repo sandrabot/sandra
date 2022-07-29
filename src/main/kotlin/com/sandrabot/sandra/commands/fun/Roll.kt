@@ -22,12 +22,12 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
 
 @Suppress("unused")
-class Roll : Command(name = "roll", arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]") {
+class Roll : Command(arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]") {
 
     override suspend fun execute(event: CommandEvent) {
 
         val bound = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
-        val reply = event.translate("reply", (1..bound).random().format(), bound.format())
+        val reply = event.get("reply", (1..bound).random().format(), bound.format())
         event.replyEmote(reply, Unicode.GAME_DIE).setEphemeral(true).queue()
 
     }
