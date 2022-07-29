@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.utils.toLocale
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.interactions.DiscordLocale
 
@@ -54,13 +55,13 @@ class LocaleContext(private val sandra: Sandra, val locale: DiscordLocale, val r
      *
      * @see getAny
      */
-    fun get(path: String, vararg args: Any?) = getTemplate(path, true).format(locale, *args)
+    fun get(path: String, vararg args: Any?) = getTemplate(path, true).format(locale.toLocale(), *args)
 
     /**
      * Formats any translation template at [path], without the root.
      *
      * @see get
      */
-    fun getAny(path: String, vararg args: Any?) = getTemplate(path, false).format(locale, *args)
+    fun getAny(path: String, vararg args: Any?) = getTemplate(path, false).format(locale.toLocale(), *args)
 
 }
