@@ -160,6 +160,7 @@ class Evaluate : Command(guildOnly = true) {
             "kotlinx.coroutines.*",
             "net.dv8tion.jda.api.*",
             "net.dv8tion.jda.api.entities.*",
+            "net.dv8tion.jda.api.interactions.*",
             "net.dv8tion.jda.api.interactions.commands.*",
             "net.dv8tion.jda.api.interactions.commands.build.*",
             "net.dv8tion.jda.api.interactions.components.*",
