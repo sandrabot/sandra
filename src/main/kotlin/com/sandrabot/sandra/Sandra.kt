@@ -72,7 +72,7 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
         logger.info("Configuring JDA and signing into Discord")
         val token = if (development) credentials.betaToken else credentials.token
         val builder = DefaultShardManagerBuilder.createDefault(token)
-        builder.enableIntents(GatewayIntent.GUILD_MEMBERS)
+        builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
         builder.setMemberCachePolicy(MemberCachePolicy.ALL)
         builder.setChunkingFilter(ChunkingFilter.include(Constants.GUILD_HANGOUT))
         builder.setShardsTotal(sandraConfig.shardsTotal)
