@@ -93,7 +93,7 @@
         "invite_content": "> would you like me to join **your server**? **[click to invite me](%1$s)**",
         "support": "%1$s support server",
         "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
-        "built": "built with %1$s by %2$s, %3$s, and %4$s"
+        "built": "built with %1$s by %2$s and %3$s"
       }
     },
     "members": {
