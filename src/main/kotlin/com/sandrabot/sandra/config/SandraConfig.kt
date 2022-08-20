@@ -76,7 +76,7 @@ class SandraConfig {
     /**
      * Determines how many shards this session should use.
      * By using `-1` as the default, JDA will use the suggested
-     * amount for the account we are signing into.
+     * amount for the account we are signing in to.
      */
     var shardsTotal = -1
 

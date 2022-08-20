@@ -86,11 +86,11 @@ class CommandEvent(
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(embeds: List<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
 
-    fun sendEmote(message: String, emote: String) = sendMessage(emote + " " + message)
+    fun sendEmote(message: String, emote: String) = sendMessage("$emote $message")
     fun sendInfo(message: String) = sendEmote(message, Emotes.INFO)
     fun sendError(message: String) = sendEmote(message, Emotes.FAILURE)
 
-    fun replyEmote(message: String, emote: String) = reply(emote + " " + message)
+    fun replyEmote(message: String, emote: String) = reply("$emote $message")
     fun replyInfo(message: String) = replyEmote(message, Emotes.INFO)
     fun replyError(message: String) = replyEmote(message, Emotes.FAILURE)
 

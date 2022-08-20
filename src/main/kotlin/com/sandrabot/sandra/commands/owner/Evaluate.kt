@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
+@Suppress("unused")
 @OptIn(ExperimentalTime::class)
 class Evaluate : Command(guildOnly = true) {
 
