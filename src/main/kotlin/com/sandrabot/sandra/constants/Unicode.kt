@@ -22,6 +22,7 @@ package com.sandrabot.sandra.constants
  */
 object Unicode {
 
+    const val BULLET = "\u2022"
     const val CLAPPING_HANDS = "\uD83D\uDC4F"
     const val CROSS_MARK = "\u274C"
     const val FORTUNE_COOKIE = "\uD83E\uDD60"

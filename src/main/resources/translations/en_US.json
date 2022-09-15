@@ -5,9 +5,20 @@
     "missing_argument": "i couldn't figure out what you said for **%1$s**, try checking the **command usage**",
     "owner_only": "this command **can only be used** by **my owners**. nice try",
     "interaction_error": "uh oh, it looks like something **went wrong** behind the scenes. sorry about that",
-    "page_prompt": "why don't you tell me what page you want to see?",
     "experience_notify": "%1$s {@user} leveled up to **LVL {user.level}**",
     "blocked": "**%1$s** is no longer be able to use this feature. you have been blocked because of: **%2$s**\nthis message is considered fyi and you will not receive another"
+  },
+  "paginator": {
+    "modal_title": "jump to page",
+    "input_label": "page number to view",
+    "input_placeholder": "number between 1 and %1$s",
+    "page_indicator": "viewing page %1$s of %2$s",
+    "buttons":{
+      "back": "back",
+      "exit": "exit",
+      "next": "next",
+      "jump": "jump to.."
+    }
   },
   "permissions": {
     "create_invite": "create invite",

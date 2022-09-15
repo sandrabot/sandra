@@ -39,6 +39,9 @@ fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, li
 fun String.capitalizeWords(): String = split(" ").joinToString {
     it.lowercase().replaceFirstChar { ch -> ch.uppercase() }
 }
+fun String.truncate(maxLength: Int) = if (length > maxLength) {
+    substring(0, maxLength - 3).substringBeforeLast(' ') + "..."
+} else this
 
 fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
