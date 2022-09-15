@@ -32,11 +32,11 @@ import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.requests.GatewayIntent
-import net.dv8tion.jda.api.requests.restaction.MessageAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
+import net.dv8tion.jda.api.utils.messages.MessageRequest
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -65,8 +65,8 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
 
         // Eliminate the possibility of accidental mass mentions, if a command needs @role it can be overridden
         val disabledMentioned = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
-        MessageAction.setDefaultMentions(EnumSet.complementOf(disabledMentioned))
-        MessageAction.setDefaultMentionRepliedUser(false)
+        MessageRequest.setDefaultMentions(EnumSet.complementOf(disabledMentioned))
+        MessageRequest.setDefaultMentionRepliedUser(false)
 
         // Configure JDA settings, we've got a couple of them
         logger.info("Configuring JDA and signing into Discord")

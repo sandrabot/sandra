@@ -42,20 +42,20 @@ dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-alpha.17") {
+    implementation("net.dv8tion:JDA:5.0.0-alpha.18") {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-classic:1.4.0")
     implementation("com.github.minndevelopment:jda-ktx:d5c5d9d")
     implementation("io.javalin:javalin:4.6.4")
-    implementation("io.ktor:ktor-client-content-negotiation:2.0.3")
-    implementation("io.ktor:ktor-client-okhttp:2.0.3")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.3")
-    implementation("io.sentry:sentry-logback:6.3.0")
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.1")
+    implementation("io.ktor:ktor-client-okhttp:2.1.1")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.1")
+    implementation("io.sentry:sentry-logback:6.4.1")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
     implementation("org.reflections:reflections:0.10.2")
     implementation("redis.clients:jedis:4.2.3")
 }

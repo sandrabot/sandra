@@ -107,7 +107,7 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
                         // If the notification channel is not where the message was sent, the reference will do nothing
-                        notifyChannel.sendMessage(formattedTemplate).reference(event.message).await()
+                        notifyChannel.sendMessage(formattedTemplate).setMessageReference(event.message).await()
                     }
                 }
                 // TODO Feature: Level Up Rewards

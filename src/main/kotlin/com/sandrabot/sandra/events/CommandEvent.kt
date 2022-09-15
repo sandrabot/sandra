@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import java.util.*
 
 class CommandEvent(
@@ -77,12 +78,12 @@ class CommandEvent(
     fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 
     fun reply(message: String) = event.reply(message)
-    fun reply(message: Message) = event.reply(message)
+    fun reply(data: MessageCreateData) = event.reply(data)
     fun reply(embed: MessageEmbed) = event.replyEmbeds(embed)
     fun reply(embeds: List<MessageEmbed>) = event.replyEmbeds(embeds)
 
     fun sendMessage(message: String) = event.hook.sendMessage(message)
-    fun sendMessage(message: Message) = event.hook.sendMessage(message)
+    fun sendMessage(data: MessageCreateData) = event.hook.sendMessage(data)
     fun sendMessage(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessage(embeds: List<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
 
