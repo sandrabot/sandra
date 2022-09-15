@@ -56,7 +56,6 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
     val config = ConfigurationManager(this)
     val lang = TranslationManager()
     val commands = CommandManager(this)
-    val eventManager = CoroutineEventManager()
     val messages = MessageManager()
     val patreon = PatreonManager(this)
     val statistics = StatisticsManager()
@@ -77,7 +76,7 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
         builder.setChunkingFilter(ChunkingFilter.include(Constants.GUILD_HANGOUT))
         builder.setShardsTotal(sandraConfig.shardsTotal)
         builder.setStatus(OnlineStatus.IDLE)
-        builder.setEventManagerProvider { eventManager }
+        builder.setEventManagerProvider { CoroutineEventManager() }
         builder.setBulkDeleteSplittingEnabled(false)
         builder.setEnableShutdownHook(false)
 

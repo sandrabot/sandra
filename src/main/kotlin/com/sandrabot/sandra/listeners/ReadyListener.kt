@@ -62,7 +62,7 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
             } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
             logger.info("Shard ${shardInfo.shardString} has finished loading additional items")
             // this is the last ready event we will ever care about, so we don't need this listener anymore
-            sandra.eventManager.unregister(this)
+            sandra.shards.removeEventListener(this)
         }
     }
 

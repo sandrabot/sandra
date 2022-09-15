@@ -28,7 +28,7 @@ object Constants {
     const val GABBY = 276856260253712384L
 
     const val GUILD_HANGOUT = 340937384239824897L
-    const val GUILD_DEVELOPMENT = 987427184308260874L
+    const val GUILD_DEVELOPMENT = 1007480322205679636L
 
     const val HASTEBIN = "https://haste.averen.dev"
     const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
