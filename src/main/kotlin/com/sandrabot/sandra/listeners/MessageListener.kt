@@ -23,8 +23,8 @@ import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
-import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.MessageType
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty

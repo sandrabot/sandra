@@ -24,7 +24,7 @@ import com.sandrabot.sandra.entities.blocklist.TargetType
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.managers.BlocklistManager
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.MessageChannel
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import org.slf4j.LoggerFactory
 
 fun checkCommandBlocklist(event: CommandEvent): Boolean = checkBlocklist(

@@ -22,7 +22,7 @@ import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.ReadyEvent
+import net.dv8tion.jda.api.events.session.ReadyEvent
 import org.slf4j.LoggerFactory
 
 class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {

@@ -20,6 +20,8 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.spaceRegex
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.channel.concrete.*
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import java.util.*
@@ -121,12 +123,10 @@ fun compileArguments(tokens: String): List<Argument> {
         val name = rawName.ifEmpty { type.name }.lowercase()
 
         // Arguments must have distinct names, throw if there are duplicates
-        if (arguments.any { name == it.name })
-            throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
+        if (arguments.any { name == it.name }) throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
 
         // Required arguments must be listed first
-        if (isRequired && arguments.any { !it.isRequired })
-            throw IllegalArgumentException("Required argument $text at ${match.range} must be listed before other arguments")
+        if (isRequired && arguments.any { !it.isRequired }) throw IllegalArgumentException("Required argument $text at ${match.range} must be listed before other arguments")
 
         arguments.add(Argument(name, type, isRequired, options))
     }
