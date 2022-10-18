@@ -34,7 +34,6 @@ setProperty("mainClassName", "com.sandrabot.sandra.MainKt")
 
 repositories {
     mavenCentral()
-    maven("https://m2.dv8tion.net/releases")
     maven("https://jitpack.io/")
 }
 
@@ -49,9 +48,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.3")
     implementation("com.github.minndevelopment:jda-ktx:fc7d7de")
     implementation("io.javalin:javalin:5.0.1")
-    implementation("io.ktor:ktor-client-content-negotiation:2.1.1")
-    implementation("io.ktor:ktor-client-okhttp:2.1.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.1")
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.2")
+    implementation("io.ktor:ktor-client-okhttp:2.1.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
     implementation("io.sentry:sentry-logback:6.4.2")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")

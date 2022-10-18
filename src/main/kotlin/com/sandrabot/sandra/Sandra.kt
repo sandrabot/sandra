@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra
 
-import com.sandrabot.sandra.api.SandraAPI
+import com.sandrabot.sandra.api.RequestManager
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
@@ -50,7 +50,7 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
     val color = if (development) Colors.WELL_READ else Colors.SEA_SERPENT
     val shards: ShardManager
 
-    val api = SandraAPI(this, sandraConfig.apiPort)
+    val api = RequestManager(this, sandraConfig.apiPort)
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
