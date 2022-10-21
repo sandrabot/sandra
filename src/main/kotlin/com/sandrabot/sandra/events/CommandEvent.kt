@@ -21,9 +21,11 @@ import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
+import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
+import dev.minn.jda.ktx.coroutines.await
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
@@ -49,7 +51,7 @@ class CommandEvent(
 
     val guildChannel: GuildMessageChannel get() = event.guildChannel
     val channel: MessageChannel get() = event.channel
-    val embed: EmbedBuilder get() = sandra.createEmbed()
+    val embed: EmbedBuilder get() = EmbedBuilder().setColor(Colors.WELL_READ)
 
     val guild: Guild? = event.guild
     val member: Member? = event.member
@@ -73,6 +75,8 @@ class CommandEvent(
     val localeContext: LocaleContext by lazy {
         LocaleContext(sandra, guild, interaction.userLocale, "commands.${command.name}")
     }
+
+    suspend fun retrieveUser(id: Long): User? = sandra.shards.retrieveUserById(id).await()
 
     fun get(path: String, vararg args: Any?): String = localeContext.get(path, *args)
     fun getAny(path: String, vararg args: Any?): String = localeContext.getAny(path, *args)

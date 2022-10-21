@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.system.exitProcess
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 
 fun main(args: Array<String>): Unit = bootstrap(args).let { if (it != 0) exitProcess(it) }
 
@@ -141,8 +143,8 @@ fun bootstrap(args: Array<String>): Int {
 
     // Add our own shutdown hook to gracefully close our resources
     Runtime.getRuntime().addShutdownHook(Thread(sandra::shutdown, "Shutdown Hook"))
-    val duration = System.currentTimeMillis() - beginStartup
-    logger.info("Initialization finished in ${"%,d".format(duration)}ms")
+    val duration = (System.currentTimeMillis() - beginStartup).milliseconds.toString(DurationUnit.MILLISECONDS)
+    logger.info("Initialization completed in $duration (✿◠‿◠) waiting for Sandra to wake up...")
 
     return 0
 

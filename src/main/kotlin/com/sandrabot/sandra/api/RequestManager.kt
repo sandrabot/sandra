@@ -26,7 +26,9 @@ import io.javalin.http.HttpResponseException
 import io.javalin.http.HttpStatus
 import org.reflections.Reflections
 import org.slf4j.LoggerFactory
+import kotlin.math.roundToInt
 import kotlin.reflect.full.primaryConstructor
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Responsible for receiving and responding to all incoming API requests.
@@ -37,6 +39,7 @@ class RequestManager(private val sandra: Sandra, private val port: Int) {
         config.showJavalinBanner = false
         config.http.prefer405over404 = true
         config.http.defaultContentType = ContentType.JSON
+        config.routing.ignoreTrailingSlashes = true
         if (sandra.development) config.plugins.enableDevLogging()
         config.plugins.enableRedirectToLowercasePaths()
         config.contextResolver.ip = { context ->
@@ -45,21 +48,23 @@ class RequestManager(private val sandra: Sandra, private val port: Int) {
                 substringAfter("for=").substringBefore(",").substringBefore(";")
             } ?: context.req().remoteAddr
         }
+        config.requestLogger.http { it, ms -> logger.info("${it.method()} ${it.path()} ${it.ip()} ${it.userAgent()} ${ms.roundToInt().milliseconds}ms") }
     }
 
     init {
-        javalinServlet.before {
-            logger.info("Received ${it.method()} ${it.url()} from ${it.ip()} ${it.userAgent()}")
-        }.exception(HttpResponseException::class.java) { e, context ->
-            logger.debug("Request handler for ${context.url()} threw response exception while handling request", e)
-            jsonResult(context, HttpStatus.forStatus(e.status), false, "message" to (e.message ?: "Unknown"))
-        }
-
         // map all possible error status values for custom responses
         HttpStatus.values().filter { it.code in 400..599 }.forEach { status ->
             javalinServlet.error(status) { jsonResult(it, status, false, "message" to status.message) }
         }
-
+        // map all possible exceptions for custom responses
+        javalinServlet.exception(HttpResponseException::class.java) { e, context ->
+            logger.debug("Request handler for ${context.url()} threw response exception while handling request", e)
+            jsonResult(context, HttpStatus.forStatus(e.status), false, "message" to (e.message ?: "Unknown"))
+        }
+        javalinServlet.exception(Exception::class.java) { e, context ->
+            logger.error("Request handler for ${context.url()} threw exception while handling request", e)
+            jsonResult(context, HttpStatus.INTERNAL_SERVER_ERROR, false, "message" to "Internal server error")
+        }
         // dynamically load the endpoint handlers using reflections
         val reflections = Reflections("com.sandrabot.sandra.api.handlers").getSubTypesOf(EndpointHandler::class.java)
         reflections.mapNotNull { handlerClass ->

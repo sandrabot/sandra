@@ -82,7 +82,7 @@ class Help : Command(arguments = "[command]") {
         embed.addField(lang.get("invite", Emotes.INVITE), inviteContent, false)
         embed.addField(lang.get("support", Emotes.CHAT), supportContent, false)
 
-        val devs = Constants.DEVELOPERS.mapNotNull { event.sandra.retrieveUser(it)?.asTag }.toTypedArray()
+        val devs = Constants.DEVELOPERS.mapNotNull { event.retrieveUser(it)?.asTag }.toTypedArray()
         embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).setEphemeral(true).queue()

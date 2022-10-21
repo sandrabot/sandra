@@ -43,7 +43,7 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
         if (shardsReady == shardInfo.shardTotal) {
             if (!sandra.development) sandra.botList.start()
             // if command updates are enabled, now is the time to perform the updates
-            if (sandra.sandraConfig.commandUpdates) {
+            if (sandra.sandraConfig.commandUpdates) try {
                 // update the global slash command list, this makes sure the commands match our local commands
                 val (owner, global) = sandra.commands.values.partition { it.ownerOnly }.toList().map { list ->
                     list.map { command -> sandra.commands.commandData[command.path] }
@@ -59,8 +59,10 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
                     val ownerCommands = guild.updateCommands().addCommands(owner).await()
                     logger.info("Successfully updated owner command list with ${ownerCommands.size} commands for ${guild.id}")
                 }
+            } catch (t: Throwable) {
+                logger.error("An exception occurred while updating command lists", t)
             } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
-            logger.info("Shard ${shardInfo.shardString} has finished loading additional items")
+            logger.info("Shard ${shardInfo.shardString} has completed all additional tasks, ready to serve ${sandra.shards.guildCache.size()} guilds")
             // this is the last ready event we will ever care about, so we don't need this listener anymore
             sandra.shards.removeEventListener(this)
         }

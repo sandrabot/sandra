@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MainKt" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="com.sandrabot.sandra.MainKt" />
+    <module name="sandra.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="generateBuildConfig" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
