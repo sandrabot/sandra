@@ -17,15 +17,14 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.exceptions.MissingTranslationException
-import com.sandrabot.sandra.utils.getResourceAsText
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import java.io.File
 
 /**
  * Deals with loading and retrieving translation keys from the language files.
  */
+@OptIn(ExperimentalSerializationApi::class)
 class TranslationManager {
 
     private val translations: Map<DiscordLocale, Map<String, Any>>
@@ -36,28 +35,24 @@ class TranslationManager {
     val availableLocales: Set<DiscordLocale>
 
     init {
-        // start loading the translation files by getting a list of resource files
-        val directoryPath = object {}.javaClass.getResource("/translations")?.file
-        val translationDir = File(directoryPath ?: throw IllegalStateException("Translation directory is missing"))
-        if (!translationDir.isDirectory) throw IllegalStateException("$translationDir is not a directory")
-        translations = translationDir.listFiles()?.associate { file ->
-            // this is the identifier used by other applications to describe this locale
-            val identifier = file.nameWithoutExtension.replace('_', '-')
-            val jsonObject: JsonObject = try {
-                // since we don't know the *exact* path for this file, we need to ask for it
-                // this allows us to load it regardless of how the code is executed
-                val path = file.toRelativeString(translationDir.parentFile)
-                val translationJson = getResourceAsText("/$path")
-                    ?: throw IllegalStateException("File for $identifier is missing, expected at $path")
-                Json.decodeFromString(translationJson)
+        // read entry file names using streams and line breaks
+        translations = object {}.javaClass.classLoader.getResourceAsStream("translations").use { stream ->
+            String(stream?.readBytes() ?: throw IllegalStateException("Translation directory does not exist"))
+        }.lines().filterNot { it.isBlank() }.associate { path ->
+            // this is the unique identifier for the specific language and dialect
+            val identifier = path.substringBefore('.').replace('_', '-')
+            val content: JsonObject = try {
+                val stream = object {}.javaClass.classLoader.getResourceAsStream("translations/$path")
+                    ?: throw IllegalStateException("Failed to read translation file for $identifier")
+                Json.decodeFromStream(stream)
             } catch (t: Throwable) {
                 throw IllegalStateException("Failed to parse translation file for $identifier", t)
             }
             val pathMap = mutableMapOf<String, Any>()
             // recursively load all translation paths and values into maps
-            loadRecursive("", pathMap, jsonObject)
+            loadRecursive("", pathMap, content)
             DiscordLocale.from(identifier) to pathMap
-        } ?: throw IllegalStateException("Failed to initialize translations")
+        }
         availableLocales = translations.keys
     }
 
