@@ -21,7 +21,11 @@ import com.sandrabot.sandra.SandraInfo
 object Constants {
 
     const val APPLICATION_ID = 302915036492333067L
+
     const val PATREON_CAMPAIGN = 1386347
+    const val PATREON_BENEFACTOR = 8834536
+    const val PATREON_SPONSOR = 3274217
+    const val PATREON_DONOR = 3274216
 
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L
@@ -33,8 +37,7 @@ object Constants {
     const val HASTEBIN = "https://haste.averen.dev"
     const val TWITTER_GABBY = "https://twitter.com/CandyCanvasArt"
     const val DIRECT_SUPPORT = "https://discord.gg/sandra"
-    const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?" +
-            "client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
+    const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
 
     val DEVELOPERS = arrayOf(AVERY, LOGAN)
     val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"

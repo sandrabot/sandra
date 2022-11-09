@@ -53,7 +53,7 @@ class Sandra(val sandraConfig: SandraConfig, val redis: RedisManager, val creden
     val lang = TranslationManager()
     val commands = CommandManager(this)
     val messages = MessageManager()
-    val patreon = PatreonManager(this)
+    val subscriptions = SubscriptionManager(this)
     val statistics = StatisticsManager()
 
     init {

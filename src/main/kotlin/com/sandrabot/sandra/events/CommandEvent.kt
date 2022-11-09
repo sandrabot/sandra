@@ -71,7 +71,7 @@ class CommandEvent(
     val channelConfig: ChannelConfig? by lazy { guildConfig?.getChannel(guildChannel.idLong) }
     val memberConfig: MemberConfig? by lazy { guildConfig?.getMember(user.idLong) }
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
-    val patreonTier: PatreonTier? by lazy { sandra.patreon.getUserTier(user.idLong) }
+    val subscriptions: Set<Subscription> by lazy { sandra.subscriptions[user.idLong] }
     val localeContext: LocaleContext by lazy {
         LocaleContext(sandra, guild, interaction.userLocale, "commands.${command.name}")
     }

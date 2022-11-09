@@ -22,6 +22,7 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -50,10 +51,10 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
 
     override fun shutdown() {
         super.shutdown()
-        execute()
+        runBlocking { execute() }
     }
 
-    override fun execute() = synchronized(accessedKeys) {
+    override suspend fun execute() = synchronized(accessedKeys) {
         accessedKeys.toList().also { accessedKeys.clear() }
     }.forEach { store(it, configs[it] ?: return@forEach) }
 

@@ -41,6 +41,7 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
         val shardInfo = event.jda.shardInfo
         // only the last shard to load will initialize the rest of our services
         if (shardsReady == shardInfo.shardTotal) {
+            sandra.subscriptions.start()
             if (!sandra.development) sandra.botList.start()
             // if command updates are enabled, now is the time to perform the updates
             if (sandra.sandraConfig.commandUpdates) try {

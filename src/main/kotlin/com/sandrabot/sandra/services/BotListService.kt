@@ -30,7 +30,7 @@ import net.dv8tion.jda.internal.JDAImpl
  */
 class BotListService(private val sandra: Sandra) : Service(300) {
 
-    override fun execute() {
+    override suspend fun execute() {
 
         // Ensure we never send any partial data to the bot lists
         if (sandra.shards.shardCache.any { it.status != JDA.Status.CONNECTED }) return
@@ -79,7 +79,7 @@ class BotListService(private val sandra: Sandra) : Service(300) {
         postBlocking<Unit>(route, data.toJson()) { header("Authorization", token) }
     }
 
-    companion object {
+    private companion object {
         private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/{}/guilds"
         private const val boatUrl = "https://discord.boats/api/bot/{}"
         private const val topGgUrl = "https://top.gg/api/bots/{}/stats"

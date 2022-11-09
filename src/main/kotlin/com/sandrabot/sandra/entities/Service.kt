@@ -16,35 +16,53 @@
 
 package com.sandrabot.sandra.entities
 
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
+import org.slf4j.LoggerFactory
+import kotlin.time.Duration.Companion.seconds
 
 /**
- * A wrapper class for running periodic tasks.
+ * Utility class for running periodic tasks throughout the bot.
+ *
+ * @param interval The interval in seconds between each execution of the task.
+ * @param initialDelay The initial delay in seconds before the task is executed for the first time.
  */
-abstract class Service(private val period: Long) {
+abstract class Service(private val interval: Long, private val initialDelay: Long = interval) {
 
-    val isRunning: Boolean
-        get() = !(task?.isDone ?: true)
+    private var job: Job? = null
 
-    private var task: ScheduledFuture<*>? = null
+    val isActive: Boolean
+        get() = job?.isActive ?: false
 
-    protected abstract fun execute()
+    protected abstract suspend fun execute()
 
-    open fun start(initialDelay: Long = period) = beginTask(initialDelay)
+    /**
+     * Starts the service and executes the task every [interval] seconds.
+     * If the service is already running, this method will do nothing.
+     */
+    open fun start() {
+        if (isActive) return
+        serviceScope.launch {
+            delay(initialDelay.seconds)
+            while (isActive) try {
+                execute()
+                delay(interval.seconds)
+            } catch (t: Throwable) {
+                logger.error("An exception occurred while executing a service task, halting service", t)
+                shutdown()
+            }
+        }
+    }
+
+    /**
+     * Stops the service and cancels the task.
+     */
     open fun shutdown() {
-        task?.cancel(false)
+        job?.cancel("Service shutdown")
     }
 
-    private fun beginTask(initialDelay: Long) {
-        if (isRunning) shutdown()
-        task = executor.scheduleWithFixedDelay(::execute, initialDelay, period, TimeUnit.SECONDS)
-    }
-
-    companion object {
-        // Services aren't time critical, if two run at the same time, one can wait
-        private val executor = Executors.newSingleThreadScheduledExecutor(CountingThreadFactory("service"))
+    internal companion object {
+        private val logger = LoggerFactory.getLogger(Service::class.java)
+        internal val serviceScope = CoroutineScope(Dispatchers.Default)
     }
 
 }

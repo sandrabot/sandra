@@ -16,8 +16,8 @@
 
 package com.sandrabot.sandra.entities
 
-enum class PatreonTier {
+enum class Subscription {
 
-    TIPPER, DONOR, SPONSOR
+    BOOSTER, DONOR, SPONSOR, BENEFACTOR, DEVELOPER
 
 }
