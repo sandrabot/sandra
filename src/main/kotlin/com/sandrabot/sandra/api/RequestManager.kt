@@ -33,14 +33,14 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * Responsible for receiving and responding to all incoming API requests.
  */
-class RequestManager(private val sandra: Sandra, private val port: Int) {
+class RequestManager(private val sandra: Sandra) {
 
     private val javalinServlet: Javalin = Javalin.create { config ->
         config.showJavalinBanner = false
         config.http.prefer405over404 = true
         config.http.defaultContentType = ContentType.JSON
         config.routing.ignoreTrailingSlashes = true
-        if (sandra.development) config.plugins.enableDevLogging()
+        if (sandra.settings.development) config.plugins.enableDevLogging()
         config.plugins.enableRedirectToLowercasePaths()
         config.contextResolver.ip = { context ->
             // resolve the original ip address if request was forwarded
@@ -78,7 +78,7 @@ class RequestManager(private val sandra: Sandra, private val port: Int) {
     }
 
     fun start() {
-        javalinServlet.start(port)
+        javalinServlet.start(sandra.settings.apiPort)
     }
 
     fun shutdown() {

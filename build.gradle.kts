@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
+    kotlin("plugin.serialization") version "1.7.21"
     id("com.github.gmazzo.buildconfig") version "3.1.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -45,18 +45,18 @@ dependencies {
         // We don't need this because lavaplayer will always send opus for us
         exclude(module = "opus-java")
     }
-    implementation("ch.qos.logback:logback-classic:1.4.3")
-    implementation("com.github.minndevelopment:jda-ktx:fc7d7de")
-    implementation("io.javalin:javalin:5.0.1")
-    implementation("io.ktor:ktor-client-content-negotiation:2.1.2")
-    implementation("io.ktor:ktor-client-okhttp:2.1.2")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2")
-    implementation("io.sentry:sentry-logback:6.4.2")
+    implementation("ch.qos.logback:logback-classic:1.4.4")
+    implementation("com.github.minndevelopment:jda-ktx:863470e")
+    implementation("io.javalin:javalin:5.1.4")
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.3")
+    implementation("io.ktor:ktor-client-okhttp:2.1.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.3")
+    implementation("io.sentry:sentry-logback:6.7.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.2.3")
+    implementation("redis.clients:jedis:4.3.1")
 }
 
 buildConfig {
@@ -71,7 +71,6 @@ buildConfig {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "17"
-compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 
 fun runCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()

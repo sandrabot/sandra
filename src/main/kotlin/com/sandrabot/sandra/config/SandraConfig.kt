@@ -22,62 +22,66 @@ import kotlinx.serialization.Serializable
  * This class is used to configure the Sandra instance during startup.
  */
 @Serializable
-class SandraConfig {
+data class SandraConfig(
 
     /**
-     * Primarily determines which Discord account this session will sign in to.
-     * It may also be used to determine other behaviors throughout the bot.
-     * When set to `true`, the beta account will be used. By using `true` as
-     * the default, we prevent signing in to production accounts accidentally.
+     * Configuration for redis database connections within the redis manager.
      */
-    var development = true
+    val redis: RedisConfig = RedisConfig(),
 
     /**
-     * Determines whether the api is enabled or not.
-     * When the api is disabled, it will not be started or
-     * stopped automatically, however it can still be started.
+     * Configuration for tokens and secrets within the bot.
      */
-    var apiEnabled = true
+    val secrets: SecretConfig = SecretConfig(),
 
     /**
-     * Determines whether sentry is enabled or not.
-     * When sentry is disabled, error and warning events will not
-     * be sent to sentry, whether the DSN is present or not.
+     * When enabled, experimental features and configurations will be used.
+     * The development token will be used instead of the production token.
+     * **(Default: true)**
      */
-    var sentryEnabled = true
+    val development: Boolean = true,
 
     /**
-     * While developing, it may be helpful to inhibit updating slash commands to
-     * prevent "Invalid application command" within Discord when there are no changes.
-     * When disabled, slash commands will not be updated and a warning will be logged.
+     * Determines whether debug messages should be logged to the console.
+     * **(Default: false)**
      */
-    var commandUpdates = true
+    val debug: Boolean = false,
 
     /**
-     * Determines the host and project sentry events are sent to.
-     * You can find this value in your sentry dashboard.
-     * When this value is `null`, error and warning events will
-     * not be sent to sentry, whether sentry is enabled or not.
+     * When true, the api will be initialized using the specified port.
+     * **(Default: false)**
      */
-    var sentryDsn: String? = null
+    val apiEnabled: Boolean = false,
 
     /**
-     * Determines the threshold for log messages to be displayed in stdout.
-     * If a message is below the threshold, it will not be printed.
-     * This may represent any value in [ch.qos.logback.classic.Level].
+     * When enabled, the Sentry client will be initialized with the specified DSN.
+     * This is not recommended for development environments.
+     * **(Default: false)**
      */
-    var logLevel: String? = "info"
+    val sentryEnabled: Boolean = false,
 
     /**
-     * Determines the port the api will use when started.
+     * Determines whether the slash commands should be updated on startup.
+     * **(Default: true)**
      */
-    var apiPort = 41517
+    val commandUpdates: Boolean = true,
 
     /**
-     * Determines how many shards this session should use.
-     * By using `-1` as the default, JDA will use the suggested
-     * amount for the account we are signing in to.
+     * The DSN used to initialize the Sentry client.
+     * **(Default: null)**
      */
-    var shardsTotal = -1
+    val sentryDsn: String? = null,
 
-}
+    /**
+     * Determines which port the api will be initialized on.
+     * **(Default: 41517)**
+     */
+    val apiPort: Int = 41517,
+
+    /**
+     * Determines the total number of shards a session will use.
+     * **(Default: -1)**
+     */
+    val shardsTotal: Int = -1
+
+)

@@ -14,138 +14,118 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalTime::class)
+
 package com.sandrabot.sandra
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
-import com.sandrabot.sandra.config.RedisConfig
 import com.sandrabot.sandra.config.SandraConfig
-import com.sandrabot.sandra.managers.CredentialManager
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.getResourceAsText
+import com.sandrabot.sandra.utils.httpClient
 import io.sentry.Sentry
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.JDAInfo
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.utils.messages.MessageRequest
 import org.slf4j.LoggerFactory
 import java.io.File
-import kotlin.reflect.full.declaredMemberProperties
+import java.io.FileNotFoundException
+import java.util.*
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
-fun main(args: Array<String>): Unit = bootstrap(args).let { if (it != 0) exitProcess(it) }
+private val logger = LoggerFactory.getLogger("Sandra")
 
-fun bootstrap(args: Array<String>): Int {
+fun main(args: Array<String>) = try {
+    bootstrap(args)
+} catch (t: Throwable) {
+    logger.error("An exception occurred while starting Sandra, exiting with error code", t)
+    exitProcess(1)
+}
+
+fun bootstrap(args: Array<String>) {
 
     val beginStartup = System.currentTimeMillis()
-    val logger = LoggerFactory.getLogger(Sandra::class.java)
+    // print the startup banner and some version information
+    println("\n${getResourceAsText("/banner.txt")}")
+    println(" | Version: ${SandraInfo.VERSION}")
+    println(" | Commit: ${SandraInfo.COMMIT}")
+    SandraInfo.LOCAL_CHANGES.apply { if (isNotEmpty()) println("   * $this") }
+    println(" | JDA: ${JDAInfo.VERSION}\n")
+
     val json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
         prettyPrint = true
     }
 
-    // Print the logo and any relevant version information
-    println("\n${getResourceAsText("/logo.txt")}")
-    println(" | Version: ${SandraInfo.VERSION}")
-    println(" | Commit: ${SandraInfo.COMMIT}")
-    if (SandraInfo.LOCAL_CHANGES.isNotBlank()) {
-        println("   * ${SandraInfo.LOCAL_CHANGES}")
-    }
-    println(" | JDA: ${JDAInfo.VERSION}\n")
-
-    logger.info("Initializing Sandra (◕ᴗ◕✿)")
-
-    // If an argument was provided, use it as the config file location
-    val file = File(if (args.isNotEmpty()) args[0] else "config.json")
-    val config = try {
-        // Attempt to parse the config file if it exists
-        if (file.exists()) json.decodeFromString<JsonObject>(file.readText()) else {
-            // Otherwise, generate a new config file with default values
-            val config = buildJsonObject {
-                json.encodeToJsonElement(SandraConfig()).jsonObject.forEach { put(it.key, it.value) }
-                put("redis", json.encodeToJsonElement(RedisConfig()))
-                // We can't exactly provide default credentials, so we set them to empty strings instead
-                putJsonObject("credentials") {
-                    CredentialManager::class.declaredMemberProperties.forEach { put(it.name, "") }
-                }
-            }
-            try {
-                // Attempt to write the config file at the same location as provided
-                file.writeText(json.encodeToString(config))
-                logger.info("The configuration file wasn't found, one has been created for you at ${file.absolutePath}")
-            } catch (t: Throwable) {
-                logger.error("Failed to write default configuration file at ${file.absolutePath}", t)
-            }
-            return 1
-        }
+    // allow the user to specify a custom config file
+    val configFile = File(args.firstOrNull() ?: "config.json")
+    val config = if (configFile.exists()) try {
+        json.decodeFromString<SandraConfig>(configFile.readText())
     } catch (t: Throwable) {
-        logger.error("Failed to read configuration file at ${file.absolutePath}, exiting with error code", t)
-        return 1
+        throw IllegalStateException("Failed to parse config file at ${configFile.absolutePath}", t)
+    } else {
+        configFile.writeText(json.encodeToString(SandraConfig()))
+        throw FileNotFoundException("A new config file has been created for you at ${configFile.absolutePath}")
     }
 
-    val sandraConfig = json.decodeFromJsonElement<SandraConfig>(config)
-    if (sandraConfig.development) logger.info("Development mode is enabled, beta configurations will be used")
-
-    // Adjust the root logger level if specified
-    if (sandraConfig.logLevel != null) {
-        val level = Level.toLevel(sandraConfig.logLevel, Level.INFO)
-        (LoggerFactory.getLogger("ROOT") as Logger).level = level
+    if (config.development) {
+        logger.info("Running in development mode, experimental features may cause instability")
+        logger.info("Sentry is disabled while in development mode, error reporting will not be available")
+    } else if (config.sentryEnabled && !config.sentryDsn.isNullOrBlank()) Sentry.init { options ->
+        // configure the sentry client if enabled and applicable
+        options.dsn = config.sentryDsn
+        options.release = SandraInfo.VERSION
+        options.environment = if (config.debug) "development" else "production"
+    } else logger.warn("Sentry is disabled, error reporting will not be available")
+    if (config.debug) {
+        logger.info("Running in debug mode, all loggers will print debug messages")
+        (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
     }
 
-    // Configure the Sentry client, if enabled
-    if (sandraConfig.sentryEnabled) Sentry.init {
-        it.dsn = if (sandraConfig.sentryEnabled) sandraConfig.sentryDsn ?: "" else ""
-        if (it.dsn.isNullOrEmpty()) logger.warn("Sentry is enabled but the DSN was not provided, client will be noop")
-        // stacktrace.app.packages can only be set in sentry.properties apparently
-        it.environment = if (sandraConfig.development) "development" else "production"
-        it.release = SandraInfo.COMMIT
-    }
+    // configure and test the redis connection
+    val redisManager = RedisManager(config.redis)
+    val ping = measureTime { redisManager.use { ping() } }
+    logger.info("Verified database connection at ${config.redis.host}:${config.redis.port}/${config.redis.database} in $ping")
 
-    // Initialize the credential manager with all the tokens and secrets
-    val credentials = try {
-        json.decodeFromJsonElement<CredentialManager>(config["credentials"]!!)
-    } catch (t: Throwable) {
-        logger.error("Failed to read credentials from configuration file, exiting with error code", t)
-        return 1
-    }
+    // eliminate the possibility of accidental mass mentions, if something need to @role it can be overridden
+    val disabled = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
+    MessageRequest.setDefaultMentions(EnumSet.complementOf(disabled))
 
-    // Configure a redis manager to communicate with the database
-    val redisConfig = try {
-        json.decodeFromJsonElement(config.getOrDefault("redis", buildJsonObject {}))
-    } catch (t: Throwable) {
-        logger.warn("Failed to read redis configuration, attempting to continue with defaults", t)
-        RedisConfig()
-    }
+    // initialize the sandra instance and start the bot
+    val sandra = Sandra(config, redisManager)
+    val self = sandra.shards.shardCache.first().selfUser
+    logger.info("Token used to sign in belongs to account: ${self.asTag} (${self.id})")
 
-    // Test the connection to the redis server, we don't know if it's any good until we poll a resource
-    logger.info("Connecting to redis at ${redisConfig.host}:${redisConfig.port} on database ${redisConfig.database}")
-    val redis = RedisManager(redisConfig)
+    val startupTime = (System.currentTimeMillis() - beginStartup).milliseconds
+    logger.info("Startup completed, connecting with ${sandra.shards.shardsTotal} shards... (took $startupTime)")
+    Runtime.getRuntime().addShutdownHook(Thread({ shutdownHook(sandra) }, "Shutdown Hook"))
+
+}
+
+private fun shutdownHook(sandra: Sandra) = with(sandra) {
+    logger.info("Shutdown hook has been reached, gracefully closing resources...")
+
+    // close all resources and shutdown the shard manager
+    // order is important here to ensure data integrity
     try {
-        val beginConnection = System.currentTimeMillis()
-        redis.resource.use { it.ping() }
-        logger.info("Verified the redis connection in ${System.currentTimeMillis() - beginConnection}ms")
+        api?.shutdown()
+        botList.shutdown()
+        subscriptions.shutdown()
+        httpClient.close()
+
+        shards.shutdown()
+        config.shutdown()
+        redis.shutdown()
     } catch (t: Throwable) {
-        logger.error("Failed to verify the redis connection, exiting with error code", t)
-        return 1
+        logger.error("An exception occurred while shutting down, halting immediately", t)
+        Runtime.getRuntime().halt(1)
     }
-
-    // Now we have everything we need to start the bot
-    val sandra = try {
-        // The process will hang here until a shard signs in
-        Sandra(sandraConfig, redis, credentials)
-    } catch (t: Throwable) {
-        logger.error("Failed to initialize Sandra, exiting with error code", t)
-        return 1
-    }
-
-    // Add our own shutdown hook to gracefully close our resources
-    Runtime.getRuntime().addShutdownHook(Thread(sandra::shutdown, "Shutdown Hook"))
-    val duration = (System.currentTimeMillis() - beginStartup).milliseconds.toString(DurationUnit.MILLISECONDS)
-    logger.info("Initialization completed in $duration (✿◠‿◠) waiting for Sandra to wake up...")
-
-    return 0
-
 }

@@ -22,30 +22,22 @@ import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 
 /**
- * This class provides a means of communication with a redis server.
+ * Responsible for managing connections to the redis database and manipulating records.
  */
 class RedisManager(config: RedisConfig) {
 
     private val pool = JedisPool(
-        JedisPoolConfig(), config.host, config.port,
-        config.timeout, config.password, config.database
+        JedisPoolConfig(), config.host, config.port, config.timeout, config.password, config.database
     )
 
-    val resource: Jedis
-        get() = pool.resource
+    fun shutdown() = pool.destroy()
 
-    operator fun get(key: String): String? = resource.use { it.get(key) }
+    fun <T> use(block: Jedis.() -> T) = pool.resource.use { block(it) }
 
-    operator fun set(key: String, value: String) {
-        resource.use { it.set(key, value) }
-    }
+    operator fun get(key: String): String? = use { get(key) }
 
-    fun del(key: String) {
-        resource.use { it.del(key) }
-    }
+    operator fun set(key: String, value: String): Unit = use { set(key, value) }
 
-    fun shutdown() {
-        pool.destroy()
-    }
+    operator fun minus(key: String): Unit = use { del(key) }
 
 }

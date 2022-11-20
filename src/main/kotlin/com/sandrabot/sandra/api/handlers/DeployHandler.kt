@@ -42,7 +42,7 @@ import kotlin.time.measureTimedValue
 @Suppress("unused")
 class DeployHandler(private val sandra: Sandra) : EndpointHandler("deploy", type = HandlerType.POST) {
 
-    private val secretKey = SecretKeySpec(sandra.credentials.githubSecret.toByteArray(), "HmacSHA256")
+    private val secretKey = SecretKeySpec(sandra.settings.secrets.githubSecret.toByteArray(), "HmacSHA256")
     private var deployEnabled = false
 
     @OptIn(ExperimentalTime::class)
@@ -90,7 +90,9 @@ class DeployHandler(private val sandra: Sandra) : EndpointHandler("deploy", type
             val timedDownload = measureTimedValue {
                 val download = try {
                     // this endpoint requires authentication with an actions scope
-                    httpClient.get(downloadUrl) { header("Authorization", "Bearer ${sandra.credentials.githubToken}") }
+                    httpClient.get(downloadUrl) {
+                        header("Authorization", "Bearer ${sandra.settings.secrets.githubToken}")
+                    }
                 } catch (t: Throwable) {
                     logger.error("Failed to download artifacts for GitHub action $runId", t)
                     throw BadGatewayResponse("Failed to download artifacts")

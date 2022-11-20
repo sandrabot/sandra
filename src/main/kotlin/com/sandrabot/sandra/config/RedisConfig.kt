@@ -19,34 +19,39 @@ package com.sandrabot.sandra.config
 import kotlinx.serialization.Serializable
 
 /**
- * This class is used to configure the redis manager.
+ * Object used to configure database connections within the redis manager.
  */
 @Serializable
-class RedisConfig {
+data class RedisConfig(
 
     /**
-     * The hostname where the redis server is running.
+     * Hostname of the redis server location.
+     * **(Default: localhost)**
      */
-    var host = "localhost"
+    val host: String = "localhost",
 
     /**
-     * The password used to authenticate connections. Optional.
+     * Password used to authenticate with the redis server. Optional.
+     * **(Default: null)**
      */
-    var password: String? = null
+    val password: String? = null,
 
     /**
-     * The port the redis server is running on.
+     * Port that the redis server is listening on.
+     * **(Default: 6379)**
      */
-    var port = 6379
+    val port: Int = 6379,
 
     /**
-     * The timeout for redis commands in milliseconds.
+     * Timeout in milliseconds for redis connections.
+     * **(Default: 2000)**
      */
-    var timeout = 2000
+    val timeout: Int = 2000,
 
     /**
-     * The database to be used.
+     * Database number to use for the redis connection.
+     * **(Default: 0)**
      */
-    var database = 0
+    val database: Int = 0
 
-}
+)
