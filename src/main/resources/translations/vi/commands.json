@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "con mèo",
+    "description": "duyên dáng trưng bày một con mèo để bạn thưởng thức"
+  },
+  "commands": {
+    "name": "mệnh lệnh",
+    "description": "lướt qua tất cả các lệnh & danh mục của tôi",
+    "select_placeholder": "chọn một danh mục để xem ..",
+    "command_title": "mệnh lệnh",
+    "more_information": "sử dụng /trợ giúp [command] để biết thêm thông tin"
+  },
+  "dog": {
+    "name": "chú chó",
+    "description": "lấy một con chó từ độ sâu của internet"
+  },
+  "evaluate": {
+    "name": "đánh giá",
+    "description": "bắt đầu phiên thay thế kotlin toàn cầu (chỉ dành cho nhà phát triển)"
+  },
+  "fortune": {
+    "name": "tài sản",
+    "description": "mở một chiếc bánh quy may mắn để tiết lộ vận may của bạn",
+    "reply": "khi chiếc bánh quy vỡ vụn trong ngón tay của bạn, nó sẽ để lộ một mảnh giấy có ghi\n\n`%1$s`"
+  },
+  "help": {
+    "name": "Cứu giúp",
+    "description": "xem một số thông tin cơ bản và cần thiết về tôi",
+    "arguments": {
+      "command": {
+        "name": "chỉ huy",
+        "description": "lệnh bạn muốn xem xét kỹ hơn"
+      }
+    },
+    "not_found": "Rất tiếc, tôi **không thể tìm thấy** lệnh đó. hãy thử sử dụng **/commands** để tìm những gì bạn đang tìm kiếm",
+    "required_arguments": "bất kỳ tùy chọn nào được bao quanh bởi <> là bắt buộc",
+    "extra_help": "cần một số trợ giúp thêm? Trò chuyện với chúng tôi",
+    "description_title": "sự miêu tả",
+    "usage_title": "cách sử dụng",
+    "info_embed": {
+      "title": "*robot hàng xóm yêu thích của bạn* <:fun:987918991135764542>",
+      "configure": "%1$s cài đặt cấu hình",
+      "configure_content": "> nếu bạn cần **cấu hình** **cài đặt** của tôi, hãy sử dụng `/config`",
+      "commands": "%1$s lệnh",
+      "commands_content": "> hoặc nếu bạn muốn xem **danh sách lệnh** của tôi, hãy sử dụng `/commands`",
+      "invite": "%1$s mời sandra",
+      "invite_content": "> bạn có muốn tôi tham gia **máy chủ của bạn** không? **[nhấp để mời tôi](%1$s)**",
+      "support": "%1$s máy chủ hỗ trợ",
+      "support_content": "> cần **trợ giúp thêm**? trò chuyện với chúng tôi trong **[sandra's hangout](%1$s)**",
+      "built": "được xây dựng với %1$s bởi %2$s và %3$s"
+    }
+  },
+  "members": {
+    "name": "các thành viên",
+    "description": "xem bảng phân tích số lượng thành viên của máy chủ",
+    "reply": "**%1$s** có %2$s người và %3$s bot với tổng số %4$s thành viên"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "gửi ping để kiểm tra kết nối của sandra với discord",
+    "reply": "tôi mất %1$s để **ping discord** và khoảng %2$s để **nhận lệnh của bạn**"
+  },
+  "roll": {
+    "name": "cuộn",
+    "description": "kiểm tra vận may của bạn với một bộ xúc xắc tưởng tượng",
+    "arguments": {
+      "sides": {
+        "name": "hai bên",
+        "description": "số mặt xúc xắc của bạn có",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "tối đa",
+        "description": "số lượng tối đa có thể"
+      }
+    },
+    "reply": "bạn đã nắm lấy cơ hội và tung ra %1$s trên %2$s"
+  },
+  "shards": {
+    "name": "mảnh vỡ",
+    "description": "xem danh sách các phân đoạn và số liệu thống kê của chúng",
+    "having_issues": "Có vấn đề? tham gia hangout của sandra",
+    "status": "trạng thái: **%1$s**\nping: %2$sms\nmáy chủ: %3$s",
+    "shards_connected": "%1$d trong số %2$d mảnh được kết nối",
+    "server_using": " • máy chủ này đang sử dụng phân đoạn %1$d",
+    "shard_title": "mảnh %1$s"
+  },
+  "toss": {
+    "name": "quăng",
+    "description": "tung đồng xu và thanh toán tiền cược của bạn",
+    "reply": [
+      "xoay như chong chóng, đồng xu nhảy múa trước mặt bạn và cuối cùng dừng lại ở __**%1$s**__",
+      "bạn tung đồng xu và bắt nó giữa không trung, đập nó xuống cổ tay để lộ __**%1$s**__",
+      "đồng xu rơi khỏi tay bạn, rơi loảng xoảng trên mặt đất và rơi xuống __**%1$s**__"
+    ],
+    "heads": "cái đầu",
+    "tails": "đuôi"
+  }
+}
