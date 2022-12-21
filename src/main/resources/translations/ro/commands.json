@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "pisică",
+    "description": "afișează cu grație o pisică pentru plăcerea dvs. de vizionare"
+  },
+  "commands": {
+    "name": "comenzi",
+    "description": "aruncați o privire prin toate comenzile și categoriile mele",
+    "select_placeholder": "alege o categorie de vizualizat..",
+    "command_title": "comenzi",
+    "more_information": "utilizați /help [command] pentru mai multe informații"
+  },
+  "dog": {
+    "name": "câine",
+    "description": "aduce un câine din adâncurile internetului"
+  },
+  "evaluate": {
+    "name": "a evalua",
+    "description": "începeți o sesiune globală de repl kotlin (numai pentru dezvoltatori)"
+  },
+  "fortune": {
+    "name": "avere",
+    "description": "Deschideți un prăjitură cu avere pentru a vă dezvălui norocul",
+    "reply": "pe măsură ce prăjitura se prăbușește în degete, dezvăluie o bucată de hârtie pe care scrie\n\n`%1$s`"
+  },
+  "help": {
+    "name": "Ajutor",
+    "description": "uită-te la câteva informații de bază și esențiale despre mine",
+    "arguments": {
+      "command": {
+        "name": "comanda",
+        "description": "comanda pe care doriți să o priviți mai atent"
+      }
+    },
+    "not_found": "Hopa, **nu am putut găsi** acea comandă. încercați să utilizați **/comenzi** pentru a găsi ceea ce căutați",
+    "required_arguments": "sunt necesare orice opțiuni care sunt înconjurate de <>",
+    "extra_help": "ai nevoie de ajutor suplimentar? Vorbeste cu noi",
+    "description_title": "Descriere",
+    "usage_title": "utilizare",
+    "info_embed": {
+      "title": "*robotul tău preferat de cartier* <:fun:987918991135764542>",
+      "configure": "%1$s configurați setările",
+      "configure_content": "> dacă trebuie să **configurați** **setările** mele, utilizați `/config`",
+      "commands": "%1$s comenzi",
+      "commands_content": "> sau dacă vrei să vezi **lista mea de comenzi**, folosește `/commands`",
+      "invite": "%1$s invita Sandra",
+      "invite_content": "> ai vrea sa ma alatur **serverului tau**? **[click pentru a mă invita](%1$s)**",
+      "support": "%1$s server de suport",
+      "support_content": "> Ai nevoie de **mai mult ajutor**? discutați cu noi în **[hangout-ul Sandrei](%1$s)**",
+      "built": "construit cu %1$s cu %2$s și %3$s"
+    }
+  },
+  "members": {
+    "name": "membrii",
+    "description": "uitați-vă la o defalcare a numărului de membri ai serverului",
+    "reply": "**%1$s** are %2$s om și %3$s roboți pentru un total de %4$s membri"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "trimite un ping pentru a testa conexiunea Sandrei la discord",
+    "reply": "Mi-a luat %1$s pentru a **ping discord** și aproximativ %2$s pentru a **primi comanda ta**"
+  },
+  "roll": {
+    "name": "rostogolire",
+    "description": "testează-ți norocul cu un set de zaruri imaginar",
+    "arguments": {
+      "sides": {
+        "name": "laturi",
+        "description": "numărul de fețe pe care le are zarul tău",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "numărul maxim posibil"
+      }
+    },
+    "reply": "ai riscat și ai dat %1$s din %2$s"
+  },
+  "shards": {
+    "name": "cioburi",
+    "description": "vizualizați o listă de fragmente și statisticile acestora",
+    "having_issues": "ai probleme? alăturați-vă la Hangout-ul Sandrei",
+    "status": "stare: **%1$s**\nping: %2$sms\nservere: %3$s",
+    "shards_connected": "%1$d din %2$d fragmente conectate",
+    "server_using": " • acest server folosește fragmentul %1$d",
+    "shard_title": "ciob %1$s"
+  },
+  "toss": {
+    "name": "arunca",
+    "description": "aruncă o monedă și stabilește-ți pariurile",
+    "reply": [
+      "învârtindu-se ca un blat, moneda dansează în fața ta și în cele din urmă se stabilește pe __**%1$s**__",
+      "arunci moneda și o prinzi în aer, trântând-o pe încheietura mâinii, dezvăluind __**%1$s**__",
+      "moneda ți se prăbușește de pe degete, zgomotând pe pământ și aterizează pe __**%1$s**__"
+    ],
+    "heads": "Capete",
+    "tails": "cozi"
+  }
+}
