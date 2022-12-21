@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "gato",
+    "description": "muestra con gracia un gato para su placer visual"
+  },
+  "commands": {
+    "name": "comandos",
+    "description": "echa un vistazo a todos mis comandos y categorías",
+    "select_placeholder": "elige una categoría para ver...",
+    "command_title": "comandos",
+    "more_information": "use /ayuda [command] para más información"
+  },
+  "dog": {
+    "name": "perro",
+    "description": "saca un perro de las profundidades de internet"
+  },
+  "evaluate": {
+    "name": "evaluar",
+    "description": "iniciar una sesión de respuesta global de Kotlin (solo para desarrolladores)"
+  },
+  "fortune": {
+    "name": "fortuna",
+    "description": "abre una galleta de la fortuna para revelar tu suerte",
+    "reply": "a medida que la galleta se desmorona entre tus dedos, revela un trozo de papel que dice\n\n`%1$s`"
+  },
+  "help": {
+    "name": "ayudar",
+    "description": "mira información básica y esencial sobre mí",
+    "arguments": {
+      "command": {
+        "name": "dominio",
+        "description": "el comando que desea ver más de cerca"
+      }
+    },
+    "not_found": "Ups, **no pude encontrar** ese comando. intenta usar **/commands** para encontrar lo que estás buscando",
+    "required_arguments": "todas las opciones que están rodeadas por <> son obligatorias",
+    "extra_help": "¿Necesitas ayuda adicional? habla con nosotros",
+    "description_title": "descripción",
+    "usage_title": "uso",
+    "info_embed": {
+      "title": "*tu robot de barrio favorito* <:fun:987918991135764542>",
+      "configure": "%1$s configurar ajustes",
+      "configure_content": "> si necesita **configurar** mi **configuración**, use `/config`",
+      "commands": "%1$s comandos",
+      "commands_content": "> o si quieres ver mi **lista de comandos**, usa `/commands`",
+      "invite": "%1$s invitar a sandra",
+      "invite_content": "> ¿quieres que me una a **tu servidor**? **[haz clic para invitarme](%1$s)**",
+      "support": "%1$s servidor de soporte",
+      "support_content": "> ¿Necesitas **más ayuda**? chatea con nosotros en **[el hangout de sandra](%1$s)**",
+      "built": "construido con %1$s por %2$s y %3$s"
+    }
+  },
+  "members": {
+    "name": "miembros",
+    "description": "mira un desglose del número de miembros del servidor",
+    "reply": "**%1$s** tiene %2$s humanos y %3$s bots para un total de %4$s miembros"
+  },
+  "ping": {
+    "name": "silbido",
+    "description": "envía un ping para probar la conexión de sandra a discord",
+    "reply": "me tomó %1$s para **hacer ping a discord** y alrededor %2$s para **recibir tu comando**"
+  },
+  "roll": {
+    "name": "rodar",
+    "description": "prueba tu suerte con un juego de dados imaginarios",
+    "arguments": {
+      "sides": {
+        "name": "lados",
+        "description": "el número de lados que tiene tu dado",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "máximo",
+        "description": "el máximo número posible"
+      }
+    },
+    "reply": "te arriesgaste y sacaste un %1$s de %2$s"
+  },
+  "shards": {
+    "name": "fragmentos",
+    "description": "ver una lista de fragmentos y sus estadísticas",
+    "having_issues": "¿teniendo problemas? únete al hangout de sandra",
+    "status": "estado: **%1$s**\nping: %2$sms\nservidores: %3$s",
+    "shards_connected": "%1$d de %2$d fragmentos conectados",
+    "server_using": " • este servidor está usando el fragmento %1$d",
+    "shard_title": "fragmento %1$s"
+  },
+  "toss": {
+    "name": "sacudida",
+    "description": "tira una moneda y liquida tus apuestas",
+    "reply": [
+      "girando como un trompo, la moneda baila ante ti y finalmente se posa en __**%1$s**__",
+      "lanzas la moneda y la atrapas en el aire, golpeando tu muñeca y revelando __**%1$s**__",
+      "la moneda cae de tus dedos, golpeando el suelo y aterrizando en __**%1$s**__"
+    ],
+    "heads": "cabezas",
+    "tails": "cruz"
+  }
+}
