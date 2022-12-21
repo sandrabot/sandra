@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} ** {user.level}LVL-ig **",
+  "interaction_error": "uh, úgy tűnik, valami **hiba történt** a színfalak mögött. sajnálom",
+  "missing_argument": "nem tudtam rájönni, mit mondtál **%1$s**, próbáld meg ellenőrizni a **parancshasználatot**",
+  "missing_permission": "ehhez **%1$s** engedélyre van szükségem ebben a **%2$s**-ban",
+  "missing_user_permission": "ehhez a **%1$s** engedélyre van szüksége ebben a **%2$s**-ban",
+  "owner_only": "ezt a parancsot **csak **tulajdonosaim** használhatják**. szép próbálkozás",
+  "categories": {
+    "custom": "egyedi",
+    "essential": "alapvető",
+    "fun": "szórakoztató",
+    "game": "játszma, meccs",
+    "moderation": "mértékletességet",
+    "music": "zene",
+    "owner": "tulajdonos",
+    "social": "társadalmi",
+    "utility": "hasznosság"
+  },
+  "paginator": {
+    "modal_title": "ugorj az oldalra",
+    "input_label": "oldalszám a megtekintéséhez",
+    "input_placeholder": "szám 1 és %1$sközött",
+    "page_indicator": "%1$s oldal %2$s",
+    "buttons": {
+      "back": "vissza",
+      "exit": "kijárat",
+      "next": "következő",
+      "jump": "ugorj.."
+    }
+  },
+  "permissions": {
+    "create_invite": "meghívó létrehozása",
+    "kick": "rúgtagok",
+    "ban": "kitiltják a tagokat",
+    "administrator": "adminisztrátor",
+    "manage_channels": "csatornák kezelése",
+    "add_reactions": "reakciókat adjunk hozzá",
+    "view_audit_logs": "ellenőrzési naplók megtekintése",
+    "view_channel": "csatorna megtekintése",
+    "send_messages": "üzenetküldés",
+    "manage_messages": "üzenetek kezelése",
+    "embed_links": "linkek beágyazása",
+    "attach_files": "csatolj fájlokat",
+    "read_history": "történelmet olvasni",
+    "external_emojis": "használj külső hangulatjeleket",
+    "voice_connect": "csatlakozni",
+    "voice_speak": "beszél",
+    "voice_activity": "hangtevékenység használata",
+    "change_nickname": "változtasson becenevet",
+    "manage_nicknames": "becenevek kezelése",
+    "manage_roles": "szerepeket kezelni",
+    "manage_permissions": "jogosultságokat kezelni",
+    "moderate_members": "timeout tagok"
+  }
+}
