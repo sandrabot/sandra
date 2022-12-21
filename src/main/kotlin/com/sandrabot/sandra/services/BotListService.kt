@@ -19,73 +19,58 @@ package com.sandrabot.sandra.services
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
-import com.sandrabot.sandra.utils.postBlocking
+import com.sandrabot.sandra.utils.httpClient
 import com.sandrabot.sandra.utils.toJson
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.internal.JDAImpl
 
 /**
- * Updates the bot listings on various discord bot list sites.
+ * Periodically posts server count data to various bot lists.
  */
 class BotListService(private val sandra: Sandra) : Service(300) {
 
     override suspend fun execute() {
 
-        // Ensure we never send any partial data to the bot lists
+        // ensure we have an accurate server count
         if (sandra.shards.shardCache.any { it.status != JDA.Status.CONNECTED }) return
-
-        val guilds = ArrayList<Long>()
-        val voice = ArrayList<Int>()
-
-        // Gather the stats from the shards
-        sandra.shards.shardCache.forEach { shard ->
-            guilds.add(shard.guildCache.size())
-            voice.add((shard as JDAImpl).audioManagerCache.count { it.isConnected })
-        }
+        val guilds = sandra.shards.shardCache.map { it.guildCache.size() }
 
         // https://bots.ondiscord.xyz/bots/302915036492333067
-        val onDiscordData = mapOf("guildCount" to guilds.sum())
-        send(onDiscordUrl, sandra.credentials.bodToken, onDiscordData)
+        send(onDiscordUrl, sandra.settings.secrets.bodToken, mapOf("guildCount" to guilds.sum()))
 
         // https://discord.boats/bot/302915036492333067
-        val boatData = mapOf("server_count" to guilds.sum())
-        send(boatUrl, sandra.credentials.boatToken, boatData)
+        send(boatUrl, sandra.settings.secrets.boatToken, mapOf("server_count" to guilds.sum()))
 
         // https://top.gg/bot/302915036492333067
-        val topData = mapOf("shards" to guilds)
-        send(topGgUrl, sandra.credentials.topGgToken, topData)
+        send(topGgUrl, sandra.settings.secrets.topGgToken, mapOf("shards" to guilds))
 
         // https://botlist.space/bot/302915036492333067
-        // We can reuse the JSON here because this API follows the same format
-        send(spaceUrl, sandra.credentials.spaceToken, topData)
+        send(spaceUrl, sandra.settings.secrets.spaceToken, mapOf("shards" to guilds))
 
-        for (i in guilds.indices) {
-
+        guilds.forEachIndexed { i, count ->
             // https://discord.bots.gg/bots/302915036492333067
-            val botsGgData = mapOf("guildCount" to guilds[i], "shardCount" to guilds.size, "shardId" to i)
-            send(discordBotsUrl, sandra.credentials.dbgToken, botsGgData)
+            val botsGgData = mapOf("guildCount" to count, "shardCount" to guilds.size, "shardId" to i)
+            send(discordBotsUrl, sandra.settings.secrets.dbgToken, botsGgData)
 
             // https://discordbotlist.com/bots/302915036492333067
-            val dblData = mapOf("voice_connections" to voice[i], "shard_id" to i, "guilds" to guilds[i])
-            send(dblUrl, sandra.credentials.dblToken, dblData)
-
+            send(dblUrl, sandra.settings.secrets.dblToken, mapOf("shard_id" to i, "guilds" to count))
         }
 
     }
 
-    private fun send(url: String, token: String, data: Map<String, Any>) {
-        val route = url.replace("{}", Constants.APPLICATION_ID.toString())
-        postBlocking<Unit>(route, data.toJson()) { header("Authorization", token) }
-    }
+    private suspend fun send(url: String, token: String, data: Map<String, Any>) =
+        httpClient.post(url.format(Constants.APPLICATION_ID)) {
+            header("Authorization", token)
+            setBody(data.toJson())
+        }
 
     private companion object {
-        private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/{}/guilds"
-        private const val boatUrl = "https://discord.boats/api/bot/{}"
-        private const val topGgUrl = "https://top.gg/api/bots/{}/stats"
-        private const val spaceUrl = "https://api.botlist.space/v1/bots/{}"
-        private const val discordBotsUrl = "https://discord.bots.gg/api/v1/bots/{}/stats"
-        private const val dblUrl = "https://discordbotlist.com/api/bots/{}/stats"
+        private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/%d/guilds"
+        private const val boatUrl = "https://discord.boats/api/bot/%d"
+        private const val topGgUrl = "https://top.gg/api/bots/%d/stats"
+        private const val spaceUrl = "https://api.botlist.space/v1/bots/%d"
+        private const val discordBotsUrl = "https://discord.bots.gg/api/v1/bots/%d/stats"
+        private const val dblUrl = "https://discordbotlist.com/api/bots/%d/stats"
     }
 
 }
