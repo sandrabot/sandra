@@ -41,7 +41,6 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val api = if (settings.apiEnabled) RequestManager(this) else null
     val shards: ShardManager
 
-    val lang = TranslationManager()
     val commands = CommandManager()
     val messages = MessageManager()
     val statistics = StatisticsManager()

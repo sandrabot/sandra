@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.managers
 
-import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.utils.asCommandData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
@@ -27,7 +26,7 @@ import kotlin.reflect.full.createInstance
 /**
  * Loads and stores all [Command] objects that are available at runtime.
  */
-class CommandManager(sandra: Sandra) {
+class CommandManager {
 
     private val commands = mutableMapOf<String, Command>()
 
@@ -52,7 +51,7 @@ class CommandManager(sandra: Sandra) {
                 // attempt to load and create an instance of this command
                 val command = clazz.kotlin.createInstance()
                 // validate the command's metadata before allowing it to be used
-                commandData[command.path] = command.asCommandData(sandra)
+                commandData[command.path] = command.asCommandData()
                     ?: throw AssertionError("Command data was null for top level command")
                 if (command.path in commands)
                     throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
@@ -66,7 +65,7 @@ class CommandManager(sandra: Sandra) {
         // this allows them to be retrieved much easier by the command listener
         commands.values.flatMap { it.allSubcommands }.forEach { commands[it.path] = it }
         val children = commands.count { it.value.isSubcommand }
-        logger.info("Successfully loaded ${commands.size - children} commands with $children subcommands")
+        logger.info("Finished loading ${commands.size - children} top-level commands with $children subcommands")
     }
 
     /**

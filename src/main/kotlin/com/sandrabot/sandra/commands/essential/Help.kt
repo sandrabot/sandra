@@ -70,17 +70,12 @@ class Help : Command(arguments = "[command]") {
         event.deferReply(ephemeral = true).await()
         // If no arguments were supplied, just show information about the bot
         val lang = event.localeContext.withRoot("commands.help.info_embed")
-        val embed = event.embed.setTitle(lang.get("title"))
+        val embed = event.embed.setTitle(lang["title"])
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
-
-        val configureContent = lang.get("configure_content")
-        val commandsContent = lang.get("commands_content")
-        val inviteContent = lang.get("invite_content", Constants.DIRECT_INVITE)
-        val supportContent = lang.get("support_content", Constants.DIRECT_SUPPORT)
-        embed.addField(lang.get("configure", Emotes.CONFIG), configureContent, false)
-        embed.addField(lang.get("commands", Emotes.COMMANDS), commandsContent, false)
-        embed.addField(lang.get("invite", Emotes.INVITE), inviteContent, false)
-        embed.addField(lang.get("support", Emotes.CHAT), supportContent, false)
+        embed.addField(lang["configure", Emotes.CONFIG], lang["configure_content"], false)
+        embed.addField(lang["commands", Emotes.COMMANDS], lang["commands_content"], false)
+        embed.addField(lang["invite", Emotes.INVITE], lang["invite_content", Constants.DIRECT_INVITE], false)
+        embed.addField(lang["support", Emotes.CHAT], lang["support_content", Constants.DIRECT_SUPPORT], false)
 
         val devs = Constants.DEVELOPERS.mapNotNull { event.retrieveUser(it)?.asTag }.toTypedArray()
         embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))

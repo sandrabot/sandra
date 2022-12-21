@@ -19,6 +19,9 @@ package com.sandrabot.sandra.utils
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 
+typealias JsonMap = Map<String, Any>
+typealias MutableJsonMap = MutableMap<String, Any>
+
 fun Map<*, *>.toJson(json: Json = Json) = json.encodeToString(toJsonObject())
 
 fun Map<*, *>.toJsonObject(): JsonObject = JsonObject(map {
@@ -45,3 +48,24 @@ fun JsonObject.string(name: String): String? = getEscaped(name)?.jsonPrimitive?.
 
 fun JsonObject.getEscaped(name: String): JsonElement? = get(name)?.escapeJsonNull()
 fun JsonElement.escapeJsonNull(): JsonElement? = if (this is JsonNull) null else this
+
+fun JsonObject.flatten(root: String = "", map: MutableJsonMap = mutableMapOf()): JsonMap =
+    entries.forEach { (key, value) ->
+        val name = if (root.isNotEmpty()) "$root.$key" else key
+        when (value) {
+            is JsonObject -> value.flatten(name, map)
+            is JsonArray -> map[name] = value.flatten()
+            is JsonPrimitive -> map[name] = value.content
+        }
+    }.let { map }
+
+fun JsonArray.flatten() = map {
+    when (it) {
+        is JsonObject -> it.flatten()
+        is JsonArray -> it.toList()
+        is JsonPrimitive -> it.content
+    }
+}
+
+inline fun <reified T> Any?.jsonList() = (this as? List<*>)?.filterIsInstance<T>() ?: emptyList()
+fun Any?.jsonMapList() = jsonList<JsonMap>()

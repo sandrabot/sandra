@@ -81,7 +81,7 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
         val channelConfig = guildConfig.getChannel(channelId)
 
         val userConfig = sandra.config.getUser(authorId)
-        val localeContext = LocaleContext(sandra, event.guild, event.author.probableLocale())
+        val localeContext = LocaleContext(event.guild, event.author.probableLocale())
 
         // TODO Feature: AFK Messages
 
@@ -102,7 +102,7 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
                     if (notifyChannel is GuildMessageChannel && notifyChannel.canTalk()) {
                         // Figure out which template to use and format it with the correct details
                         val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.getAny(
-                            "general.experience_notify", Emotes.LEVEL_UP
+                            "core.experience_notify", Emotes.LEVEL_UP
                         )
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)

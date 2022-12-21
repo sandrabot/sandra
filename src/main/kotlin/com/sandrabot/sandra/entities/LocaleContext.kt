@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.constants.ContentStore
 import com.sandrabot.sandra.utils.toLocale
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.interactions.DiscordLocale
@@ -24,10 +24,10 @@ import net.dv8tion.jda.api.interactions.DiscordLocale
 /**
  * Utility class for conveniently handling translations.
  */
-class LocaleContext(private val sandra: Sandra, val locale: DiscordLocale, val root: String? = null) {
+class LocaleContext(val locale: DiscordLocale, val root: String? = null) {
 
-    constructor(sandra: Sandra, guild: Guild?, locale: DiscordLocale, root: String? = null) : this(
-        sandra, when {
+    constructor(guild: Guild?, locale: DiscordLocale, root: String? = null) : this(
+        when {
             guild == null -> locale
             locale != guild.locale -> locale
             else -> guild.locale
@@ -37,31 +37,32 @@ class LocaleContext(private val sandra: Sandra, val locale: DiscordLocale, val r
     /**
      * Creates a new context with the specified root.
      */
-    fun withRoot(root: String?) = LocaleContext(sandra, locale, root)
+    fun withRoot(root: String?) = LocaleContext(locale, root)
 
     /**
      * Returns the unchanged string template from the translation.
-     * If [withRoot] is `true`, the context root will be prefixed to the [path].
+     * If [withRoot] is `true`, the context root will be prefixed to the [name].
      *
      * @see get
      * @see getAny
      */
-    fun getTemplate(path: String, withRoot: Boolean): String = sandra.lang.get(
-        locale, if (root == null || !withRoot) path else "$root.$path"
-    )
+    fun getTemplate(name: String, withRoot: Boolean): String {
+        val path = if (root == null || !withRoot) name else "$root.$name"
+        return ContentStore[locale, path]
+    }
 
     /**
-     * Formats the translation template at [root] + [path] with the [args].
+     * Formats the translation template at [root] + [name] with the [args].
      *
      * @see getAny
      */
-    fun get(path: String, vararg args: Any?) = getTemplate(path, true).format(locale.toLocale(), *args)
+    operator fun get(name: String, vararg args: Any?) = getTemplate(name, true).format(locale.toLocale(), *args)
 
     /**
-     * Formats any translation template at [path], without the root.
+     * Formats any translation template at [name], without the root.
      *
      * @see get
      */
-    fun getAny(path: String, vararg args: Any?) = getTemplate(path, false).format(locale.toLocale(), *args)
+    fun getAny(name: String, vararg args: Any?) = getTemplate(name, false).format(locale.toLocale(), *args)
 
 }

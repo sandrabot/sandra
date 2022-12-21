@@ -37,7 +37,7 @@ class Cat : Command() {
         if (response.status == HttpStatusCode.OK) {
             val url = response.body<JsonObject>().string("url")
             event.sendMessage("https://cataas.com$url").queue()
-        } else event.sendError(event.getAny("general.interaction_error")).queue()
+        } else event.sendError(event.getAny("core.interaction_error")).queue()
     }
 
 }
