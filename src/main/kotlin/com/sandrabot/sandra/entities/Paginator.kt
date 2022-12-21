@@ -119,10 +119,9 @@ class Paginator(
                         is ButtonInteractionEvent -> if (verifyButton(event)) handleButton(event)
                         is ModalInteractionEvent -> if (verifyModal(event)) handleModal(event)
                     } // when the event listener times out, cancel the coroutine
-                } ?: cancel()
-            }.also {
-                // always remove the message components when the job is completed, ignore any api errors
-                it.invokeOnCompletion { commandEvent.hook.editMessageComponentsById(messageId).queue(null, handler) }
+                } ?: cancel("Event listener timed out")
+            }.apply { // always remove the message components when the job is completed, ignore any api errors
+                invokeOnCompletion { commandEvent.hook.editMessageComponentsById(messageId).queue(null, handler) }
             }
         }
     }
@@ -143,7 +142,7 @@ class Paginator(
 
     private suspend fun handleButton(buttonEvent: ButtonInteractionEvent) = when (buttonEvent.componentId) {
         // cancel the listener job and destroy this paginator
-        exitButtonId -> listenerJob?.cancel()
+        exitButtonId -> listenerJob?.cancel("User exited paginator")
 
         // respond by replying to the interaction with a modal
         jumpButtonId -> buttonEvent.replyModal(

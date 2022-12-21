@@ -21,14 +21,10 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Constants.PATREON_CAMPAIGN
 import com.sandrabot.sandra.entities.Service
 import com.sandrabot.sandra.entities.Subscription
-import com.sandrabot.sandra.utils.array
-import com.sandrabot.sandra.utils.httpClient
-import com.sandrabot.sandra.utils.obj
-import com.sandrabot.sandra.utils.string
+import com.sandrabot.sandra.utils.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 
 /**
  * Responsible for managing the subscription status of patrons and boosters.
@@ -59,19 +55,16 @@ class SubscriptionManager(private val sandra: Sandra) : Service(1800, initialDel
         while (currentRoute.isNotEmpty())
 
         // parse the responses and apply subscriptions to patrons
-        val members = dataPages.flatMap { it.array("data")?.map { m -> m.jsonObject } ?: emptyList() }
-        val users = dataPages.flatMap { it.array("included")?.map { u -> u.jsonObject } ?: emptyList() }
-            .filter { it.string("type") == "user" }
+        val data = dataPages.flatMap { it.array("data")?.flatten() ?: emptyList() }.jsonMapList()
+        val included = dataPages.flatMap { it.array("included")?.flatten() ?: emptyList() }.jsonMapList()
 
-        for (member in members.mapNotNull { it.obj("relationships") }) {
-            val id = member.obj("user")?.obj("data")?.string("id")
-            val entitled = member.obj("currently_entitled_tiers")?.array("data")
-                ?.mapNotNull { fromTierId(it.jsonObject.string("id")) }?.toMutableSet()
-            if (entitled.isNullOrEmpty()) continue // so apparently you can be a patron but not have a subscription
-            val social = users.firstOrNull { it.string("id") == id }?.obj("attributes")?.obj("social_connections")
-            val discordId = social?.obj("discord")?.string("user_id")?.toLongOrNull() ?: continue
-            // todo maybe notify the user if they have a subscription but it's not linked to their discord?
-            putSet(discordId).addAll(entitled)
+        for (entry in data) {
+            val id = entry["relationships.user.data.id"] as String
+            val entitled = entry["relationships.currently_entitled_tiers.data"].jsonMapList()
+            if (entitled.isEmpty()) continue // apparently you can be a patron but not have an entitlement
+            val tiers = entitled.mapNotNull { fromTierId(it["id"] as String?) }
+            val discord = included.first { it["id"] == id }["attributes.social_connections.discord.user_id"] as String?
+            putSet(discord?.toLongOrNull() ?: continue).addAll(tiers)
         }
 
     }
