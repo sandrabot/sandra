@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user}, **LVL {user.level}** düzeyine ulaştı",
+  "interaction_error": "uh oh, görünüşe göre perde arkasında bir şeyler **ters gitti**. bunun için üzgünüm",
+  "missing_argument": "**%1$s** için ne dediğinizi anlayamadım, **komut kullanımını** kontrol etmeyi deneyin",
+  "missing_permission": "bunu yapmak için bu **%2$s** içinde **%1$s** iznine ihtiyacım var",
+  "missing_user_permission": "bunu yapmak için bu **%2$s** içinde **%1$s** iznine ihtiyacınız var",
+  "owner_only": "bu komut **yalnızca **sahiplerim** tarafından kullanılabilir**. iyi deneme",
+  "categories": {
+    "custom": "gelenek",
+    "essential": "gerekli",
+    "fun": "eğlence",
+    "game": "oyun",
+    "moderation": "ılımlılık",
+    "music": "müzik",
+    "owner": "mal sahibi",
+    "social": "sosyal",
+    "utility": "Yarar"
+  },
+  "paginator": {
+    "modal_title": "sayfaya atla",
+    "input_label": "görüntülenecek sayfa numarası",
+    "input_placeholder": "1 ile %1$sarasındaki sayı",
+    "page_indicator": "%2$ssayfadan %1$s sayfa görüntüleniyor",
+    "buttons": {
+      "back": "geri",
+      "exit": "çıkış",
+      "next": "sonraki",
+      "jump": "atlamak.."
+    }
+  },
+  "permissions": {
+    "create_invite": "davet oluştur",
+    "kick": "üyeleri tekmelemek",
+    "ban": "üyeleri yasakla",
+    "administrator": "yönetici",
+    "manage_channels": "kanalları yönet",
+    "add_reactions": "tepki ekle",
+    "view_audit_logs": "denetim günlüklerini görüntüle",
+    "view_channel": "kanalı görüntüle",
+    "send_messages": "mesaj gönder",
+    "manage_messages": "mesajları yönet",
+    "embed_links": "bağlantıları göm",
+    "attach_files": "dosyaları ekle",
+    "read_history": "geçmişi oku",
+    "external_emojis": "harici emojileri kullan",
+    "voice_connect": "bağlamak",
+    "voice_speak": "konuşmak",
+    "voice_activity": "ses etkinliğini kullan",
+    "change_nickname": "takma adı değiştir",
+    "manage_nicknames": "takma adları yönet",
+    "manage_roles": "rolleri yönet",
+    "manage_permissions": "izinleri yönet",
+    "moderate_members": "zaman aşımı üyeleri"
+  }
+}
