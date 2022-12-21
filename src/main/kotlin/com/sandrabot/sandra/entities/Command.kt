@@ -44,8 +44,8 @@ abstract class Command(
             do topLevelParent = topLevelParent.parent ?: break while (true)
             buildString {
                 append(topLevelParent.name)
-                if (group != null) append('/', group)
-                append('/', name)
+                if (group != null) append('.', group)
+                append('.', name)
             }
         }
     }

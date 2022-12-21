@@ -44,15 +44,14 @@ class Help : Command(arguments = "[command]") {
             }
 
             // Begin putting the embed together, starting with the command path and category
-            val readablePath = command.path.replace('/', ' ')
+            val readablePath = command.path.replace('.', ' ')
             val wordCommands = event.getAny("commands.commands.command_title")
             val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
             val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())
             embed.setTitle(event.get("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
-            val descriptionPath = "commands.${command.path.replace('/', '.')}.description"
-            val descriptionValue = "> ${event.getAny(descriptionPath)}"
+            val descriptionValue = "> ${event.getAny("commands.${command.path}.description")}"
             embed.addField("${Emotes.PROMPT} ${event.get("description_title")}", descriptionValue, false)
             // Display a field describing the command usage if there's any arguments
             if (command.arguments.isNotEmpty()) {

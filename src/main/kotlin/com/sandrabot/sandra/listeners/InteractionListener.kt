@@ -46,8 +46,9 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
      */
     private suspend fun onSlashCommand(slashEvent: SlashCommandInteractionEvent) {
         // the command will only ever be null if it was manually removed with an eval
-        val command = sandra.commands[slashEvent.commandPath] ?: run {
-            logger.warn("Failed to find command for registered command with path ${slashEvent.commandPath}")
+        val qualifiedPath = slashEvent.fullCommandName.replace(' ', '.')
+        val command = sandra.commands[qualifiedPath] ?: run {
+            logger.warn("Failed to find registered command with path: $qualifiedPath")
             return
         }
         // the first thing we want to do is wrap this with our own object
@@ -72,7 +73,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         val logChannel = if (event.guild != null) {
             "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
         } else "direct message"
-        logger.info("${slashEvent.commandPath} | $logUser | $logChannel | ${slashEvent.commandString}")
+        logger.info("$qualifiedPath | $logUser | $logChannel | ${slashEvent.commandString}")
         // if the guild isn't fully loaded, that could affect some of our commands
         if (slashEvent.isFromGuild && event.guild?.isLoaded == false) event.guild.loadMembers().await()
         // catch any exceptions the commands could throw

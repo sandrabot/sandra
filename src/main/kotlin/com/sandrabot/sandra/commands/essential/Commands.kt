@@ -20,12 +20,13 @@ import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import dev.minn.jda.ktx.coroutines.await
-import dev.minn.jda.ktx.events.onSelection
+import dev.minn.jda.ktx.events.onStringSelect
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.requests.ErrorResponse
 import kotlin.time.Duration.Companion.minutes
 
@@ -40,11 +41,11 @@ class Commands : Command() {
 
     }
 
-    private fun waitForSelection(event: CommandEvent) = event.sandra.shards.onSelection(
+    private fun waitForSelection(event: CommandEvent) = event.sandra.shards.onStringSelect(
         componentPrefix + event.encodedInteraction, timeout = 2.minutes
     ) { selectEvent ->
         // only process this event if it's from the author of the interaction
-        if (selectEvent.user != event.user) return@onSelection
+        if (selectEvent.user != event.user) return@onStringSelect
         val embeds = getEmbeds(event, Category.valueOf(selectEvent.values[0]))
         selectEvent.editMessageEmbeds(embeds).await()
     }
@@ -53,12 +54,12 @@ class Commands : Command() {
         private const val componentPrefix = "commands:select:"
         private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTERACTION)
         private val embeds = mutableMapOf<Category, List<MessageEmbed>>()
-        private var menuBuilder: SelectMenu.Builder? = null
+        private var menuBuilder: StringSelectMenu.Builder? = null
 
         private fun Category.path() = "categories." + name.lowercase()
 
         private fun getSelectionMenu(event: CommandEvent): SelectMenu = (menuBuilder ?: run {
-            SelectMenu.create(componentPrefix).setPlaceholder(event.get("select_placeholder"))
+            StringSelectMenu.create(componentPrefix).setPlaceholder(event.get("select_placeholder"))
                 .addOptions(event.sandra.commands.values.groupBy { it.category }.filterNot { (category, list) ->
                     category == Category.CUSTOM || category == Category.OWNER || list.isEmpty()
                 }.toSortedMap().map { (category, _) ->
