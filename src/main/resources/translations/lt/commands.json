@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "katė",
+    "description": "grakščiai rodo katę jūsų žiūrėjimo malonumui"
+  },
+  "commands": {
+    "name": "komandas",
+    "description": "peržiūrėkite visas mano komandas ir kategorijas",
+    "select_placeholder": "pasirinkite kategoriją, kurią norite peržiūrėti..",
+    "command_title": "komandas",
+    "more_information": "Norėdami gauti daugiau informacijos, naudokite /help [command]"
+  },
+  "dog": {
+    "name": "šuo",
+    "description": "atneša šunį iš interneto gelmių"
+  },
+  "evaluate": {
+    "name": "įvertinti",
+    "description": "pradėti visuotinę kotlin repl sesiją (tik kūrėjams)"
+  },
+  "fortune": {
+    "name": "turtas",
+    "description": "sulaužykite laimės sausainį, kad atskleistumėte savo sėkmę",
+    "reply": "kai sausainis byra pirštuose, jis atskleidžia popieriaus lapą, kuriame parašyta\n\n`%1$s`"
+  },
+  "help": {
+    "name": "padėti",
+    "description": "pažvelkite į pagrindinę ir esminę informaciją apie mane",
+    "arguments": {
+      "command": {
+        "name": "komandą",
+        "description": "komanda, kurią norite atidžiau pažvelgti"
+      }
+    },
+    "not_found": "oi, aš **nerandu** tos komandos. pabandykite naudoti **/commands**, kad rastumėte tai, ko ieškote",
+    "required_arguments": "būtinos visos parinktys, kurios yra apsuptos <>",
+    "extra_help": "reikia papildomos pagalbos? pabendrauti su mumis",
+    "description_title": "apibūdinimas",
+    "usage_title": "naudojimas",
+    "info_embed": {
+      "title": "*jūsų mėgstamiausias kaimynystės robotas* <:fun:987918991135764542>",
+      "configure": "%1$s konfigūruoti nustatymus",
+      "configure_content": "> jei reikia **konfigūruoti** mano **nustatymus**, naudokite „/config“.",
+      "commands": "%1$s komandų",
+      "commands_content": "> arba jei norite pamatyti mano **komandų sąrašą**, naudokite „/commands“.",
+      "invite": "%1$s pakviesti Sandra",
+      "invite_content": "> ar norėtum, kad prisijungčiau prie **jūsų serverio**? **[spustelėkite, kad pakviestumėte mane](%1$s)**",
+      "support": "%1$s palaikymo serveris",
+      "support_content": "> reikia **daugiau pagalbos**? pasikalbėk su mumis **[sandros „Hangout“](%1$s)**",
+      "built": "pastatytas naudojant %1$s x %2$s ir %3$s"
+    }
+  },
+  "members": {
+    "name": "nariai",
+    "description": "pažvelgti į serverio narių skaičiaus suskirstymą",
+    "reply": "**%1$s** turi %2$s žmogų ir %3$s robotus, iš viso %4$s nariai"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "siunčia ping, kad patikrintų Sandros ryšį su nesantaika",
+    "reply": "man prireikė %1$s iki **ping discord** ir maždaug %2$s **, kol gavau jūsų komandą**"
+  },
+  "roll": {
+    "name": "ritinys",
+    "description": "išbandykite savo sėkmę su įsivaizduojamu kauliukų rinkiniu",
+    "arguments": {
+      "sides": {
+        "name": "pusės",
+        "description": "jūsų kauliuko pusių skaičius",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "maks",
+        "description": "maksimalus galimas skaičius"
+      }
+    },
+    "reply": "pasinaudojote galimybe ir surinkote %1$s iš %2$s"
+  },
+  "shards": {
+    "name": "šukės",
+    "description": "peržiūrėti šukių sąrašą ir jų statistiką",
+    "having_issues": "turi problemų? prisijungti prie Sandros „Hangout“.",
+    "status": "būsena: **%1$s**\nping: %2$sms\nserveriai: %3$s",
+    "shards_connected": "Prijungta %1$d iš %2$d šukių",
+    "server_using": " • šis serveris naudoja shard %1$d",
+    "shard_title": "šukė %1$s"
+  },
+  "toss": {
+    "name": "mesti",
+    "description": "mesti monetą ir atlikti statymus",
+    "reply": [
+      "sukasi kaip viršūnė, moneta šoka prieš tave ir galiausiai nusistovi __**%1$s**__",
+      "jūs metate monetą ir pagaunate ją ore, trenkdami ant riešo, atidengdami __**%1$s**__",
+      "moneta krenta nuo pirštų, trinkteli ant žemės ir nusileidžia ant __**%1$s**__"
+    ],
+    "heads": "galvos",
+    "tails": "uodegos"
+  }
+}
