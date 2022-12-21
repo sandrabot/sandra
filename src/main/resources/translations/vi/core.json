@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} đã lên cấp **LVL {user.level}**",
+  "interaction_error": "uh oh, có vẻ như đã xảy ra sự cố ** ở hậu trường. xin lỗi vì điều đó",
+  "missing_argument": "tôi không thể hiểu những gì bạn nói về **%1$s**, hãy thử kiểm tra ** cách sử dụng lệnh**",
+  "missing_permission": "tôi cần quyền **%1$s** trong **%2$s** này để làm điều đó",
+  "missing_user_permission": "bạn cần có quyền **%1$s** trong **%2$s** này để làm điều đó",
+  "owner_only": "lệnh này **chỉ có thể được sử dụng** bởi **chủ sở hữu của tôi**. thử tốt",
+  "categories": {
+    "custom": "tập quán",
+    "essential": "Thiết yếu",
+    "fun": "niềm vui",
+    "game": "trò chơi",
+    "moderation": "điều độ",
+    "music": "Âm nhạc",
+    "owner": "chủ nhân",
+    "social": "xã hội",
+    "utility": "tính thiết thực"
+  },
+  "paginator": {
+    "modal_title": "Chuyển đến trang",
+    "input_label": "số trang để xem",
+    "input_placeholder": "số giữa 1 và %1$s",
+    "page_indicator": "đang xem trang %1$s trên %2$s",
+    "buttons": {
+      "back": "trở lại",
+      "exit": "lối ra",
+      "next": "tiếp theo",
+      "jump": "nhảy tới.."
+    }
+  },
+  "permissions": {
+    "create_invite": "tạo lời mời",
+    "kick": "đá thành viên",
+    "ban": "cấm thành viên",
+    "administrator": "người quản lý",
+    "manage_channels": "quản lý kênh",
+    "add_reactions": "thêm phản ứng",
+    "view_audit_logs": "xem nhật ký kiểm tra",
+    "view_channel": "xem kênh",
+    "send_messages": "gửi tin nhắn",
+    "manage_messages": "quản lý tin nhắn",
+    "embed_links": "liên kết nhúng",
+    "attach_files": "đính kèm tập tin",
+    "read_history": "đọc lịch sử",
+    "external_emojis": "sử dụng biểu tượng cảm xúc bên ngoài",
+    "voice_connect": "liên kết",
+    "voice_speak": "nói chuyện",
+    "voice_activity": "sử dụng hoạt động bằng giọng nói",
+    "change_nickname": "thay đổi biệt hiệu",
+    "manage_nicknames": "quản lý biệt danh",
+    "manage_roles": "quản lý vai trò",
+    "manage_permissions": "quyền quản lý",
+    "moderate_members": "thành viên hết thời gian chờ"
+  }
+}
