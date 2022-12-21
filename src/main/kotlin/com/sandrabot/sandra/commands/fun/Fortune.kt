@@ -19,7 +19,7 @@ package com.sandrabot.sandra.commands.`fun`
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.getResourceAsText
+import com.sandrabot.sandra.utils.resourceAsStream
 
 @Suppress("unused")
 class Fortune : Command() {
@@ -30,8 +30,8 @@ class Fortune : Command() {
 
     }
 
-    companion object {
-        private val fortunes = getResourceAsText("/fortunes.txt")!!.lines()
+    private companion object {
+        private val fortunes = resourceAsStream("fortunes.txt") { String(readBytes()).lines() }
     }
 
 }

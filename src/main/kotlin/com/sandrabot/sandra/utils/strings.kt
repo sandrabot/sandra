@@ -21,6 +21,7 @@ import kotlinx.serialization.json.JsonObject
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
+import java.io.InputStream
 import java.util.*
 import kotlin.time.Duration
 
@@ -39,6 +40,7 @@ fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, li
 fun String.capitalizeWords(): String = split(" ").joinToString {
     it.lowercase().replaceFirstChar { ch -> ch.uppercase() }
 }
+
 fun String.truncate(maxLength: Int) = if (length > maxLength) {
     substring(0, maxLength - 3).substringBeforeLast(' ') + "..."
 } else this
@@ -52,7 +54,9 @@ fun DiscordLocale.toLocale(): Locale = Locale.forLanguageTag(locale)
 fun User.probableLocale(): DiscordLocale =
     mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: DiscordLocale.ENGLISH_US
 
-fun getResourceAsText(path: String) = object {}.javaClass.getResource(path)?.readText()
+fun <T> resourceAsStream(name: String, block: InputStream.() -> T): T =
+    Constants.javaClass.classLoader.getResourceAsStream(name)?.use(block)
+        ?: throw AssertionError("Missing resource, stream was null: $name")
 
 fun hastebin(text: String): String? = try {
     postBlocking<JsonObject>("${Constants.HASTEBIN}/documents", text).let {
