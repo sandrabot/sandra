@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "chat",
+    "description": "affiche gracieusement un chat pour votre plus grand plaisir"
+  },
+  "commands": {
+    "name": "commandes",
+    "description": "parcourir toutes mes commandes et catégories",
+    "select_placeholder": "choisissez une catégorie à afficher.",
+    "command_title": "commandes",
+    "more_information": "utilisez /help [command] pour plus d'informations"
+  },
+  "dog": {
+    "name": "chien",
+    "description": "va chercher un chien dans les profondeurs d'internet"
+  },
+  "evaluate": {
+    "name": "évaluer",
+    "description": "démarrer une session globale de remplacement de kotlin (développeurs uniquement)"
+  },
+  "fortune": {
+    "name": "fortune",
+    "description": "casser un fortune cookie pour révéler votre chance",
+    "reply": "au fur et à mesure que le cookie s'effrite dans vos doigts, il révèle un morceau de papier qui lit\n\n`%1$s`"
+  },
+  "help": {
+    "name": "aider",
+    "description": "regardez quelques informations de base et essentielles sur moi",
+    "arguments": {
+      "command": {
+        "name": "commande",
+        "description": "la commande que vous souhaitez examiner de plus près"
+      }
+    },
+    "not_found": "oups, je **n'ai pas trouvé** cette commande. essayez d'utiliser **/commands** pour trouver ce que vous cherchez",
+    "required_arguments": "toutes les options entourées de <> sont obligatoires",
+    "extra_help": "besoin d'aide supplémentaire? Discute avec nous",
+    "description_title": "la description",
+    "usage_title": "usage",
+    "info_embed": {
+      "title": "*votre robot de quartier préféré* <:fun:987918991135764542>",
+      "configure": "%1$s configurer les paramètres",
+      "configure_content": "> si vous avez besoin de **configurer** mes **paramètres**, utilisez `/config`",
+      "commands": "%1$s commandes",
+      "commands_content": "> ou si vous voulez voir ma **liste de commandes**, utilisez `/commands`",
+      "invite": "%1$s inviter sandra",
+      "invite_content": "> Souhaitez-vous que je rejoigne **votre serveur** ? **[cliquez pour m'inviter](%1$s)**",
+      "support": "%1$s serveur d'assistance",
+      "support_content": "> besoin de **plus d'aide** ? discutez avec nous dans **[le repaire de sandra](%1$s)**",
+      "built": "construit avec %1$s par %2$s et %3$s"
+    }
+  },
+  "members": {
+    "name": "membres",
+    "description": "jeter un coup d'œil à une ventilation du nombre de membres du serveur",
+    "reply": "**%1$s** a %2$s humain et %3$s bots pour un total de %4$s membres"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "envoie un ping pour tester la connexion de sandra à discord",
+    "reply": "il m'a fallu %1$s pour **ping discord** et environ %2$s pour **recevoir votre commande**"
+  },
+  "roll": {
+    "name": "rouler",
+    "description": "tentez votre chance avec un jeu de dés imaginaire",
+    "arguments": {
+      "sides": {
+        "name": "côtés",
+        "description": "le nombre de faces de votre dé",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "maximum",
+        "description": "le nombre maximal possible"
+      }
+    },
+    "reply": "tu as tenté ta chance et obtenu un %1$s sur %2$s"
+  },
+  "shards": {
+    "name": "fragments",
+    "description": "afficher une liste de fragments et leurs statistiques",
+    "having_issues": "avoir des problèmes? rejoindre le repaire de sandra",
+    "status": "état : **%1$s**\nping : %2$sms\nserveurs : %3$s",
+    "shards_connected": "%1$d partitions sur %2$d connectées",
+    "server_using": " • ce serveur utilise le fragment %1$d",
+    "shard_title": "fragment %1$s"
+  },
+  "toss": {
+    "name": "lancer",
+    "description": "lancer une pièce et régler vos paris",
+    "reply": [
+      "tournant comme une toupie, la pièce danse devant vous et se pose finalement sur __**%1$s**__",
+      "vous lancez la pièce et l'attrapez en l'air, en la frappant sur votre poignet révélant __**%1$s**__",
+      "la pièce tombe de vos doigts, claquant sur le sol et atterrissant sur __**%1$s**__"
+    ],
+    "heads": "têtes",
+    "tails": "queues"
+  }
+}
