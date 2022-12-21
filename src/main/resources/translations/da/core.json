@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} niveau op til **LVL {user.level}**",
+  "interaction_error": "øh åh, det ser ud som om noget **gik galt** bag kulisserne. Det er jeg ked af",
+  "missing_argument": "jeg kunne ikke finde ud af, hvad du sagde til **%1$s**, prøv at tjekke **kommandobrugen**",
+  "missing_permission": "jeg har brug for **%1$s** tilladelsen i denne **%2$s** for at gøre det",
+  "missing_user_permission": "du skal bruge **%1$s** tilladelsen i denne **%2$s** for at gøre det",
+  "owner_only": "denne kommando **kan kun bruges** af **mine ejere**. godt forsøgt",
+  "categories": {
+    "custom": "brugerdefinerede",
+    "essential": "vigtig",
+    "fun": "sjovt",
+    "game": "spil",
+    "moderation": "mådehold",
+    "music": "musik",
+    "owner": "ejer",
+    "social": "social",
+    "utility": "nytte"
+  },
+  "paginator": {
+    "modal_title": "spring til side",
+    "input_label": "sidenummer at se",
+    "input_placeholder": "tal mellem 1 og %1$s",
+    "page_indicator": "ser side %1$s af %2$s",
+    "buttons": {
+      "back": "tilbage",
+      "exit": "Afslut",
+      "next": "Næste",
+      "jump": "Hop til.."
+    }
+  },
+  "permissions": {
+    "create_invite": "oprette invitation",
+    "kick": "sparke medlemmer",
+    "ban": "forbyde medlemmer",
+    "administrator": "administrator",
+    "manage_channels": "administrere kanaler",
+    "add_reactions": "tilføje reaktioner",
+    "view_audit_logs": "se revisionslogfiler",
+    "view_channel": "se kanal",
+    "send_messages": "sende beskeder",
+    "manage_messages": "administrere beskeder",
+    "embed_links": "indlejre links",
+    "attach_files": "Vedhæft filer",
+    "read_history": "læse historie",
+    "external_emojis": "bruge eksterne emojis",
+    "voice_connect": "forbinde",
+    "voice_speak": "tale",
+    "voice_activity": "bruge stemmeaktivitet",
+    "change_nickname": "ændre kaldenavn",
+    "manage_nicknames": "administrere kaldenavne",
+    "manage_roles": "styre roller",
+    "manage_permissions": "administrere tilladelser",
+    "moderate_members": "timeout medlemmer"
+  }
+}
