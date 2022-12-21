@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} leveled up to **LVL {user.level}**",
+  "interaction_error": "uh oh, it looks like something **went wrong** behind the scenes. sorry about that",
+  "missing_argument": "i couldn't figure out what you said for **%1$s**, try checking the **command usage**",
+  "missing_permission": "i need the **%1$s** permission in this **%2$s** to do that",
+  "missing_user_permission": "you need the **%1$s** permission in this **%2$s** to do that",
+  "owner_only": "this command **can only be used** by **my owners**. nice try",
+  "categories": {
+    "custom": "custom",
+    "essential": "essential",
+    "fun": "fun",
+    "game": "game",
+    "moderation": "moderation",
+    "music": "music",
+    "owner": "owner",
+    "social": "social",
+    "utility": "utility"
+  },
+  "paginator": {
+    "modal_title": "jump to page",
+    "input_label": "page number to view",
+    "input_placeholder": "number between 1 and %1$s",
+    "page_indicator": "viewing page %1$s of %2$s",
+    "buttons": {
+      "back": "back",
+      "exit": "exit",
+      "next": "next",
+      "jump": "jump to.."
+    }
+  },
+  "permissions": {
+    "create_invite": "create invite",
+    "kick": "kick members",
+    "ban": "ban members",
+    "administrator": "administrator",
+    "manage_channels": "manage channels",
+    "add_reactions": "add reactions",
+    "view_audit_logs": "view audit logs",
+    "view_channel": "view channel",
+    "send_messages": "send messages",
+    "manage_messages": "manage messages",
+    "embed_links": "embed links",
+    "attach_files": "attach files",
+    "read_history": "read history",
+    "external_emojis": "use external emojis",
+    "voice_connect": "connect",
+    "voice_speak": "speak",
+    "voice_activity": "use voice activity",
+    "change_nickname": "change nickname",
+    "manage_nicknames": "manage nicknames",
+    "manage_roles": "manage roles",
+    "manage_permissions": "manage permissions",
+    "moderate_members": "timeout members"
+  }
+}
