@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} opgehoogd tot **LVL {user.level}**",
+  "interaction_error": "uh oh, het lijkt erop dat er achter de schermen iets **fout is gegaan**. Sorry daarvoor",
+  "missing_argument": "ik kon niet achterhalen wat je zei voor **%1$s**, probeer het **opdrachtgebruik** te controleren",
+  "missing_permission": "ik heb de **%1$s** toestemming nodig in deze **%2$s** om dat te doen",
+  "missing_user_permission": "je hebt de **%1$s** toestemming nodig in deze **%2$s** om dat te doen",
+  "owner_only": "dit commando **kan alleen gebruikt worden** door **mijn baasjes**. goed geprobeerd",
+  "categories": {
+    "custom": "Op maat",
+    "essential": "essentieel",
+    "fun": "plezier",
+    "game": "spel",
+    "moderation": "met mate",
+    "music": "muziek",
+    "owner": "baasje",
+    "social": "sociaal",
+    "utility": "nutsvoorziening"
+  },
+  "paginator": {
+    "modal_title": "spring naar pagina",
+    "input_label": "paginanummer te bekijken",
+    "input_placeholder": "getal tussen 1 en %1$s",
+    "page_indicator": "pagina %1$s van %2$sbekijken",
+    "buttons": {
+      "back": "rug",
+      "exit": "Uitgang",
+      "next": "De volgende",
+      "jump": "Spring naar.."
+    }
+  },
+  "permissions": {
+    "create_invite": "uitnodiging maken",
+    "kick": "leden schoppen",
+    "ban": "leden verbieden",
+    "administrator": "beheerder",
+    "manage_channels": "kanalen beheren",
+    "add_reactions": "reacties toevoegen",
+    "view_audit_logs": "auditlogboeken bekijken",
+    "view_channel": "kanaal bekijken",
+    "send_messages": "berichten sturen",
+    "manage_messages": "berichten beheren",
+    "embed_links": "koppelingen insluiten",
+    "attach_files": "Voeg bestanden toe",
+    "read_history": "geschiedenis lezen",
+    "external_emojis": "gebruik externe emoji's",
+    "voice_connect": "aansluiten",
+    "voice_speak": "spreken",
+    "voice_activity": "stemactiviteit gebruiken",
+    "change_nickname": "bijnaam veranderen",
+    "manage_nicknames": "bijnamen beheren",
+    "manage_roles": "rollen beheren",
+    "manage_permissions": "Machtigingen beheren",
+    "moderate_members": "time-out leden"
+  }
+}
