@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} išlygintas iki ** {user.level}LVL **",
+  "interaction_error": "oi, atrodo, kad kažkas **negerai** užkulisiuose. Atsiprašau dėl to",
+  "missing_argument": "negalėjau suprasti, ką pasakėte **%1$s**, pabandykite patikrinti **komandos naudojimą**",
+  "missing_permission": "man reikia **%1$s** leidimo tai padaryti **%2$s**",
+  "missing_user_permission": "jums reikia **%1$s** leidimo šiame **%2$s**, kad tai padarytumėte",
+  "owner_only": "šią komandą **gali naudoti** tik **mano savininkai**. geras bandymas",
+  "categories": {
+    "custom": "paprotys",
+    "essential": "esminis",
+    "fun": "linksma",
+    "game": "žaidimas",
+    "moderation": "saikingai",
+    "music": "muzika",
+    "owner": "savininkas",
+    "social": "socialiniai",
+    "utility": "naudingumas"
+  },
+  "paginator": {
+    "modal_title": "pereiti į puslapį",
+    "input_label": "puslapio numeris, kurį norite peržiūrėti",
+    "input_placeholder": "skaičius nuo 1 iki %1$s",
+    "page_indicator": "žiūri %1$s puslapį iš %2$s",
+    "buttons": {
+      "back": "atgal",
+      "exit": "išeiti",
+      "next": "Kitas",
+      "jump": "pereiti prie.."
+    }
+  },
+  "permissions": {
+    "create_invite": "sukurti kvietimą",
+    "kick": "kick nariai",
+    "ban": "uždrausti narius",
+    "administrator": "administratorius",
+    "manage_channels": "valdyti kanalus",
+    "add_reactions": "pridėti reakcijas",
+    "view_audit_logs": "peržiūrėti audito žurnalus",
+    "view_channel": "peržiūrėti kanalą",
+    "send_messages": "siųsti žinutes",
+    "manage_messages": "tvarkyti pranešimus",
+    "embed_links": "įterpti nuorodas",
+    "attach_files": "Prisegti failus",
+    "read_history": "skaityti istoriją",
+    "external_emojis": "naudoti išorinius jaustukus",
+    "voice_connect": "Prisijungti",
+    "voice_speak": "kalbėti",
+    "voice_activity": "naudoti balso veiklą",
+    "change_nickname": "pakeisti slapyvardį",
+    "manage_nicknames": "tvarkyti slapyvardžius",
+    "manage_roles": "valdyti vaidmenis",
+    "manage_permissions": "tvarkyti leidimus",
+    "moderate_members": "pertraukos nariai"
+  }
+}
