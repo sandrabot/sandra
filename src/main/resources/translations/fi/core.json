@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@käyttäjä} tasoitettu ** {user.level}LVL:iin **",
+  "interaction_error": "oi, näyttää siltä, että jotain **meni pieleen** kulissien takana. anteeksi tuosta",
+  "missing_argument": "en ymmärtänyt mitä sanoit **%1$s**, yritä tarkistaa **komennon käyttö**",
+  "missing_permission": "Tarvitsen **%1$s** luvan tähän **%2$s** tehdäkseni sen",
+  "missing_user_permission": "tarvitset **%1$s** luvan tässä **%2$s** tehdäksesi sen",
+  "owner_only": "tätä komentoa **voivat käyttää** vain **omistajani**. hyvä yritys",
+  "categories": {
+    "custom": "mukautettu",
+    "essential": "välttämätön",
+    "fun": "hauskaa",
+    "game": "peli",
+    "moderation": "maltillisuus",
+    "music": "musiikkia",
+    "owner": "omistaja",
+    "social": "sosiaalinen",
+    "utility": "apuohjelma"
+  },
+  "paginator": {
+    "modal_title": "hyppää sivulle",
+    "input_label": "katsottava sivunumero",
+    "input_placeholder": "numero väliltä 1 ja %1$s",
+    "page_indicator": "katselee %2$s%1$s",
+    "buttons": {
+      "back": "takaisin",
+      "exit": "poistu",
+      "next": "Seuraava",
+      "jump": "hypätä.."
+    }
+  },
+  "permissions": {
+    "create_invite": "luo kutsu",
+    "kick": "potkia jäseniä",
+    "ban": "kieltää jäseniä",
+    "administrator": "järjestelmänvalvoja",
+    "manage_channels": "hallita kanavia",
+    "add_reactions": "lisää reaktioita",
+    "view_audit_logs": "tarkastella tarkastuslokeja",
+    "view_channel": "katso kanava",
+    "send_messages": "lähettää viestejä",
+    "manage_messages": "hallita viestejä",
+    "embed_links": "upota linkkejä",
+    "attach_files": "Liitä tiedostot",
+    "read_history": "lukea historiaa",
+    "external_emojis": "käytä ulkoisia hymiöitä",
+    "voice_connect": "kytkeä",
+    "voice_speak": "puhua",
+    "voice_activity": "käyttää äänitoimintaa",
+    "change_nickname": "vaihda lempinimi",
+    "manage_nicknames": "hallita lempinimiä",
+    "manage_roles": "hallita rooleja",
+    "manage_permissions": "hallita käyttöoikeuksia",
+    "moderate_members": "aikakatkaisun jäsenet"
+  }
+}
