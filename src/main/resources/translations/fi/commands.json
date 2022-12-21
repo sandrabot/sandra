@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "kissa",
+    "description": "näyttää kauniisti kissan katselun iloksi"
+  },
+  "commands": {
+    "name": "komentoja",
+    "description": "vilkaista kaikkia komentojani ja luokkiani",
+    "select_placeholder": "valitse katsottava luokka..",
+    "command_title": "komentoja",
+    "more_information": "käytä /help [command] saadaksesi lisätietoja"
+  },
+  "dog": {
+    "name": "koira",
+    "description": "hakee koiran netin syvyyksistä"
+  },
+  "evaluate": {
+    "name": "arvioida",
+    "description": "aloita globaali kotlin repl -istunto (vain kehittäjät)"
+  },
+  "fortune": {
+    "name": "onni",
+    "description": "avaa onnenkeksi paljastaaksesi onneasi",
+    "reply": "kun keksi murenee sormissasi, se paljastaa paperin, jossa lukee\n\n`%1$s`"
+  },
+  "help": {
+    "name": "auta",
+    "description": "katso joitakin perustietoja ja olennaisia tietoja minusta",
+    "arguments": {
+      "command": {
+        "name": "komento",
+        "description": "komento, jota haluat tarkastella lähemmin"
+      }
+    },
+    "not_found": "hups, en **en löytänyt** sitä komentoa. yritä käyttää **/komentoja** löytääksesi etsimäsi",
+    "required_arguments": "kaikki <>-merkityt vaihtoehdot ovat pakollisia",
+    "extra_help": "tarvitsetko lisäapua? Juttele kanssamme",
+    "description_title": "kuvaus",
+    "usage_title": "käyttö",
+    "info_embed": {
+      "title": "*naapuruston suosikkirobottisi* <:fun:987918991135764542>",
+      "configure": "%1$s määritä asetukset",
+      "configure_content": "> jos sinun on **määritettävä** **asetukset**, käytä `/config'",
+      "commands": "%1$s komentoa",
+      "commands_content": "> tai jos haluat nähdä **komentoluetteloni**, käytä `/commands`",
+      "invite": "%1$s kutsu Sandra",
+      "invite_content": "> haluaisitko minun liittyvän **palvelimellesi**? **[klikkaa kutsuaksesi minut](%1$s)**",
+      "support": "%1$s tukipalvelin",
+      "support_content": "> tarvitsetko **lisää apua**? keskustele kanssamme **[sandran hangoutissa](%1$s)**",
+      "built": "rakennettu %1$s x %2$s ja %3$savulla"
+    }
+  },
+  "members": {
+    "name": "jäsenet",
+    "description": "ihmettele palvelimen jäsenmäärän erittelyä",
+    "reply": "**%1$s** sisältää %2$s ihmisen ja %3$s bottia, yhteensä %4$s jäsentä"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "lähettää ping-sanoman testatakseen Sandran yhteyttä ristiriitaan",
+    "reply": "kesti %1$s :n **ping-erilaisuuden** ja noin %2$s :n **komennon vastaanottamiseen**"
+  },
+  "roll": {
+    "name": "rullaa",
+    "description": "testaa onneasi kuvitteellisella noppasarjalla",
+    "arguments": {
+      "sides": {
+        "name": "sivut",
+        "description": "nopan sivujen lukumäärä",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "suurin mahdollinen määrä"
+      }
+    },
+    "reply": "otit mahdollisuuden ja %2$s%1$s"
+  },
+  "shards": {
+    "name": "sirpaleita",
+    "description": "tarkastella luetteloa sirpaleista ja niiden tilastoista",
+    "having_issues": "onko ongelmia? liity sandran hangoutiin",
+    "status": "tila: **%1$s**\nping: %2$sms\npalvelinta: %3$s",
+    "shards_connected": "%1$d %2$d yhdistetty",
+    "server_using": " • tämä palvelin käyttää shard %1$d:aa",
+    "shard_title": "sirpale %1$s"
+  },
+  "toss": {
+    "name": "nakata",
+    "description": "heittää kolikon ja ratkaista panoksesi",
+    "reply": [
+      "pyörii kuin huippu, kolikko tanssii edessäsi ja asettuu lopulta __**%1$s**__",
+      "heität kolikon ja otat sen kiinni ilmassa, löi sen ranteeseesi paljastaen __**%1$s**__",
+      "kolikko putoaa sormistasi, kolhii maahan ja laskeutuu __**%1$s**__"
+    ],
+    "heads": "päät",
+    "tails": "hännät"
+  }
+}
