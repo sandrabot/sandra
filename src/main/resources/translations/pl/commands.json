@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "kot",
+    "description": "z wdziękiem wyświetla kota dla przyjemności oglądania"
+  },
+  "commands": {
+    "name": "polecenia",
+    "description": "przejrzyj wszystkie moje polecenia i kategorie",
+    "select_placeholder": "wybierz kategorię do wyświetlenia..",
+    "command_title": "polecenia",
+    "more_information": "użyj /help [command] , aby uzyskać więcej informacji"
+  },
+  "dog": {
+    "name": "pies",
+    "description": "wyciąga psa z czeluści internetu"
+  },
+  "evaluate": {
+    "name": "oceniać",
+    "description": "rozpocznij globalną sesję odpowiedzi kotlin (tylko programiści)"
+  },
+  "fortune": {
+    "name": "fortuna",
+    "description": "rozbij ciasteczko z wróżbą, aby odkryć swoje szczęście",
+    "reply": "gdy ciastko kruszy się w twoich palcach, odsłania kawałek papieru, na którym widnieje\n\n`%1$s`"
+  },
+  "help": {
+    "name": "Wsparcie",
+    "description": "spójrz na kilka podstawowych i niezbędnych informacji o mnie",
+    "arguments": {
+      "command": {
+        "name": "Komenda",
+        "description": "polecenie, któremu chcesz się przyjrzeć"
+      }
+    },
+    "not_found": "Ups, **nie mogłem znaleźć** tego polecenia. spróbuj użyć **/commands**, aby znaleźć to, czego szukasz",
+    "required_arguments": "wymagane są wszystkie opcje otoczone znakiem <>",
+    "extra_help": "potrzebujesz dodatkowej pomocy? Porozmawiaj z nami",
+    "description_title": "opis",
+    "usage_title": "stosowanie",
+    "info_embed": {
+      "title": "*twój ulubiony robot z sąsiedztwa* <:fun:987918991135764542>",
+      "configure": "%1$s skonfiguruj ustawienia",
+      "configure_content": "> jeśli chcesz **skonfigurować** moje **ustawienia**, użyj `/config`",
+      "commands": "%1$s poleceń",
+      "commands_content": "> lub jeśli chcesz zobaczyć moją **listę poleceń**, użyj `/commands`",
+      "invite": "%1$s zaproś sandrę",
+      "invite_content": "> chcesz żebym dołączył do **twojego serwera**? **[kliknij, aby mnie zaprosić](%1$s)**",
+      "support": "%1$s serwer wsparcia",
+      "support_content": "> potrzebujesz **więcej pomocy**? porozmawiaj z nami na **[spotkaniu sandry](%1$s)**",
+      "built": "zbudowany z %1$s przez %2$s i %3$s"
+    }
+  },
+  "members": {
+    "name": "członkowie",
+    "description": "przeglądać zestawienie liczby członków serwera",
+    "reply": "**%1$s** ma %2$s człowieka i %3$s boty, co daje w sumie %4$s członków"
+  },
+  "ping": {
+    "name": "świst",
+    "description": "wysyła polecenie ping, aby przetestować połączenie Sandry z niezgodą",
+    "reply": "zajęło mi %1$s , aby **pingować niezgodę** i około %2$s , aby **odebrać twoje polecenie**"
+  },
+  "roll": {
+    "name": "bułka",
+    "description": "sprawdzić swoje szczęście z wyimaginowanym zestawem kości",
+    "arguments": {
+      "sides": {
+        "name": "boki",
+        "description": "liczbę boków twojej kości",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "maks",
+        "description": "maksymalna możliwa liczba"
+      }
+    },
+    "reply": "zaryzykowałeś i wyrzuciłeś %1$s z %2$s"
+  },
+  "shards": {
+    "name": "odłamki",
+    "description": "wyświetlić listę odłamków i ich statystyki",
+    "having_issues": "mieć problemy? dołącz do spotkania sandry",
+    "status": "status: **%1$s**\nping: %2$sms\nserwery: %3$s",
+    "shards_connected": "%1$d z %2$d połączonych fragmentów",
+    "server_using": " • ten serwer używa fragmentu %1$d",
+    "shard_title": "odłamek %1$s"
+  },
+  "toss": {
+    "name": "podrzucenie",
+    "description": "rzuć monetą i rozstrzygnij zakłady",
+    "reply": [
+      "wiruje jak bączek, moneta tańczy przed tobą i w końcu osiada na __**%1$s**__",
+      "rzucasz monetą i łapiesz ją w powietrzu, uderzając nią w nadgarstek odsłaniając __**%1$s**__",
+      "moneta wypada z twoich palców, stukając o ziemię i lądując na __**%1$s**__"
+    ],
+    "heads": "głowy",
+    "tails": "ogony"
+  }
+}
