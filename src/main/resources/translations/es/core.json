@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@usuario} subido de nivel a **LVL {user.level}**",
+  "interaction_error": "oh oh, parece que algo ** salió mal ** detrás de escena. lo siento por eso",
+  "missing_argument": "No pude entender lo que dijiste para **%1$s**, intenta verificar el ** uso del comando **",
+  "missing_permission": "necesito el permiso **%1$s** en este **%2$s** para hacer eso",
+  "missing_user_permission": "necesitas el permiso **%1$s** en este **%2$s** para hacer eso",
+  "owner_only": "este comando **solo puede ser usado** por **mis propietarios**. buen intento",
+  "categories": {
+    "custom": "disfraz",
+    "essential": "básico",
+    "fun": "divertida",
+    "game": "juego",
+    "moderation": "moderación",
+    "music": "música",
+    "owner": "propietario",
+    "social": "social",
+    "utility": "utilidad"
+  },
+  "paginator": {
+    "modal_title": "saltar a la página",
+    "input_label": "número de página para ver",
+    "input_placeholder": "número entre 1 y %1$s",
+    "page_indicator": "viendo la página %1$s de %2$s",
+    "buttons": {
+      "back": "espalda",
+      "exit": "salida",
+      "next": "próximo",
+      "jump": "Salta a.."
+    }
+  },
+  "permissions": {
+    "create_invite": "crear invitación",
+    "kick": "patear a los miembros",
+    "ban": "prohibir miembros",
+    "administrator": "administrador",
+    "manage_channels": "gestionar canales",
+    "add_reactions": "añadir reacciones",
+    "view_audit_logs": "ver registros de auditoría",
+    "view_channel": "ver canal",
+    "send_messages": "enviar mensajes",
+    "manage_messages": "administrar mensajes",
+    "embed_links": "incrustar enlaces",
+    "attach_files": "adjuntar archivos",
+    "read_history": "leer historia",
+    "external_emojis": "usa emojis externos",
+    "voice_connect": "conectar",
+    "voice_speak": "hablar",
+    "voice_activity": "usar la actividad de voz",
+    "change_nickname": "cambiar apodo",
+    "manage_nicknames": "administrar apodos",
+    "manage_roles": "administrar roles",
+    "manage_permissions": "Administrar permisos",
+    "moderate_members": "miembros de tiempo de espera"
+  }
+}
