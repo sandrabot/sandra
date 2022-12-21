@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} awansował do ** {user.level}lvl **",
+  "interaction_error": "och, wygląda na to, że coś **poszło nie tak** za kulisami. przepraszam za to",
+  "missing_argument": "nie mogłem zrozumieć, co powiedziałeś dla **%1$s**, spróbuj sprawdzić **użycie polecenia**",
+  "missing_permission": "potrzebuję **%1$s** pozwolenia w tym **%2$s**, aby to zrobić",
+  "missing_user_permission": "potrzebujesz **%1$s** pozwolenia w tym **%2$s**, aby to zrobić",
+  "owner_only": "tego polecenia **mogą używać** tylko **moi właściciele**. Niezła próba",
+  "categories": {
+    "custom": "zwyczaj",
+    "essential": "kluczowy",
+    "fun": "zabawa",
+    "game": "gra",
+    "moderation": "umiar",
+    "music": "muzyka",
+    "owner": "właściciel",
+    "social": "społeczny",
+    "utility": "pożytek"
+  },
+  "paginator": {
+    "modal_title": "przejdź do strony",
+    "input_label": "numer strony do wyświetlenia",
+    "input_placeholder": "liczba od 1 do %1$s",
+    "page_indicator": "przeglądanie strony %1$s z %2$s",
+    "buttons": {
+      "back": "plecy",
+      "exit": "Wyjście",
+      "next": "następny",
+      "jump": "Skocz do.."
+    }
+  },
+  "permissions": {
+    "create_invite": "utwórz zaproszenie",
+    "kick": "kopać członków",
+    "ban": "zakazać członków",
+    "administrator": "administrator",
+    "manage_channels": "zarządzać kanałami",
+    "add_reactions": "dodaj reakcje",
+    "view_audit_logs": "przeglądać dzienniki kontroli",
+    "view_channel": "zobacz kanał",
+    "send_messages": "wysłać wiadomości",
+    "manage_messages": "zarządzać wiadomościami",
+    "embed_links": "osadzać linki",
+    "attach_files": "dołączać pliki",
+    "read_history": "czytać historię",
+    "external_emojis": "użyj zewnętrznych emotikonów",
+    "voice_connect": "połączyć",
+    "voice_speak": "mówić",
+    "voice_activity": "użyj aktywności głosowej",
+    "change_nickname": "zmienić nick",
+    "manage_nicknames": "zarządzać pseudonimami",
+    "manage_roles": "zarządzać rolami",
+    "manage_permissions": "Zarządzaj uprawnieniami",
+    "moderate_members": "członkowie przedawnieni"
+  }
+}
