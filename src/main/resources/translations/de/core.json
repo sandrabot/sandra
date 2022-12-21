@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} aufgestiegen auf **LVL {user.level}**",
+  "interaction_error": "oh oh, es sieht so aus, als wäre hinter den Kulissen etwas **schiefgelaufen**. Das tut mir leid",
+  "missing_argument": "Ich konnte nicht herausfinden, was Sie für **%1$s** gesagt haben, versuchen Sie, die **Befehlsverwendung** zu überprüfen",
+  "missing_permission": "Ich brauche die **%1$s** Berechtigung in dieser **%2$s**, um das zu tun",
+  "missing_user_permission": "Sie benötigen die **%1$s** -Berechtigung in dieser **%2$s**, um das zu tun",
+  "owner_only": "dieser Befehl **kann nur von **meinen Besitzern** verwendet werden**. netter Versuch",
+  "categories": {
+    "custom": "Brauch",
+    "essential": "wesentlich",
+    "fun": "Spaß",
+    "game": "Spiel",
+    "moderation": "Mäßigung",
+    "music": "Musik",
+    "owner": "Inhaber",
+    "social": "Sozial",
+    "utility": "Dienstprogramm"
+  },
+  "paginator": {
+    "modal_title": "zur Seite springen",
+    "input_label": "Seitenzahl zu sehen",
+    "input_placeholder": "Zahl zwischen 1 und %1$s",
+    "page_indicator": "Anzeige von Seite %1$s von %2$s",
+    "buttons": {
+      "back": "der Rücken",
+      "exit": "Ausfahrt",
+      "next": "nächste",
+      "jump": "springen zu.."
+    }
+  },
+  "permissions": {
+    "create_invite": "Einladung erstellen",
+    "kick": "Kick-Mitglieder",
+    "ban": "Mitglieder verbieten",
+    "administrator": "Administrator",
+    "manage_channels": "Kanäle verwalten",
+    "add_reactions": "Reaktionen hinzufügen",
+    "view_audit_logs": "Prüfprotokolle anzeigen",
+    "view_channel": "Kanal ansehen",
+    "send_messages": "Sende Nachrichten",
+    "manage_messages": "Nachrichten verwalten",
+    "embed_links": "Links einbetten",
+    "attach_files": "Dateien anhängen",
+    "read_history": "Geschichte lesen",
+    "external_emojis": "Verwenden Sie externe Emojis",
+    "voice_connect": "anschließen",
+    "voice_speak": "sprechen",
+    "voice_activity": "Sprachaktivität verwenden",
+    "change_nickname": "Spitznamen ändern",
+    "manage_nicknames": "Spitznamen verwalten",
+    "manage_roles": "Rollen verwalten",
+    "manage_permissions": "Berechtigungen verwalten",
+    "moderate_members": "Timeout-Mitglieder"
+  }
+}
