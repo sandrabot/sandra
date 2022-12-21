@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "고양이",
+    "description": "보는 즐거움을 위해 고양이를 우아하게 표시합니다."
+  },
+  "commands": {
+    "name": "명령",
+    "description": "내 모든 명령 및 범주 살펴보기",
+    "select_placeholder": "보고 싶은 카테고리를 선택하세요..",
+    "command_title": "명령",
+    "more_information": "자세한 정보는 /help [command] 을 사용하십시오."
+  },
+  "dog": {
+    "name": "개",
+    "description": "인터넷의 깊은 곳에서 개를 가져옵니다"
+  },
+  "evaluate": {
+    "name": "평가하다",
+    "description": "글로벌 kotlin repl 세션 시작(개발자 전용)"
+  },
+  "fortune": {
+    "name": "행운",
+    "description": "당신의 행운을 드러내기 위해 포춘 쿠키를 부수세요",
+    "reply": "쿠키가 손가락에서 부서지면서\n\n`%1$s`이라고 적힌 종이가 나타납니다."
+  },
+  "help": {
+    "name": "돕다",
+    "description": "나에 대한 기본 및 필수 정보 보기",
+    "arguments": {
+      "command": {
+        "name": "명령",
+        "description": "자세히 살펴보고 싶은 명령"
+      }
+    },
+    "not_found": "이런, 그 명령을 **찾을 수 없습니다**. **/commands**를 사용하여 원하는 항목을 찾으십시오.",
+    "required_arguments": "<>로 둘러싸인 모든 옵션이 필요합니다.",
+    "extra_help": "추가 도움이 필요하십니까? 우리와 채팅",
+    "description_title": "설명",
+    "usage_title": "용법",
+    "info_embed": {
+      "title": "*좋아하는 동네 로봇* <:fun:987918991135764542>",
+      "configure": "%1$s 구성 설정",
+      "configure_content": "> 내 **설정**을 **구성**해야 하는 경우 `/config`를 사용합니다.",
+      "commands": "%1$s 명령",
+      "commands_content": "> 또는 내 **명령어 목록**을 보려면 `/commands`를 사용하세요.",
+      "invite": "%1$s 산드라 초대",
+      "invite_content": "> **귀하의 서버**에 가입하시겠습니까? **[초대하려면 클릭](%1$s)**",
+      "support": "%1$s 지원 서버",
+      "support_content": "> **추가 도움**이 필요하십니까? **[sandra's hangout](%1$s)**에서 저희와 채팅하세요",
+      "built": "%1$s x %2$s 및 %3$s로 빌드"
+    }
+  },
+  "members": {
+    "name": "회원",
+    "description": "서버 회원 수의 내역을 살펴보세요.",
+    "reply": "**%1$s**은 사람 %2$s 명과 봇 %3$s 명으로 총 %4$s 명입니다."
+  },
+  "ping": {
+    "name": "핑",
+    "description": "Sandra와 Discord의 연결을 테스트하기 위해 핑을 보냅니다.",
+    "reply": "**불화를 핑**하는 데 %1$s 이 걸렸고 **명령을 받는 데 약 %2$s 이 걸렸습니다**"
+  },
+  "roll": {
+    "name": "롤",
+    "description": "가상의 주사위 세트로 행운을 시험해보세요",
+    "arguments": {
+      "sides": {
+        "name": "측면",
+        "description": "주사위의 면 수",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "최대",
+        "description": "가능한 최대 수"
+      }
+    },
+    "reply": "당신은 기회를 잡고 %2$s에서 %1$s 을 굴렸습니다."
+  },
+  "shards": {
+    "name": "파편",
+    "description": "샤드 및 해당 통계 목록 보기",
+    "having_issues": "문제가 있습니까? 산드라의 행아웃에 참여하기",
+    "status": "상태: **%1$s**\nping: %2$sms\n서버: %3$s",
+    "shards_connected": "샤드 %2$d 중 %1$d 개 연결됨",
+    "server_using": " • 이 서버는 샤드 %1$d을 사용하고 있습니다.",
+    "shard_title": "샤드 %1$s"
+  },
+  "toss": {
+    "name": "던져 올림",
+    "description": "동전을 던지고 내기를 정산하십시오",
+    "reply": [
+      "팽이처럼 회전하면서 동전이 당신 앞에서 춤을 추고 마침내 __**%1$s**__에 안착합니다.",
+      "당신은 동전을 던지고 공중에서 그것을 받아 당신의 손목에 두드려 __**%1$s**__을 드러냅니다.",
+      "동전이 손가락에서 떨어지며 땅을 덜컥거리며 __**%1$s**__에 떨어집니다."
+    ],
+    "heads": "머리",
+    "tails": "꼬리"
+  }
+}
