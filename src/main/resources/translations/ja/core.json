@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} が **LVL {user.level}** にレベルアップしました",
+  "interaction_error": "うーん、裏で何かが**うまくいかなかったようです**。ごめんなさい",
+  "missing_argument": "**%1$s** に対して何を言っているのかわかりませんでした。**コマンドの使用法**を確認してください。",
+  "missing_permission": "それを行うには、この **%2$s** で **%1$s** パーミッションが必要です",
+  "missing_user_permission": "これを行うには、この **%2$s** で **%1$s** パーミッションが必要です",
+  "owner_only": "このコマンドは、**私の所有者**のみが使用できます**。よい試み",
+  "categories": {
+    "custom": "習慣",
+    "essential": "必要不可欠",
+    "fun": "楽しい",
+    "game": "ゲーム",
+    "moderation": "節度",
+    "music": "音楽",
+    "owner": "オーナー",
+    "social": "ソーシャル",
+    "utility": "効用"
+  },
+  "paginator": {
+    "modal_title": "ページにジャンプ",
+    "input_label": "表示するページ番号",
+    "input_placeholder": "1 から %1$sまでの数値",
+    "page_indicator": "ページ %1$s を %2$s中",
+    "buttons": {
+      "back": "戻る",
+      "exit": "出口",
+      "next": "次",
+      "jump": "にジャンプ.."
+    }
+  },
+  "permissions": {
+    "create_invite": "招待状を作成",
+    "kick": "キックメンバー",
+    "ban": "メンバーを禁止する",
+    "administrator": "管理者",
+    "manage_channels": "チャネルを管理する",
+    "add_reactions": "リアクションを追加する",
+    "view_audit_logs": "監査ログを表示する",
+    "view_channel": "チャンネルを見る",
+    "send_messages": "メッセージを送る",
+    "manage_messages": "メッセージを管理する",
+    "embed_links": "リンクを埋め込む",
+    "attach_files": "ファイルを添付",
+    "read_history": "履歴を読む",
+    "external_emojis": "外部絵文字を使用する",
+    "voice_connect": "接続",
+    "voice_speak": "話す",
+    "voice_activity": "音声アクティビティを使用する",
+    "change_nickname": "ニックネームを変更",
+    "manage_nicknames": "ニックネームを管理する",
+    "manage_roles": "役割を管理する",
+    "manage_permissions": "権限を管理する",
+    "moderate_members": "タイムアウトメンバー"
+  }
+}
