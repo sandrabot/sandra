@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} เลเวลถึง **LVL {user.level}**",
+  "interaction_error": "เอ่อ ดูเหมือนมีบางอย่าง **ผิดพลาด** อยู่เบื้องหลัง ขอโทษสำหรับเรื่องนั้น",
+  "missing_argument": "ฉันไม่เข้าใจว่าคุณพูดอะไรสำหรับ **%1$s** ลองตรวจสอบ **การใช้คำสั่ง**",
+  "missing_permission": "ฉันต้องการสิทธิ์ **%1$s** ใน **%2$s** นี้เพื่อทำเช่นนั้น",
+  "missing_user_permission": "คุณต้องได้รับอนุญาต **%1$s** ใน **%2$s** นี้เพื่อทำเช่นนั้น",
+  "owner_only": "คำสั่งนี้ **สามารถใช้ได้** โดย **เจ้าของของฉัน** เท่านั้น พยายามได้ดี",
+  "categories": {
+    "custom": "กำหนดเอง",
+    "essential": "จำเป็น",
+    "fun": "สนุก",
+    "game": "เกม",
+    "moderation": "การกลั่นกรอง",
+    "music": "ดนตรี",
+    "owner": "เจ้าของ",
+    "social": "ทางสังคม",
+    "utility": "คุณประโยชน์"
+  },
+  "paginator": {
+    "modal_title": "ข้ามไปที่หน้า",
+    "input_label": "หมายเลขหน้าที่จะดู",
+    "input_placeholder": "จำนวนระหว่าง 1 ถึง %1$s",
+    "page_indicator": "กำลังดูหน้าที่ %1$s จาก %2$s",
+    "buttons": {
+      "back": "กลับ",
+      "exit": "ทางออก",
+      "next": "ต่อไป",
+      "jump": "กระโดดไปที่.."
+    }
+  },
+  "permissions": {
+    "create_invite": "สร้างคำเชิญ",
+    "kick": "เตะสมาชิก",
+    "ban": "ห้ามสมาชิก",
+    "administrator": "ผู้ดูแลระบบ",
+    "manage_channels": "จัดการช่อง",
+    "add_reactions": "เพิ่มปฏิกิริยา",
+    "view_audit_logs": "ดูบันทึกการตรวจสอบ",
+    "view_channel": "ช่องดู",
+    "send_messages": "ส่งข้อความ",
+    "manage_messages": "จัดการข้อความ",
+    "embed_links": "ลิงค์ฝัง",
+    "attach_files": "แนบไฟล์",
+    "read_history": "อ่านประวัติศาสตร์",
+    "external_emojis": "ใช้อิโมจิภายนอก",
+    "voice_connect": "เชื่อมต่อ",
+    "voice_speak": "พูด",
+    "voice_activity": "ใช้กิจกรรมเสียง",
+    "change_nickname": "เปลี่ยนชื่อเล่น",
+    "manage_nicknames": "จัดการชื่อเล่น",
+    "manage_roles": "จัดการบทบาท",
+    "manage_permissions": "จัดการสิทธิ์",
+    "moderate_members": "สมาชิกหมดเวลา"
+  }
+}
