@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} har nådd **LVL {user.level}**",
+  "interaction_error": "øh, det ser ut som noe ** gikk galt** bak kulissene. Beklager for det",
+  "missing_argument": "jeg kunne ikke finne ut hva du sa for **%1$s**, prøv å sjekke **kommandobruken**",
+  "missing_permission": "jeg trenger **%1$s** tillatelsen i denne **%2$s** for å gjøre det",
+  "missing_user_permission": "du trenger **%1$s** tillatelsen i denne **%2$s** for å gjøre det",
+  "owner_only": "denne kommandoen **kan bare brukes** av **mine eiere**. godt forsøk",
+  "categories": {
+    "custom": "tilpasset",
+    "essential": "viktig",
+    "fun": "moro",
+    "game": "spill",
+    "moderation": "moderasjon",
+    "music": "musikk",
+    "owner": "Eieren",
+    "social": "sosial",
+    "utility": "nytte"
+  },
+  "paginator": {
+    "modal_title": "gå til siden",
+    "input_label": "sidenummer for å se",
+    "input_placeholder": "tall mellom 1 og %1$s",
+    "page_indicator": "viser side %1$s av %2$s",
+    "buttons": {
+      "back": "tilbake",
+      "exit": "exit",
+      "next": "neste",
+      "jump": "hoppe til.."
+    }
+  },
+  "permissions": {
+    "create_invite": "opprette invitasjon",
+    "kick": "sparke medlemmer",
+    "ban": "utestenge medlemmer",
+    "administrator": "administrator",
+    "manage_channels": "administrere kanaler",
+    "add_reactions": "legge til reaksjoner",
+    "view_audit_logs": "se revisjonslogger",
+    "view_channel": "se kanal",
+    "send_messages": "sende meldinger",
+    "manage_messages": "administrere meldinger",
+    "embed_links": "legge inn lenker",
+    "attach_files": "Legg til filer",
+    "read_history": "lese historie",
+    "external_emojis": "bruk eksterne emojier",
+    "voice_connect": "koble",
+    "voice_speak": "snakke",
+    "voice_activity": "bruke stemmeaktivitet",
+    "change_nickname": "endre kallenavn",
+    "manage_nicknames": "administrere kallenavn",
+    "manage_roles": "administrere roller",
+    "manage_permissions": "administrere tillatelser",
+    "moderate_members": "timeout medlemmer"
+  }
+}
