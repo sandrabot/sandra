@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "gatto",
+    "description": "mostra con grazia un gatto per il tuo piacere di visione"
+  },
+  "commands": {
+    "name": "comandi",
+    "description": "dai un'occhiata a tutti i miei comandi e categorie",
+    "select_placeholder": "scegli una categoria da visualizzare..",
+    "command_title": "comandi",
+    "more_information": "usa /help [command] per maggiori informazioni"
+  },
+  "dog": {
+    "name": "cane",
+    "description": "recupera un cane dalle profondità di Internet"
+  },
+  "evaluate": {
+    "name": "valutare",
+    "description": "avviare una sessione globale kotlin repl (solo sviluppatori)"
+  },
+  "fortune": {
+    "name": "fortuna",
+    "description": "rompi un biscotto della fortuna per rivelare la tua fortuna",
+    "reply": "mentre il biscotto si sbriciola tra le dita, rivela un pezzo di carta che legge\n\n`%1$s"
+  },
+  "help": {
+    "name": "aiuto",
+    "description": "guarda alcune informazioni di base ed essenziali su di me",
+    "arguments": {
+      "command": {
+        "name": "comando",
+        "description": "il comando che vuoi esaminare più da vicino"
+      }
+    },
+    "not_found": "whoops, **non sono riuscito a trovare** quel comando. prova a utilizzare **/commands** per trovare ciò che stai cercando",
+    "required_arguments": "tutte le opzioni racchiuse tra <> sono obbligatorie",
+    "extra_help": "hai bisogno di un aiuto in più? chatta con noi",
+    "description_title": "descrizione",
+    "usage_title": "utilizzo",
+    "info_embed": {
+      "title": "*il tuo robot di quartiere preferito* <:fun:987918991135764542>",
+      "configure": "%1$s configurare le impostazioni",
+      "configure_content": "> se hai bisogno di **configurare** le mie **impostazioni**, usa `/config`",
+      "commands": "%1$s comandi",
+      "commands_content": "> o se vuoi vedere la mia **lista di comandi**, usa `/commands`",
+      "invite": "%1$s invita sandra",
+      "invite_content": "> vuoi che mi unisca al **tuo server**? **[fai clic per invitarmi](%1$s)**",
+      "support": "%1$s server di supporto",
+      "support_content": "> hai bisogno di **altro aiuto**? chatta con noi in **[Hangout di Sandra](%1$s)**",
+      "built": "costruito con %1$s per %2$s e %3$s"
+    }
+  },
+  "members": {
+    "name": "membri",
+    "description": "guarda una ripartizione del conteggio dei membri del server",
+    "reply": "**%1$s** ha %2$s umano e %3$s robot per un totale di %4$s membri"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "invia un ping per testare la connessione di sandra a discord",
+    "reply": "mi ci sono voluti %1$s per **pingare discord** e circa %2$s per **ricevere il tuo comando**"
+  },
+  "roll": {
+    "name": "rotolo",
+    "description": "prova la tua fortuna con un set di dadi immaginario",
+    "arguments": {
+      "sides": {
+        "name": "lati",
+        "description": "il numero di lati che ha il tuo dado",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "il numero massimo possibile"
+      }
+    },
+    "reply": "hai colto l'occasione e hai tirato uno %1$s su %2$s"
+  },
+  "shards": {
+    "name": "frammenti",
+    "description": "visualizzare un elenco di frammenti e le relative statistiche",
+    "having_issues": "avere problemi? unisciti all'Hangout di Sandra",
+    "status": "stato: **%1$s**\nping: %2$sms\nserver: %3$s",
+    "shards_connected": "%1$d di %2$d shard collegati",
+    "server_using": " • questo server utilizza lo shard %1$d",
+    "shard_title": "frammento %1$s"
+  },
+  "toss": {
+    "name": "lanciare",
+    "description": "lancia una moneta e regola le tue scommesse",
+    "reply": [
+      "girando come una trottola, la moneta danza davanti a te e alla fine si posa su __**%1$s**__",
+      "lanci la moneta e la prendi a mezz'aria, sbattendola sul tuo polso rivelando __**%1$s**__",
+      "la moneta ti cade dalle dita, sbattendo a terra e atterrando su __**%1$s**__"
+    ],
+    "heads": "teste",
+    "tails": "code"
+  }
+}
