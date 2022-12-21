@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} a atteint le niveau **LVL {user.level}**",
+  "interaction_error": "euh oh, on dirait que quelque chose ** s'est mal passé ** dans les coulisses. Désolé pour ça",
+  "missing_argument": "je n'ai pas compris ce que vous avez dit pour **%1$s**, essayez de vérifier l'**utilisation de la commande**",
+  "missing_permission": "j'ai besoin de la permission **%1$s** dans ce **%2$s** pour faire ça",
+  "missing_user_permission": "vous avez besoin de la permission **%1$s** dans ce **%2$s** pour le faire",
+  "owner_only": "cette commande **ne peut être utilisée** que par **mes propriétaires**. bien essayé",
+  "categories": {
+    "custom": "Douane",
+    "essential": "indispensable",
+    "fun": "amusement",
+    "game": "Jeu",
+    "moderation": "modération",
+    "music": "la musique",
+    "owner": "propriétaire",
+    "social": "social",
+    "utility": "utilitaire"
+  },
+  "paginator": {
+    "modal_title": "sauter à la page",
+    "input_label": "numéro de page à afficher",
+    "input_placeholder": "nombre entre 1 et %1$s",
+    "page_indicator": "affichage de la page %1$s sur %2$s",
+    "buttons": {
+      "back": "arrière",
+      "exit": "sortir",
+      "next": "suivant",
+      "jump": "sauter à.."
+    }
+  },
+  "permissions": {
+    "create_invite": "créer une invitation",
+    "kick": "kick membres",
+    "ban": "bannir des membres",
+    "administrator": "administrateur",
+    "manage_channels": "gérer les canaux",
+    "add_reactions": "ajouter des réactions",
+    "view_audit_logs": "afficher les journaux d'audit",
+    "view_channel": "afficher la chaîne",
+    "send_messages": "envoyer des messages",
+    "manage_messages": "gérer les messages",
+    "embed_links": "intégrer des liens",
+    "attach_files": "joindre des fichiers",
+    "read_history": "lire l'histoire",
+    "external_emojis": "utiliser des emojis externes",
+    "voice_connect": "relier",
+    "voice_speak": "parlez",
+    "voice_activity": "utiliser l'activité vocale",
+    "change_nickname": "changer de pseudo",
+    "manage_nicknames": "gérer les surnoms",
+    "manage_roles": "gérer les rôles",
+    "manage_permissions": "Gérer les autorisations",
+    "moderate_members": "membres du délai d'attente"
+  }
+}
