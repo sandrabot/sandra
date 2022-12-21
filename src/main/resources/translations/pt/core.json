@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} nivelado até **LVL {user.level}**",
+  "interaction_error": "uh oh, parece que algo **deu errado** nos bastidores. desculpe por isso",
+  "missing_argument": "não consegui entender o que você disse para **%1$s**, tente verificar o ** uso do comando **",
+  "missing_permission": "eu preciso da permissão **%1$s** neste **%2$s** para fazer isso",
+  "missing_user_permission": "você precisa da permissão **%1$s** neste **%2$s** para fazer isso",
+  "owner_only": "este comando **só pode ser usado** por **meus proprietários**. boa tentativa",
+  "categories": {
+    "custom": "personalizadas",
+    "essential": "essencial",
+    "fun": "Diversão",
+    "game": "jogos",
+    "moderation": "moderação",
+    "music": "música",
+    "owner": "proprietário",
+    "social": "social",
+    "utility": "Utilitário"
+  },
+  "paginator": {
+    "modal_title": "pular para a página",
+    "input_label": "número da página para ver",
+    "input_placeholder": "número entre 1 e %1$s",
+    "page_indicator": "visualizando a página %1$s de %2$s",
+    "buttons": {
+      "back": "costas",
+      "exit": "saída",
+      "next": "Próximo",
+      "jump": "pule para.."
+    }
+  },
+  "permissions": {
+    "create_invite": "criar convite",
+    "kick": "chutar membros",
+    "ban": "proibir membros",
+    "administrator": "administrador",
+    "manage_channels": "gerenciar canais",
+    "add_reactions": "adicionar reações",
+    "view_audit_logs": "visualizar logs de auditoria",
+    "view_channel": "ver canal",
+    "send_messages": "enviar mensagens",
+    "manage_messages": "gerenciar mensagens",
+    "embed_links": "incorporar links",
+    "attach_files": "anexar arquivos",
+    "read_history": "ler história",
+    "external_emojis": "usar emojis externos",
+    "voice_connect": "conectar",
+    "voice_speak": "falar",
+    "voice_activity": "usar atividade de voz",
+    "change_nickname": "mudar apelido",
+    "manage_nicknames": "gerenciar apelidos",
+    "manage_roles": "gerenciar funções",
+    "manage_permissions": "Gerenciar Permissões",
+    "moderate_members": "membros de tempo limite"
+  }
+}
