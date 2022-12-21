@@ -36,9 +36,7 @@
         </encoder>
     </appender>
 
-    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
-        <filter class="com.sandrabot.sandra.utils.SentryFilter" />
-    </appender>
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender" />
 
     <root level="info">
         <appender-ref ref="Console" />
