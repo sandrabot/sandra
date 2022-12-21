@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "猫",
+    "description": "猫を優雅に飾って鑑賞を楽しもう"
+  },
+  "commands": {
+    "name": "コマンド",
+    "description": "すべてのコマンドとカテゴリを一目で確認",
+    "select_placeholder": "表示するカテゴリを選択してください..",
+    "command_title": "コマンド",
+    "more_information": "詳細については、/help [command] を使用してください"
+  },
+  "dog": {
+    "name": "犬",
+    "description": "インターネットの奥底から犬を連れてくる"
+  },
+  "evaluate": {
+    "name": "評価",
+    "description": "グローバル kotlin repl セッションを開始する (開発者のみ)"
+  },
+  "fortune": {
+    "name": "運",
+    "description": "フォーチュン クッキーを割って運勢を明らかにする",
+    "reply": "指の中でクッキーが砕けると、\n\n`%1$s` と書かれた紙が現れます"
+  },
+  "help": {
+    "name": "ヘルプ",
+    "description": "私に関するいくつかの基本的かつ重要な情報を見てください",
+    "arguments": {
+      "command": {
+        "name": "指図",
+        "description": "詳しく調べたいコマンド"
+      }
+    },
+    "not_found": "おっと、そのコマンドが**見つかりませんでした**。 **/commands** を使用して探しているものを見つけてください",
+    "required_arguments": "<> で囲まれたオプションはすべて必須です",
+    "extra_help": "追加のヘルプが必要ですか?私たちとしゃべる",
+    "description_title": "説明",
+    "usage_title": "利用方法",
+    "info_embed": {
+      "title": "*お気に入りの近所のロボット* <:fun:987918991135764542>",
+      "configure": "%1$s 設定を構成する",
+      "configure_content": "> 私の **設定** を **構成** する必要がある場合は、`/config` を使用してください",
+      "commands": "%1$s コマンド",
+      "commands_content": "> または、私の **コマンド リスト** を見たい場合は、`/commands` を使用してください",
+      "invite": "%1$s サンドラを招待",
+      "invite_content": "> **あなたのサーバー**に参加しますか? **[クリックして招待](%1$s)**",
+      "support": "%1$s サポートサーバー",
+      "support_content": "> **さらにヘルプ**が必要ですか? **[サンドラのたまり場](%1$s)**で私たちとチャットしてください",
+      "built": "%1$s by %2$s と %3$sで構築"
+    }
+  },
+  "members": {
+    "name": "メンバー",
+    "description": "サーバーのメンバー数の内訳を見てみましょう",
+    "reply": "**%1$s** には %2$s 人の人間と %3$s のボットの合計 %4$s 人のメンバーがいます"
+  },
+  "ping": {
+    "name": "ピング",
+    "description": "サンドラの discord への接続をテストするために ping を送信します",
+    "reply": "**discordにping**するのに %1$s 時間、**あなたのコマンドを受け取る**のに約 %2$s 時間かかりました"
+  },
+  "roll": {
+    "name": "ロール",
+    "description": "架空のサイコロセットで運試し",
+    "arguments": {
+      "sides": {
+        "name": "側面",
+        "description": "サイコロの面の数",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "最大",
+        "description": "可能な最大数"
+      }
+    },
+    "reply": "あなたはチャンスをつかみ、 %2$sから %1$s を出しました"
+  },
+  "shards": {
+    "name": "破片",
+    "description": "シャードとその統計のリストを表示する",
+    "having_issues": "問題がありますか？サンドラのハングアウトに参加する",
+    "status": "ステータス: **%1$s**\nping: %2$sミリ秒\nサーバー: %3$s",
+    "shards_connected": "%2$d 個中%1$d 個のシャードが接続されました",
+    "server_using": " • このサーバーはシャード %1$dを使用しています",
+    "shard_title": "シャード %1$s"
+  },
+  "toss": {
+    "name": "投げ捨てる",
+    "description": "コインを投げてベットを清算する",
+    "reply": [
+      "コマのように回転し、コインはあなたの前で踊り、最終的に __**%1$s**__ に落ち着きます。",
+      "コインを投げて空中でキャッチし、手首に叩きつけて __**%1$s**__ を明らかにします。",
+      "コインが指から転がり落ち、地面でガタガタと音を立てて __**%1$s**__ に着地します。"
+    ],
+    "heads": "頭",
+    "tails": "尾"
+  }
+}
