@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user}님이 **LVL {user.level}**까지 레벨 업했습니다.",
+  "interaction_error": "어, 뒤에서 뭔가 **잘못된** 것 같습니다. 미안합니다",
+  "missing_argument": "**%1$s**에 대해 말씀하신 내용을 이해할 수 없습니다. **명령어 사용법**을 확인해 보세요.",
+  "missing_permission": "그렇게 하려면 **%2$s**에 **%1$s** 권한이 필요합니다.",
+  "missing_user_permission": "그렇게 하려면 이 **%2$s**에 **%1$s** 권한이 필요합니다.",
+  "owner_only": "이 명령은 **내 소유자**만 사용할 수 있습니다**. 좋은 시도",
+  "categories": {
+    "custom": "커스텀",
+    "essential": "필수적인",
+    "fun": "재미있는",
+    "game": "게임",
+    "moderation": "절도",
+    "music": "음악",
+    "owner": "소유자",
+    "social": "사회의",
+    "utility": "공익사업"
+  },
+  "paginator": {
+    "modal_title": "페이지로 이동",
+    "input_label": "볼 페이지 번호",
+    "input_placeholder": "1과 %1$s사이의 숫자",
+    "page_indicator": "페이지 %1$s %2$s",
+    "buttons": {
+      "back": "뒤쪽에",
+      "exit": "출구",
+      "next": "다음",
+      "jump": "로 점프.."
+    }
+  },
+  "permissions": {
+    "create_invite": "초대 만들기",
+    "kick": "킥 멤버",
+    "ban": "금지 회원",
+    "administrator": "관리자",
+    "manage_channels": "채널 관리",
+    "add_reactions": "반응 추가",
+    "view_audit_logs": "감사 로그 보기",
+    "view_channel": "채널 보기",
+    "send_messages": "메시지 보내기",
+    "manage_messages": "메시지 관리",
+    "embed_links": "임베드 링크",
+    "attach_files": "파일 첨부",
+    "read_history": "기록 읽기",
+    "external_emojis": "외부 이모티콘 사용",
+    "voice_connect": "연결하다",
+    "voice_speak": "말하다",
+    "voice_activity": "음성 활동 사용",
+    "change_nickname": "닉네임 변경",
+    "manage_nicknames": "닉네임 관리",
+    "manage_roles": "역할 관리",
+    "manage_permissions": "권한 관리",
+    "moderate_members": "타임아웃 멤버"
+  }
+}
