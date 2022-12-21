@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "kedi",
+    "description": "izleme zevkiniz için zarif bir şekilde bir kedi gösterir"
+  },
+  "commands": {
+    "name": "komutlar",
+    "description": "tüm komutlarıma ve kategorilerime göz at",
+    "select_placeholder": "görüntülemek için bir kategori seçin..",
+    "command_title": "komutlar",
+    "more_information": "daha fazla bilgi için /help [command] kullanın"
+  },
+  "dog": {
+    "name": "köpek",
+    "description": "internetin derinliklerinden bir köpek getirir"
+  },
+  "evaluate": {
+    "name": "değerlendirmek",
+    "description": "global bir kotlin repl oturumu başlat (yalnızca geliştiriciler)"
+  },
+  "fortune": {
+    "name": "talih",
+    "description": "şansınızı ortaya çıkarmak için bir fal kurabiyesi açın",
+    "reply": "Kurabiye parmaklarınızın arasında ufalanırken\n\n`%1$s` yazan bir kağıt parçası ortaya çıkıyor."
+  },
+  "help": {
+    "name": "Yardım Edin",
+    "description": "hakkımda bazı temel ve temel bilgilere bakın",
+    "arguments": {
+      "command": {
+        "name": "emretmek",
+        "description": "yakından bakmak istediğiniz komut"
+      }
+    },
+    "not_found": "Hay aksi, o komutu **bulamadım**. aradığınızı bulmak için **/commands** kullanmayı deneyin",
+    "required_arguments": "<> ile çevrili tüm seçenekler gereklidir",
+    "extra_help": "fazladan yardıma mı ihtiyacınız var? bizle sohbet et",
+    "description_title": "tanım",
+    "usage_title": "kullanım",
+    "info_embed": {
+      "title": "*en sevdiğiniz mahalle robotu* <:fun:987918991135764542>",
+      "configure": "%1$s ayarları yapılandır",
+      "configure_content": "> **ayarlarımı** **yapılandırmanız** gerekiyorsa, `/config` kullanın",
+      "commands": "%1$s komut",
+      "commands_content": "> veya **komut listemi** görmek istiyorsanız `/commands` kullanın",
+      "invite": "%1$s sandra'yı davet et",
+      "invite_content": "> **sunucunuza** katılmamı ister misiniz? **[beni davet etmek için tıklayın](%1$s)**",
+      "support": "%1$s destek sunucusu",
+      "support_content": "> **daha fazla yardıma** mı ihtiyacınız var? **[sandra's hangout](%1$s)**'da bizimle sohbet edin",
+      "built": "%1$s %2$s ve %3$sile inşa edildi"
+    }
+  },
+  "members": {
+    "name": "üyeler",
+    "description": "sunucunun üye sayısının dökümüne bakın",
+    "reply": "**%1$s** %2$s insan ve %3$s bot olmak üzere toplam %4$s üyeye sahiptir"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "sandra'nın discord bağlantısını test etmek için bir ping gönderir",
+    "reply": "**discord'a ping atmak** %1$s , **komutunuzu almak** yaklaşık %2$s saniyemi aldı"
+  },
+  "roll": {
+    "name": "rulo",
+    "description": "hayali bir zar seti ile şansınızı test edin",
+    "arguments": {
+      "sides": {
+        "name": "taraflar",
+        "description": "zarınızın sahip olduğu taraf sayısı",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "maks.",
+        "description": "mümkün olan maksimum sayı"
+      }
+    },
+    "reply": "şansını denedin ve %2$süzerinden %1$s attın"
+  },
+  "shards": {
+    "name": "kırıklar",
+    "description": "kırıkların listesini ve istatistiklerini görüntüleyin",
+    "having_issues": "sorun mu yaşıyorsunuz? Sandra'nın Hangout'una katıl",
+    "status": "durum: **%1$s**\nping: %2$sms\nsunucu: %3$s",
+    "shards_connected": "%1$d / %2$d parça bağlı",
+    "server_using": " • bu sunucu parça %1$dkullanıyor",
+    "shard_title": "parça %1$s"
+  },
+  "toss": {
+    "name": "atmak",
+    "description": "yazı tura atın ve bahislerinizi sonuçlandırın",
+    "reply": [
+      "top gibi dönen madeni para önünüzde dans eder ve sonunda __**%1$s***__",
+      "yazı tura atarsın ve havada yakalarsın, bileğine vurursun ____%1$s**__",
+      "madeni para parmaklarınızdan yuvarlanarak yere takırdayarak __**%1$s**__ üzerine iniyor"
+    ],
+    "heads": "kafalar",
+    "tails": "kuyruklar"
+  }
+}
