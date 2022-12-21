@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "kat",
+    "description": "toont gracieus een kat voor uw kijkplezier"
+  },
+  "commands": {
+    "name": "commando's",
+    "description": "blader door al mijn opdrachten en categorieën",
+    "select_placeholder": "kies een categorie om te bekijken..",
+    "command_title": "commando's",
+    "more_information": "gebruik /help [command] voor meer info"
+  },
+  "dog": {
+    "name": "hond",
+    "description": "haalt een hond uit de krochten van het internet"
+  },
+  "evaluate": {
+    "name": "evalueren",
+    "description": "start een globale kotlin repl-sessie (alleen ontwikkelaars)"
+  },
+  "fortune": {
+    "name": "fortuin",
+    "description": "Breek een gelukskoekje open om je geluk te onthullen",
+    "reply": "terwijl het koekje in je vingers verkruimelt, onthult het een stuk papier met de tekst\n\n`%1$s`"
+  },
+  "help": {
+    "name": "helpen",
+    "description": "kijk naar wat basis- en essentiële informatie over mij",
+    "arguments": {
+      "command": {
+        "name": "opdracht",
+        "description": "de opdracht die u nader wilt bekijken"
+      }
+    },
+    "not_found": "oeps, ik kon die opdracht **niet vinden**. probeer **/commands** te gebruiken om te vinden wat je zoekt",
+    "required_arguments": "alle opties die omgeven zijn door <> zijn vereist",
+    "extra_help": "wat extra hulp nodig? chat met ons",
+    "description_title": "Beschrijving",
+    "usage_title": "gebruik",
+    "info_embed": {
+      "title": "*je favoriete buurtrobot* <:fun:987918991135764542>",
+      "configure": "%1$s instellingen configureren",
+      "configure_content": "> als je mijn **instellingen** moet **configureren**, gebruik dan `/config`",
+      "commands": "%1$s commando's",
+      "commands_content": "> of als je mijn **commandolijst** wilt zien, gebruik dan `/commands`",
+      "invite": "%1$s nodig sandra uit",
+      "invite_content": "> wil je dat ik lid wordt van **jouw server**? **[klik om mij uit te nodigen](%1$s)**",
+      "support": "%1$s ondersteuningsserver",
+      "support_content": "> **meer hulp** nodig? chat met ons in **[sandra's hangout](%1$s)**",
+      "built": "gebouwd met %1$s bij %2$s en %3$s"
+    }
+  },
+  "members": {
+    "name": "leden",
+    "description": "bekijk een uitsplitsing van het aantal leden van de server",
+    "reply": "**%1$s** heeft %2$s mens en %3$s bots voor een totaal van %4$s leden"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "stuurt een ping om Sandra's verbinding met onenigheid te testen",
+    "reply": "het kostte me %1$s tot **ping onenigheid** en ongeveer %2$s tot **je opdracht ontvangen**"
+  },
+  "roll": {
+    "name": "rollen",
+    "description": "test je geluk met een denkbeeldige set dobbelstenen",
+    "arguments": {
+      "sides": {
+        "name": "kanten",
+        "description": "het aantal zijden dat je dobbelsteen heeft",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "het maximaal mogelijke aantal"
+      }
+    },
+    "reply": "je waagde een kans en rolde een %1$s uit %2$s"
+  },
+  "shards": {
+    "name": "scherven",
+    "description": "bekijk een lijst met scherven en hun statistieken",
+    "having_issues": "problemen hebben? sluit je aan bij sandra's hangout",
+    "status": "status: **%1$s**\nping: %2$sms\nservers: %3$s",
+    "shards_connected": "%1$d van %2$d scherven verbonden",
+    "server_using": " • deze server gebruikt shard %1$d",
+    "shard_title": "scherf %1$s"
+  },
+  "toss": {
+    "name": "toss",
+    "description": "gooi een munt en vereffen uw weddenschappen",
+    "reply": [
+      "draaiend als een tol, de munt danst voor je uit en komt uiteindelijk terecht op __**%1$s**__",
+      "je gooit de munt en vangt hem in de lucht op, slaat hem op je pols en onthult __**%1$s**__",
+      "de munt tuimelt uit je vingers, klettert op de grond en landt op __**%1$s**__"
+    ],
+    "heads": "hoofden",
+    "tails": "staarten"
+  }
+}
