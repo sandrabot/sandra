@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "kočka",
+    "description": "elegantně zobrazuje kočku pro vaše potěšení ze sledování"
+  },
+  "commands": {
+    "name": "příkazy",
+    "description": "prohlédněte si všechny mé příkazy a kategorie",
+    "select_placeholder": "vyberte kategorii k zobrazení..",
+    "command_title": "příkazy",
+    "more_information": "pro více informací použijte /help [command]"
+  },
+  "dog": {
+    "name": "Pes",
+    "description": "aportuje psa z hlubin internetu"
+  },
+  "evaluate": {
+    "name": "hodnotit",
+    "description": "zahájit globální relaci kotlin repl (pouze pro vývojáře)"
+  },
+  "fortune": {
+    "name": "štěstí",
+    "description": "rozlomte koláček štěstí a odhalte své štěstí",
+    "reply": "jak se sušenka rozpadá v prstech, odhaluje kus papíru, na kterém je napsáno\n\n`%1$s`"
+  },
+  "help": {
+    "name": "Pomoc",
+    "description": "podívejte se na základní a podstatné informace o mně",
+    "arguments": {
+      "command": {
+        "name": "příkaz",
+        "description": "příkaz, na který se chcete podívat blíže"
+      }
+    },
+    "not_found": "Jejda, ten příkaz jsem **nenašel**. zkuste použít **/commands** k nalezení toho, co hledáte",
+    "required_arguments": "všechny možnosti, které jsou obklopeny <>, jsou povinné",
+    "extra_help": "potřebujete nějakou pomoc navíc? piš si s námi",
+    "description_title": "popis",
+    "usage_title": "používání",
+    "info_embed": {
+      "title": "*tvůj oblíbený sousedský robot* <:zábava:987918991135764542>",
+      "configure": "%1$s konfigurovat nastavení",
+      "configure_content": "> pokud potřebujete **konfigurovat** moje **nastavení**, použijte `/config`",
+      "commands": "%1$s příkazů",
+      "commands_content": "> nebo pokud chcete vidět můj **seznam příkazů**, použijte `/commands`",
+      "invite": "%1$s pozvat Sandru",
+      "invite_content": "> chtěli byste, abych se připojil k **vašemu serveru**? **[kliknutím mě pozvěte](%1$s)**",
+      "support": "%1$s podpůrný server",
+      "support_content": "> potřebujete **další pomoc**? chatujte s námi na **[sandřině hangoutu](%1$s)**",
+      "built": "postavený s %1$s x %2$s a %3$s"
+    }
+  },
+  "members": {
+    "name": "členů",
+    "description": "podívejte se na rozpis počtu členů serveru",
+    "reply": "**%1$s** má %2$s člověka a %3$s roboty pro celkem %4$s členy"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "odešle ping, aby otestoval Sandřino spojení s discordem",
+    "reply": "trvalo mi %1$s **ping discord** a asi %2$s **obdržení vašeho příkazu**"
+  },
+  "roll": {
+    "name": "válec",
+    "description": "otestujte své štěstí s imaginární sadou kostek",
+    "arguments": {
+      "sides": {
+        "name": "strany",
+        "description": "počet stran, které má vaše kostka",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "maximální možný počet"
+      }
+    },
+    "reply": "využili jste šance a hodili jste %1$s z %2$s"
+  },
+  "shards": {
+    "name": "střepy",
+    "description": "zobrazit seznam shardů a jejich statistiky",
+    "having_issues": "mít problémy? připojit se k Sandřině hangoutu",
+    "status": "stav: **%1$s**\nping: %2$sms\nservery: %3$s",
+    "shards_connected": "%1$d z %2$d připojených úlomků",
+    "server_using": " • tento server používá fragment %1$d",
+    "shard_title": "střep %1$s"
+  },
+  "toss": {
+    "name": "hození",
+    "description": "hoďte si mincí a vyrovnejte své sázky",
+    "reply": [
+      "točí se jako vrchol, mince před vámi tančí a nakonec se usadí na __**%1$s**__",
+      "hodíte mincí a chytíte ji ve vzduchu, plácnete ji na zápěstí a odhalíte __**%1$s**__",
+      "mince vám padají z prstů, rachotí o zem a přistávají na __**%1$s**__"
+    ],
+    "heads": "hlavy",
+    "tails": "ocasy"
+  }
+}
