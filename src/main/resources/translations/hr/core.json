@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} napredovao na **LVL {user.level}**",
+  "interaction_error": "uh oh, izgleda da je nešto **pošlo po zlu** iza scene. ispričavam se zbog toga",
+  "missing_argument": "nisam mogao shvatiti što si rekao za **%1$s**, pokušaj provjeriti **korištenje naredbe**",
+  "missing_permission": "trebam **%1$s** dozvolu u ovom **%2$s** da to učinim",
+  "missing_user_permission": "potrebno vam je **%1$s** dopuštenje u ovom **%2$s** za to",
+  "owner_only": "ovu naredbu **mogu koristiti** samo **moji vlasnici**. dobar pokušaj",
+  "categories": {
+    "custom": "prilagođen",
+    "essential": "bitno",
+    "fun": "zabava",
+    "game": "igra",
+    "moderation": "umjerenost",
+    "music": "glazba, muzika",
+    "owner": "vlasnik",
+    "social": "društveni",
+    "utility": "korisnost"
+  },
+  "paginator": {
+    "modal_title": "skok na stranicu",
+    "input_label": "broj stranice za pregled",
+    "input_placeholder": "broj između 1 i %1$s",
+    "page_indicator": "gledanje stranice %1$s od %2$s",
+    "buttons": {
+      "back": "leđa",
+      "exit": "Izlaz",
+      "next": "Sljedeći",
+      "jump": "Skoči na.."
+    }
+  },
+  "permissions": {
+    "create_invite": "stvoriti pozivnicu",
+    "kick": "udarac članova",
+    "ban": "članovi zabrane",
+    "administrator": "administrator",
+    "manage_channels": "upravljati kanalima",
+    "add_reactions": "dodajte reakcije",
+    "view_audit_logs": "pregled dnevnika revizije",
+    "view_channel": "pogledajte kanal",
+    "send_messages": "slati poruke",
+    "manage_messages": "upravljati porukama",
+    "embed_links": "ugraditi poveznice",
+    "attach_files": "priložiti datoteke",
+    "read_history": "čitati povijest",
+    "external_emojis": "koristiti vanjske emojije",
+    "voice_connect": "Spojiti",
+    "voice_speak": "govoriti",
+    "voice_activity": "koristiti glasovnu aktivnost",
+    "change_nickname": "promijeniti nadimak",
+    "manage_nicknames": "upravljati nadimcima",
+    "manage_roles": "upravljati ulogama",
+    "manage_permissions": "upravljati dozvolama",
+    "moderate_members": "timeout članovi"
+  }
+}
