@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} ने **LVL {user.level}** तक लेवल किया",
+  "interaction_error": "उह ओह, ऐसा लगता है कि पर्दे के पीछे कुछ **गलत** हो गया है। इसके बारे में खेद",
+  "missing_argument": "मैं समझ नहीं पाया कि आपने **%1$s** के लिए क्या कहा, ** कमांड उपयोग ** की जाँच करने का प्रयास करें",
+  "missing_permission": "मुझे इसमें **%1$s** की अनुमति चाहिए **%2$s** ऐसा करने के लिए",
+  "missing_user_permission": "ऐसा करने के लिए आपको इसमें **%1$s** की अनुमति चाहिए **%2$s**",
+  "owner_only": "यह आदेश **केवल **मेरे स्वामियों** द्वारा ही** उपयोग किया जा सकता है। अच्छा प्रयास",
+  "categories": {
+    "custom": "रिवाज़",
+    "essential": "ज़रूरी",
+    "fun": "मज़ा",
+    "game": "खेल",
+    "moderation": "संयम",
+    "music": "संगीत",
+    "owner": "मालिक",
+    "social": "सामाजिक",
+    "utility": "उपयोगिता"
+  },
+  "paginator": {
+    "modal_title": "पृष्ठ पर कूदो",
+    "input_label": "पृष्ठ संख्या देखने के लिए",
+    "input_placeholder": "1 और %1$sके बीच की संख्या",
+    "page_indicator": "%2$sका पृष्ठ %1$s देख रहा हूँ",
+    "buttons": {
+      "back": "पीछे",
+      "exit": "बाहर निकलना",
+      "next": "अगला",
+      "jump": "पर कूदना.."
+    }
+  },
+  "permissions": {
+    "create_invite": "आमंत्रण बनाएँ",
+    "kick": "सदस्यों को लात मारो",
+    "ban": "सदस्यों को प्रतिबंधित करें",
+    "administrator": "प्रशासक",
+    "manage_channels": "चैनल प्रबंधित करें",
+    "add_reactions": "प्रतिक्रियाएँ जोड़ें",
+    "view_audit_logs": "ऑडिट लॉग देखें",
+    "view_channel": "चैनल देखें",
+    "send_messages": "संदेश भेजो",
+    "manage_messages": "संदेशों का प्रबंधन करें",
+    "embed_links": "एम्बेड लिंक",
+    "attach_files": "फ़ाइलों को संलग्न करें",
+    "read_history": "इतिहास पढ़ें",
+    "external_emojis": "बाहरी इमोजी का प्रयोग करें",
+    "voice_connect": "जोड़ना",
+    "voice_speak": "बोलना",
+    "voice_activity": "आवाज गतिविधि का प्रयोग करें",
+    "change_nickname": "उपनाम बदलें",
+    "manage_nicknames": "उपनाम प्रबंधित करें",
+    "manage_roles": "भूमिकाएँ प्रबंधित करें",
+    "manage_permissions": "अनुमतियाँ प्रबंधित करें",
+    "moderate_members": "टाइमआउट सदस्य"
+  }
+}
