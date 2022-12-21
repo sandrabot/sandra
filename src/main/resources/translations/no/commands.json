@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "katt",
+    "description": "viser grasiøst en katt for din seerglede"
+  },
+  "commands": {
+    "name": "kommandoer",
+    "description": "se gjennom alle mine kommandoer og kategorier",
+    "select_placeholder": "velg en kategori å se..",
+    "command_title": "kommandoer",
+    "more_information": "bruk /help [command] for mer info"
+  },
+  "dog": {
+    "name": "hund",
+    "description": "henter en hund fra dypet av internett"
+  },
+  "evaluate": {
+    "name": "evaluere",
+    "description": "start en global kotlin-repl-økt (kun utviklere)"
+  },
+  "fortune": {
+    "name": "formue",
+    "description": "bryte opp en lykkekake for å avsløre lykken din",
+    "reply": "mens informasjonskapselen smuldrer opp i fingrene dine, avslører den et stykke papir med\n\n`%1$s`"
+  },
+  "help": {
+    "name": "hjelp",
+    "description": "se på litt grunnleggende og viktig informasjon om meg",
+    "arguments": {
+      "command": {
+        "name": "kommando",
+        "description": "kommandoen du vil se nærmere på"
+      }
+    },
+    "not_found": "opps, jeg **kunne ikke finne** den kommandoen. prøv å bruke **/kommandoer** for å finne det du leter etter",
+    "required_arguments": "alle alternativer som er omgitt av <> kreves",
+    "extra_help": "trenger du litt ekstra hjelp? snakk med oss",
+    "description_title": "beskrivelse",
+    "usage_title": "bruk",
+    "info_embed": {
+      "title": "*din favoritt nabolagsrobot* <:fun:987918991135764542>",
+      "configure": "%1$s konfigurere innstillinger",
+      "configure_content": "> hvis du trenger å **konfigurere** mine **innstillinger**, bruk `/config`",
+      "commands": "%1$s kommandoer",
+      "commands_content": "> eller hvis du vil se min **kommandoliste**, bruk `/commands`",
+      "invite": "%1$s inviter sandra",
+      "invite_content": "> vil du at jeg skal bli med i **serveren din**? **[klikk for å invitere meg](%1$s)**",
+      "support": "%1$s støtteserver",
+      "support_content": "> trenger **mer hjelp**? chat med oss i **[sandras hangout](%1$s)**",
+      "built": "bygget med %1$s ganger %2$s og %3$s"
+    }
+  },
+  "members": {
+    "name": "medlemmer",
+    "description": "se på en oversikt over serverens medlemsantall",
+    "reply": "**%1$s** har %2$s mennesker og %3$s roboter for totalt %4$s medlemmer"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "sender et ping for å teste sandras tilkobling til discord",
+    "reply": "det tok meg %1$s til **ping discord** og omtrent %2$s å **motta kommandoen din**"
+  },
+  "roll": {
+    "name": "rull",
+    "description": "test lykken med et tenkt terningsett",
+    "arguments": {
+      "sides": {
+        "name": "sider",
+        "description": "antall sider terningene dine har",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "maks",
+        "description": "maksimalt mulig antall"
+      }
+    },
+    "reply": "du tok sjansen og kastet %1$s av %2$s"
+  },
+  "shards": {
+    "name": "skår",
+    "description": "se en liste over shards og deres statistikk",
+    "having_issues": "har problemer? bli med på Sandras hangout",
+    "status": "status: **%1$s**\nping: %2$sms\nservere: %3$s",
+    "shards_connected": "%1$d av %2$d shards tilkoblet",
+    "server_using": " • denne serveren bruker shard %1$d",
+    "shard_title": "skår %1$s"
+  },
+  "toss": {
+    "name": "slenge",
+    "description": "kaste en mynt og avgjøre innsatsene dine",
+    "reply": [
+      "snurrer som en topp, mynten danser foran deg og slår seg til slutt på __**%1$s**__",
+      "du kaster mynten og fanger den i luften, slår den ned på håndleddet og avslører __**%1$s**__",
+      "mynten faller fra fingrene dine, klaprer på bakken og lander på __**%1$s**__"
+    ],
+    "heads": "hoder",
+    "tails": "haler"
+  }
+}
