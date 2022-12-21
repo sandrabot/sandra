@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} 升级到 **LVL {user.level}**",
+  "interaction_error": "呃哦，看起来幕后**出了问题**。对于那个很抱歉",
+  "missing_argument": "我无法弄清楚你对 **%1$s** 说了什么，请尝试检查 **命令用法**",
+  "missing_permission": "我需要这个 **%2$s** 中的 **%1$s** 权限才能做到这一点",
+  "missing_user_permission": "您需要 **%2$s** 中的 **%1$s** 权限才能执行此操作",
+  "owner_only": "此命令**只能由**我的所有者**使用**。不错的尝试",
+  "categories": {
+    "custom": "风俗",
+    "essential": "基本的",
+    "fun": "乐趣",
+    "game": "游戏",
+    "moderation": "适度",
+    "music": "音乐",
+    "owner": "所有者",
+    "social": "社会的",
+    "utility": "公用事业"
+  },
+  "paginator": {
+    "modal_title": "跳转到页面",
+    "input_label": "要查看的页码",
+    "input_placeholder": "1 到 %1$s之间的数字",
+    "page_indicator": "查看第 %1$s 页，共 %2$s页",
+    "buttons": {
+      "back": "背部",
+      "exit": "出口",
+      "next": "下一个",
+      "jump": "跳到.."
+    }
+  },
+  "permissions": {
+    "create_invite": "创建邀请",
+    "kick": "踢会员",
+    "ban": "禁止成员",
+    "administrator": "行政人员",
+    "manage_channels": "管理渠道",
+    "add_reactions": "添加反应",
+    "view_audit_logs": "查看审计日志",
+    "view_channel": "查看频道",
+    "send_messages": "发送信息",
+    "manage_messages": "管理消息",
+    "embed_links": "嵌入链接",
+    "attach_files": "附加文件",
+    "read_history": "阅读历史",
+    "external_emojis": "使用外部表情符号",
+    "voice_connect": "连接",
+    "voice_speak": "说话",
+    "voice_activity": "使用语音活动",
+    "change_nickname": "更改昵称",
+    "manage_nicknames": "管理昵称",
+    "manage_roles": "管理角色",
+    "manage_permissions": "管理权限",
+    "moderate_members": "超时成员"
+  }
+}
