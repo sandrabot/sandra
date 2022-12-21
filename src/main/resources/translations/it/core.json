@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} saliti di livello a **LVL {user.level}**",
+  "interaction_error": "uh oh, sembra che qualcosa **sia andato storto** dietro le quinte. mi dispiace per quello",
+  "missing_argument": "non sono riuscito a capire cosa hai detto per **%1$s**, prova a controllare l'**utilizzo del comando**",
+  "missing_permission": "ho bisogno dell'autorizzazione **%1$s** in questo **%2$s** per farlo",
+  "missing_user_permission": "hai bisogno dell'autorizzazione **%1$s** in questo **%2$s** per farlo",
+  "owner_only": "questo comando **può essere utilizzato** solo dai **miei proprietari**. bel tentativo",
+  "categories": {
+    "custom": "costume",
+    "essential": "essenziale",
+    "fun": "divertimento",
+    "game": "gioco",
+    "moderation": "moderazione",
+    "music": "musica",
+    "owner": "proprietario",
+    "social": "sociale",
+    "utility": "utilità"
+  },
+  "paginator": {
+    "modal_title": "salta alla pagina",
+    "input_label": "numero di pagina da visualizzare",
+    "input_placeholder": "numero compreso tra 1 e %1$s",
+    "page_indicator": "visualizzando la pagina %1$s di %2$s",
+    "buttons": {
+      "back": "indietro",
+      "exit": "Uscita",
+      "next": "prossimo",
+      "jump": "salta a.."
+    }
+  },
+  "permissions": {
+    "create_invite": "creare invito",
+    "kick": "calciare i membri",
+    "ban": "bandire i membri",
+    "administrator": "amministratore",
+    "manage_channels": "gestire i canali",
+    "add_reactions": "aggiungere reazioni",
+    "view_audit_logs": "visualizzare i registri di controllo",
+    "view_channel": "vedi canale",
+    "send_messages": "Manda messaggi",
+    "manage_messages": "gestire i messaggi",
+    "embed_links": "collegamenti incorporati",
+    "attach_files": "allegati",
+    "read_history": "leggi la storia",
+    "external_emojis": "usa emoji esterni",
+    "voice_connect": "Collegare",
+    "voice_speak": "parlare",
+    "voice_activity": "utilizzare l'attività vocale",
+    "change_nickname": "cambia soprannome",
+    "manage_nicknames": "gestire i nickname",
+    "manage_roles": "gestire i ruoli",
+    "manage_permissions": "gestire i permessi",
+    "moderate_members": "membri di timeout"
+  }
+}
