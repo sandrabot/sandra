@@ -1,0 +1,55 @@
+{
+  "experience_notify": "%1$s {@user} a crescut la **LVL {user.level}**",
+  "interaction_error": "uh oh, se pare că ceva **a mers prost** în culise. îmi pare rău pentru asta",
+  "missing_argument": "Nu mi-am putut da seama ce ai spus pentru **%1$s**, încearcă să verifici **utilizarea comenzii**",
+  "missing_permission": "Am nevoie de permisiunea **%1$s** din acest **%2$s** pentru a face asta",
+  "missing_user_permission": "aveți nevoie de permisiunea **%1$s** din acest **%2$s** pentru a face asta",
+  "owner_only": "această comandă **poate fi folosită** numai de **proprietarii mei**. bună încercare",
+  "categories": {
+    "custom": "personalizat",
+    "essential": "esenţial",
+    "fun": "distracţie",
+    "game": "joc",
+    "moderation": "moderare",
+    "music": "muzică",
+    "owner": "proprietar",
+    "social": "social",
+    "utility": "utilitate"
+  },
+  "paginator": {
+    "modal_title": "sari la pagina",
+    "input_label": "numărul paginii de vizualizat",
+    "input_placeholder": "număr între 1 și %1$s",
+    "page_indicator": "vizualizarea paginii %1$s din %2$s",
+    "buttons": {
+      "back": "înapoi",
+      "exit": "Ieșire",
+      "next": "Următorul",
+      "jump": "sari la.."
+    }
+  },
+  "permissions": {
+    "create_invite": "creați o invitație",
+    "kick": "loviți membrii",
+    "ban": "interzice membrii",
+    "administrator": "administrator",
+    "manage_channels": "gestionați canalele",
+    "add_reactions": "adauga reactii",
+    "view_audit_logs": "vizualizați jurnalele de audit",
+    "view_channel": "vizualiza canalul",
+    "send_messages": "Trimite mesaje",
+    "manage_messages": "gestionați mesajele",
+    "embed_links": "încorpora legături",
+    "attach_files": "ataseaza fisiere",
+    "read_history": "citeste istoria",
+    "external_emojis": "utilizați emoji-uri externe",
+    "voice_connect": "conectați",
+    "voice_speak": "vorbi",
+    "voice_activity": "utilizați activitatea vocală",
+    "change_nickname": "schimba porecla",
+    "manage_nicknames": "gestionați poreclele",
+    "manage_roles": "gestionează roluri",
+    "manage_permissions": "gestionați permisiunile",
+    "moderate_members": "membrii timeout"
+  }
+}
