@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "Katze",
+    "description": "zeigt anmutig eine Katze für Ihr Sehvergnügen"
+  },
+  "commands": {
+    "name": "Befehle",
+    "description": "Durchsuchen Sie alle meine Befehle und Kategorien",
+    "select_placeholder": "Wählen Sie eine Kategorie zur Ansicht aus..",
+    "command_title": "Befehle",
+    "more_information": "Verwenden Sie /help [command] für weitere Informationen"
+  },
+  "dog": {
+    "name": "Hund",
+    "description": "holt einen Hund aus den Tiefen des Internets"
+  },
+  "evaluate": {
+    "name": "bewerten",
+    "description": "Starten Sie eine globale Kotlin-Repl-Sitzung (nur Entwickler)"
+  },
+  "fortune": {
+    "name": "Reichtum",
+    "description": "Brechen Sie einen Glückskeks auf, um Ihr Glück zu offenbaren",
+    "reply": "Wenn der Keks in Ihren Fingern zerbröckelt, enthüllt er ein Stück Papier, auf dem\n\n`%1$s` steht"
+  },
+  "help": {
+    "name": "Hilfe",
+    "description": "Schauen Sie sich einige grundlegende und wesentliche Informationen über mich an",
+    "arguments": {
+      "command": {
+        "name": "Befehl",
+        "description": "den Befehl, den Sie sich genauer ansehen möchten"
+      }
+    },
+    "not_found": "Hoppla, ich konnte diesen Befehl **nicht finden**. Versuchen Sie, **/commands** zu verwenden, um zu finden, wonach Sie suchen",
+    "required_arguments": "Alle Optionen, die von <> umgeben sind, sind erforderlich",
+    "extra_help": "Benötigen Sie zusätzliche Hilfe? chatte mit uns",
+    "description_title": "Bezeichnung",
+    "usage_title": "Verwendung",
+    "info_embed": {
+      "title": "*Ihr Lieblingsroboter aus der Nachbarschaft* <:fun:987918991135764542>",
+      "configure": "%1$s Einstellungen konfigurieren",
+      "configure_content": "> Wenn Sie meine **Einstellungen** **konfigurieren** müssen, verwenden Sie `/config`",
+      "commands": "%1$s Befehle",
+      "commands_content": "> oder wenn Sie meine **Befehlsliste** sehen möchten, verwenden Sie `/commands`",
+      "invite": "%1$s Sandra einladen",
+      "invite_content": "> Möchtest du, dass ich **Deinem Server** beitrete? **[klicken, um mich einzuladen](%1$s)**",
+      "support": "%1$s Support-Server",
+      "support_content": "> Benötigen Sie **weitere Hilfe**? chatte mit uns in **[sandra's hangout](%1$s)**",
+      "built": "gebaut mit %1$s mal %2$s und %3$s"
+    }
+  },
+  "members": {
+    "name": "Mitglieder",
+    "description": "Blick auf eine Aufschlüsselung der Mitgliederzahl des Servers",
+    "reply": "**%1$s** hat %2$s Menschen und %3$s Bots für insgesamt %4$s Mitglieder"
+  },
+  "ping": {
+    "name": "Klingeln",
+    "description": "sendet einen Ping, um Sandras Verbindung zu Discord zu testen",
+    "reply": "Ich brauchte %1$s , um **Zwietracht zu pingen** und ungefähr %2$s , um **Ihren Befehl zu erhalten**"
+  },
+  "roll": {
+    "name": "rollen",
+    "description": "Testen Sie Ihr Glück mit einem imaginären Würfelset",
+    "arguments": {
+      "sides": {
+        "name": "Seiten",
+        "description": "die Anzahl der Seiten, die dein Würfel hat",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "die maximal mögliche Anzahl"
+      }
+    },
+    "reply": "Sie haben es riskiert und eine %1$s von %2$s"
+  },
+  "shards": {
+    "name": "Scherben",
+    "description": "Zeigen Sie eine Liste der Shards und ihrer Statistiken an",
+    "having_issues": "Probleme haben? Treten Sie Sandras Hangout bei",
+    "status": "Status: **%1$s**\nPing: %2$sms\nServer: %3$s",
+    "shards_connected": "%1$d von %2$d Shards verbunden",
+    "server_using": " • Dieser Server verwendet Shard %1$d",
+    "shard_title": "Scherbe %1$s"
+  },
+  "toss": {
+    "name": "werfen",
+    "description": "Werfen Sie eine Münze und begleichen Sie Ihre Wetten",
+    "reply": [
+      "dreht sich wie ein Kreisel, die Münze tanzt vor Ihnen und setzt sich schließlich auf __**%1$s**__",
+      "du wirfst die Münze und fängst sie mitten in der Luft, klatschst sie auf dein Handgelenk und enthüllt __**%1$s**__",
+      "die Münze fällt dir aus den Fingern, scheppert auf dem Boden und landet auf __**%1$s**__"
+    ],
+    "heads": "Köpfe",
+    "tails": "Schwänze"
+  }
+}
