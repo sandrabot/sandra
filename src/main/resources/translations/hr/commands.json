@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "mačka",
+    "description": "graciozno prikazuje mačku za vaš užitak gledanja"
+  },
+  "commands": {
+    "name": "naredbe",
+    "description": "pregledaj sve moje naredbe i kategorije",
+    "select_placeholder": "odaberite kategoriju za pregled..",
+    "command_title": "naredbe",
+    "more_information": "koristite /help [command] za više informacija"
+  },
+  "dog": {
+    "name": "pas",
+    "description": "dohvati psa iz dubina interneta"
+  },
+  "evaluate": {
+    "name": "procijeniti",
+    "description": "započni globalnu kotlin repl sesiju (samo za programere)"
+  },
+  "fortune": {
+    "name": "bogatstvo",
+    "description": "razbijte kolačić sreće da otkrijete svoju sreću",
+    "reply": "dok se kolačić mrvi u vašim prstima, otkriva komad papira na kojem piše\n\n`%1$s`"
+  },
+  "help": {
+    "name": "Pomozite",
+    "description": "pogledajte neke osnovne i bitne podatke o meni",
+    "arguments": {
+      "command": {
+        "name": "naredba",
+        "description": "naredbu koju želite pobliže pogledati"
+      }
+    },
+    "not_found": "ups, **nisam mogao pronaći** tu naredbu. pokušajte upotrijebiti **/commands** kako biste pronašli ono što tražite",
+    "required_arguments": "sve opcije koje su okružene <> su potrebne",
+    "extra_help": "trebaš dodatnu pomoć? razgovaraj s nama",
+    "description_title": "opis",
+    "usage_title": "korištenje",
+    "info_embed": {
+      "title": "*vaš omiljeni susjedski robot* <:fun:987918991135764542>",
+      "configure": "%1$s konfigurirajte postavke",
+      "configure_content": "> ako trebate **konfigurirati** moje **postavke**, koristite `/config`",
+      "commands": "%1$s naredbi",
+      "commands_content": "> ili ako želite vidjeti moj **popis naredbi**, koristite `/commands`",
+      "invite": "%1$s pozovi sandru",
+      "invite_content": "> želite li da se pridružim **vašem poslužitelju**? **[klikni da me pozoveš](%1$s)**",
+      "support": "%1$s poslužitelj za podršku",
+      "support_content": "> trebate **još pomoći**? razgovaraj s nama u **[sandra's hangout](%1$s)**",
+      "built": "izgrađen s %1$s puta %2$s i %3$s"
+    }
+  },
+  "members": {
+    "name": "članova",
+    "description": "pregledati raščlambu broja članova poslužitelja",
+    "reply": "**%1$s** ima %2$s čovjeka i %3$s bota za ukupno %4$s člana"
+  },
+  "ping": {
+    "name": "ping",
+    "description": "šalje ping za testiranje sandrine veze s discordom",
+    "reply": "trebalo mi je %1$s da **pingujem discord** i oko %2$s da **primim vašu naredbu**"
+  },
+  "roll": {
+    "name": "svitak",
+    "description": "testirajte svoju sreću sa zamišljenim setom kockica",
+    "arguments": {
+      "sides": {
+        "name": "strane",
+        "description": "broj strana koje vaša kocka ima",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "max",
+        "description": "najveći mogući broj"
+      }
+    },
+    "reply": "riskirali ste i bacili %1$s od %2$s"
+  },
+  "shards": {
+    "name": "krhotine",
+    "description": "pogledajte popis fragmenata i njihovu statistiku",
+    "having_issues": "ima problema? pridruži se sandrinom druženju",
+    "status": "status: **%1$s**\nping: %2$sms\nposlužitelja: %3$s",
+    "shards_connected": "Povezano je %1$d od %2$d fragmenata",
+    "server_using": " • ovaj poslužitelj koristi shard %1$d",
+    "shard_title": "krhotina %1$s"
+  },
+  "toss": {
+    "name": "bacanje",
+    "description": "bacite novčić i podmirite oklade",
+    "reply": [
+      "okrećući se poput vrha, novčić pleše pred tobom i konačno se zaustavlja na __**%1$s**__",
+      "bacite novčić i uhvatite ga u zraku, udarite ga o zapešće otkrivajući __**%1$s**__",
+      "novčić pada iz tvojih prstiju, zveckajući o tlo i padajući na __**%1$s**__"
+    ],
+    "heads": "glave",
+    "tails": "repovi"
+  }
+}
