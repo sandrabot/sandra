@@ -1,0 +1,106 @@
+{
+  "cat": {
+    "name": "猫",
+    "description": "优雅地展示一只猫以供您观赏"
+  },
+  "commands": {
+    "name": "命令",
+    "description": "浏览我所有的命令和类别",
+    "select_placeholder": "选择一个类别来查看..",
+    "command_title": "命令",
+    "more_information": "使用 /help [command] 获取更多信息"
+  },
+  "dog": {
+    "name": "狗",
+    "description": "从互联网深处取来一条狗"
+  },
+  "evaluate": {
+    "name": "评估",
+    "description": "启动一个全局 kotlin repl 会话（仅限开发人员）"
+  },
+  "fortune": {
+    "name": "财富",
+    "description": "打开一个幸运饼干来揭示你的运气",
+    "reply": "当饼干在您的手指中碎裂时，它会露出一张纸，上面写着\n\n`%1$s`"
+  },
+  "help": {
+    "name": "帮助",
+    "description": "查看关于我的一些基本和必要信息",
+    "arguments": {
+      "command": {
+        "name": "命令",
+        "description": "您想要仔细查看的命令"
+      }
+    },
+    "not_found": "糟糕，我**找不到**那个命令。尝试使用 **/commands** 来查找您要查找的内容",
+    "required_arguments": "任何被 <> 包围的选项都是必需的",
+    "extra_help": "需要一些额外的帮助吗？与我们聊天",
+    "description_title": "描述",
+    "usage_title": "用法",
+    "info_embed": {
+      "title": "*你最喜欢的邻居机器人* <:fun:987918991135764542>",
+      "configure": "%1$s 配置设置",
+      "configure_content": "> 如果你需要**配置**我的**设置**，使用`/config`",
+      "commands": "%1$s 个命令",
+      "commands_content": "> 或者如果你想查看我的**命令列表**，请使用 `/commands`",
+      "invite": "%1$s 邀请桑德拉",
+      "invite_content": "> 你想让我加入**你的服务器**吗？ **[点击邀请我](%1$s)**",
+      "support": "%1$s 支持服务器",
+      "support_content": "> 需要**更多帮助**？在 **[sandra 的视频群聊](%1$s)** 中与我们聊天",
+      "built": "用 %1$s x %2$s 和 %3$s构建"
+    }
+  },
+  "members": {
+    "name": "成员",
+    "description": "查看服务器成员数量的明细",
+    "reply": "**%1$s** 有 %2$s 个人和 %3$s 机器人，共 %4$s 成员"
+  },
+  "ping": {
+    "name": "平",
+    "description": "发送 ping 以测试 sandra 与 discord 的连接",
+    "reply": "我花了 %1$s 时间来 **ping discord**，大约 %2$s 时间来**接收你的命令**"
+  },
+  "roll": {
+    "name": "卷",
+    "description": "用假想的骰子测试你的运气",
+    "arguments": {
+      "sides": {
+        "name": "双方",
+        "description": "你的骰子的面数",
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
+      },
+      "max": {
+        "name": "最大限度",
+        "description": "最大可能数"
+      }
+    },
+    "reply": "你抓住机会，从 %2$s中掷出 %1$s"
+  },
+  "shards": {
+    "name": "碎片",
+    "description": "查看分片列表及其统计信息",
+    "having_issues": "有问题？加入桑德拉的视频群聊",
+    "status": "状态：**%1$s**\nping： %2$s毫秒\n服务器： %3$s",
+    "shards_connected": "%1$d 个分片中的 %2$d 已连接",
+    "server_using": " • 此服务器正在使用分片 %1$d",
+    "shard_title": "碎片 %1$s"
+  },
+  "toss": {
+    "name": "折腾",
+    "description": "掷硬币并下注",
+    "reply": [
+      "像陀螺一样旋转，硬币在你面前跳舞，最后落在 __**%1$s**__",
+      "你抛硬币并在半空中接住它，将它拍在你的手腕上，露出 __**%1$s**__",
+      "硬币从你的手指上滚落，咔哒一声落在地上，落在 __**%1$s**__"
+    ],
+    "heads": "头",
+    "tails": "尾巴"
+  }
+}
