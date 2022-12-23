@@ -1,72 +1,72 @@
 {
   "cat": {
-    "name": "cat",
-    "description": "gracefully displays a cat for your viewing pleasure"
+    "name": "gato",
+    "description": "muestra con gracia un gato para su placer visual"
   },
   "commands": {
-    "name": "commands",
-    "description": "glance through all my commands & categories",
-    "select_placeholder": "pick a category to view..",
-    "command_title": "commands",
-    "more_information": "use /help [command] for more info"
+    "name": "comandos",
+    "description": "echa un vistazo a todos mis comandos y categorías",
+    "select_placeholder": "elige una categoría para ver...",
+    "command_title": "comandos",
+    "more_information": "use /ayuda [command] para más información"
   },
   "dog": {
-    "name": "dog",
-    "description": "fetches a dog from the depths of the internet"
+    "name": "perro",
+    "description": "saca un perro de las profundidades de internet"
   },
   "evaluate": {
-    "name": "evaluate",
-    "description": "start a global kotlin repl session (developers only)"
+    "name": "evaluar",
+    "description": "iniciar una sesión de respuesta global de Kotlin (solo para desarrolladores)"
   },
   "fortune": {
-    "name": "fortune",
-    "description": "break open a fortune cookie to reveal your luck",
-    "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
+    "name": "fortuna",
+    "description": "abre una galleta de la fortuna para revelar tu suerte",
+    "reply": "a medida que la galleta se desmorona entre tus dedos, revela un trozo de papel que dice\n\n`%1$s`"
   },
   "help": {
-    "name": "help",
-    "description": "look at some basic & essential info about me",
+    "name": "ayudar",
+    "description": "mira información básica y esencial sobre mí",
     "arguments": {
       "command": {
-        "name": "command",
-        "description": "the command you want to take a closer look at"
+        "name": "dominio",
+        "description": "el comando que desea ver más de cerca"
       }
     },
-    "not_found": "whoops, i **couldn't find** that command. try using **/commands** to find what you're looking for",
-    "required_arguments": "any options that are surrounded by <> are required",
-    "extra_help": "need some extra help? chat with us",
-    "description_title": "description",
-    "usage_title": "usage",
+    "not_found": "Ups, **no pude encontrar** ese comando. intenta usar **/commands** para encontrar lo que estás buscando",
+    "required_arguments": "todas las opciones que están rodeadas por <> son obligatorias",
+    "extra_help": "¿Necesitas ayuda adicional? habla con nosotros",
+    "description_title": "descripción",
+    "usage_title": "uso",
     "info_embed": {
-      "title": "*your favorite neighborhood robot* <:fun:987918991135764542>",
-      "configure": "%1$s configure settings",
-      "configure_content": "> if you need to **configure** my **settings**, use `/config`",
-      "commands": "%1$s commands",
-      "commands_content": "> or if you want to see my **command list**, use `/commands`",
-      "invite": "%1$s invite sandra",
-      "invite_content": "> would you like me to join **your server**? **[click to invite me](%1$s)**",
-      "support": "%1$s support server",
-      "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
-      "built": "built with %1$s by %2$s and %3$s"
+      "title": "*tu robot de barrio favorito* <:fun:987918991135764542>",
+      "configure": "%1$s configurar ajustes",
+      "configure_content": "> si necesita **configurar** mi **configuración**, use `/config`",
+      "commands": "%1$s comandos",
+      "commands_content": "> o si quieres ver mi **lista de comandos**, usa `/commands`",
+      "invite": "%1$s invitar a sandra",
+      "invite_content": "> ¿quieres que me una a **tu servidor**? **[haz clic para invitarme](%1$s)**",
+      "support": "%1$s servidor de soporte",
+      "support_content": "> ¿Necesitas **más ayuda**? chatea con nosotros en **[el hangout de sandra](%1$s)**",
+      "built": "construido con %1$s por %2$s y %3$s"
     }
   },
   "members": {
-    "name": "members",
-    "description": "gander at a breakdown of the server's member count",
-    "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
+    "name": "miembros",
+    "description": "mira un desglose del número de miembros del servidor",
+    "reply": "**%1$s** tiene %2$s humanos y %3$s bots para un total de %4$s miembros"
   },
   "ping": {
-    "name": "ping",
-    "description": "sends a ping to test sandra's connection to discord",
-    "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
+    "name": "silbido",
+    "description": "envía un ping para probar la conexión de sandra a discord",
+    "reply": "me tomó %1$s para **hacer ping a discord** y alrededor %2$s para **recibir tu comando**"
   },
   "roll": {
-    "name": "roll",
-    "description": "test your luck with an imaginary dice set",
+    "name": "rodar",
+    "description": "prueba tu suerte con un juego de dados imaginarios",
     "arguments": {
       "sides": {
-        "name": "sides",
-        "description": "the number of sides your dice has",
+        "name": "lados",
+        "description": "el número de lados que tiene tu dado",
         "choices": [
           "d4",
           "d6",
@@ -77,30 +77,30 @@
         ]
       },
       "max": {
-        "name": "max",
-        "description": "the maximum possible number"
+        "name": "máximo",
+        "description": "el máximo número posible"
       }
     },
-    "reply": "you took a chance and rolled a %1$s out of %2$s"
+    "reply": "te arriesgaste y sacaste un %1$s de %2$s"
   },
   "shards": {
-    "name": "shards",
-    "description": "view a list of shards and their stats",
-    "having_issues": "having issues? join sandra's hangout",
-    "status": "status: **%1$s**\nping: %2$sms\nservers: %3$s",
-    "shards_connected": "%1$d of %2$d shards connected",
-    "server_using": " • this server is using shard %1$d",
-    "shard_title": "shard %1$s"
+    "name": "fragmentos",
+    "description": "ver una lista de fragmentos y sus estadísticas",
+    "having_issues": "¿teniendo problemas? únete al hangout de sandra",
+    "status": "estado: **%1$s**\nping: %2$sms\nservidores: %3$s",
+    "shards_connected": "%1$d de %2$d fragmentos conectados",
+    "server_using": " • este servidor está usando el fragmento %1$d",
+    "shard_title": "fragmento %1$s"
   },
   "toss": {
-    "name": "toss",
-    "description": "toss a coin and settle your bets",
+    "name": "sacudida",
+    "description": "tira una moneda y liquida tus apuestas",
     "reply": [
-      "spinning like a top, the coin dances before you and finally settles on __**%1$s**__",
-      "you toss the coin and catch it in mid air, slapping it down on your wrist revealing __**%1$s**__",
-      "the coin tumbles from your fingers, clattering on the ground and landing on __**%1$s**__"
+      "girando como un trompo, la moneda baila ante ti y finalmente se posa en __**%1$s**__",
+      "lanzas la moneda y la atrapas en el aire, golpeando tu muñeca y revelando __**%1$s**__",
+      "la moneda cae de tus dedos, golpeando el suelo y aterrizando en __**%1$s**__"
     ],
-    "heads": "heads",
-    "tails": "tails"
+    "heads": "cabezas",
+    "tails": "cruz"
   }
 }
