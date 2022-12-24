@@ -40,16 +40,18 @@ object ContentStore {
     val locales: Set<DiscordLocale>
 
     init {
-        val localMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
-        // read the translation directory tree to find available resources
-        readDirectory("translations").flatMap { readDirectory(it) }.forEach { path ->
-            val identifier = path.substringAfter('/').substringBefore('/')
-            val root = path.substringAfterLast('/').substringBefore('.')
-            val content = resourceAsStream(path) { Json.decodeFromStream<JsonObject>(this) }
-            localMap.getOrPut(DiscordLocale.from(identifier)) { mutableMapOf() }.putAll(content.flatten(root))
+        val tempMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
+        // read the content directory to find available resources
+        for (entry in readDirectory("content")) {
+            // decode content from json file and flatten into a path map
+            val content = resourceAsStream(entry) { Json.decodeFromStream<JsonObject>(this).flatten() }
+            // read the metadata to reliably select the appropriate locale
+            val locale = DiscordLocale.from(content["meta.locale"] as String)
+            // ensure that entries are not overwritten, prevent metadata from being entered
+            tempMap.getOrPut(locale) { mutableMapOf() }.putAll(content.filterKeys { !it.startsWith("meta") })
         }
-        contentMap = localMap
-        locales = localMap.keys
+        contentMap = tempMap
+        locales = tempMap.keys
     }
 
     /**
