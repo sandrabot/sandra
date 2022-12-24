@@ -2,12 +2,12 @@ name: Deploy to production
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
   build:
-    uses: sandrabot/sandra/.github/workflows/build.yml@master
+    uses: sandrabot/sandra/.github/workflows/build.yml@main
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -16,7 +16,7 @@ jobs:
     needs: build
     steps:
       - name: Invoke deployment webhook
-        uses: distributhor/workflow-webhook@v2
+        uses: distributhor/workflow-webhook@v3
         env:
           webhook_type: 'form-urlencoded'
           webhook_url: ${{ secrets.DEPLOY_WEBHOOK_URL }}
