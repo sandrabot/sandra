@@ -20,11 +20,13 @@ import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import dev.minn.jda.ktx.coroutines.await
-import dev.minn.jda.ktx.events.onStringSelect
+import dev.minn.jda.ktx.events.await
+import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
+import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.requests.ErrorResponse
@@ -33,61 +35,56 @@ import kotlin.time.Duration.Companion.minutes
 @Suppress("unused")
 class Commands : Command() {
 
+    private val embedMap = mutableMapOf<DiscordLocale, Map<Category, List<MessageEmbed>>>()
+
     override suspend fun execute(event: CommandEvent) {
 
-        val selectionMenu = getSelectionMenu(event)
-        event.reply(getEmbeds(event, Category.ESSENTIAL)).addActionRow(selectionMenu).setEphemeral(true).await()
-        waitForSelection(event)
+        val menuId = "commands:select:" + event.encodedInteraction
+        val builder = StringSelectMenu.create(menuId).setPlaceholder(event.get("placeholder"))
+        val localeEmbeds = embedMap.getOrPut(event.localeContext.locale) { generateEmbeds(event) }
+        localeEmbeds.keys.map {
+            val label = "${event.getAny("core.categories.${it.displayName}")} ${event.get("command_title")}"
+            SelectOption.of(label, it.name).withEmoji(Emoji.fromFormatted(it.emote))
+        }.also(builder::addOptions)
+
+        val essential = localeEmbeds[Category.ESSENTIAL] ?: throw AssertionError("Missing essential category")
+        event.reply(essential).addActionRow(builder.build()).setEphemeral(true).await()
+
+        while (true) withTimeoutOrNull(1.minutes) {
+            // await is a blocking call, this is where we wait for the select event
+            val selectEvent = event.sandra.shards.await<StringSelectInteractionEvent>()
+            if (menuId == selectEvent.componentId && event.user == selectEvent.user) {
+                val newEmbeds = localeEmbeds[Category.valueOf(selectEvent.values.first())]!!
+                selectEvent.editMessageEmbeds(newEmbeds).await()
+            }
+        } ?: break
+
+        // remove all components from the message when we're done
+        event.hook.editOriginalComponents().queue(null, ERROR_HANDLER)
 
     }
 
-    private fun waitForSelection(event: CommandEvent) = event.sandra.shards.onStringSelect(
-        componentPrefix + event.encodedInteraction, timeout = 2.minutes
-    ) { selectEvent ->
-        // only process this event if it's from the author of the interaction
-        if (selectEvent.user != event.user) return@onStringSelect
-        val embeds = getEmbeds(event, Category.valueOf(selectEvent.values[0]))
-        selectEvent.editMessageEmbeds(embeds).await()
+    private fun generateEmbeds(event: CommandEvent): Map<Category, List<MessageEmbed>> {
+        // gather all top-level commands and sort them by category
+        val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
+        // remap the list of commands into a list of embeds
+        return commands.groupBy { it.category }.mapValues { (category, list) ->
+            val descriptions = list.map { command ->
+                // build the descriptions and join them into pages of 20 commands each
+                val description = event.getAny("commands.${command.name}.description")
+                buildString { append("`/", command.name, "` - ", description, "\n") }
+            }.chunked(20).map { it.joinToString("") }
+            // start putting the page embeds together by reusing the builder
+            val categoryText = event.getAny("core.categories.${category.displayName}")
+            val embed = event.embed.setThumbnail(event.selfUser.effectiveAvatarUrl).setTitle(
+                "${category.emote} $categoryText ${event.get("command_title")}"
+            ).setFooter(event.get("more_information"))
+            descriptions.map { embed.setDescription(it).build() }
+        }.filterNot { (category, list) -> category == Category.CUSTOM || category == Category.OWNER || list.isEmpty() }
     }
 
     private companion object {
-        private const val componentPrefix = "commands:select:"
-        private val handler = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTERACTION)
-        private val embeds = mutableMapOf<Category, List<MessageEmbed>>()
-        private var menuBuilder: StringSelectMenu.Builder? = null
-
-        private fun Category.path() = "categories." + name.lowercase()
-
-        private fun getSelectionMenu(event: CommandEvent): SelectMenu = (menuBuilder ?: run {
-            StringSelectMenu.create(componentPrefix).setPlaceholder(event.get("select_placeholder"))
-                .addOptions(event.sandra.commands.values.groupBy { it.category }.filterNot { (category, list) ->
-                    category == Category.CUSTOM || category == Category.OWNER || list.isEmpty()
-                }.toSortedMap().map { (category, _) ->
-                    val displayName = event.getAny(category.path())
-                    SelectOption.of(displayName + " " + event.get("command_title"), category.name)
-                        .withEmoji(Emoji.fromFormatted(category.emote))
-                }).also { menuBuilder = it }
-        }).setId(componentPrefix + event.encodedInteraction).build()
-
-        private fun getEmbeds(event: CommandEvent, category: Category): List<MessageEmbed> =
-            embeds.getOrPut(category) { buildEmbeds(event, category) }
-
-        private fun buildEmbeds(event: CommandEvent, category: Category): List<MessageEmbed> {
-            // Filter for top level commands that are from this category
-            val commands = event.sandra.commands.values.filter {
-                it.category == category && !it.isSubcommand
-            }.sortedBy { it.name }
-            val embedDescriptions = commands.map {
-                // Append each command to the embed description
-                val commandDescription = event.getAny("commands.${it.name}.description")
-                buildString { append("`/", it.name, "` - ", commandDescription, "\n") }
-            }.chunked(20).map { it.joinToString("") } // Chunk the commands into groups and combine them
-            val embed = event.embed.setTitle(
-                "${category.emote} ${event.getAny(category.path())} ${event.get("command_title")}"
-            ).setThumbnail(event.selfUser.effectiveAvatarUrl).setFooter(event.get("more_information"))
-            // Build each page using the embed template and its own description
-            return embedDescriptions.map { embed.setDescription(it).build() }
-        }
+        private val ERROR_HANDLER = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTEGRATION)
     }
 
 }
