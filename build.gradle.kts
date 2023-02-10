@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.0"
     id("com.github.gmazzo.buildconfig") version "3.1.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -41,7 +41,7 @@ dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-beta.2") { exclude(module = "opus-java") }
+    implementation("net.dv8tion:JDA:5.0.0-beta.3") { exclude(module = "opus-java") }
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("com.github.minndevelopment:jda-ktx:17eb77a")
     implementation("io.javalin:javalin:5.2.0")
