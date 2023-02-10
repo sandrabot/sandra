@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.entities
 
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import kotlin.time.Duration.Companion.seconds
@@ -41,11 +42,13 @@ abstract class Service(private val interval: Long, private val initialDelay: Lon
      */
     open fun start() {
         if (isActive) return
-        serviceScope.launch {
+        job = serviceScope.launch {
             delay(initialDelay.seconds)
             while (isActive) try {
                 execute()
                 delay(interval.seconds)
+            } catch (_: CancellationException) {
+                // these can be safely ignored, only occurs when service shuts down
             } catch (t: Throwable) {
                 logger.error("An exception occurred while executing a service task, halting service", t)
                 shutdown()
