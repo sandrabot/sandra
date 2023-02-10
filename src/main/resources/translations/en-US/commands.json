@@ -1,4 +1,15 @@
 {
+  "avatar": {
+    "name": "avatar",
+    "description": "look up a user's avatar",
+    "button": "click to open",
+    "arguments": {
+      "user": {
+        "name": "user",
+        "description": "the user you want to look up"
+      }
+    }
+  },
   "cat": {
     "name": "cat",
     "description": "gracefully displays a cat for your viewing pleasure"
@@ -67,7 +78,14 @@
       "sides": {
         "name": "sides",
         "description": "the number of sides your dice has",
-        "choices": ["d4", "d6", "d8", "d10", "d12", "d20"]
+        "choices": [
+          "d4",
+          "d6",
+          "d8",
+          "d10",
+          "d12",
+          "d20"
+        ]
       },
       "max": {
         "name": "max",
