@@ -42,7 +42,7 @@ private val templateTokens = mapOf<String, KFunction<*>>(
     "user.created" to UserImpl::getTimeCreated,
     "user.exp" to MemberConfig::experience.getter,
     "user.level" to MemberConfig::level.getter,
-    "user.money" to UserConfig::credits.getter,
+    "user.cash" to UserConfig::cash.getter,
     "server.id" to GuildImpl::getId,
     "server.name" to GuildImpl::getName,
     "server.members" to GuildImpl::getMemberCount,

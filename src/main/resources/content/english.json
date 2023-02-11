@@ -59,6 +59,29 @@
     }
   },
   "commands": {
+    "avatar": {
+      "name": "avatar",
+      "description": "look up a user's avatar",
+      "button": "click to open",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "the user you want to look up"
+        }
+      }
+    },
+    "cash": {
+      "name": "cash",
+      "description": "check how much money you have",
+      "self": "according to my records, you have $%2$s in your wallet",
+      "other": "after a quick search, i found that %1$s has $%2$s in their wallet",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "the user you want to check"
+        }
+      }
+    },
     "cat": {
       "name": "cat",
       "description": "gracefully displays a cat for your viewing pleasure"

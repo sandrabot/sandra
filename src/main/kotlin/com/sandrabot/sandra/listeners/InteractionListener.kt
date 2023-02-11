@@ -80,13 +80,12 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         try {
             command.execute(event)
         } catch (e: MissingPermissionException) {
-            event.replyError(missingSelfMessage(event, e.permission)).setEphemeral(true).await()
+            event.sendError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
             logger.debug("Couldn't finish command execution due to missing permissions", e)
         } catch (e: MissingArgumentException) {
-            event.replyError(event.getAny("core.missing_argument", e.argument.name))
-                .setEphemeral(true).await()
+            event.sendError(event.getAny("core.missing_argument", e.argument.name)).setEphemeral(true).queue()
         } catch (t: Throwable) {
-            event.sendError(event.getAny("core.interaction_error")).setEphemeral(true).await()
+            event.sendError(event.getAny("core.interaction_error")).setEphemeral(true).queue()
             logger.error("An exception occurred while executing a command", t)
         }
     }

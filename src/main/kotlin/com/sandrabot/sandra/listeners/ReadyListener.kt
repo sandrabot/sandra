@@ -47,7 +47,8 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
             // if command updates are enabled, now is the time to perform the updates
             if (sandra.settings.commandUpdates) try {
                 // update the global slash command list, this makes sure the commands match our local commands
-                val (owner, global) = sandra.commands.values.partition { it.ownerOnly }.toList().map { list ->
+                val topCommands = sandra.commands.values.filterNot { it.isSubcommand }
+                val (owner, global) = topCommands.partition { it.ownerOnly }.toList().map { list ->
                     list.map { command -> sandra.commands.commandData[command.path] }
                 }
                 val globalCommands = event.jda.updateCommands().addCommands(global).await()

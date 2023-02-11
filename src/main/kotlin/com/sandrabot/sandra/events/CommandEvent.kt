@@ -73,7 +73,7 @@ class CommandEvent(
     val userConfig: UserConfig by lazy { sandra.config.getUser(user.idLong) }
     val subscriptions: Set<Subscription> by lazy { sandra.subscriptions[user.idLong] }
     val localeContext: LocaleContext by lazy {
-        LocaleContext(guild, interaction.userLocale, "commands.${command.name}")
+        LocaleContext(guild, interaction.userLocale, "commands.${command.path}")
     }
 
     suspend fun retrieveUser(id: Long): User? = sandra.shards.retrieveUserById(id).await()
