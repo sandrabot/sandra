@@ -26,6 +26,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.User
 import net.jodah.expiringmap.ExpirationListener
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
@@ -67,6 +69,9 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
 
     fun getGuild(id: Long) = get<GuildConfig>(id)
     fun getUser(id: Long) = get<UserConfig>(id)
+
+    operator fun get(guild: Guild) = getGuild(guild.idLong)
+    operator fun get(user: User) = getUser(user.idLong)
 
     private inline fun <reified T : Configuration> get(id: Long): T = configs.getOrPut(id) {
         val prefix = if (T::class == GuildConfig::class) RedisPrefix.GUILD else RedisPrefix.USER
