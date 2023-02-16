@@ -107,6 +107,11 @@ enum class ArgumentType(val optionType: OptionType) {
     /**
      * Resolves [net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel] objects.
      */
-    VOICE(OptionType.CHANNEL),
+    VOICE(OptionType.CHANNEL);
+
+    companion object {
+        fun fromName(name: String) = values().find { name.equals(it.name, ignoreCase = true) }
+            ?: throw IllegalArgumentException("Invalid argument type: $name")
+    }
 
 }

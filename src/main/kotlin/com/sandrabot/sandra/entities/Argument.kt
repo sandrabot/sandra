@@ -94,7 +94,7 @@ fun compileArguments(tokens: String): List<Argument> {
     tokenRegex.findAll(tokens).forEach { matchResult ->
         val (text, asterisk, rawName, rawType, rawOptions) = matchResult.groupValues
         val isRequired = asterisk.isNotEmpty()
-        val type = ArgumentType.valueOf(rawType.uppercase())
+        val type = ArgumentType.fromName(rawType)
 
         // figure out if options are applicable and validate them
         val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type.optionType) {
@@ -159,7 +159,7 @@ fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResu
 }.let { values ->
     // make sure all required arguments are present
     arguments.filter { it.isRequired }.find { it.name !in values }?.let { throw MissingArgumentException(event, it) }
-    ArgumentResult(arguments.zip(values, transform = { a, b -> a.name to b }).toMap())
+    ArgumentResult(arguments.zip(values, transform = { argument, value -> argument.name to value }).toMap())
 }
 
 
