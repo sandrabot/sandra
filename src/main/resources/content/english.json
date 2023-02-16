@@ -143,6 +143,19 @@
       "description": "sends a ping to test sandra's connection to discord",
       "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
+    "reputation": {
+      "name": "reputation",
+      "description": "send someone a meaningless reputation point",
+      "cooldown": "you can only send reputation once every **20** hours",
+      "self": "as hard as you may try, you can't give yourself reputation",
+      "reply": "you sent %1$s a reputation point, they now have %2$s rep",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "the person you want to disappoint"
+        }
+      }
+    },
     "roll": {
       "name": "roll",
       "description": "test your luck with an imaginary dice set",

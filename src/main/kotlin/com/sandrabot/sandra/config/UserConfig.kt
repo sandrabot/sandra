@@ -25,6 +25,8 @@ import kotlinx.serialization.Serializable
 class UserConfig(override val id: Long) : ExperienceConfig() {
 
     var cash: Long = 0
+    var reputation: Long = 0
+    var reputationLast: Long = 0
 
     override fun toString(): String = "UserConfig:$id"
 

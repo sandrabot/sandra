@@ -19,6 +19,7 @@ package com.sandrabot.sandra.utils
 import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.ExperienceConfig
 import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.config.UserConfig
 import kotlin.math.roundToInt
 
 val experienceLevelGoals: List<Int> = run {
@@ -41,7 +42,7 @@ fun GuildConfig.computeMultiplier(channel: ChannelConfig? = null): Double = when
     else -> experienceMultiplier
 }
 
-fun ExperienceConfig.canExperience() = System.currentTimeMillis() >= experienceLast + 60_000
+fun ExperienceConfig.canExperience() = System.currentTimeMillis() >= experienceLast + 60_000 // 1 minute
 
 fun ExperienceConfig.awardExperience(amount: Int): Boolean {
     experience += amount // Add the new experience to the old value
@@ -54,3 +55,5 @@ fun ExperienceConfig.awardExperience(amount: Int): Boolean {
         true // Signify to the caller there was a level up
     } else false
 }
+
+fun UserConfig.canReputation() = System.currentTimeMillis() >= reputationLast + 72_000_000 // 20 hours
