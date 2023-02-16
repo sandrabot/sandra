@@ -40,16 +40,18 @@ object ContentStore {
     val locales: Set<DiscordLocale>
 
     init {
-        val localMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
-        // read the translation directory tree to find available resources
-        readDirectory("translations").flatMap { readDirectory(it) }.forEach { path ->
-            val identifier = path.substringAfter('/').substringBefore('/')
-            val root = path.substringAfterLast('/').substringBefore('.')
-            val content = resourceAsStream(path) { Json.decodeFromStream<JsonObject>(this) }
-            localMap.getOrPut(DiscordLocale.from(identifier)) { mutableMapOf() }.putAll(content.flatten(root))
+        val localeMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
+        // stream the content directory to find available locales
+        resourceAsStream("content") { reader().readLines().map { "content/$it" } }.forEach { path ->
+            // decode the json file by streaming it and flattening the paths
+            val content = resourceAsStream(path) { Json.decodeFromStream<JsonObject>(this).flatten() }
+            // read the metadata to reliably select the appropriate locale
+            val locale = DiscordLocale.from(content["meta.locale"] as String)
+            // ensure that entries are not overwritten, also prevent metadata from being entered
+            localeMap.getOrPut(locale) { mutableMapOf() }.putAll(content.filterKeys { !it.startsWith("meta") })
         }
-        contentMap = localMap
-        locales = localMap.keys
+        contentMap = localeMap
+        locales = localeMap.keys
     }
 
     /**
@@ -83,10 +85,5 @@ object ContentStore {
             ?: throw MissingTranslationException("Missing default translation map")
         return localeMap[name] ?: throw MissingTranslationException("Missing content for $locale at: $name")
     }
-
-    private fun readDirectory(name: String) =
-        this.javaClass.classLoader.getResourceAsStream(name)?.reader()?.useLines { sequence ->
-            sequence.filterNot { it.isBlank() }.map { "$name/$it" }.toList()
-        } ?: throw AssertionError("Failed to load: $name")
 
 }

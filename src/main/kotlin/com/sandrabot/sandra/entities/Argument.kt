@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.*
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.interactions.commands.OptionType
 import java.util.*
 import kotlin.time.Duration
 
@@ -38,10 +39,7 @@ private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 class Argument internal constructor(
     val name: String, val type: ArgumentType, val isRequired: Boolean, val choices: List<*>
 ) {
-    val usage = run {
-        val (start, end) = if (isRequired) "<" to ">" else "[" to "]"
-        "$start$name$end"
-    }
+    val usage = if (isRequired) "<$name>" else "[$name]"
 
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
@@ -92,118 +90,117 @@ class Argument internal constructor(
  */
 @Suppress("KDocUnresolvedReference")
 fun compileArguments(tokens: String): List<Argument> {
-    val arguments = LinkedList<Argument>()
-    for (match in tokenRegex.findAll(tokens)) {
-        val (text, atSign, rawName, rawType, rawOptions) = match.groupValues
-        val isRequired = atSign.isNotEmpty()
-        // This will throw if the type is invalid
+    val arguments = mutableListOf<Argument>()
+    tokenRegex.findAll(tokens).forEach { matchResult ->
+        val (text, asterisk, rawName, rawType, rawOptions) = matchResult.groupValues
+        val isRequired = asterisk.isNotEmpty()
         val type = ArgumentType.fromName(rawType)
 
-        // Figure out if options are applicable and validate them
-        val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type) {
-            // Options can only be used with TEXT, INTEGER, and DOUBLE types
-            ArgumentType.TEXT, ArgumentType.INTEGER, ArgumentType.DOUBLE ->
-                // Split by commas with a limit of 25 distinct entries
+        // figure out if options are applicable and validate them
+        val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type.optionType) {
+            // only argument types with text, integer, and double value types may use options
+            OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER ->
                 rawOptions.lowercase().split(',').distinct().take(25).let { list ->
-                    when (type) {
-                        ArgumentType.TEXT -> list
-                        ArgumentType.INTEGER -> list.map { int -> int.toLongOrNull() }
-                        ArgumentType.DOUBLE -> list.map { num -> num.toDoubleOrNull() }
-                        else -> throw AssertionError("Illegal option type")
+                    when (type.optionType) {
+                        OptionType.STRING -> list
+                        OptionType.INTEGER -> list.map(String::toLongOrNull)
+                        OptionType.NUMBER -> list.map(String::toDoubleOrNull)
+                        else -> throw AssertionError("Illegal option type in $text")
                     }.also { mappedList ->
-                        // Throw if any options couldn't be converted
-                        if (null in mappedList) throw IllegalArgumentException("Illegal option type for argument type $type")
+                        // throw if any options couldn't be converted
+                        if (null in mappedList) throw IllegalArgumentException("Illegal option type in $text")
                     }
                 }
-            // Throw if options are defined on any other argument type
-            else -> throw IllegalArgumentException("Argument type $type cannot use options")
+
+            else -> throw IllegalArgumentException("Argument type $type cannot use options in $text")
         }
 
-        // The name must always be lowercase
+        // the name must always be lowercase
         val name = rawName.ifEmpty { type.name }.lowercase()
+        // arguments must have distinct names, throw if there's any duplicates
+        if (arguments.any { name == it.name }) throw IllegalArgumentException("Duplicate argument name already in use $text")
 
-        // Arguments must have distinct names, throw if there are duplicates
-        if (arguments.any { name == it.name }) throw IllegalArgumentException("Duplicate argument name $name in $text at ${match.range}")
+        // required arguments must be listed first
+        if (isRequired && arguments.any { !it.isRequired }) throw IllegalArgumentException("Required argument $name must be listed before other arguments")
 
-        // Required arguments must be listed first
-        if (isRequired && arguments.any { !it.isRequired }) throw IllegalArgumentException("Required argument $text at ${match.range} must be listed before other arguments")
-
-        arguments.add(Argument(name, type, isRequired, options))
+        arguments += Argument(name, type, isRequired, options)
     }
     return arguments
 }
 
 /**
- * Parses the arguments provided by the user into objects easily consumed by commands.
+ * Parses the provided [arguments] from the provided [event].
  */
-fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResult {
-    val parsedArguments = mutableMapOf<String, Any>()
-    val options = event.options
+fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResult = arguments.mapNotNull {
+    when (it.type) {
+        // these types are simple and can be resolved directly
+        ArgumentType.ATTACHMENT -> findOption(event, it)?.asAttachment
+        ArgumentType.BOOLEAN -> findOption(event, it)?.asBoolean
+        ArgumentType.DOUBLE -> findOption(event, it)?.asDouble
+        ArgumentType.INTEGER -> findOption(event, it)?.asLong
+        ArgumentType.MEMBER -> findOption(event, it)?.asMember
+        ArgumentType.MENTIONABLE -> findOption(event, it)?.asMentionable
+        ArgumentType.ROLE -> findOption(event, it)?.asRole
+        ArgumentType.TEXT -> findOption(event, it)?.asString
+        ArgumentType.USER -> findOption(event, it)?.asUser
 
-    for (arg in arguments) {
-        val result: Any? = when (arg.type) {
-            ArgumentType.ATTACHMENT -> findOption(options, arg)?.asAttachment
-            ArgumentType.BOOLEAN -> findOption(options, arg)?.asBoolean
-            ArgumentType.DOUBLE -> findOption(options, arg)?.asDouble
-            ArgumentType.INTEGER -> findOption(options, arg)?.asLong
-            ArgumentType.MEMBER -> findOption(options, arg)?.asMember
-            ArgumentType.MENTIONABLE -> findOption(options, arg)?.asMentionable
-            ArgumentType.ROLE -> findOption(options, arg)?.asRole
-            ArgumentType.TEXT -> findOption(options, arg)?.asString
-            ArgumentType.USER -> findOption(options, arg)?.asUser
+        // channels can just be filtered by type
+        ArgumentType.CHANNEL -> parseChannels<TextChannel>(event, it)
+        ArgumentType.NEWS -> parseChannels<NewsChannel>(event, it)
+        ArgumentType.STAGE -> parseChannels<StageChannel>(event, it)
+        ArgumentType.VOICE -> parseChannels<VoiceChannel>(event, it)
 
-            ArgumentType.CHANNEL -> parseChannels<TextChannel>(options, arg)
-            ArgumentType.NEWS -> parseChannels<NewsChannel>(options, arg)
-            ArgumentType.STAGE -> parseChannels<StageChannel>(options, arg)
-            ArgumentType.VOICE -> parseChannels<VoiceChannel>(options, arg)
-
-            ArgumentType.CATEGORY -> parseCategory(options, arg)
-            ArgumentType.COMMAND -> parseCommand(event, options, arg)
-            ArgumentType.DURATION -> parseDuration(options, arg)
-            ArgumentType.EMOTE -> parseEmote(event, options, arg)
-        }
-        // Add the parsed values to the map if anything was found
-        if (result != null) parsedArguments[arg.name] = result
+        // these types require more complex parsing
+        ArgumentType.CATEGORY -> parseCategory(event, it)
+        ArgumentType.COMMAND -> parseCommand(event, it)
+        ArgumentType.DURATION -> parseDuration(event, it)
+        ArgumentType.EMOTE -> parseEmote(event, it)
     }
-
-    // Check for any required arguments that failed to parse
-    arguments.firstOrNull { it.isRequired && it.name !in parsedArguments }
-        ?.let { throw MissingArgumentException(event, it) }
-
-    return ArgumentResult(parsedArguments)
+}.let { values ->
+    // make sure all required arguments are present
+    arguments.filter { it.isRequired }.find { it.name !in values }?.let { throw MissingArgumentException(event, it) }
+    ArgumentResult(arguments.zip(values, transform = { argument, value -> argument.name to value }).toMap())
 }
 
-/* ==================== Parsing Methods ===================== */
 
-private fun findOption(options: List<OptionMapping>, arg: Argument): OptionMapping? =
-    options.firstOrNull { arg.name == it.name && arg.type.optionType == it.type }
+private fun findOption(event: CommandEvent, argument: Argument): OptionMapping? =
+    event.options.firstOrNull { argument.name == it.name && argument.type.optionType == it.type }
 
-private inline fun <reified T : GuildChannel> parseChannels(options: List<OptionMapping>, arg: Argument): T? =
-    findOption(options, arg)?.asChannel?.let { if (it is T) it else null }
+private inline fun <reified T : GuildChannel> parseChannels(event: CommandEvent, argument: Argument): T? =
+    findOption(event, argument)?.asChannel?.let { if (it is T) it else null }
 
-private fun parseCategory(options: List<OptionMapping>, arg: Argument): Category? = findOption(options, arg)?.let {
-    Category.values().firstOrNull { category -> category.name == it.asString.uppercase() }
+private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
+    val option = findOption(event, argument) ?: return null
+    // allow the categories to be searched by their localized names
+    val categories = Category.values().associateBy { event.getAny("core.categories.${it.displayName}") }
+    // since we don't support fuzzy searching, the option is the key
+    return categories[option.asString.lowercase()]
 }
 
-private fun parseCommand(event: CommandEvent, options: List<OptionMapping>, arg: Argument): Command? =
-    findOption(options, arg)?.let { event.sandra.commands[it.asString.replace(spaceRegex, "/")] }
+private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
+    val option = findOption(event, argument) ?: return null
+    // allow the commands to be searched by their localized names
+    val commands = event.sandra.commands.values.associateBy { event.getAny("commands.${it.name}.name") }
+    // since we don't support fuzzy searching, the option is the key
+    return commands[option.asString.lowercase().replace(spaceRegex, "/")]
+}
 
-private fun parseDuration(options: List<OptionMapping>, arg: Argument): Duration? {
-    val option = findOption(options, arg) ?: return null
-    // Due to regex negative lookahead we need to match the entire string
+private fun parseDuration(event: CommandEvent, argument: Argument): Duration? {
+    val option = findOption(event, argument) ?: return null
+    // due to regex negative lookahead, we need to match the entire string
     val match = durationRegex.matchEntire(option.asString) ?: return null
-    // The time units must be in order so that makes this easy enough
+    // the time units must be in order, so that makes this easy enough
     val (_, days, hours, minutes, seconds) = match.groupValues.map { it.ifBlank { "0" } }
-    // This is sadly the most straightforward way to parse the duration, as
+    // this is sadly the most straightforward way to parse the duration, as
     // the spaces are required when parsing but optional in the regex
     val duration = Duration.parseOrNull("${days}d ${hours}h ${minutes}m ${seconds}s")
     return duration?.let { if (it.inWholeSeconds > 0) duration else null }
 }
 
-private fun parseEmote(event: CommandEvent, options: List<OptionMapping>, arg: Argument): RichCustomEmoji? {
-    val option = findOption(options, arg) ?: return null
-    // Only match the entire string to be consistent with the other types
+private fun parseEmote(event: CommandEvent, argument: Argument): RichCustomEmoji? {
+    val option = findOption(event, argument) ?: return null
+    // only match the entire string to be consistent with the other types
     val match = emoteRegex.matchEntire(option.asString) ?: return null
-    // Check against all guilds, usually the emote isn't from the calling guild
+    // check against all guilds, usually the emote isn't from the calling guild
     return event.sandra.shards.getEmojiById(match.groupValues[1])
 }

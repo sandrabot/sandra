@@ -40,7 +40,7 @@ enum class ArgumentType(val optionType: OptionType) {
     CATEGORY(OptionType.STRING),
 
     /**
-     * Resolves [net.dv8tion.jda.api.entities.TextChannel] objects.
+     * Resolves [net.dv8tion.jda.api.entities.channel.concrete.TextChannel] objects.
      */
     CHANNEL(OptionType.CHANNEL),
 
@@ -80,7 +80,7 @@ enum class ArgumentType(val optionType: OptionType) {
     MENTIONABLE(OptionType.MENTIONABLE),
 
     /**
-     * Resolves [net.dv8tion.jda.api.entities.NewsChannel] objects.
+     * Resolves [net.dv8tion.jda.api.entities.channel.concrete.NewsChannel] objects.
      */
     NEWS(OptionType.CHANNEL),
 
@@ -90,7 +90,7 @@ enum class ArgumentType(val optionType: OptionType) {
     ROLE(OptionType.ROLE),
 
     /**
-     * Resolves [net.dv8tion.jda.api.entities.StageChannel] objects.
+     * Resolves [net.dv8tion.jda.api.entities.channel.concrete.StageChannel] objects.
      */
     STAGE(OptionType.CHANNEL),
 
@@ -105,13 +105,13 @@ enum class ArgumentType(val optionType: OptionType) {
     USER(OptionType.USER),
 
     /**
-     * Resolves [net.dv8tion.jda.api.entities.VoiceChannel] objects.
+     * Resolves [net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel] objects.
      */
     VOICE(OptionType.CHANNEL);
 
     companion object {
-        fun fromName(name: String): ArgumentType = values().firstOrNull { name.equals(it.name, ignoreCase = true) }
-            ?: throw IllegalArgumentException("Unknown argument type $name")
+        fun fromName(name: String) = values().find { name.equals(it.name, ignoreCase = true) }
+            ?: throw IllegalArgumentException("Invalid argument type: $name")
     }
 
 }
