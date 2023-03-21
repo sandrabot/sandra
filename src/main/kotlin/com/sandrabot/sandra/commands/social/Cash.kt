@@ -29,7 +29,7 @@ class Cash : Command(arguments = "[user]") {
         val cash = event.sandra.config[user].cash.format()
         // the user is formatted as a mention to provide a clickable link to their profile
         val reply = event.get(if (user == event.user) "self" else "other", user.asMention, cash)
-        // to prevent mention spam, we send the reply as an ephemeral message
-        event.replyEmote(reply, Emotes.SANDOLLAR).setEphemeral(true).await()
+        // to prevent mention spam, disable all mentions in the reply
+        event.replyEmote(reply, Emotes.SANDOLLAR).mention().await()
     }
 }

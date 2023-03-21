@@ -131,35 +131,37 @@ fun compileArguments(tokens: String): List<Argument> {
 /**
  * Parses the provided [arguments] from the provided [event].
  */
-fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResult = arguments.mapNotNull {
-    when (it.type) {
-        // these types are simple and can be resolved directly
-        ArgumentType.ATTACHMENT -> findOption(event, it)?.asAttachment
-        ArgumentType.BOOLEAN -> findOption(event, it)?.asBoolean
-        ArgumentType.DOUBLE -> findOption(event, it)?.asDouble
-        ArgumentType.INTEGER -> findOption(event, it)?.asLong
-        ArgumentType.MEMBER -> findOption(event, it)?.asMember
-        ArgumentType.MENTIONABLE -> findOption(event, it)?.asMentionable
-        ArgumentType.ROLE -> findOption(event, it)?.asRole
-        ArgumentType.TEXT -> findOption(event, it)?.asString
-        ArgumentType.USER -> findOption(event, it)?.asUser
+fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResult {
+    val parsed = mutableMapOf<String, Any>()
+    arguments.forEach { argument ->
+        val value: Any? = when (argument.type) {
+            // these types are simple and can be resolved directly
+            ArgumentType.ATTACHMENT -> findOption(event, argument)?.asAttachment
+            ArgumentType.BOOLEAN -> findOption(event, argument)?.asBoolean
+            ArgumentType.DOUBLE -> findOption(event, argument)?.asDouble
+            ArgumentType.INTEGER -> findOption(event, argument)?.asLong
+            ArgumentType.MEMBER -> findOption(event, argument)?.asMember
+            ArgumentType.MENTIONABLE -> findOption(event, argument)?.asMentionable
+            ArgumentType.ROLE -> findOption(event, argument)?.asRole
+            ArgumentType.TEXT -> findOption(event, argument)?.asString
+            ArgumentType.USER -> findOption(event, argument)?.asUser
 
-        // channels can just be filtered by type
-        ArgumentType.CHANNEL -> parseChannels<TextChannel>(event, it)
-        ArgumentType.NEWS -> parseChannels<NewsChannel>(event, it)
-        ArgumentType.STAGE -> parseChannels<StageChannel>(event, it)
-        ArgumentType.VOICE -> parseChannels<VoiceChannel>(event, it)
+            // channels can just be filtered by type
+            ArgumentType.CHANNEL -> parseChannels<TextChannel>(event, argument)
+            ArgumentType.NEWS -> parseChannels<NewsChannel>(event, argument)
+            ArgumentType.STAGE -> parseChannels<StageChannel>(event, argument)
+            ArgumentType.VOICE -> parseChannels<VoiceChannel>(event, argument)
 
-        // these types require more complex parsing
-        ArgumentType.CATEGORY -> parseCategory(event, it)
-        ArgumentType.COMMAND -> parseCommand(event, it)
-        ArgumentType.DURATION -> parseDuration(event, it)
-        ArgumentType.EMOTE -> parseEmote(event, it)
+            // these types require more complex parsing
+            ArgumentType.CATEGORY -> parseCategory(event, argument)
+            ArgumentType.COMMAND -> parseCommand(event, argument)
+            ArgumentType.DURATION -> parseDuration(event, argument)
+            ArgumentType.EMOTE -> parseEmote(event, argument)
+        }
+        if (argument.isRequired && value == null) throw MissingArgumentException(event, argument)
+        if (value != null) parsed[argument.name] = value
     }
-}.let { values ->
-    // make sure all required arguments are present
-    arguments.filter { it.isRequired }.find { it.name !in values }?.let { throw MissingArgumentException(event, it) }
-    ArgumentResult(arguments.zip(values, transform = { argument, value -> argument.name to value }).toMap())
+    return ArgumentResult(parsed)
 }
 
 
