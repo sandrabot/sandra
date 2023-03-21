@@ -41,14 +41,14 @@ dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-beta.3") { exclude(module = "opus-java") }
-    implementation("ch.qos.logback:logback-classic:1.4.5")
+    implementation("net.dv8tion:JDA:5.0.0-beta.6") { exclude(module = "opus-java") }
+    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("com.github.minndevelopment:jda-ktx:17eb77a")
-    implementation("io.javalin:javalin:5.2.0")
-    implementation("io.ktor:ktor-client-content-negotiation:2.2.1")
-    implementation("io.ktor:ktor-client-okhttp:2.2.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
-    implementation("io.sentry:sentry-logback:6.9.0")
+    implementation("io.javalin:javalin:5.4.2")
+    implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
+    implementation("io.ktor:ktor-client-okhttp:2.2.4")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.4")
+    implementation("io.sentry:sentry-logback:6.16.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")

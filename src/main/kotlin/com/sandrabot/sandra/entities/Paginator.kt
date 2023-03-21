@@ -23,7 +23,7 @@ import com.sandrabot.sandra.utils.truncate
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
 import dev.minn.jda.ktx.interactions.components.ModalBuilder
-import kotlinx.coroutines.*
+import kotlinx.coroutines.withTimeoutOrNull
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -37,7 +37,6 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import kotlin.coroutines.coroutineContext
 import kotlin.time.Duration.Companion.minutes
 
 /**
@@ -70,14 +69,13 @@ class Paginator(
     ).map { button ->
         // dynamically localize the button labels for the end user
         val name = button.id!!.substringAfter(':').substringBefore(':')
-        button.withLabel(commandEvent.getAny("paginator.buttons.$name"))
+        button.withLabel(commandEvent.getAny("core.paginator.buttons.$name"))
     }.toMutableList()
     private val messageEmbeds = mutableListOf<MessageEmbed>()
 
     private var currentPage: Int = 0
     private var messageId: Long = 0
         set(value) = if (field != 0L) throw IllegalStateException("MessageId is already set") else field = value
-    private var listenerJob: Job? = null
 
     /**
      * Initializes the paginator using the [pages] and options provided.
@@ -108,27 +106,22 @@ class Paginator(
         // generate the message data and send the initial message
         messageId = commandEvent.sendMessage(generateMessageData()).await().idLong
 
-        // it looks messy, but it does exactly what we want it to do
-        listenerJob = withContext(coroutineContext) {
-            launch { // creates a new coroutine within the same context to listen for events
-                // while this coroutine is active, listen to events with a timeout
-                while (isActive) withTimeoutOrNull(5.minutes) {
-                    // await is a blocking call, this is where we actually wait for the event
-                    when (val event = commandEvent.sandra.shards.await<GenericInteractionCreateEvent>()) {
-                        // verify and handle the events if they're valid, then do it all over again
-                        is ButtonInteractionEvent -> if (verifyButton(event)) handleButton(event)
-                        is ModalInteractionEvent -> if (verifyModal(event)) handleModal(event)
-                    } // when the event listener times out, cancel the coroutine
-                } ?: cancel("Event listener timed out")
-            }.apply { // always remove the message components when the job is completed, ignore any api errors
-                invokeOnCompletion { commandEvent.hook.editMessageComponentsById(messageId).queue(null, handler) }
-            }
-        }
+        while (true) withTimeoutOrNull(1.minutes) {
+            // await is a blocking call, this is where we actually wait for the event
+            when (val event = commandEvent.sandra.shards.await<GenericInteractionCreateEvent>()) {
+                // verify and handle the events if they're valid, then do it all over again
+                is ButtonInteractionEvent -> if (verifyButton(event)) handleButton(event)
+                is ModalInteractionEvent -> if (verifyModal(event)) handleModal(event)
+            } // when the event listener times out, cancel the menu
+        } ?: break
+
+        // destroy the paginator when the menu is cancelled
+        commandEvent.hook.editMessageComponentsById(messageId).queue(null, handler)
     }
 
     private fun verifyButton(buttonEvent: ButtonInteractionEvent): Boolean {
-        // only acknowledge button clicks from our own message
-        if (buttonEvent.messageIdLong != messageId) return false
+        // only acknowledge our own button clicks
+        if (buttonEvent.componentId !in buttons.map { it.id }) return false
         // only let the command author advance the pages
         return if (buttonEvent.user.idLong == commandEvent.user.idLong) {
             // verify that the button is actually enabled
@@ -141,8 +134,8 @@ class Paginator(
     }
 
     private suspend fun handleButton(buttonEvent: ButtonInteractionEvent) = when (buttonEvent.componentId) {
-        // cancel the listener job and destroy this paginator
-        exitButtonId -> listenerJob?.cancel("User exited paginator")
+        // exit the paginator when the exit button is clicked
+        exitButtonId -> null
 
         // respond by replying to the interaction with a modal
         jumpButtonId -> buttonEvent.replyModal(
