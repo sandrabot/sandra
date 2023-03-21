@@ -25,8 +25,8 @@ abstract class Command(
     arguments: String = "",
     val guildOnly: Boolean = false,
     val group: String? = null,
-    val requiredPermissions: Array<Permission> = emptyArray(),
-    val userPermissions: Array<Permission> = emptyArray()
+    val requiredPermissions: Set<Permission> = emptySet(),
+    val userPermissions: Set<Permission> = emptySet()
 ) {
 
     val name: String = this::class.simpleName!!.lowercase()

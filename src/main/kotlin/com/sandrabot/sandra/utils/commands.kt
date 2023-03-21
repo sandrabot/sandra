@@ -21,6 +21,7 @@ import com.sandrabot.sandra.entities.Argument
 import com.sandrabot.sandra.entities.Command
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.DiscordLocale.ENGLISH_US
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.*
 
 typealias ContentMap = Map<DiscordLocale, String>
@@ -37,6 +38,8 @@ fun Command.asCommandData(): SlashCommandData? {
     val data = Commands.slash(names[ENGLISH_US]!!, descriptions[ENGLISH_US]!!).setGuildOnly(guildOnly)
     // convert locales to discord locales and set the translations for the command
     data.setNameLocalizations(names).setDescriptionLocalizations(descriptions)
+    // set the default permissions for this command
+    if (userPermissions.isNotEmpty()) data.defaultPermissions = DefaultMemberPermissions.enabledFor(userPermissions)
     // add the argument data here if applicable
     if (arguments.isNotEmpty()) data.addOptions(arguments.map { it.asOptionData(path) })
     // process any subcommands this command may have
