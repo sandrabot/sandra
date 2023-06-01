@@ -48,7 +48,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // the command will only ever be null if it was manually removed with an eval
         val qualifiedPath = slashEvent.fullCommandName.replace(' ', '.')
         val command = sandra.commands[qualifiedPath] ?: run {
-            logger.warn("Failed to find registered command with path: $qualifiedPath")
+            logger.warn("Received a command that is not registered with path: $qualifiedPath")
             return
         }
         // the first thing we want to do is wrap this with our own object
@@ -58,14 +58,14 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // do additional checks for guild commands, since discord added privileges we only need to check for ourselves
         if (slashEvent.isFromGuild) {
             // make sure we have all the permissions we'll need to run this command
-            (requiredPermissions + command.requiredPermissions).find { missingPermission(event, it) }?.let {
-                event.replyError(missingSelfMessage(event, it)).setEphemeral(true).await()
+            val allPermissions = basePermissions + command.requiredPermissions
+            allPermissions.find { missingPermission(event, it) }?.let {
+                event.replyError(missingSelfMessage(event, it)).setEphemeral(true).queue()
                 return
             }
-            // TODO user privileges and permissions
-        } // we don't need to check guild only anymore, thanks discord
+        }
         if (command.ownerOnly && !event.isOwner) {
-            event.replyError(event.getAny("core.owner_only"))
+            event.replyError(event.getAny("core.owner_only")).setEphemeral(true).queue()
             return
         }
         // and now we can log the command and execute it
@@ -79,20 +79,21 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // catch any exceptions the commands could throw
         try {
             command.execute(event)
-        } catch (e: MissingPermissionException) {
-            event.sendError(missingSelfMessage(event, e.permission)).setEphemeral(true).queue()
-            logger.debug("Couldn't finish command execution due to missing permissions", e)
-        } catch (e: MissingArgumentException) {
-            event.sendError(event.getAny("core.missing_argument", e.argument.name)).setEphemeral(true).queue()
         } catch (t: Throwable) {
-            event.sendError(event.getAny("core.interaction_error")).setEphemeral(true).queue()
             logger.error("An exception occurred while executing a command", t)
+            val message = when (t) {
+                is MissingPermissionException -> missingSelfMessage(event, t.permission)
+                is MissingArgumentException -> event.getAny("core.missing_argument", t.argument.name)
+                else -> event.getAny("core.interaction_error")
+            }
+            if (event.isAcknowledged) event.sendError(message).queue()
+            else event.replyError(message).setEphemeral(true).queue()
         }
     }
 
     private companion object {
         private val logger = LoggerFactory.getLogger(InteractionListener::class.java)
-        private val requiredPermissions = arrayOf(Permission.MESSAGE_EXT_EMOJI)
+        private val basePermissions = setOf(Permission.MESSAGE_EXT_EMOJI)
     }
 
 }

@@ -23,14 +23,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 @Suppress("unused")
 class Avatar : Command(arguments = "[user]") {
-
     override suspend fun execute(event: CommandEvent) {
-
         val user = event.arguments.user() ?: event.user
         val avatarUrl = user.effectiveAvatarUrl + "?size=2048"
         val button = Button.link(avatarUrl, event.get("button"))
         event.reply(avatarUrl).addActionRow(button).setEphemeral(true).await()
-
     }
-
 }
