@@ -80,10 +80,10 @@ object ContentStore {
         }
     }
 
-    private fun getAny(locale: DiscordLocale, name: String): Any {
-        val localeMap = contentMap[if (locale in contentMap) locale else DiscordLocale.ENGLISH_US]
-            ?: throw MissingTranslationException("Missing default translation map")
-        return localeMap[name] ?: throw MissingTranslationException("Missing content for $locale at: $name")
+    private fun getAny(discordLocale: DiscordLocale, name: String): Any {
+        val locale = if (discordLocale in contentMap) discordLocale else DiscordLocale.ENGLISH_US
+        val translationMap = contentMap[locale] ?: throw AssertionError("Missing default translation map")
+        return translationMap[name] ?: throw MissingTranslationException(locale, name)
     }
 
 }

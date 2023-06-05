@@ -21,8 +21,8 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.checkCommandBlocklist
-import com.sandrabot.sandra.utils.missingPermission
-import com.sandrabot.sandra.utils.missingSelfMessage
+import com.sandrabot.sandra.utils.missingPermissionMessage
+import com.sandrabot.sandra.utils.isMissingPermission
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.Permission
@@ -59,8 +59,8 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         if (slashEvent.isFromGuild) {
             // make sure we have all the permissions we'll need to run this command
             val allPermissions = basePermissions + command.requiredPermissions
-            allPermissions.find { missingPermission(event, it) }?.let {
-                event.replyError(missingSelfMessage(event, it)).setEphemeral(true).queue()
+            allPermissions.find { event.isMissingPermission(it) }?.let {
+                event.replyError(event.missingPermissionMessage(it, self = true)).setEphemeral(true).queue()
                 return
             }
         }
@@ -69,7 +69,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             return
         }
         // and now we can log the command and execute it
-        val logUser = "${event.user.asTag} [${event.user.id}]"
+        val logUser = "${event.user.name} [${event.user.id}]"
         val logChannel = if (event.guild != null) {
             "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
         } else "direct message"
@@ -82,7 +82,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         } catch (t: Throwable) {
             logger.error("An exception occurred while executing a command", t)
             val message = when (t) {
-                is MissingPermissionException -> missingSelfMessage(event, t.permission)
+                is MissingPermissionException -> event.missingPermissionMessage(t.permission, self = true)
                 is MissingArgumentException -> event.getAny("core.missing_argument", t.argument.name)
                 else -> event.getAny("core.interaction_error")
             }

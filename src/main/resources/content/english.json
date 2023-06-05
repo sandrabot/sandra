@@ -10,6 +10,8 @@
     "missing_permission": "i need the **%1$s** permission in this **%2$s** to do that",
     "missing_user_permission": "you need the **%1$s** permission in this **%2$s** to do that",
     "owner_only": "this command **can only be used** by **my owners**. nice try",
+    "channel": "channel",
+    "server": "server",
     "categories": {
       "custom": "custom",
       "essential": "essential",

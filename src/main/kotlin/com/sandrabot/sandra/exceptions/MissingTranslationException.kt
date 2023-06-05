@@ -16,4 +16,8 @@
 
 package com.sandrabot.sandra.exceptions
 
-class MissingTranslationException(message: String) : IllegalArgumentException(message)
+import net.dv8tion.jda.api.interactions.DiscordLocale
+
+class MissingTranslationException(locale: DiscordLocale, name: String) : RuntimeException(
+    "Missing translation for content in $locale at $name"
+)
