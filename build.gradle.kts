@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     application
-    kotlin("jvm") version "1.8.0"
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.serialization") version "1.8.22"
     id("com.github.gmazzo.buildconfig") version "3.1.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
@@ -41,19 +41,19 @@ dependencies {
     listOf(
         "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
     ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-beta.6") { exclude(module = "opus-java") }
-    implementation("ch.qos.logback:logback-classic:1.4.6")
-    implementation("com.github.minndevelopment:jda-ktx:17eb77a")
+    implementation("net.dv8tion:JDA:5.0.0-beta.11") { exclude(module = "opus-java") }
+    implementation("ch.qos.logback:logback-classic:1.4.7")
+    implementation("com.github.minndevelopment:jda-ktx:9370cb1")
     implementation("io.javalin:javalin:5.4.2")
     implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
     implementation("io.ktor:ktor-client-okhttp:2.2.4")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.4")
-    implementation("io.sentry:sentry-logback:6.16.0")
+    implementation("io.sentry:sentry-logback:6.19.0")
     implementation("net.jodah:expiringmap:0.5.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.3.1")
+    implementation("redis.clients:jedis:4.4.0")
 }
 
 buildConfig {
@@ -67,7 +67,7 @@ buildConfig {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "17"
+compileKotlin.kotlinOptions.jvmTarget = "19"
 
 fun runCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()

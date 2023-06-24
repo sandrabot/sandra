@@ -24,12 +24,8 @@ enum class RedisPrefix(private val prefix: String) {
 
     GUILD("G:"), USER("U:"), SETTING("S:");
 
-    override fun toString(): String {
-        return prefix
-    }
+    override fun toString() = prefix
 
-    operator fun plus(other: String): String {
-        return prefix + other
-    }
+    operator fun plus(other: String) = prefix + other
 
 }

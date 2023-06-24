@@ -91,6 +91,5 @@ private fun associateContent(path: String): Pair<ContentMap, ContentMap> {
     // compute a map of all possible names and descriptions for this object
     val names = ContentStore.locales.associateWith { ContentStore[it, "$path.name"] }
     val descriptions = ContentStore.locales.associateWith { ContentStore[it, "$path.description"] }
-    // convert locales to discord locales and set the translations for the object
     return names to descriptions
 }
