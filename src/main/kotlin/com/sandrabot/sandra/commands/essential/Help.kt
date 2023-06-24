@@ -27,18 +27,11 @@ import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Help : Command(arguments = "[command]") {
-
     override suspend fun execute(event: CommandEvent) {
-
         if (event.argumentString.isNotEmpty()) {
-
-            val command = event.arguments.command() ?: run {
-                // The command couldn't be found with the given path
-                event.replyError(event.get("not_found")).setEphemeral(true).queue()
-                return
-            }
-
-            if (command.ownerOnly || command.category == Category.CUSTOM) {
+            val command = event.arguments.command()
+            // additionally respond with "not found" if the command isn't listed in /commands
+            if (command == null || command.ownerOnly || command.category == Category.CUSTOM) {
                 event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }
@@ -73,14 +66,14 @@ class Help : Command(arguments = "[command]") {
         embed.setThumbnail(event.selfUser.effectiveAvatarUrl)
         embed.addField(lang["configure", Emotes.CONFIG], lang["configure_content"], false)
         embed.addField(lang["commands", Emotes.COMMANDS], lang["commands_content"], false)
-        embed.addField(lang["invite", Emotes.INVITE], lang["invite_content", Constants.DIRECT_INVITE], false)
+
+        val invite = if (event.sandra.settings.development) Constants.BETA_INVITE else Constants.DIRECT_INVITE
+        embed.addField(lang["invite", Emotes.INVITE], lang["invite_content", invite], false)
         embed.addField(lang["support", Emotes.CHAT], lang["support_content", Constants.DIRECT_SUPPORT], false)
 
         val devs = Constants.DEVELOPERS.mapNotNull { event.retrieveUser(it)?.asTag }.toTypedArray()
         embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).setEphemeral(true).queue()
-
     }
-
 }
