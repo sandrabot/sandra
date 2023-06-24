@@ -34,10 +34,9 @@ private val templateRegex = Regex("""\{([\S.]+)}""")
 private val templateTokens = mapOf<String, KFunction<*>>(
     "@user" to MemberImpl::getAsMention,
     "user.name" to UserImpl::getName,
+    "user.global" to UserImpl::getGlobalName,
     "user.nickname" to MemberImpl::getEffectiveName,
-    "user.dis" to UserImpl::getDiscriminator,
     "user.id" to MemberImpl::getId,
-    "user.tag" to UserImpl::getAsTag,
     "user.age" to MemberImpl::getTimeCreated,
     "user.created" to UserImpl::getTimeCreated,
     "user.exp" to MemberConfig::experience.getter,

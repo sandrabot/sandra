@@ -45,7 +45,7 @@ fun String.truncate(maxLength: Int) = if (length > maxLength) {
     substring(0, maxLength - 3).substringBeforeLast(' ') + "..."
 } else this
 
-fun User.format(): String = "**${name.sanitize()}**#**$discriminator**"
+fun User.format(): String = "**${effectiveName.sanitize()}**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
