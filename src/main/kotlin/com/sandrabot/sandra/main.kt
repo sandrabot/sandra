@@ -54,9 +54,9 @@ fun bootstrap(args: Array<String>) {
     val beginStartup = System.currentTimeMillis()
     // print the startup banner and some version information
     println(resourceAsStream("banner.txt") { String(readBytes()) })
-    println(" | Version: ${SandraInfo.VERSION}")
-    println(" | Commit: ${SandraInfo.COMMIT}")
-    SandraInfo.LOCAL_CHANGES.apply { if (isNotEmpty()) println("   * $this") }
+    println(" | Version: ${BuildInfo.VERSION}")
+    println(" | Commit: ${BuildInfo.COMMIT}")
+    BuildInfo.LOCAL_CHANGES.apply { if (isNotEmpty()) println("   * $this") }
     println(" | JDA: ${JDAInfo.VERSION}\n")
 
     val json = Json {
@@ -82,7 +82,7 @@ fun bootstrap(args: Array<String>) {
     } else if (config.sentryEnabled && !config.sentryDsn.isNullOrBlank()) Sentry.init { options ->
         // configure the sentry client if enabled and applicable
         options.dsn = config.sentryDsn
-        options.release = SandraInfo.VERSION
+        options.release = BuildInfo.VERSION
         options.environment = if (config.debug) "development" else "production"
     } else logger.warn("Sentry is disabled, error reporting will not be available")
     if (config.debug) {

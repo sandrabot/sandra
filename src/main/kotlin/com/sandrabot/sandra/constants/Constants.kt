@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.constants
 
-import com.sandrabot.sandra.SandraInfo
+import com.sandrabot.sandra.BuildInfo
 
 object Constants {
 
@@ -42,7 +42,7 @@ object Constants {
     const val BETA_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$BETA_APPLICATION_ID&permissions=274878220352&scope=bot%20applications.commands"
 
     val DEVELOPERS = arrayOf(AVERY, LOGAN)
-    val VERSION = "${SandraInfo.VERSION}_${SandraInfo.COMMIT.substring(0, 8)}"
+    val VERSION = "${BuildInfo.VERSION}_${BuildInfo.COMMIT.take(8)}"
     val USER_AGENT = "Sandra/$VERSION (+${Website.WEBSITE})"
 
 }

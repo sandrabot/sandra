@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import org.apache.commons.io.output.ByteArrayOutputStream
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 plugins {
-    idea
     application
-    kotlin("jvm") version "1.8.22"
-    kotlin("plugin.serialization") version "1.8.22"
-    id("com.github.gmazzo.buildconfig") version "3.1.0"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
+    id("com.github.gmazzo.buildconfig") version "4.1.2"
+    id("io.ktor.plugin") version "2.3.3"
 }
 
 group = "com.sandrabot"
 version = "5.0.0-SNAPSHOT"
-
-// Defines the program entry point for shadowJar and application
-setProperty("mainClassName", "com.sandrabot.sandra.MainKt")
 
 repositories {
     mavenCentral()
@@ -38,38 +33,43 @@ repositories {
 }
 
 dependencies {
-    listOf(
-        "stdlib", "reflect", "script-util", "script-runtime", "scripting-compiler-embeddable", "compiler-embeddable"
-    ).forEach { implementation(kotlin(it)) }
-    implementation("net.dv8tion:JDA:5.0.0-beta.11") { exclude(module = "opus-java") }
-    implementation("ch.qos.logback:logback-classic:1.4.7")
+    implementation(kotlin("reflect"))
+    implementation("io.ktor:ktor-client-okhttp")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+
+    implementation("net.dv8tion:JDA:5.0.0-beta.13")
     implementation("com.github.minndevelopment:jda-ktx:9370cb1")
-    implementation("io.javalin:javalin:5.4.2")
-    implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
-    implementation("io.ktor:ktor-client-okhttp:2.2.4")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.4")
-    implementation("io.sentry:sentry-logback:6.19.0")
+
+    implementation("ch.qos.logback:logback-classic:1.4.10")
+    implementation("io.javalin:javalin:5.6.1")
+    implementation("io.sentry:sentry-logback:6.28.0")
     implementation("net.jodah:expiringmap:0.5.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.4.0")
+    implementation("redis.clients:jedis:4.4.3")
+}
+
+kotlin {
+    jvmToolchain(20)
+}
+
+application {
+    mainClass.set("com.sandrabot.sandra.MainKt")
 }
 
 buildConfig {
-    className("SandraInfo")
-    val commit = runCommand("git", "rev-parse", "HEAD")
-    val changes = runCommand("git", "diff", "--shortstat")
+    className("BuildInfo")
+    val commit = executeCommand("git", "rev-parse", "HEAD")
+    val localChanges = executeCommand("git", "diff", "--shortstat")
     buildConfigField("String", "VERSION", "\"$version\"")
     buildConfigField("String", "COMMIT", "\"$commit\"")
-    buildConfigField("String", "LOCAL_CHANGES", "\"$changes\"")
+    buildConfigField("String", "LOCAL_CHANGES", "\"$localChanges\"")
     buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "19"
-
-fun runCommand(vararg parts: String): String {
+fun executeCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()
     exec {
         commandLine = parts.asList()
