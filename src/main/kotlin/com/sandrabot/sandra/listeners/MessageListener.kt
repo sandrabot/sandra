@@ -27,13 +27,12 @@ import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.slf4j.LoggerFactory
 
 /**
  * Event listener that processes events related to message content.
  */
-class MessageListener(private val sandra: Sandra): CoroutineEventListener {
+class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
 
     override suspend fun onEvent(event: GenericEvent) {
         when (event) {
@@ -128,13 +127,12 @@ class MessageListener(private val sandra: Sandra): CoroutineEventListener {
     /**
      * Processes any private messages that the bot receives.
      */
-    private fun handlePrivateMessage(event: MessageReceivedEvent) {
-        val logUser = "${event.author.asTag} [${event.author.id}]"
-        val attachments = event.message.attachments.ifNotEmpty {
-            joinToString("\n", prefix = "\n") { "Direct Message Attachment: ${it.url}" }
-        } ?: ""
-        logger.info("Direct Message: $logUser | ${event.message.contentDisplay}$attachments")
-    }
+    private fun handlePrivateMessage(event: MessageReceivedEvent) = buildString {
+        append("Direct Message: ", event.author.name, " [", event.author.id, "] | ", event.message.contentDisplay)
+        with(event.message.attachments) {
+            if (isNotEmpty()) forEach { append("\nDirect Message Attachment: ${it.url}") }
+        }
+    }.let { logger.info(it) }
 
     private companion object {
         private val logger = LoggerFactory.getLogger(MessageListener::class.java)

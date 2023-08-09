@@ -20,7 +20,7 @@ package com.sandrabot.sandra.constants
 
 import com.sandrabot.sandra.exceptions.MissingTranslationException
 import com.sandrabot.sandra.utils.flatten
-import com.sandrabot.sandra.utils.resourceAsStream
+import com.sandrabot.sandra.utils.useResourceStream
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -42,9 +42,9 @@ object ContentStore {
     init {
         val localeMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
         // stream the content directory to find available locales
-        resourceAsStream("content") { reader().readLines().map { "content/$it" } }.forEach { path ->
+        useResourceStream("content") { reader().readLines().map { "content/$it" } }.forEach { path ->
             // decode the json file by streaming it and flattening the paths
-            val content = resourceAsStream(path) { Json.decodeFromStream<JsonObject>(this).flatten() }
+            val content = useResourceStream(path) { Json.decodeFromStream<JsonObject>(this).flatten() }
             // read the metadata to reliably select the appropriate locale
             val locale = DiscordLocale.from(content["meta.locale"] as String)
             // ensure that entries are not overwritten, also prevent metadata from being entered

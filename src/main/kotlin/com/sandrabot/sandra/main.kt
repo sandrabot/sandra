@@ -23,9 +23,8 @@ import ch.qos.logback.classic.Logger
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.httpClient
-import com.sandrabot.sandra.utils.resourceAsStream
+import com.sandrabot.sandra.utils.useResourceStream
 import io.sentry.Sentry
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.dv8tion.jda.api.JDAInfo
@@ -53,7 +52,7 @@ fun bootstrap(args: Array<String>) {
 
     val beginStartup = System.currentTimeMillis()
     // print the startup banner and some version information
-    println(resourceAsStream("banner.txt") { String(readBytes()) })
+    println(useResourceStream("banner.txt") { String(readBytes()) })
     println(" | Version: ${BuildInfo.VERSION}")
     println(" | Commit: ${BuildInfo.COMMIT}")
     BuildInfo.LOCAL_CHANGES.apply { if (isNotEmpty()) println("   * $this") }

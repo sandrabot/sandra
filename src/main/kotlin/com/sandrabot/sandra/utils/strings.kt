@@ -54,9 +54,9 @@ fun DiscordLocale.toLocale(): Locale = Locale.forLanguageTag(locale)
 fun User.probableLocale(): DiscordLocale =
     mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: DiscordLocale.ENGLISH_US
 
-fun <T> resourceAsStream(name: String, block: InputStream.() -> T): T =
-    Constants.javaClass.classLoader.getResourceAsStream(name)?.use(block)
-        ?: throw AssertionError("Missing resource, stream was null: $name")
+fun <T> useResourceStream(path: String, block: InputStream.() -> T): T =
+    object {}.javaClass.classLoader.getResourceAsStream(path)?.use(block)
+        ?: throw IllegalArgumentException("Unable to load resource: $path")
 
 fun hastebin(text: String): String? = try {
     postBlocking<JsonObject>("${Constants.HASTEBIN}/documents", text).let {
