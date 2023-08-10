@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.api.plugins
 
-import io.javalin.http.Context
-import io.javalin.http.Handler
-import io.javalin.http.HandlerType
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.*
 
-abstract class EndpointHandler(val path: String, val type: HandlerType) : Handler {
-    abstract override fun handle(context: Context)
+fun Application.configureSerialization() {
+    install(ContentNegotiation) {
+        json()
+    }
 }

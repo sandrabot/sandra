@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra
 
-import com.sandrabot.sandra.api.RequestManager
+import com.sandrabot.sandra.api.ServerController
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.InteractionListener
@@ -38,7 +38,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter
 class Sandra(val settings: SandraConfig, val redis: RedisManager) {
 
     // only initialize the api when enabled, this preserves resources and reduces logging
-    val api = if (settings.apiEnabled) RequestManager(this) else null
+    val api = if (settings.apiEnabled) ServerController(this) else null
     val shards: ShardManager
 
     val commands = CommandManager()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,15 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("io.ktor:ktor-client-okhttp")
     implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-server-netty")
+    implementation("io.ktor:ktor-server-content-negotiation")
+    implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("net.dv8tion:JDA:5.0.0-beta.13")
     implementation("com.github.minndevelopment:jda-ktx:9370cb1")
 
     implementation("ch.qos.logback:logback-classic:1.4.10")
-    implementation("io.javalin:javalin:5.6.1")
     implementation("io.sentry:sentry-logback:6.28.0")
     implementation("net.jodah:expiringmap:0.5.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
