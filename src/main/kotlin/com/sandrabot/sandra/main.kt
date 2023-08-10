@@ -22,7 +22,7 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.managers.RedisManager
-import com.sandrabot.sandra.utils.httpClient
+import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.useResourceStream
 import io.sentry.Sentry
 import kotlinx.serialization.encodeToString
@@ -118,7 +118,7 @@ private fun shutdownHook(sandra: Sandra) = with(sandra) {
         api?.shutdown()
         botList.shutdown()
         subscriptions.shutdown()
-        httpClient.close()
+        HTTP_CLIENT.close()
 
         shards.shutdown()
         config.shutdown()

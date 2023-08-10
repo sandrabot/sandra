@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.utils.string
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
@@ -30,7 +29,7 @@ object ConfigMapTransformer : JsonTransformingSerializer<Map<Long, Configuration
 
     // Convert the list back to a map with the id as they key
     override fun transformDeserialize(element: JsonElement): JsonElement =
-        buildJsonObject { element.jsonArray.map { put(it.jsonObject.string("id")!!, it.jsonObject) } }
+        buildJsonObject { element.jsonArray.map { put(it.jsonObject["id"].toString(), it.jsonObject) } }
 }
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {

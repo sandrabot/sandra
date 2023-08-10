@@ -18,26 +18,27 @@ package com.sandrabot.sandra.commands.`fun`
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.httpClient
-import com.sandrabot.sandra.utils.string
+import com.sandrabot.sandra.utils.HTTP_CLIENT
 import dev.minn.jda.ktx.coroutines.await
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 class Cat : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply(ephemeral = true).await()
-        val response = httpClient.get("https://cataas.com/cat?json=true")
+        val response = HTTP_CLIENT.get("https://cataas.com/cat?json=true")
         if (response.status == HttpStatusCode.OK) {
-            val url = response.body<JsonObject>().string("url")
-            event.sendMessage("https://cataas.com$url").queue()
+            event.sendMessage("https://cataas.com" + response.body<CatAasResponse>().url).queue()
         } else event.sendError(event.getAny("core.interaction_error")).queue()
     }
 
 }
+
+@Serializable
+private data class CatAasResponse(val url: String)

@@ -18,18 +18,15 @@ package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.constants.Constants
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
-val httpClient = HttpClient(OkHttp) {
+val HTTP_CLIENT = HttpClient(OkHttp) {
     install(ContentNegotiation) {
         json(Json { encodeDefaults = true })
     }
@@ -37,21 +34,4 @@ val httpClient = HttpClient(OkHttp) {
         header("User-Agent", Constants.USER_AGENT)
         contentType(ContentType.Application.Json)
     }
-}
-
-inline fun <reified T> getBlocking(
-    url: String, crossinline block: HttpRequestBuilder.() -> Unit = {}
-): T = runBlocking(Dispatchers.IO) {
-    httpClient.get(url) {
-        apply(block)
-    }.body()
-}
-
-inline fun <reified T> postBlocking(
-    url: String, content: Any, crossinline block: HttpRequestBuilder.() -> Unit = {}
-): T = runBlocking(Dispatchers.IO) {
-    httpClient.post(url) {
-        setBody(content)
-        apply(block)
-    }.body()
 }

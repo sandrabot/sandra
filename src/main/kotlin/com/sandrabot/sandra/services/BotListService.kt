@@ -19,8 +19,7 @@ package com.sandrabot.sandra.services
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
-import com.sandrabot.sandra.utils.httpClient
-import com.sandrabot.sandra.utils.toJson
+import com.sandrabot.sandra.utils.HTTP_CLIENT
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.JDA
 
@@ -59,9 +58,9 @@ class BotListService(private val sandra: Sandra) : Service(300) {
     }
 
     private suspend fun send(url: String, token: String, data: Map<String, Any>) =
-        httpClient.post(url.format(Constants.APPLICATION_ID)) {
+        HTTP_CLIENT.post(url.format(Constants.APPLICATION_ID)) {
             header("Authorization", token)
-            setBody(data.toJson())
+            setBody(data)
         }
 
     private companion object {

@@ -16,8 +16,6 @@
 
 package com.sandrabot.sandra.utils
 
-import com.sandrabot.sandra.constants.Constants
-import kotlinx.serialization.json.JsonObject
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
@@ -57,11 +55,3 @@ fun User.probableLocale(): DiscordLocale =
 fun <T> useResourceStream(path: String, block: InputStream.() -> T): T =
     object {}.javaClass.classLoader.getResourceAsStream(path)?.use(block)
         ?: throw IllegalArgumentException("Unable to load resource: $path")
-
-fun hastebin(text: String): String? = try {
-    postBlocking<JsonObject>("${Constants.HASTEBIN}/documents", text).let {
-        "${Constants.HASTEBIN}/${it.string("key")}"
-    }
-} catch (t: Throwable) {
-    null
-}
