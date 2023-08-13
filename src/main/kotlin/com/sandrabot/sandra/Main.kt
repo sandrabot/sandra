@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.useResourceStream
 import io.sentry.Sentry
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.utils.messages.MessageRequest
