@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2023 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,21 +33,6 @@ data class SecretConfig(
      * Token used for the development bot account.
      */
     val developmentToken: String = "",
-
-    /**
-     * Secret used to validate webhook payloads from GitHub.
-     */
-    val githubSecret: String = "",
-
-    /**
-     * Token used to interact with the GitHub api.
-     */
-    val githubToken: String = "",
-
-    /**
-     * Token used to interact with the Patreon api.
-     */
-    val patreonToken: String = "",
 
     /**
      * Token used for the API at https://botlist.space
