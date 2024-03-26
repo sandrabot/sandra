@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ class Help : Command(arguments = "[command]") {
         embed.addField(lang["invite", Emotes.INVITE], lang["invite_content", invite], false)
         embed.addField(lang["support", Emotes.CHAT], lang["support_content", Constants.DIRECT_SUPPORT], false)
 
-        val devs = Constants.DEVELOPERS.mapNotNull { event.retrieveUser(it)?.asTag }.toTypedArray()
+        val devs = Constants.DEVELOPERS.mapNotNull { event.retrieveUser(it)?.name }.toTypedArray()
         embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).setEphemeral(true).queue()

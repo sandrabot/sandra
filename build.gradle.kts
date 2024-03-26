@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
-    id("com.github.gmazzo.buildconfig") version "4.1.2"
-    id("io.ktor.plugin") version "2.3.3"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
+    id("com.github.gmazzo.buildconfig") version "5.3.5"
+    id("io.ktor.plugin") version "2.3.9"
 }
 
 group = "com.sandrabot"
@@ -41,20 +41,20 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.13")
-    implementation("com.github.minndevelopment:jda-ktx:9370cb1")
+    implementation("net.dv8tion:JDA:5.0.0-beta.21")
+    implementation("com.github.minndevelopment:jda-ktx:78dbf82")
 
-    implementation("ch.qos.logback:logback-classic:1.4.10")
-    implementation("io.sentry:sentry-logback:6.28.0")
-    implementation("net.jodah:expiringmap:0.5.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("ch.qos.logback:logback-classic:1.5.3")
+    implementation("io.sentry:sentry-logback:7.6.0")
+    implementation("net.jodah:expiringmap:0.5.11")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:4.4.3")
+    implementation("redis.clients:jedis:5.1.2")
 }
 
 kotlin {
-    jvmToolchain(20)
+    jvmToolchain(21)
 }
 
 application {
