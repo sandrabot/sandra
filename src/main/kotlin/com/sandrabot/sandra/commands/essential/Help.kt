@@ -30,8 +30,8 @@ class Help : Command(arguments = "[command]") {
     override suspend fun execute(event: CommandEvent) {
         if (event.argumentString.isNotEmpty()) {
             val command = event.arguments.command()
-            // additionally respond with "not found" if the command isn't listed in /commands
-            if (command == null || command.ownerOnly || command.category == Category.CUSTOM) {
+            // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
+            if (command == null || (command.ownerOnly && !event.isOwner) || command.category == Category.CUSTOM) {
                 event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }

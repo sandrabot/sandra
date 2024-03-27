@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
-import kotlinx.coroutines.*
+import kotlinx.coroutines.withTimeoutOrNull
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
@@ -42,7 +42,7 @@ class Commands : Command() {
         val menuId = "commands:select:" + event.encodedInteraction
         val builder = StringSelectMenu.create(menuId).setPlaceholder(event.get("placeholder"))
         val localeEmbeds = embedMap.getOrPut(event.localeContext.locale) { generateEmbeds(event) }
-        localeEmbeds.keys.map {
+        localeEmbeds.keys.filterNot { it == Category.OWNER && !event.isOwner }.map {
             val label = "${event.getAny("core.categories.${it.displayName}")} ${event.get("command_title")}"
             SelectOption.of(label, it.name).withEmoji(Emoji.fromFormatted(it.emote))
         }.also(builder::addOptions)
@@ -80,7 +80,7 @@ class Commands : Command() {
                 "${category.emote} $categoryText ${event.get("command_title")}"
             ).setFooter(event.get("more_information"))
             descriptions.map { embed.setDescription(it).build() }
-        }.filterNot { (category, list) -> category == Category.CUSTOM || category == Category.OWNER || list.isEmpty() }
+        }.filterNot { (category, list) -> category == Category.CUSTOM || list.isEmpty() }
     }
 
     private companion object {

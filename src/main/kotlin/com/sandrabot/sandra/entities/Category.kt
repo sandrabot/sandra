@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ enum class Category(val emote: String) {
     GAME(Emotes.SANDOLLAR),
     MODERATION(Emotes.MOD),
     MUSIC(Emotes.MUSIC),
-    OWNER(Emotes.USER),
+    OWNER(Emotes.CONFIG),
     SOCIAL(Emotes.USER),
     UTILITY(Emotes.PROMPT);
 
@@ -38,7 +38,7 @@ enum class Category(val emote: String) {
             if (clazz.qualifiedName?.startsWith("com.sandrabot.sandra.commands.") == false)
                 throw IllegalArgumentException("Class must be a member of a command category package")
             val packageName = clazz.toString().substringBeforeLast(".").substringAfterLast(".")
-            return values().first { packageName.equals(it.name, ignoreCase = true) }
+            return entries.first { packageName.equals(it.name, ignoreCase = true) }
         }
     }
 
