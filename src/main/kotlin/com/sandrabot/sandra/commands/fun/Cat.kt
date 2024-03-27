@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 @Suppress("unused")
 class Cat : Command() {
@@ -33,12 +34,10 @@ class Cat : Command() {
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
         event.deferReply(ephemeral = true).await()
         val response = HTTP_CLIENT.get("https://cataas.com/cat?json=true")
-        if (response.status == HttpStatusCode.OK) {
-            event.sendMessage("https://cataas.com" + response.body<CatAasResponse>().url).queue()
+        val catId = response.body<JsonObject>()["_id"]?.jsonPrimitive?.content
+        if (response.status == HttpStatusCode.OK && catId != null) {
+            event.sendMessage("https://cataas.com/cat/$catId").queue()
         } else event.sendError(event.getAny("core.interaction_error")).queue()
     }
 
 }
-
-@Serializable
-private data class CatAasResponse(val url: String)
