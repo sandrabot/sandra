@@ -51,6 +51,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.reflections:reflections:0.10.2")
     implementation("redis.clients:jedis:5.1.2")
+
+    runtimeOnly(kotlin("scripting-jsr223"))
 }
 
 kotlin {

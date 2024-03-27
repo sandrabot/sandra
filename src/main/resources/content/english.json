@@ -101,7 +101,7 @@
     },
     "evaluate": {
       "name": "evaluate",
-      "description": "start a global kotlin repl session (developers only)"
+      "description": "enable eval prompts for the current channel (developers only)"
     },
     "fortune": {
       "name": "fortune",
