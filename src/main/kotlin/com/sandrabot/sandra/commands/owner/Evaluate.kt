@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.commands.owner
 
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
@@ -42,7 +43,7 @@ class Evaluate : Command(guildOnly = true) {
     private var isEngineStopped = true
 
     init {
-        persistentImports += useResourceStream("imports.txt") { String(readBytes()).lines().sorted() }
+        persistentImports += useResourceStream("imports.txt") { String(readBytes()).lines() }
         persistentImports += Package.getPackages().map { it.name }.filter {
             it.startsWith("com.sandrabot.sandra") && !it.contains("commands")
         }.map { "$it.*" }.sorted()
@@ -54,15 +55,20 @@ class Evaluate : Command(guildOnly = true) {
         } else {
             activeChannels += event.channel.idLong
             event.reply("enabled eval prompts for this channel").setEphemeral(true).queue()
-            if (isEngineStopped) waitForMessage(event).also { isEngineStopped = false }
+            // only allow the engine to be started once, otherwise return
+            if (isEngineStopped) isEngineStopped = false else return
+            waitForMessage(event.sandra)
         }
     }
 
-    private suspend fun waitForMessage(event: CommandEvent) = event.sandra.shards.await<MessageReceivedEvent> {
+    private suspend fun waitForMessage(sandra: Sandra): Unit = sandra.shards.await<MessageReceivedEvent> {
         it.channel.idLong in activeChannels && it.author.idLong in Constants.DEVELOPERS && it.message.contentRaw.matches(snippetRegex)
-    }.let { parseSnippet(it, event) }
+    }.let {
+        handleSnippet(it, sandra)
+        waitForMessage(sandra)
+    }
 
-    private suspend fun parseSnippet(event: MessageReceivedEvent, commandEvent: CommandEvent) {
+    private suspend fun handleSnippet(event: MessageReceivedEvent, sandra: Sandra) {
         // send a response, so we actually know when the engine is thinking
         val reply = event.message.reply("${Emotes.LOADING} hold on a sec while i crunch the numbers").await()
         // start parsing and building the snippet into a script
@@ -72,16 +78,27 @@ class Evaluate : Command(guildOnly = true) {
         val importLines = rawSnippet.lines().takeWhile { it.startsWith("import") }
         persistentImports += importLines.map { it.substringAfter("import ") }
         // now we can actually start building the script
-        val bindings = createBindings(event, commandEvent)
-        val snippet = rawSnippet.lines().dropWhile { it in importLines }.joinToString("\n")
+        val snippet = rawSnippet.lines().dropWhile { it in importLines || it.isBlank() }.joinToString("\n")
         val allImports = persistentImports.joinToString("\n", postfix = "\n\n") { "import $it" }
-        val (value, duration) = evaluate(allImports + snippet, bindings, CoroutineExceptionHandler { _, throwable ->
+        // create a handler to catch any unexpected exceptions
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             handleResult(reply, "**unknown** with unhandled exception", throwable.stackTraceToString())
-        })
-        if (value == null) {
+        }
+        // finally create bindings and evaluate the script
+        val (result, duration) = evaluate(allImports + snippet, createBindings(event, sandra), exceptionHandler)
+        if (result == null) {
             reply.editMessage("evaluated in ${duration.format()} with no returns").await()
-        } else handleResult(reply, duration.format(), value.toString())
-        waitForMessage(commandEvent)
+        } else handleResult(reply, duration.format(), result.toString())
+        val debugImports = if (logger.isDebugEnabled) allImports else ""
+        // log the context, script, and result of the evaluation
+        logger.info("""
+            |Evaluated snippet submitted by ${event.author.name} [${event.author.idLong}] in ${event.channel.name} [${event.channel.idLong}]
+            |$debugImports$snippet
+            |
+            |======================================== RESULT ($duration) ========================================
+            |
+            |$result
+        """.trimMargin())
     }
 
     private suspend fun evaluate(
@@ -98,33 +115,31 @@ class Evaluate : Command(guildOnly = true) {
 
     private fun handleResult(message: Message, duration: String, result: String) {
         // format the result and make sure it isn't too long to send
-        val formatted = "evaluated in $duration\n```\n$result\n```"
-        if (formatted.length > Message.MAX_CONTENT_LENGTH) {
-            // log the result to the console since it's too big
-            logger.info("Evaluation result:\n$result")
+        val content = "evaluated in $duration\n```\n$result\n```"
+        if (content.length > Message.MAX_CONTENT_LENGTH) {
+            // otherwise just rely on the console output for the result
             message.editMessage("evaluated in $duration, check console for result").queue()
-        } else message.editMessage(formatted).queue()
+        } else message.editMessage(content).queue()
     }
 
-    private fun createBindings(messageEvent: MessageReceivedEvent, commandEvent: CommandEvent) =
+    private fun createBindings(messageEvent: MessageReceivedEvent, sandra: Sandra) =
         scriptEngine.createBindings().apply {
-            val guildConfig = commandEvent.sandra.config.getGuild(messageEvent.guild.idLong)
+            val guildConfig = sandra.config.getGuild(messageEvent.guild.idLong)
             put("event", messageEvent)
             put("guild", messageEvent.guild)
             put("id", messageEvent.guild.id)
             put("channel", messageEvent.guildChannel)
             put("member", messageEvent.member)
             put("user", messageEvent.author)
-            put("ce", commandEvent)
             put("gc", guildConfig)
             put("cc", guildConfig.getChannel(messageEvent.channel.idLong))
             put("mc", guildConfig.getMember(messageEvent.author.idLong))
-            put("uc", commandEvent.sandra.config.getUser(messageEvent.author.idLong))
-            put("sandra", commandEvent.sandra)
-            put("commands", commandEvent.sandra.commands)
-            put("config", commandEvent.sandra.config)
-            put("redis", commandEvent.sandra.redis)
-            put("shards", commandEvent.sandra.shards)
+            put("uc", sandra.config.getUser(messageEvent.author.idLong))
+            put("sandra", sandra)
+            put("commands", sandra.commands)
+            put("config", sandra.config)
+            put("redis", sandra.redis)
+            put("shards", sandra.shards)
         }
 
     private companion object {

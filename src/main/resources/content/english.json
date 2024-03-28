@@ -101,7 +101,7 @@
     },
     "evaluate": {
       "name": "evaluate",
-      "description": "enable eval prompts for the current channel (developers only)"
+      "description": "enable eval prompts for this channel (devs only)"
     },
     "fortune": {
       "name": "fortune",

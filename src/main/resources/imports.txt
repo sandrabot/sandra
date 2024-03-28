@@ -11,6 +11,7 @@ kotlinx.serialization.*
 kotlinx.serialization.json.*
 net.dv8tion.jda.api.*
 net.dv8tion.jda.api.entities.*
+net.dv8tion.jda.api.entities.emoji.*
 net.dv8tion.jda.api.interactions.*
 net.dv8tion.jda.api.interactions.commands.*
 net.dv8tion.jda.api.interactions.commands.build.*
@@ -19,4 +20,7 @@ net.dv8tion.jda.api.interactions.components.buttons.*
 net.dv8tion.jda.api.interactions.components.selections.*
 net.dv8tion.jda.api.interactions.components.text.*
 net.dv8tion.jda.api.interactions.modals.*
+net.dv8tion.jda.api.utils.*
+net.dv8tion.jda.api.utils.SplitUtil.Strategy
+net.dv8tion.jda.api.utils.messages.*
 redis.clients.jedis.*
