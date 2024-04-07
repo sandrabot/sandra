@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ data class SandraConfig(
      * Configuration for tokens and secrets within the bot.
      */
     val secrets: SecretConfig = SecretConfig(),
+
+    /**
+     * Configuration that allows features to be managed on the fly.
+     */
+    val features: FeatureConfig = FeatureConfig(),
 
     /**
      * When enabled, experimental features and configurations will be used.
@@ -82,6 +87,6 @@ data class SandraConfig(
      * Determines the total number of shards a session will use.
      * **(Default: -1)**
      */
-    val shardsTotal: Int = -1
+    val shardsTotal: Int = -1,
 
-)
+    )

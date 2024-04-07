@@ -41,7 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.21")
+    implementation("net.dv8tion:JDA:5.0.0-beta.22")
     implementation("com.github.minndevelopment:jda-ktx:78dbf82")
 
     implementation("ch.qos.logback:logback-classic:1.5.3")

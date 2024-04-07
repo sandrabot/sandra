@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,23 @@
 package com.sandrabot.sandra.utils
 
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.InputStream
-import java.util.*
 import kotlin.time.Duration
 
 private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
 private val decimalRegex = Regex("""(\d+\.\d{2})\d+(.*)""")
-private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 val spaceRegex = Regex("""\s+""")
 
-fun String.asEmoteUrl() = "https://cdn.discordapp.com/emojis/${emoteRegex.find(this)?.groupValues?.get(1)}.png"
-fun String.asReaction(): String = this.substring(1, lastIndex)
+fun String.asEmoji(): EmojiUnion = Emoji.fromFormatted(this)
 
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
-fun String.removeExtraSpaces(): String = this.replace(spaceRegex, " ").trim()
-fun String.splitSpaces(limit: Int = 0): List<String> = this.split(spaceRegex, limit)
+fun String.removeExtraSpaces(): String = replace(spaceRegex, " ").trim()
+fun String.splitSpaces(limit: Int = 0): List<String> = split(spaceRegex, limit)
 fun String.capitalizeWords(): String = split(" ").joinToString {
     it.lowercase().replaceFirstChar { ch -> ch.uppercase() }
 }
@@ -48,7 +47,6 @@ fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
 fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
 fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
 
-fun DiscordLocale.toLocale(): Locale = Locale.forLanguageTag(locale)
 fun User.probableLocale(): DiscordLocale =
     mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: DiscordLocale.ENGLISH_US
 

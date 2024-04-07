@@ -22,7 +22,7 @@ import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.asEmoteUrl
+import com.sandrabot.sandra.utils.asEmoji
 import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
@@ -41,7 +41,8 @@ class Help : Command(arguments = "[command]") {
             val wordCommands = event.getAny("commands.commands.command_title")
             val author = "$readablePath • ${command.category.name.lowercase()} $wordCommands"
             // The command's category emote is used as the author image
-            val embed = event.embed.setAuthor(author).setThumbnail(command.category.emote.asEmoteUrl())
+            val emojiUrl = command.category.emote.asEmoji().asCustom().imageUrl
+            val embed = event.embed.setAuthor(author).setThumbnail(emojiUrl)
             embed.setTitle(event.get("extra_help"), Constants.DIRECT_SUPPORT)
             // Retrieve the translation for the command's description, this time we need to not use the root
             val descriptionValue = "> ${event.getAny("commands.${command.path}.description")}"

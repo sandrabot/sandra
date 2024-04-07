@@ -19,39 +19,15 @@ package com.sandrabot.sandra.config
 import kotlinx.serialization.Serializable
 
 /**
- * Object used to configure database connections within the redis manager.
+ * Object used to configure various features without necessitating hard-coded values.
  */
 @Serializable
-data class RedisConfig(
+data class FeatureConfig(
 
     /**
-     * Hostname of the redis server location.
-     * **(Default: localhost)**
-     */
-    val host: String = "localhost",
-
-    /**
-     * Password used to authenticate with the redis server. Optional.
-     * **(Default: null)**
-     */
-    val password: String? = null,
-
-    /**
-     * Port that the redis server is listening on.
-     * **(Default: 6379)**
-     */
-    val port: Int = 6379,
-
-    /**
-     * Timeout in milliseconds for redis connections.
-     * **(Default: 2000)**
-     */
-    val timeout: Int = 2000,
-
-    /**
-     * Database number to use for the redis connection.
+     * The channel where feedback messages should be sent.
      * **(Default: 0)**
      */
-    val database: Int = 0,
+    val feedbackChannel: Long = 0L,
 
     )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package com.sandrabot.sandra.constants
  */
 object Unicode {
 
+    const val BUG = "\uD83D\uDC1B"
     const val BULLET = "\u2022"
     const val CLAPPING_HANDS = "\uD83D\uDC4F"
     const val CROSS_MARK = "\u274C"
