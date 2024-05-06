@@ -95,6 +95,20 @@
       "command_title": "commands",
       "more_information": "use /help [command] for more info"
     },
+    "daily": {
+      "name": "daily",
+      "description": "claim your daily allowance once every 20 hours",
+      "cooldown": "slow your roll my guy, you still have another %1$s left on the clock",
+      "no_bots": "oops, bot accounts aren't allowed to receive dailies. do you have anyone else in mind?",
+      "self": "yippee! you redeemed your daily reward of $%1$s sandollars",
+      "other": "that was very nice of you. $%1$s sandollars have been deposited into %2$s's account",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "someone you'd like to donate your daily to"
+        }
+      }
+    },
     "dog": {
       "name": "dog",
       "description": "fetches a dog from the depths of the internet"
