@@ -41,11 +41,11 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("net.dv8tion:JDA:5.0.0-beta.22")
+    implementation("net.dv8tion:JDA:5.0.0-beta.23")
     implementation("com.github.minndevelopment:jda-ktx:78dbf82")
 
-    implementation("ch.qos.logback:logback-classic:1.5.3")
-    implementation("io.sentry:sentry-logback:7.6.0")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("io.sentry:sentry-logback:7.8.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
