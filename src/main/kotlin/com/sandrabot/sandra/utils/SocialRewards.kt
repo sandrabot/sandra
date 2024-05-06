@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import com.sandrabot.sandra.config.ExperienceConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.UserConfig
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
+import kotlin.time.Duration.Companion.milliseconds
 
 val experienceLevelGoals: List<Int> = run {
     var (increment, step) = 100 to 55
@@ -57,3 +59,20 @@ fun ExperienceConfig.awardExperience(amount: Int): Boolean {
 }
 
 fun UserConfig.canReputation() = System.currentTimeMillis() >= reputationLast + 72_000_000 // 20 hours
+fun UserConfig.canDaily() = System.currentTimeMillis() >= dailyLast + 72_000_000 // 20 hours
+
+fun UserConfig.updateDailyStreak() {
+    val streakDuration = (System.currentTimeMillis() - dailyLast).milliseconds
+    if (streakDuration.inWholeHours >= 24) { // if the last daily was awarded over 24 hours ago
+        dailyStreak = 0 // the daily streak is lost and reset
+    } else dailyStreak++ // otherwise increment the streak
+    if (dailyStreak > dailyLongestStreak) { // if the new streak beats our record
+        dailyLongestStreak = dailyStreak // update the longest streak
+    }
+    dailyLast = System.currentTimeMillis() // update the daily timer
+}
+
+fun UserConfig.computeDailyReward(): Long {
+    val multiplier = 1.0 + (0.33 * dailyStreak)
+    return (200 * multiplier).roundToLong()
+}

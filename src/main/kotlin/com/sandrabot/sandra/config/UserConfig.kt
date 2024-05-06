@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,11 @@ import kotlinx.serialization.Serializable
 class UserConfig(override val id: Long) : ExperienceConfig() {
 
     var cash: Long = 0
+
+    var dailyLast: Long = 0
+    var dailyStreak: Int = 0
+    var dailyLongestStreak: Int = 0
+
     var reputation: Long = 0
     var reputationLast: Long = 0
 
