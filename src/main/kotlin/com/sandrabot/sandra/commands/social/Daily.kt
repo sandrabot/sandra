@@ -56,7 +56,7 @@ class Daily : Command(arguments = "[user]") {
         // todo implement streak progression tooltips
 
         val context = if (event.user == targetUser) "self" else "other"
-        event.replyEmote(event.get(context, amount.format(), targetUser), Emotes.SANDOLLAR).queue()
+        event.replyEmote(event.get(context, amount.format(), targetUser), Emotes.CASH).queue()
 
     }
 }

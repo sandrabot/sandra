@@ -24,7 +24,7 @@ enum class Category(val emote: String) {
     CUSTOM(Emotes.PATREON),
     ESSENTIAL(Emotes.PIN),
     FUN(Emotes.FUN),
-    GAME(Emotes.SANDOLLAR),
+    GAME(Emotes.CASH),
     MODERATION(Emotes.MOD),
     MUSIC(Emotes.MUSIC),
     OWNER(Emotes.CONFIG),

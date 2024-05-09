@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,6 @@ class Cash : Command(arguments = "[user]") {
         // the user is formatted as a mention to provide a clickable link to their profile
         val reply = event.get(if (user == event.user) "self" else "other", user.asMention, cash)
         // to prevent mention spam, disable all mentions in the reply
-        event.replyEmote(reply, Emotes.SANDOLLAR).mention().await()
+        event.replyEmote(reply, Emotes.CASH).mention().await()
     }
 }
