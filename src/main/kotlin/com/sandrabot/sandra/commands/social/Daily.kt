@@ -47,16 +47,30 @@ class Daily : Command(arguments = "[user]") {
         }
 
         // update the user's daily streak and cooldown
+        val lastStreak = event.userConfig.dailyStreak
         event.userConfig.updateDailyStreak()
         // calculate the daily reward based on the updated streak
         val amount = event.userConfig.computeDailyReward()
         // deposit the adjusted amount into the target user's account
         event.sandra.config[targetUser].cash += amount
 
-        // todo implement streak progression tooltips
+        // figure out which message to display and format it accordingly
+        val streakInfo = when (event.userConfig.dailyStreak) {
+            0 -> if (lastStreak > 0) {
+                event.get("streak.ended", lastStreak.format(), event.userConfig.dailyLongestStreak.format())
+            } else event.get("streak.hint")
+
+            1 -> event.get("streak.started")
+
+            else -> {
+                val nextDailySeconds = (event.userConfig.dailyLast + 72_000_000) / 1_000
+                event.get("streak.continued", event.userConfig.dailyStreak.format(), "<t:$nextDailySeconds:t>")
+            }
+        }
 
         val context = if (event.user == targetUser) "self" else "other"
-        event.replyEmote(event.get(context, amount.format(), targetUser), Emotes.CASH).queue()
+        val header = event.get(context, Emotes.CASH, amount.format(), targetUser)
+        event.reply("$header\n$streakInfo").queue()
 
     }
 }

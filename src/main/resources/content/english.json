@@ -100,8 +100,14 @@
       "description": "claim your daily allowance once every 20 hours",
       "cooldown": "slow your roll my guy, you still have another %1$s left on the clock",
       "no_bots": "oops, bot accounts aren't allowed to receive dailies. do you have anyone else in mind?",
-      "self": "yippee! you redeemed your daily reward of $%1$s sandollars",
-      "other": "that was very nice of you. $%1$s sandollars have been deposited into %2$s's account",
+      "self": "## %1$s yippee! you redeemed your daily reward of $%2$s",
+      "other": "## %1$s that's very kind. you sent your daily reward of $%2$s to %3$s",
+      "streak": {
+        "hint": "come back again in **20 hours** to start a streak and earn even more cash",
+        "started": "you've started a streak! claim your dailies **every 20 hours** to keep it going!",
+        "continued": "keep up the great work, your streak has reached day %1$s. come back tomorrow at %2$s to earn more!",
+        "ended": "sadly, you waited too long and your streak of %1$s was lost. your longest streak ever was %2$s days"
+      },
       "arguments": {
         "user": {
           "name": "user",
