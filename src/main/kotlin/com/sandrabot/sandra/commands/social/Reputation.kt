@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,24 +22,44 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.canReputation
 import com.sandrabot.sandra.utils.format
 import dev.minn.jda.ktx.coroutines.await
+import kotlin.time.Duration.Companion.seconds
 
 @Suppress("unused")
 class Reputation : Command(arguments = "[@user]") {
+
     override suspend fun execute(event: CommandEvent) {
-        val otherUser = event.arguments.user()!!
-        // don't allow users to give reputation to themselves
-        if (event.user == otherUser) {
-            event.replyError(event.get("self")).setEphemeral(true).await()
+
+        // only allow users to give reputation points once every 20 hours
+        if (!event.userConfig.canReputation() && !event.isOwner) {
+            val nextRep = event.userConfig.reputationLast + 72_000_000 // 20 hours
+            val remaining = ((nextRep - System.currentTimeMillis()) / 1_000).seconds.format()
+            event.replyEmote(event.get("cooldown", remaining), Emotes.TIME).setEphemeral(true).queue()
             return
         }
-        // only allow users to give reputation once every 20 hours
-        if (event.userConfig.canReputation() || event.isOwner) {
-            // increment the reputation of the other user
-            val config = event.sandra.config[otherUser].apply { reputation++ }
-            // update the last reputation time
-            event.userConfig.reputationLast = System.currentTimeMillis()
-            // reply with the new reputation count
-            event.replyEmote(event.get("reply", otherUser, config.reputation.format()), Emotes.ADD).await()
-        } else event.replyError(event.get("cooldown")).setEphemeral(true).await() // reply with the cooldown error
+
+        // user is guaranteed to be non-null since it's required
+        val targetUser = event.arguments.user()!!
+        // prevent bots from receiving rep and creating data profiles
+        if (targetUser.isBot || targetUser.isSystem) {
+            event.replyError(event.get("no_bots")).setEphemeral(true).queue()
+            return
+        }
+
+        // don't allow the user to give reputation to themselves either
+        if (targetUser == event.user) {
+            event.replyError(event.get("no_self")).setEphemeral(true).await()
+            return
+        }
+
+        // increment the reputation of the target user
+        val targetConfig = event.sandra.config[targetUser].apply { reputation++ }
+        // update the current user's reputation timer
+        event.userConfig.reputationLast = System.currentTimeMillis()
+
+        // reply with the target user's updated rep count
+        val reply = event.get("reply", targetUser, targetConfig.reputation.format())
+        event.replyEmote(reply, Emotes.ADD).queue()
+
     }
+
 }

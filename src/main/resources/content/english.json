@@ -193,9 +193,10 @@
     "reputation": {
       "name": "reputation",
       "description": "send someone a meaningless reputation point",
-      "cooldown": "you can only send reputation once every **20** hours",
-      "self": "as hard as you may try, you can't give yourself reputation",
-      "reply": "you sent %1$s a reputation point, they now have %2$s rep",
+      "cooldown": "woah there, hold your horses! you still have another %1$s left on the clock",
+      "no_bots": "sorry pal, bots aren't allowed to receive reputation points. go on now, try someone else",
+      "no_self": "as hard as you may try, you can't give yourself reputation points. pick someone else",
+      "reply": "you sent %1$s a reputation point! they now have %2$s rep thanks to you",
       "arguments": {
         "user": {
           "name": "user",
