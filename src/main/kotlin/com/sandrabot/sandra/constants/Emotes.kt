@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ object Emotes {
     const val ARROW_RIGHT = "<:arrowright:987904244071948308>"
     const val BAN = "<:ban:987920148017082379>"
     const val BIN = "<:bin:987946764361404416>"
+    const val CASH = "<:cash:988965262550257664>"
     const val CHAT = "<:chat:987950926545444864>"
     const val COMMANDS = "<:commands:987913791671005275>"
     const val CONFIG = "<:config:988525871986016367>"
@@ -51,7 +52,6 @@ object Emotes {
     const val RESET = "<:reset:987912473564835841>"
     const val RETURN = "<:return:987904285138378822>"
     const val REWIND = "<:rewind:987904324539674685>"
-    const val SANDOLLAR = "<:sandollar:988965262550257664>"
     const val SUBTRACT = "<:subtract:987904481876381696>"
     const val SUCCESS = "<:success:987905974364942356>"
     const val TAILS = "<:tails:988965283546931260>"
