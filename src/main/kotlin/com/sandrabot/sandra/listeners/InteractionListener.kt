@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.checkCommandBlocklist
-import com.sandrabot.sandra.utils.missingPermissionMessage
 import com.sandrabot.sandra.utils.isMissingPermission
-import dev.minn.jda.ktx.coroutines.await
+import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.GenericEvent
@@ -74,8 +73,6 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
         } else "direct message"
         logger.info("$qualifiedPath | $logUser | $logChannel | ${slashEvent.commandString}")
-        // if the guild isn't fully loaded, that could affect some of our commands
-        if (slashEvent.isFromGuild && event.guild?.isLoaded == false) event.guild.loadMembers().await()
         // catch any exceptions the commands could throw
         try {
             command.execute(event)
