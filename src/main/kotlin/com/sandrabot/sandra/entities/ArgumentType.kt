@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ enum class ArgumentType(val optionType: OptionType) {
     VOICE(OptionType.CHANNEL);
 
     companion object {
-        fun fromName(name: String) = values().find { name.equals(it.name, ignoreCase = true) }
+        fun fromName(name: String) = entries.find { name.equals(it.name, ignoreCase = true) }
             ?: throw IllegalArgumentException("Invalid argument type: $name")
     }
 

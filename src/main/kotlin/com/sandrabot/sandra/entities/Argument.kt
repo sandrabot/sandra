@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ private inline fun <reified T : GuildChannel> parseChannels(event: CommandEvent,
 private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
     val option = findOption(event, argument) ?: return null
     // allow the categories to be searched by their localized names
-    val categories = Category.values().associateBy { event.getAny("core.categories.${it.displayName}") }
+    val categories = Category.entries.associateBy { event.getAny("core.categories.${it.displayName}") }
     // since we don't support fuzzy searching, the option is the key
     return categories[option.asString.lowercase()]
 }
