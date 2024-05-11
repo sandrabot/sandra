@@ -26,10 +26,11 @@ class Cash : Command(arguments = "[user]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val user = event.arguments.user() ?: event.user
-        val cash = event.sandra.config[user].cash.format()
-        // the user is formatted as a mention to provide a clickable link to their profile
-        val reply = event.get(if (user == event.user) "self" else "other", user.asMention, cash)
+        // allow the user to view someone else's balance
+        val targetUser = event.arguments.user() ?: event.user
+        // retrieve the balance of the target user and format it
+        val cash = event.sandra.config[targetUser].cash.format()
+        val reply = event.get(if (targetUser == event.user) "self" else "other", targetUser, cash)
         // to prevent mention spam, disable all mentions in the reply
         event.replyEmote(reply, Emotes.CASH).mention().queue()
 
