@@ -17,13 +17,12 @@ Sandra uses a range of tools and libraries to help deliver your experience.
 A few have been listed below, including what they are used for:
 * [JDA](https://github.com/DV8FromTheWorld/JDA) - Communicating with Discord
 * [Jedis](https://github.com/xetorthio/jedis) - Communicating with Redis
-* [Javalin](https://javalin.io/) - Providing the Sandra API
+* [Ktor](https://ktor.io/) - Providing the Sandra API
 * [ExpiringMap](https://github.com/jhalterman/expiringmap) - Expiring Caches
 
 # Authors and Contributors
 * [averen](https://github.com/averen) - Project Founder and Maintainer
 * [legolog3](https://github.com/legolog3) - Project Co-Founder
-* blair - Product Designer
 * [CandyCanvas](https://twitter.com/candycanvasart) - Artwork
 
 # Copyright Stuff
@@ -31,7 +30,7 @@ If you wish to use code from this repository, you must include the [license](htt
 We don't mind if you gain inspiration from us, but **do not blatantly copy the source code**.
 
 ## License
-Copyright 2017-2022 **Avery Carroll** / **averen** and **Logan Devecka** / **legolog3**
+Copyright 2017-2024 **Avery Carroll** / **averen** and **Logan Devecka** / **legolog3**
 
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
