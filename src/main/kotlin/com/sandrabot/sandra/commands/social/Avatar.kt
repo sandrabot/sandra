@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,13 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 @Suppress("unused")
 class Avatar : Command(arguments = "[user]") {
+
     override suspend fun execute(event: CommandEvent) {
+
         val user = event.arguments.user() ?: event.user
         val avatarUrl = user.effectiveAvatarUrl + "?size=2048"
         val button = Button.link(avatarUrl, event.get("button"))
         event.reply(avatarUrl).addActionRow(button).setEphemeral(true).await()
     }
+
 }

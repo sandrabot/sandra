@@ -50,6 +50,7 @@ class Evaluate : Command(guildOnly = true) {
     }
 
     override suspend fun execute(event: CommandEvent) {
+
         if (event.channel.idLong in activeChannels) {
             event.reply("this channel has already enabled eval prompts").setEphemeral(true).queue()
         } else {
@@ -59,6 +60,7 @@ class Evaluate : Command(guildOnly = true) {
             if (isEngineStopped) isEngineStopped = false else return
             waitForMessage(event.sandra)
         }
+
     }
 
     private suspend fun waitForMessage(sandra: Sandra): Unit = sandra.shards.await<MessageReceivedEvent> {

@@ -32,12 +32,14 @@ import kotlinx.serialization.json.jsonPrimitive
 class Cat : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
+
         event.deferReply(ephemeral = true).await()
         val response = HTTP_CLIENT.get("https://cataas.com/cat?json=true")
         val catId = response.body<JsonObject>()["_id"]?.jsonPrimitive?.content
         if (response.status == HttpStatusCode.OK && catId != null) {
             event.sendMessage("https://cataas.com/cat/$catId").queue()
         } else event.sendError(event.getAny("core.interaction_error")).queue()
+
     }
 
 }

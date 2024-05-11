@@ -27,7 +27,9 @@ import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Help : Command(arguments = "[command]") {
+
     override suspend fun execute(event: CommandEvent) {
+
         if (event.argumentString.isNotEmpty()) {
             val command = event.arguments.command()
             // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
@@ -76,5 +78,7 @@ class Help : Command(arguments = "[command]") {
         embed.setFooter(lang.get("built", Unicode.HEAVY_BLACK_HEART, *devs))
 
         event.sendMessage(embed.build()).setEphemeral(true).queue()
+
     }
+
 }

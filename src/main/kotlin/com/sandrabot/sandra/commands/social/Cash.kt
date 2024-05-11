@@ -24,12 +24,16 @@ import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Cash : Command(arguments = "[user]") {
+
     override suspend fun execute(event: CommandEvent) {
+
         val user = event.arguments.user() ?: event.user
         val cash = event.sandra.config[user].cash.format()
         // the user is formatted as a mention to provide a clickable link to their profile
         val reply = event.get(if (user == event.user) "self" else "other", user.asMention, cash)
         // to prevent mention spam, disable all mentions in the reply
         event.replyEmote(reply, Emotes.CASH).mention().await()
+
     }
+
 }
