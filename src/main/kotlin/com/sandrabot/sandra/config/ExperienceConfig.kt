@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 abstract class ExperienceConfig : Configuration() {
     var experienceLast: Long = 0
-    var experience: Long = 0
+    var experience: Int = 0
     var level: Int = 0
 }

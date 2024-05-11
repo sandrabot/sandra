@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlin.time.Duration.Companion.milliseconds
 
-val experienceLevelGoals: List<Int> = run {
+val EXPERIENCE_LEVEL_GOALS: List<Int> = run {
     var (increment, step) = 100 to 55
     generateSequence {
         val goal = increment.also {
@@ -49,7 +49,7 @@ fun ExperienceConfig.canExperience() = System.currentTimeMillis() >= experienceL
 fun ExperienceConfig.awardExperience(amount: Int): Boolean {
     experience += amount // Add the new experience to the old value
     experienceLast = System.currentTimeMillis() // Update the experience timer
-    val goal = experienceLevelGoals[level] // Get the current experience goal
+    val goal = EXPERIENCE_LEVEL_GOALS[level] // Get the current experience goal
     // Check if the new experience amount reached this goal
     return if (experience >= goal) {
         experience -= goal // Reset the experience counter and keep any rollover
