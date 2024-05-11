@@ -18,7 +18,6 @@ package com.sandrabot.sandra.commands.social
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import dev.minn.jda.ktx.coroutines.await
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 
 @Suppress("unused")
@@ -29,7 +28,8 @@ class Avatar : Command(arguments = "[user]") {
         val user = event.arguments.user() ?: event.user
         val avatarUrl = user.effectiveAvatarUrl + "?size=2048"
         val button = Button.link(avatarUrl, event.get("button"))
-        event.reply(avatarUrl).addActionRow(button).setEphemeral(true).await()
+        event.reply(avatarUrl).addActionRow(button).setEphemeral(true).queue()
+
     }
 
 }

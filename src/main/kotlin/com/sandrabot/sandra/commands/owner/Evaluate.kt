@@ -89,7 +89,7 @@ class Evaluate : Command(guildOnly = true) {
         // finally create bindings and evaluate the script
         val (result, duration) = evaluate(allImports + snippet, createBindings(event, sandra), exceptionHandler)
         if (result == null) {
-            reply.editMessage("evaluated in ${duration.format()} with no returns").await()
+            reply.editMessage("evaluated in ${duration.format()} with no returns").queue()
         } else handleResult(reply, duration.format(), result.toString())
         val debugImports = if (logger.isDebugEnabled) allImports else ""
         // log the context, script, and result of the evaluation

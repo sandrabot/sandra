@@ -111,7 +111,7 @@ class Feedback : Command() {
             .setFooter(event.get("footer", event.user.name, event.user.id), event.user.effectiveAvatarUrl)
 
         feedbackChannel.sendMessageEmbeds(embed.build()).await()
-        modalEvent.editMessage(event.get("thanks", Emotes.SUCCESS)).await()
+        modalEvent.editMessage(event.get("thanks", Emotes.SUCCESS)).queue()
 
     }
 

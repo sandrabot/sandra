@@ -21,7 +21,6 @@ import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.canReputation
 import com.sandrabot.sandra.utils.format
-import dev.minn.jda.ktx.coroutines.await
 import kotlin.time.Duration.Companion.seconds
 
 @Suppress("unused")
@@ -47,7 +46,7 @@ class Reputation : Command(arguments = "[@user]") {
 
         // don't allow the user to give reputation to themselves either
         if (targetUser == event.user) {
-            event.replyError(event.get("no_self")).setEphemeral(true).await()
+            event.replyError(event.get("no_self")).setEphemeral(true).queue()
             return
         }
 

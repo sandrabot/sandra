@@ -20,7 +20,6 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
-import dev.minn.jda.ktx.coroutines.await
 
 @Suppress("unused")
 class Cash : Command(arguments = "[user]") {
@@ -32,7 +31,7 @@ class Cash : Command(arguments = "[user]") {
         // the user is formatted as a mention to provide a clickable link to their profile
         val reply = event.get(if (user == event.user) "self" else "other", user.asMention, cash)
         // to prevent mention spam, disable all mentions in the reply
-        event.replyEmote(reply, Emotes.CASH).mention().await()
+        event.replyEmote(reply, Emotes.CASH).mention().queue()
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
-import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
@@ -67,7 +66,7 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
     /**
      * Processes all messages received within all guild channels.
      */
-    private suspend fun handleGuildMessage(event: MessageReceivedEvent) {
+    private fun handleGuildMessage(event: MessageReceivedEvent) {
         val authorId = event.author.idLong
         val guildId = event.guild.idLong
         val channelId = event.channel.idLong
@@ -106,7 +105,7 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
                         // If the notification channel is not where the message was sent, the reference will do nothing
-                        notifyChannel.sendMessage(formattedTemplate).setMessageReference(event.message).await()
+                        notifyChannel.sendMessage(formattedTemplate).setMessageReference(event.message).queue()
                     }
                 }
                 // TODO Feature: Level Up Rewards
