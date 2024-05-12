@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ abstract class Command(
     val userPermissions: Set<Permission> = emptySet()
 ) {
 
-    val name: String = this::class.simpleName!!.lowercase()
+    // this is open for when command names differ from their class names, like 8ball
+    open val name: String = this::class.simpleName!!.lowercase()
     val arguments: List<Argument> = compileArguments(arguments)
     val category: Category = Category.fromClass(this::class)
     val ownerOnly: Boolean = category == Category.OWNER

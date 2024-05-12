@@ -29,6 +29,7 @@ object Unicode {
     const val FORTUNE_COOKIE = "\uD83E\uDD60"
     const val GAME_DIE = "\uD83C\uDFB2"
     const val HEAVY_BLACK_HEART = "\u2764"
+    const val MAGIC_8_BALL = "\uD83C\uDFB1"
     const val SCALES = "\u2696"
 
 }

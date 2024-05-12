@@ -180,6 +180,40 @@
         "built": "built with %1$s by %2$s and %3$s"
       }
     },
+    "8ball": {
+      "name": "8ball",
+      "description": "seek guidance from the spherical one",
+      "too_long": "my lord, it appears that the **magic 8 ball** will only understand **more simple questions**, i'm afraid",
+      "reply": "## %1$s %2$s asks: %3$s\nafter vigorously shaking the **magic 8 ball**, the answer slowly appears: **%4$s**",
+      "answer": [
+        "it is certain",
+        "it is decidedly so",
+        "without a doubt",
+        "yes definitely",
+        "you may rely on it",
+        "as i see it, yes",
+        "most likely",
+        "outlook good",
+        "yes",
+        "signs point to yes",
+        "reply hazy try again",
+        "ask again later",
+        "better not tell you now",
+        "cannot predict now",
+        "concentrate and ask again",
+        "don't count on it",
+        "my reply is no",
+        "my sources say no",
+        "outlook not so good",
+        "very doubtful"
+      ],
+      "arguments": {
+        "question": {
+          "name": "question",
+          "description": "the all powerful requires a question to answer"
+        }
+      }
+    },
     "members": {
       "name": "members",
       "description": "gander at a breakdown of the server's member count",
