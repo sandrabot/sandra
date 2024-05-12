@@ -32,7 +32,7 @@ class Cash : Command(arguments = "[user]") {
         val cash = event.sandra.config[targetUser].cash.format()
         val reply = event.get(if (targetUser == event.user) "self" else "other", targetUser, cash)
         // to prevent mention spam, disable all mentions in the reply
-        event.replyEmote(reply, Emotes.CASH).mention().queue()
+        event.replyEmote(reply, Emotes.CASH).setAllowedMentions(emptySet()).queue()
 
     }
 
