@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,54 +22,49 @@ import com.sandrabot.sandra.entities.Service
 import com.sandrabot.sandra.utils.HTTP_CLIENT
 import io.ktor.client.request.*
 import net.dv8tion.jda.api.JDA
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 /**
- * Periodically posts server count data to various bot lists.
+ * Periodically posts guild count data to various bot listing sites.
  */
-class BotListService(private val sandra: Sandra) : Service(300) {
+class BotListService(private val sandra: Sandra) : Service(6.hours, initialDelay = 5.minutes) {
 
     override suspend fun execute() {
 
         // ensure we have an accurate server count
         if (sandra.shards.shardCache.any { it.status != JDA.Status.CONNECTED }) return
-        val guilds = sandra.shards.shardCache.map { it.guildCache.size() }
-
-        // https://bots.ondiscord.xyz/bots/302915036492333067
-        send(onDiscordUrl, sandra.settings.secrets.bodToken, mapOf("guildCount" to guilds.sum()))
-
-        // https://discord.boats/bot/302915036492333067
-        send(boatUrl, sandra.settings.secrets.boatToken, mapOf("server_count" to guilds.sum()))
+        val guildsPerShard = sandra.shards.shardCache.map { it.guildCache.size() }
 
         // https://top.gg/bot/302915036492333067
-        send(topGgUrl, sandra.settings.secrets.topGgToken, mapOf("shards" to guilds))
+        send(TOP_GG, sandra.settings.secrets.topGgToken, mapOf("shards" to guildsPerShard))
 
         // https://botlist.space/bot/302915036492333067
-        send(spaceUrl, sandra.settings.secrets.spaceToken, mapOf("shards" to guilds))
+        send(BOTLIST_SPACE, sandra.settings.secrets.spaceToken, mapOf("shards" to guildsPerShard))
 
-        guilds.forEachIndexed { i, count ->
+        guildsPerShard.forEachIndexed { shard, guilds ->
             // https://discord.bots.gg/bots/302915036492333067
-            val botsGgData = mapOf("guildCount" to count, "shardCount" to guilds.size, "shardId" to i)
-            send(discordBotsUrl, sandra.settings.secrets.dbgToken, botsGgData)
+            val botsGgData = mapOf("guildCount" to guilds, "shardCount" to guildsPerShard.size, "shardId" to shard)
+            send(BOTS_GG, sandra.settings.secrets.dbgToken, botsGgData)
 
             // https://discordbotlist.com/bots/302915036492333067
-            send(dblUrl, sandra.settings.secrets.dblToken, mapOf("shard_id" to i, "guilds" to count))
+            send(DISCORD_BOT_LIST, sandra.settings.secrets.dblToken, mapOf("shard_id" to shard, "guilds" to guilds))
         }
 
     }
 
-    private suspend fun send(url: String, token: String, data: Map<String, Any>) =
-        HTTP_CLIENT.post(url.format(Constants.APPLICATION_ID)) {
-            header("Authorization", token)
-            setBody(data)
-        }
+    private suspend fun send(
+        url: String, token: String, data: Map<String, Any>,
+    ) = HTTP_CLIENT.post(url.format(Constants.APPLICATION_ID)) {
+        header("Authorization", token)
+        setBody(data)
+    }
 
     private companion object {
-        private const val onDiscordUrl = "https://bots.ondiscord.xyz/bot-api/bots/%d/guilds"
-        private const val boatUrl = "https://discord.boats/api/bot/%d"
-        private const val topGgUrl = "https://top.gg/api/bots/%d/stats"
-        private const val spaceUrl = "https://api.botlist.space/v1/bots/%d"
-        private const val discordBotsUrl = "https://discord.bots.gg/api/v1/bots/%d/stats"
-        private const val dblUrl = "https://discordbotlist.com/api/bots/%d/stats"
+        private const val TOP_GG = "https://top.gg/api/bots/%d/stats"
+        private const val BOTLIST_SPACE = "https://api.botlist.space/v1/bots/%d"
+        private const val BOTS_GG = "https://discord.bots.gg/api/v1/bots/%d/stats"
+        private const val DISCORD_BOT_LIST = "https://discordbotlist.com/api/bots/%d/stats"
     }
 
 }

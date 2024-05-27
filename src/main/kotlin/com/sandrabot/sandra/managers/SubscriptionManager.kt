@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.entities.Service
 import com.sandrabot.sandra.entities.Subscription
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Responsible for managing the subscription status of patrons and boosters.
  * The subscriptions are refreshed every 30 minutes while the service is running.
  */
-class SubscriptionManager(private val sandra: Sandra) : Service(1800, initialDelay = 0) {
+class SubscriptionManager(private val sandra: Sandra) : Service(30.minutes, initialDelay = Duration.ZERO) {
 
     private val subscriptions = mutableMapOf<Long, MutableSet<Subscription>>()
 

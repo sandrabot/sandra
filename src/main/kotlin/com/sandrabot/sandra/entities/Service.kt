@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,45 @@ package com.sandrabot.sandra.entities
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration
 
 /**
- * Utility class for running periodic tasks throughout the bot.
+ * Utility class that periodically executes a task using coroutines.
  *
- * @param interval The interval in seconds between each execution of the task.
- * @param initialDelay The initial delay in seconds before the task is executed for the first time.
+ * The [interval] is the duration between each execution of the task.
+ * You may delay the first execution of the task by using [initialDelay]. By default, it is the same value as [interval].
  */
-abstract class Service(private val interval: Long, private val initialDelay: Long = interval) {
+@Suppress("MemberVisibilityCanBePrivate")
+abstract class Service(
+    private val interval: Duration, private val initialDelay: Duration = interval,
+) {
 
     private var job: Job? = null
 
+    /**
+     * Used to determine if the service is currently running.
+     */
     val isActive: Boolean
         get() = job?.isActive ?: false
 
+    /**
+     * This method defines the task that should be executed every [interval] by the service.
+     */
     protected abstract suspend fun execute()
 
     /**
-     * Starts the service and executes the task every [interval] seconds.
-     * If the service is already running, this method will do nothing.
+     * Can be used to modify the startup behavior of the service.
+     * This method does nothing if the service is already running.
+     *
+     * **Warning:** You must always call `super.start()` to actually start the service.
      */
     open fun start() {
         if (isActive) return
         job = serviceScope.launch {
-            delay(initialDelay.seconds)
+            delay(initialDelay)
             while (isActive) try {
                 execute()
-                delay(interval.seconds)
+                delay(interval)
             } catch (_: CancellationException) {
                 // these can be safely ignored, only occurs when service shuts down
             } catch (t: Throwable) {
@@ -57,15 +68,18 @@ abstract class Service(private val interval: Long, private val initialDelay: Lon
     }
 
     /**
-     * Stops the service and cancels the task.
+     * Can be used to modify the shutdown behavior of the service.
+     * This method does nothing if the service is not running.
+     *
+     * **Warning:** You must always call `super.shutdown()` to actually stop the service.
      */
     open fun shutdown() {
-        job?.cancel("Service shutdown")
+        job?.cancel("Service is shutting down")
     }
 
-    internal companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(Service::class.java)
-        internal val serviceScope = CoroutineScope(Dispatchers.Default)
+        private val serviceScope = CoroutineScope(Dispatchers.Default)
     }
 
 }

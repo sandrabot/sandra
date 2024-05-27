@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.entities.Guild
@@ -32,11 +31,18 @@ import net.jodah.expiringmap.ExpirationListener
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
+import kotlin.time.Duration.Companion.seconds
 
 /**
- * Stores configuration objects in memory to prevent overhead of recreating objects too often.
+ * Retrieves, stores, and caches configuration data for users and guilds.
+ *
+ * Whenever a configuration is accessed, it is assumed that the data may have been updated by the calling code.
+ * Every 30 seconds, the recently accessed records will be sent to redis for storage.
+ *
+ * Objects expire from cache **1 hour** after they were last accessed to reduce the memory footprint.
  */
-class ConfigurationManager(private val sandra: Sandra) : Service(30), ExpirationListener<Long, Configuration> {
+class ConfigurationManager(private val sandra: Sandra) : Service(30.seconds), ExpirationListener<Long, Configuration> {
 
     private val json = Json { encodeDefaults = true }
     private val accessedKeys = mutableSetOf<Long>()
@@ -45,26 +51,23 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
             .asyncExpirationListener(this).build()
 
     init {
-        start()
+        start() // immediately start the service
     }
 
-    fun countGuilds() = configs.count { it.value is GuildConfig }
-    fun countUsers() = configs.count { it.value is UserConfig }
-
     override fun shutdown() {
-        super.shutdown()
-        runBlocking { execute() }
+        super.shutdown() // shutdown the service and cancel the job
+        runBlocking { execute() } // save any leftover keys one last time
     }
 
     override suspend fun execute() = synchronized(accessedKeys) {
+        // create a copy of the list before clearing it and releasing the lock
         accessedKeys.toList().also { accessedKeys.clear() }
     }.forEach { store(it, configs[it] ?: return@forEach) }
 
     override fun expired(key: Long, value: Configuration) = store(key, value)
 
     private fun store(id: Long, config: Configuration) {
-        val prefix = if (config is GuildConfig) RedisPrefix.GUILD else RedisPrefix.USER
-        sandra.redis["$prefix$id"] = json.encodeToString(config)
+        sandra.redis[prefix(config::class) + "$id"] = json.encodeToString(config)
     }
 
     fun getGuild(id: Long) = get<GuildConfig>(id)
@@ -74,12 +77,17 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30), Expiration
     operator fun get(user: User) = getUser(user.idLong)
 
     private inline fun <reified T : Configuration> get(id: Long): T = configs.getOrPut(id) {
-        val prefix = if (T::class == GuildConfig::class) RedisPrefix.GUILD else RedisPrefix.USER
-        sandra.redis["$prefix$id"]?.let { json.decodeFromString<T>(it) } ?: when (T::class) {
+        sandra.redis[prefix(T::class) + "$id"]?.let { json.decodeFromString<T>(it) } ?: when (T::class) {
             GuildConfig::class -> GuildConfig(id)
             UserConfig::class -> UserConfig(id)
-            else -> throw AssertionError("Illegal configuration type")
+            else -> throw AssertionError("Illegal configuration type: ${T::class}")
         }
     }.also { synchronized(accessedKeys) { accessedKeys += id } } as T
+
+    private fun <T : Configuration> prefix(clazz: KClass<T>) = when (clazz) {
+        GuildConfig::class -> RedisPrefix.GUILD
+        UserConfig::class -> RedisPrefix.USER
+        else -> throw AssertionError("Illegal configuration type: $clazz")
+    }
 
 }
