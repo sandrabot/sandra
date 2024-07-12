@@ -33,7 +33,7 @@ class Help : Command(arguments = "[command]") {
         if (event.argumentString.isNotEmpty()) {
             val command = event.arguments.command()
             // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
-            if (command == null || (command.ownerOnly && !event.isOwner) || command.category == Category.CUSTOM) {
+            if (command == null || (command.isOwnerOnly && !event.isOwner) || command.category == Category.CUSTOM) {
                 event.replyError(event.get("not_found")).setEphemeral(true).queue()
                 return
             }

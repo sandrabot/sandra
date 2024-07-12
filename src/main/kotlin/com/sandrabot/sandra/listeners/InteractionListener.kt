@@ -57,13 +57,13 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // do additional checks for guild commands, since discord added privileges we only need to check for ourselves
         if (slashEvent.isFromGuild) {
             // make sure we have all the permissions we'll need to run this command
-            val allPermissions = basePermissions + command.requiredPermissions
+            val allPermissions = basePermissions + command.selfPermissions
             allPermissions.find { event.isMissingPermission(it) }?.let {
                 event.replyError(event.missingPermissionMessage(it, self = true)).setEphemeral(true).queue()
                 return
             }
         }
-        if (command.ownerOnly && !event.isOwner) {
+        if (command.isOwnerOnly && !event.isOwner) {
             event.replyError(event.getAny("core.owner_only")).setEphemeral(true).queue()
             return
         }

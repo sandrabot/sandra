@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,12 +48,10 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
             if (sandra.settings.commandUpdates) try {
                 // update the global slash command list, this makes sure the commands match our local commands
                 val topCommands = sandra.commands.values.filterNot { it.isSubcommand }
-                val (owner, global) = topCommands.partition { it.ownerOnly }.toList().map { list ->
+                val (owner, global) = topCommands.partition { it.isOwnerOnly }.toList().map { list ->
                     list.map { command -> sandra.commands.commandData[command.path] }
                 }
                 val globalCommands = event.jda.updateCommands().addCommands(global).await()
-                // discord returns us a list of metadata, so we can use it to figure out the discord command's id
-                globalCommands.forEach { sandra.commands[it.name]?.id = it.idLong }
                 logger.info("Successfully updated global command list with ${globalCommands.size} commands")
                 // update the owner command list for all of our development servers
                 arrayOf(

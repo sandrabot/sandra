@@ -17,51 +17,91 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.managers.CommandManager
 import net.dv8tion.jda.api.Permission
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
+/**
+ * This class defines, configures, and handles the execution of slash commands.
+ *
+ * All commands that extend this class within the `com.sandrabot.sandra.commands`
+ * package are dynamically loaded at startup by the [CommandManager].
+ */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class Command(
     arguments: String = "",
+    val subgroup: String? = null,
     val guildOnly: Boolean = false,
-    val group: String? = null,
-    val requiredPermissions: Set<Permission> = emptySet(),
-    val userPermissions: Set<Permission> = emptySet()
+    val selfPermissions: Set<Permission> = emptySet(),
+    val userPermissions: Set<Permission> = emptySet(),
 ) {
 
-    // this is open for when command names differ from their class names, like 8ball
+    /**
+     * The command's name. By default, this is the simple class name.
+     * You should only override this if the command name must differ
+     * from the class name, such as 8ball vs Magic8Ball.
+     */
     open val name: String = this::class.simpleName!!.lowercase()
+
+    /**
+     * List of command arguments that were configured successfully.
+     */
     val arguments: List<Argument> = compileArguments(arguments)
+
+    /**
+     * The [Category] that this command belongs to.
+     * By default, this is determined by the command's package.
+     */
     val category: Category = Category.fromClass(this::class)
-    val ownerOnly: Boolean = category == Category.OWNER
+
+    /**
+     * Determines whether this command is reserved for developers only.
+     * When enabled, this command will only be available in trusted servers.
+     */
+    val isOwnerOnly: Boolean = category == Category.OWNER
+
+    /**
+     * List of this command's immediate subcommands.
+     */
     val subcommands: List<Command> = this::class.nestedClasses.filter { it.isSubclassOf(Command::class) }
         .map { (it.createInstance() as Command).also { child -> child.parent = this } }
+
+    /**
+     * Lists all nested subcommands within this command.
+     */
     val allSubcommands: List<Command> = subcommands + subcommands.flatMap { it.allSubcommands }
 
-    // Must be lazy so parents are set before access
+    /**
+     * Allows nested subcommands to be recursively linked to the top level command.
+     */
+    var parent: Command? = null
+        private set
+
+    /**
+     * Determines if this command is a subcommand or not.
+     */
+    val isSubcommand: Boolean by lazy { parent != null }
+
+    /**
+     * The qualified path for this command.
+     */
     val path: String by lazy {
-        if (!isSubcommand) name else {
-            var topLevelParent = this
-            do topLevelParent = topLevelParent.parent ?: break while (true)
+        if (isSubcommand) {
+            var topLevel = this
+            do topLevel = topLevel.parent ?: break while (true)
             buildString {
-                append(topLevelParent.name)
-                if (group != null) append('.', group)
+                append(topLevel.name)
+                if (subgroup != null) append('.', subgroup)
                 append('.', name)
             }
-        }
+        } else name
     }
 
-    var id: Long = 0L
-        set(value) {
-            // Only allow the field to be set once for top level commands
-            if (field == 0L && !isSubcommand) field = value
-            else throw IllegalStateException("Command ID for $path has already been set to $field")
-        }
-    var parent: Command? = null
-        internal set
-    val isSubcommand: Boolean
-        get() = parent != null
-
+    /**
+     * This method defines the command logic and
+     * is executed after the command is validated.
+     */
     abstract suspend fun execute(event: CommandEvent)
 
     override fun toString(): String = "Command:$path"

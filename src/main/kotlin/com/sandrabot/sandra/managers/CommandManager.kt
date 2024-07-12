@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ class CommandManager {
     /**
      * Shorthand for retrieving the list of current commands.
      * Please note this collection is **mutable**, any changes should be done with care.
+     * Access is only provided with the intention of being used from eval prompts.
      */
     val values: MutableCollection<Command>
         get() = commands.values

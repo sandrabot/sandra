@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ fun Command.asCommandData(): SlashCommandData? {
     // add the argument data here if applicable
     if (arguments.isNotEmpty()) data.addOptions(arguments.map { it.asOptionData(path) })
     // process any subcommands this command may have
-    if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.group }.forEach { (group, commands) ->
+    if (allSubcommands.isNotEmpty()) allSubcommands.groupBy { it.subgroup }.forEach { (group, commands) ->
         val subcommandData = commands.map { subcommand ->
             val subPath = "commands.${subcommand.path}"
             // retrieve a map of all possible names and descriptions
