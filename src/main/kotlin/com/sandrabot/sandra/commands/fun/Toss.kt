@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.`fun`
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import kotlin.random.Random
 
 @Suppress("unused")
@@ -27,7 +28,7 @@ class Toss : Command() {
     override suspend fun execute(event: CommandEvent) {
 
         val (emote, side) = if (Random.nextBoolean()) Emotes.CASH to "heads" else Emotes.TAILS to "tails"
-        event.replyEmote(event.get("reply", event.get(side)), emote).setEphemeral(true).queue()
+        event.replyEmoji(emote, event.get("reply", event.get(side))).asEphemeral().queue()
 
     }
 

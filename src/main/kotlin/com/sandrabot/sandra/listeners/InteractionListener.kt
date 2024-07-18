@@ -51,7 +51,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             return
         }
         // the first thing we want to do is wrap this with our own object
-        val event = CommandEvent(sandra, slashEvent, command)
+        val event = CommandEvent(command, slashEvent, sandra)
         // check the blocklist to prevent responding in actively blocked contexts
         if (checkCommandBlocklist(event)) return
         // do additional checks for guild commands, since discord added privileges we only need to check for ourselves

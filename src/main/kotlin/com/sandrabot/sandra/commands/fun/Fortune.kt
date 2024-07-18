@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.`fun`
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.useResourceStream
 
 @Suppress("unused")
@@ -26,7 +27,7 @@ class Fortune : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.replyEmote(event.get("reply", fortunes.random()), Unicode.FORTUNE_COOKIE).setEphemeral(true).queue()
+        event.replyEmoji(Unicode.FORTUNE_COOKIE, event.get("reply", fortunes.random())).asEphemeral().queue()
 
     }
 

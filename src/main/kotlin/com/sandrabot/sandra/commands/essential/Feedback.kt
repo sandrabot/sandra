@@ -107,7 +107,7 @@ class Feedback : Command() {
         val emoji = selectMenu.options.first { it.value == feedbackType }.emoji!!.let {
             if (it.type == Emoji.Type.CUSTOM) it.asCustom().asMention else it.name
         }
-        val embed = event.embed.setTitle("$emoji $title ${Unicode.BULLET} $summary").setDescription(description)
+        val embed = event.embed().setTitle("$emoji $title ${Unicode.BULLET} $summary").setDescription(description)
             .setFooter(event.get("footer", event.user.name, event.user.id), event.user.effectiveAvatarUrl)
 
         feedbackChannel.sendMessageEmbeds(embed.build()).await()

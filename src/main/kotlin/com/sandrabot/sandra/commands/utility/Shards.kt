@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class Shards : Command() {
         }
         val size = event.sandra.shards.shardCache.size()
         val connected = event.sandra.shards.shardCache.count { it.status == JDA.Status.CONNECTED }
-        val embed = event.embed.setTitle(event.get("having_issues"), Constants.DIRECT_SUPPORT)
+        val embed = event.embed().setTitle(event.get("having_issues"), Constants.DIRECT_SUPPORT)
         embed.setFooter(event.get("shards_connected", connected, size) + if (event.isFromGuild)
             event.get("server_using", event.jda.shardInfo.shardId) else ""
         )

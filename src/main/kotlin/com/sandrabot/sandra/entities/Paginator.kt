@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,12 +54,12 @@ class Paginator(
 ) {
 
     // create unique instances of component ids for this interaction
-    private val jumpModalId = "page:modal:" + commandEvent.encodedInteraction
-    private val jumpInputId = "page:input:" + commandEvent.encodedInteraction
-    private val backButtonId = "page:back:" + commandEvent.encodedInteraction
-    private val jumpButtonId = "page:jump:" + commandEvent.encodedInteraction
-    private val nextButtonId = "page:next:" + commandEvent.encodedInteraction
-    private val exitButtonId = "page:exit:" + commandEvent.encodedInteraction
+    private val jumpModalId = "page:modal:" + commandEvent.interaction.id
+    private val jumpInputId = "page:input:" + commandEvent.interaction.id
+    private val backButtonId = "page:back:" + commandEvent.interaction.id
+    private val jumpButtonId = "page:jump:" + commandEvent.interaction.id
+    private val nextButtonId = "page:next:" + commandEvent.interaction.id
+    private val exitButtonId = "page:exit:" + commandEvent.interaction.id
 
     private val buttons = listOf(
         Button.primary(backButtonId, Emoji.fromFormatted(Emotes.ARROW_LEFT)),

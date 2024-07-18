@@ -39,7 +39,7 @@ class Commands : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val menuId = "commands:select:" + event.encodedInteraction
+        val menuId = "commands:select:" + event.interaction.id
         val builder = StringSelectMenu.create(menuId).setPlaceholder(event.get("placeholder"))
         val localeEmbeds = embedMap.getOrPut(event.localeContext.locale) { generateEmbeds(event) }
         localeEmbeds.keys.filterNot { it == Category.OWNER && !event.isOwner }.map {
@@ -48,7 +48,7 @@ class Commands : Command() {
         }.also(builder::addOptions)
 
         val essential = localeEmbeds[Category.ESSENTIAL] ?: throw AssertionError("Missing essential category")
-        event.reply(essential).addActionRow(builder.build()).setEphemeral(true).await()
+        event.replyEmbeds(essential).addActionRow(builder.build()).setEphemeral(true).await()
 
         while (true) withTimeoutOrNull(1.minutes) {
             // await is a blocking call, this is where we wait for the select event
@@ -76,7 +76,7 @@ class Commands : Command() {
             }.chunked(20).map { it.joinToString("") }
             // start putting the page embeds together by reusing the builder
             val categoryText = event.getAny("core.categories.${category.displayName}")
-            val embed = event.embed.setThumbnail(event.selfUser.effectiveAvatarUrl).setTitle(
+            val embed = event.embed().setThumbnail(event.selfUser.effectiveAvatarUrl).setTitle(
                 "${category.emote} $categoryText ${event.get("command_title")}"
             ).setFooter(event.get("more_information"))
             descriptions.map { embed.setDescription(it).build() }

@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.social
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.canReputation
 import com.sandrabot.sandra.utils.format
 import kotlin.time.Duration.Companion.seconds
@@ -32,7 +33,7 @@ class Reputation : Command(arguments = "[@user]") {
         if (!event.userConfig.canReputation() && !event.isOwner) {
             val nextRep = event.userConfig.reputationLast + 72_000_000 // 20 hours
             val remaining = ((nextRep - System.currentTimeMillis()) / 1_000).seconds.format()
-            event.replyEmote(event.get("cooldown", remaining), Emotes.TIME).setEphemeral(true).queue()
+            event.replyEmoji(Emotes.TIME, event.get("cooldown", remaining)).asEphemeral().queue()
             return
         }
 
@@ -57,7 +58,7 @@ class Reputation : Command(arguments = "[@user]") {
 
         // reply with the target user's updated rep count
         val reply = event.get("reply", targetUser, targetConfig.reputation.format())
-        event.replyEmote(reply, Emotes.ADD).queue()
+        event.replyEmoji(Emotes.ADD, reply).queue()
 
     }
 

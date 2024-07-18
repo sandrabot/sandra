@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.social
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.canDaily
 import com.sandrabot.sandra.utils.computeDailyReward
 import com.sandrabot.sandra.utils.format
@@ -34,7 +35,7 @@ class Daily : Command(arguments = "[user]") {
         if (!event.userConfig.canDaily() && !event.isOwner) {
             val nextDaily = event.userConfig.dailyLast + 72_000_000 // 20 hours
             val remaining = ((nextDaily - System.currentTimeMillis()) / 1_000).seconds.format()
-            event.replyEmote(event.get("cooldown", remaining), Emotes.TIME).setEphemeral(true).queue()
+            event.replyEmoji(Emotes.TIME, event.get("cooldown", remaining)).asEphemeral().queue()
             return
         }
 

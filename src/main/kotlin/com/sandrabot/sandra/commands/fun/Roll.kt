@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.sandrabot.sandra.commands.`fun`
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.format
 
 @Suppress("unused")
@@ -28,7 +29,7 @@ class Roll : Command(arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]")
 
         val bound = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
         val reply = event.get("reply", (1..bound).random().format(), bound.format())
-        event.replyEmote(reply, Unicode.GAME_DIE).setEphemeral(true).queue()
+        event.replyEmoji(Unicode.GAME_DIE, reply).asEphemeral().queue()
 
     }
 
