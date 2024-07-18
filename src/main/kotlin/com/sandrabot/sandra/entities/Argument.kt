@@ -37,7 +37,7 @@ private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
  * The internal constructor ensures the rules defined in [compileArguments] are enforced.
  */
 class Argument internal constructor(
-    val name: String, val type: ArgumentType, val isRequired: Boolean, val choices: List<*>
+    val name: String, val type: ArgumentType, val isRequired: Boolean, val choices: List<*>,
 ) {
     val usage = if (isRequired) "<$name>" else "[$name]"
 
@@ -181,8 +181,9 @@ private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
 
 private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
     val option = findOption(event, argument) ?: return null
-    // allow the commands to be searched by their localized names
-    val commands = event.sandra.commands.values.associateBy { event.getAny("commands.${it.name}.name") }
+    // allow top level commands to be searched by their localized names
+    val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
+        .associateBy { event.getAny("commands.${it.name}.name") }
     // since we don't support fuzzy searching, the option is the key
     return commands[option.asString.lowercase().replace(spaceRegex, "/")]
 }
