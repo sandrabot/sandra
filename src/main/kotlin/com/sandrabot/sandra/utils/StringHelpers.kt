@@ -17,8 +17,6 @@
 package com.sandrabot.sandra.utils
 
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.entities.emoji.Emoji
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.InputStream
@@ -28,8 +26,6 @@ private val digitRegex = Regex("""\d+""")
 private val doubleRegex = Regex("""[,.]""")
 private val decimalRegex = Regex("""(\d+\.\d{2})\d+(.*)""")
 val spaceRegex = Regex("""\s+""")
-
-fun String.asEmoji(): EmojiUnion = Emoji.fromFormatted(this)
 
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
 fun String.removeExtraSpaces(): String = replace(spaceRegex, " ").trim()
