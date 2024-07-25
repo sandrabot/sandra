@@ -219,6 +219,50 @@
       "description": "gander at a breakdown of the server's member count",
       "reply": "**%1$s** has %2$s humans and %3$s bots for a total of %4$s members"
     },
+    "owner": {
+      "name": "owner",
+      "description": "useful commands to help manage the bot (devs only)",
+      "avatar": {
+        "name": "avatar",
+        "description": "upload a new avatar for the current account",
+        "arguments": {
+          "image": {
+            "name": "image",
+            "description": "the new avatar"
+          }
+        }
+      },
+      "levels": {
+        "name": "levels",
+        "description": "fast-forward user leveling",
+        "arguments": {
+          "user": {
+            "name": "user",
+            "description": "user"
+          }
+        }
+      },
+      "shutdown": {
+        "name": "shutdown",
+        "description": "exit the jvm"
+      },
+      "log": {
+        "name": "log",
+        "description": "lol idk what this is",
+        "debug": {
+          "name": "debug",
+          "description": "enable debug logging"
+        },
+        "info": {
+          "name": "info",
+          "description": "only log info messages"
+        },
+        "trace": {
+          "name": "trace",
+          "description": "show me everything"
+        }
+      }
+    },
     "ping": {
       "name": "ping",
       "description": "sends a ping to test sandra's connection to discord",
