@@ -17,19 +17,18 @@
 package com.sandrabot.sandra.constants
 
 /**
- * A central place to keep track of unicode characters used throughout the bot.
- * The names will typically be related to the official unicode description.
+ * A central place to keep track of Unicode characters used throughout the bot.
+ * The names will typically be related to the official Unicode description.
  */
 object Unicode {
 
-    const val BUG = "\uD83D\uDC1B"
-    const val BULLET = "\u2022"
-    const val CLAPPING_HANDS = "\uD83D\uDC4F"
-    const val CROSS_MARK = "\u274C"
-    const val FORTUNE_COOKIE = "\uD83E\uDD60"
-    const val GAME_DIE = "\uD83C\uDFB2"
-    const val HEAVY_BLACK_HEART = "\u2764"
-    const val MAGIC_8_BALL = "\uD83C\uDFB1"
-    const val SCALES = "\u2696"
+    const val BUG = "🐛"
+    const val BULLET = "•"
+    const val CROSS_MARK = "❌"
+    const val FORTUNE_COOKIE = "🥠"
+    const val GAME_DIE = "🎲"
+    const val HEAVY_BLACK_HEART = "❤"
+    const val LINK = "🔗"
+    const val MAGIC_8_BALL = "🎱"
 
 }
