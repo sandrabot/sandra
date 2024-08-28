@@ -29,7 +29,6 @@ version = "5.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io/")
 }
 
 dependencies {
@@ -41,8 +40,8 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("net.dv8tion:JDA:5.0.0")
-    implementation("club.minnced:jda-ktx:78dbf82")
+    implementation("net.dv8tion:JDA:5.1.0")
+    implementation("club.minnced:jda-ktx:0.12.0")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.sentry:sentry-logback:7.11.0")

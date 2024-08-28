@@ -18,6 +18,7 @@ package com.sandrabot.sandra.commands.owner
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
+import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
@@ -25,6 +26,7 @@ import com.sandrabot.sandra.utils.awardExperience
 import com.sandrabot.sandra.utils.format
 import dev.minn.jda.ktx.coroutines.await
 import org.slf4j.LoggerFactory
+import java.io.File
 import kotlin.system.exitProcess
 
 @Suppress("unused")
@@ -44,6 +46,29 @@ class Owner : Command() {
             val image = attachment.proxy.downloadAsIcon().await()
             event.jda.selfUser.manager.setAvatar(image).flatMap { event.reply("that should do the trick!") }
                 .onErrorFlatMap { event.reply("couldn't set the avatar; ${it.message}") }.queue()
+        }
+    }
+
+    class Emojis : Command(arguments = "[@guild:text]") {
+        override suspend fun execute(event: CommandEvent) {
+            val guild = event.arguments.text("guild")?.let { event.sandra.shards.getGuildById(it) } ?: run {
+                event.reply("couldn't access guild").queue()
+                return
+            }
+            val emojis = guild.retrieveEmojis().await() ?: run {
+                event.reply("couldn't access emojis").queue()
+                return
+            }
+            val folder = File("${guild.id}/")
+            if (folder.exists() && folder.isDirectory && folder.canRead() && folder.canWrite() || folder.mkdir()) {
+                val message = event.replyEmoji(Emotes.LOADING, "downloading **${guild.name}** emojis... (**${emojis.size}**)").await()
+                for (emoji in emojis) {
+                    val extension = if (emoji.isAnimated) "gif" else "png"
+                    emoji.image.downloadToFile(File("${guild.id}/${emoji.name}.$extension")).await()
+                }
+                val fileSize = (folder.listFiles()?.sumOf { it.readBytes().size } ?: 0) shr 10
+                message.editOriginal("download complete (**${folder.list()?.size}** files, ${fileSize.format()}kB)").queue()
+            } else event.reply("couldn't access folder").queue()
         }
     }
 

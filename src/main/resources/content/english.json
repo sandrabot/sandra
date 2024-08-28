@@ -232,6 +232,16 @@
           }
         }
       },
+      "emojis": {
+        "name": "emojis",
+        "description": "download emojis from a guild",
+        "arguments": {
+          "guild": {
+            "name": "guild",
+            "description": "server id"
+          }
+        }
+      },
       "levels": {
         "name": "levels",
         "description": "fast-forward user leveling",
