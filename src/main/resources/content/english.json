@@ -315,6 +315,36 @@
       },
       "reply": "you took a chance and rolled a %1$s out of %2$s"
     },
+    "softban": {
+      "name": "softban",
+      "description": "gently ban someone, deletes their recent messages",
+      "no_self": "you can't softban yourself, that would be too much fun",
+      "already_banned": "**%1$s** is already banned from this server; **%2$s**",
+      "no_owner": "sorry to rain on your parade, but you can't softban the server owner",
+      "no_interact": "hey! you're not allowed to do that, %1$s has a role higher than yours",
+      "no_interact_self": "this is embarrassing, but i don't have a role high enough to interact with %1$s",
+      "ban_notification": "## %1$s you have been soft-banned from %2$s\nyou should be able to rejoin the server at any time, but you may need to be invited again\n\n>>> **%3$s** gave the reason: **%4$s**",
+      "confirmation": "## %1$s are you sure you want to softban %2$s?\ntheir most recent messages will be deleted and cannot be recovered",
+      "success": "%1$s **%2$s** has been soft-banned from this server. now, who's gonna invite them back?",
+      "reason": "/softban was used by %1$s; %2$s",
+      "default_reason": "no reason given",
+      "button_confirm": "confirm softban",
+      "button_cancel": "cancel",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "the user you wanna softban"
+        },
+        "reason": {
+          "name": "reason",
+          "description": "the reason for their punishment"
+        },
+        "quiet": {
+          "name": "quiet",
+          "description": "let's just keep this between you and me?"
+        }
+      }
+    },
     "shards": {
       "name": "shards",
       "description": "view a list of shards and their stats",

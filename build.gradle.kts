@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.0"
     id("com.github.gmazzo.buildconfig") version "5.3.5"
     id("io.ktor.plugin") version "2.3.11"
@@ -44,7 +44,7 @@ dependencies {
     implementation("club.minnced:jda-ktx:0.12.0")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
-    implementation("io.sentry:sentry-logback:7.11.0")
+    implementation("io.sentry:sentry-logback:7.12.1")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
