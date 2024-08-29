@@ -358,9 +358,9 @@
       "name": "toss",
       "description": "toss a coin and settle your bets",
       "reply": [
-        "spinning like a top, the coin dances before you and finally settles on __**%1$s**__",
-        "you toss the coin and catch it in mid air, slapping it down on your wrist revealing __**%1$s**__",
-        "the coin tumbles from your fingers, clattering on the ground and landing on __**%1$s**__"
+        "spinning like a top, the coin dances before you and finally settles on **%1$s**",
+        "you toss the coin and catch it in mid air, slapping it down on your wrist revealing **%1$s**",
+        "the coin tumbles from your fingers, clattering on the ground and landing on **%1$s**"
       ],
       "heads": "heads",
       "tails": "tails"
