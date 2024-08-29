@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-@file:OptIn(ExperimentalTime::class)
 
 package com.sandrabot.sandra
 
@@ -33,10 +31,10 @@ import net.dv8tion.jda.api.utils.messages.MessageRequest
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
+import java.net.InetAddress
 import java.util.*
 import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 private val logger = LoggerFactory.getLogger("Sandra")
@@ -75,14 +73,13 @@ fun bootstrap(args: Array<String>) {
         throw FileNotFoundException("A new config file has been created for you at ${configFile.absolutePath}")
     }
 
-    if (config.development) {
-        logger.info("Running in development mode, experimental features may cause instability")
-        logger.info("Sentry is disabled while in development mode, error reporting will not be available")
-    } else if (config.sentryEnabled && !config.sentryDsn.isNullOrBlank()) Sentry.init { options ->
-        // configure the sentry client if enabled and applicable
+    if (config.development) logger.info("Running in development mode, experimental features may cause instability")
+    if (config.sentryEnabled && !config.sentryDsn.isNullOrBlank()) Sentry.init { options ->
+        // configure the sentry client for the current environment
         options.dsn = config.sentryDsn
-        options.release = BuildInfo.VERSION
-        options.environment = if (config.debug) "development" else "production"
+        options.release = BuildInfo.COMMIT
+        options.serverName = InetAddress.getLocalHost().hostName
+        options.environment = if (config.development) "development" else "production"
     } else logger.warn("Sentry is disabled, error reporting will not be available")
     if (config.debug) {
         logger.info("Running in debug mode, all loggers will print debug messages")
@@ -94,14 +91,15 @@ fun bootstrap(args: Array<String>) {
     val ping = measureTime { redisManager.use { ping() } }
     logger.info("Verified database connection at ${config.redis.host}:${config.redis.port}/${config.redis.database} in $ping")
 
-    // eliminate the possibility of accidental mass mentions, if something need to @role it can be overridden
+    // eliminate the possibility of accidental mass mentions
     val disabled = EnumSet.of(Message.MentionType.EVERYONE, Message.MentionType.HERE, Message.MentionType.ROLE)
     MessageRequest.setDefaultMentions(EnumSet.complementOf(disabled))
 
     // initialize the sandra instance and start the bot
+    // this is a blocking call while jda signs into the first shard
     val sandra = Sandra(config, redisManager)
     val self = sandra.shards.shardCache.first().selfUser
-    logger.info("Token used to sign in belongs to account: ${self.asTag} (${self.id})")
+    logger.info("Token used to sign in belongs to account: ${self.name} (${self.id})")
 
     val startupTime = (System.currentTimeMillis() - beginStartup).milliseconds
     logger.info("Startup completed, connecting with ${sandra.shards.shardsTotal} shards... (took $startupTime)")
@@ -115,12 +113,17 @@ private fun shutdownHook(sandra: Sandra) = with(sandra) {
     // close all resources and shutdown the shard manager
     // order is important here to ensure data integrity
     try {
-        api?.shutdown()
+        // disable any auxiliary services first
         botList.shutdown()
+        blocklist.shutdown()
         subscriptions.shutdown()
+
+        // stop accepting new requests and sign out from discord
+        api?.shutdown()
+        shards.shutdown()
         HTTP_CLIENT.close()
 
-        shards.shutdown()
+        // save config data before closing the redis connection
         config.shutdown()
         redis.shutdown()
     } catch (t: Throwable) {
