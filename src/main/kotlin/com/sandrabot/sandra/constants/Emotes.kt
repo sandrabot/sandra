@@ -43,6 +43,7 @@ object Emotes {
     const val INFO = "<:info:1278461761858834613>"
     const val INVITE = "<:invite:1278461780347195404>"
     const val JOIN = "<:join:1278461800312213637>"
+    const val LASTFM = "<:lastfm:1278548049605558364>"
     const val LEAVE = "<:leave:1278461819354353726>"
     const val LEVEL_UP = "<:level_up:1278461840329936938>"
     const val LOADING = "<a:loading:1278461861792186437>"
