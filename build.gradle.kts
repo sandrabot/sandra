@@ -19,9 +19,9 @@ import java.io.ByteArrayOutputStream
 plugins {
     application
     kotlin("jvm") version "2.0.20"
-    kotlin("plugin.serialization") version "2.0.0"
-    id("com.github.gmazzo.buildconfig") version "5.3.5"
-    id("io.ktor.plugin") version "2.3.11"
+    kotlin("plugin.serialization") version "2.0.20"
+    id("com.github.gmazzo.buildconfig") version "5.4.0"
+    id("io.ktor.plugin") version "2.3.12"
 }
 
 group = "com.sandrabot"
@@ -44,14 +44,12 @@ dependencies {
     implementation("club.minnced:jda-ktx:0.12.0")
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
-    implementation("de.u-mass:lastfm-java:0.1.2")
     implementation("io.sentry:sentry-logback:7.12.1")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:5.1.3")
-    implementation("org.slf4j:jul-to-slf4j:2.0.16")
+    implementation("redis.clients:jedis:5.1.5")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }
