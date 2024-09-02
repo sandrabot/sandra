@@ -17,6 +17,8 @@
 package com.sandrabot.sandra.entities.lastfm
 
 import com.sandrabot.sandra.utils.asInt
+import com.sandrabot.sandra.utils.emptyJsonArray
+import com.sandrabot.sandra.utils.emptyJsonObject
 import kotlinx.serialization.json.*
 
 object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
@@ -40,8 +42,8 @@ object RecentTracksSerializer : JsonTransformingSerializer<PaginatedResult<Track
     PaginatedResult.serializer(TrackSerializer)
 ) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
-        val recentTracks = element.jsonObject["recenttracks"]?.jsonObject ?: JsonObject(emptyMap())
-        put("results", recentTracks["track"]?.jsonArray ?: JsonArray(emptyList()))
+        val recentTracks = element.jsonObject["recenttracks"]?.jsonObject ?: emptyJsonObject()
+        put("results", recentTracks["track"]?.jsonArray ?: emptyJsonArray())
         recentTracks["@attr"]?.jsonObject?.forEach { key, value ->
             when (key) {
                 "user" -> put("user", value.jsonPrimitive.content)

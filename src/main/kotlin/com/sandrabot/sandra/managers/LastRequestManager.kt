@@ -22,6 +22,7 @@ import com.sandrabot.sandra.entities.lastfm.RecentTracksSerializer
 import com.sandrabot.sandra.entities.lastfm.Track
 import com.sandrabot.sandra.entities.lastfm.TrackSerializer
 import com.sandrabot.sandra.utils.HTTP_CLIENT
+import com.sandrabot.sandra.utils.emptyJsonObject
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
@@ -68,7 +69,7 @@ class LastRequestManager(private val sandra: Sandra) {
         return if (response.isEmpty() || "error" in response) {
             // use the global instance here since we're only encoding, and we don't want it pretty printed
             LOGGER.error("Failed Last.fm request: ${Json.encodeToString(response)}")
-            JsonObject(emptyMap())
+            emptyJsonObject()
         } else response
     }
 

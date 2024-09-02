@@ -21,6 +21,9 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
+fun emptyJsonObject(): JsonObject = JsonObject(emptyMap())
+fun emptyJsonArray(): JsonArray = JsonArray(emptyList())
+
 fun Map<*, *>.toJsonObject() = buildJsonObject {
     forEach { (key, value) -> put(key.toString(), value.toJsonElement()) }
 }
