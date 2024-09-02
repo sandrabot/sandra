@@ -25,7 +25,7 @@ import kotlinx.serialization.json.JsonNames
 @Serializable
 data class PaginatedResult<T>(
     val page: Int = 1, val totalPages: Int = 1, private val results: List<T> = emptyList(),
-    val user: String, val perPage: Int = -1, val total: Int = -1,
+    val user: String? = null, val perPage: Int = -1, val total: Int = -1,
 ) : Iterable<T> {
     fun isEmpty() = results.isEmpty()
     override fun iterator(): Iterator<T> = results.iterator()

@@ -40,9 +40,9 @@ object RecentTracksSerializer : JsonTransformingSerializer<PaginatedResult<Track
     PaginatedResult.serializer(TrackSerializer)
 ) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
-        val recentTracks = element.jsonObject["recenttracks"]!!.jsonObject
-        put("results", recentTracks["track"]!!.jsonArray)
-        recentTracks["@attr"]!!.jsonObject.forEach { key, value ->
+        val recentTracks = element.jsonObject["recenttracks"]?.jsonObject ?: JsonObject(emptyMap())
+        put("results", recentTracks["track"]?.jsonArray ?: JsonArray(emptyList()))
+        recentTracks["@attr"]?.jsonObject?.forEach { key, value ->
             when (key) {
                 "user" -> put("user", value.jsonPrimitive.content)
                 else -> put(key, value.asInt())
