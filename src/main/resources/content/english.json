@@ -17,6 +17,7 @@
       "essential": "essential",
       "fun": "fun",
       "game": "game",
+      "lastfm": "last.fm",
       "moderation": "moderation",
       "music": "music",
       "owner": "owner",
@@ -146,6 +147,22 @@
         "summary_placeholder": "summarize your concerns",
         "description_label": "alright give me the rundown",
         "description_placeholder": "go ahead, yap about it here"
+      }
+    },
+    "fm": {
+      "name": "fm",
+      "description": "show chat what you're listening to",
+      "missing_username": "hey bro idk your last.fm username, you gotta sign in with `/settings` first",
+      "missing_other_username": "it looks like %1$s hasn't signed into last.fm yet, tell them to use `/settings` first",
+      "missing_data": "user not found, are you sure the username \"**%1$s**\" is correct?",
+      "now_playing": "now playing - %s",
+      "recent": "recently played - %s",
+      "plays": "plays: %1$,d",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "who are you curious about?"
+        }
       }
     },
     "fortune": {
