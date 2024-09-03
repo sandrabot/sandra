@@ -69,7 +69,7 @@ class Commands : Command() {
         val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
         // remap the list of commands into a list of embeds
         return commands.groupBy { it.category }.mapValues { (category, list) ->
-            val descriptions = list.map { command ->
+            val descriptions = list.sortedBy { it.name }.map { command ->
                 // build the descriptions and join them into pages of 20 commands each
                 val description = event.getAny("commands.${command.name}.description")
                 buildString { append("`/", command.name, "` - ", description, "\n") }
