@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.slf4j.LoggerFactory
-import javax.script.Bindings
+import javax.script.ScriptContext
 import javax.script.ScriptEngineManager
 import kotlin.time.measureTimedValue
 
@@ -86,8 +86,9 @@ class Evaluate : Command(guildOnly = true) {
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             handleResult(reply, "**unknown** with unhandled exception", throwable.stackTraceToString())
         }
-        // finally create bindings and evaluate the script
-        val (result, duration) = evaluate(allImports + snippet, createBindings(event, sandra), exceptionHandler)
+        // finally update the bindings and evaluate the full script
+        updateEngineBindings(event, sandra)
+        val (result, duration) = evaluate(allImports + snippet, exceptionHandler)
         if (result == null) {
             reply.editMessage("evaluated in ${duration.format()} with no returns").queue()
         } else handleResult(reply, duration.format(), result.toString())
@@ -103,12 +104,10 @@ class Evaluate : Command(guildOnly = true) {
         """.trimMargin())
     }
 
-    private suspend fun evaluate(
-        script: String, bindings: Bindings, handler: CoroutineExceptionHandler
-    ) = measureTimedValue {
+    private suspend fun evaluate(script: String, handler: CoroutineExceptionHandler) = measureTimedValue {
         withContext(handler) {
             try {
-                scriptEngine.eval(script, bindings)
+                scriptEngine.eval(script)
             } catch (throwable: Throwable) {
                 throwable
             }
@@ -124,9 +123,9 @@ class Evaluate : Command(guildOnly = true) {
         } else message.editMessage(content).queue()
     }
 
-    private fun createBindings(messageEvent: MessageReceivedEvent, sandra: Sandra) =
-        scriptEngine.createBindings().apply {
-            val guildConfig = sandra.config.getGuild(messageEvent.guild.idLong)
+    private fun updateEngineBindings(messageEvent: MessageReceivedEvent, sandra: Sandra) {
+        val guildConfig = sandra.config.getGuild(messageEvent.guild.idLong)
+        scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).apply {
             put("event", messageEvent)
             put("guild", messageEvent.guild)
             put("id", messageEvent.guild.id)
@@ -143,6 +142,7 @@ class Evaluate : Command(guildOnly = true) {
             put("redis", sandra.redis)
             put("shards", sandra.shards)
         }
+    }
 
     private companion object {
         private val logger = LoggerFactory.getLogger(Evaluate::class.java)
