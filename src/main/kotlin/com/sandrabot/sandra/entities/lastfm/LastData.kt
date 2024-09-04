@@ -40,6 +40,7 @@ data class Track(
     val playCount: Int = -1,
     val userLoved: Int = -1,
     val userPlayCount: Int = -1,
+    val playedWhen: Long = -1,
     val isNowPlaying: Boolean = false,
     val tags: List<Tag> = emptyList(),
     val images: List<CoverImage> = emptyList(),
@@ -48,7 +49,6 @@ data class Track(
 ) {
     fun getImageUrl(size: ImageSize) = images.firstOrNull { it.size == size }?.url
 }
-
 
 @Serializable
 data class Album(

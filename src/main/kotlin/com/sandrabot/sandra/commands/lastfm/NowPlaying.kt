@@ -69,6 +69,8 @@ class NowPlaying : Command(arguments = "[user]") {
             url = track.url
             description = "**${track.artist.name.escape()}** • *${track.album?.title?.escape()}*"
             thumbnail = track.getImageUrl(ImageSize.EXTRALARGE)?.replace("/300x300", "")
+            // add the timestamp only when the track was recently played, rather than now playing
+            if (track.playedWhen > 0) timestamp = Instant.ofEpochSecond(track.playedWhen)
 
             // fetch the track info to display additional context in the footer
             val trackInfo = event.sandra.lastfm.getTrackInfo(track.name, track.artist.name, username)
