@@ -27,6 +27,7 @@ private val doubleRegex = Regex("""[,.]""")
 private val decimalRegex = Regex("""(\d+\.\d{2})\d+(.*)""")
 val spaceRegex = Regex("""\s+""")
 
+fun String.escape(single: Boolean = true): String = MarkdownSanitizer.escape(this, single)
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
 fun String.removeExtraSpaces(): String = replace(spaceRegex, " ").trim()
 fun String.splitSpaces(limit: Int = 0): List<String> = split(spaceRegex, limit)

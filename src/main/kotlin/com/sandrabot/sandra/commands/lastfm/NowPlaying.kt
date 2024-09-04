@@ -23,12 +23,14 @@ import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.HTTP_CLIENT
+import com.sandrabot.sandra.utils.escape
 import com.sandrabot.sandra.utils.findTrueAverageColor
 import com.sandrabot.sandra.utils.sanitize
 import dev.minn.jda.ktx.messages.Embed
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import java.io.InputStream
+import java.time.Instant
 import javax.imageio.ImageIO
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -65,7 +67,7 @@ class NowPlaying : Command(arguments = "[user]") {
             }
             title = track.name
             url = track.url
-            description = "**${track.artist.name}** • *${track.album?.title}*"
+            description = "**${track.artist.name.escape()}** • *${track.album?.title?.escape()}*"
             thumbnail = track.getImageUrl(ImageSize.EXTRALARGE)?.replace("/300x300", "")
 
             // fetch the track info to display additional context in the footer
