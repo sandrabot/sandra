@@ -75,7 +75,7 @@ class NowPlaying : Command(arguments = "[user]") {
             // fetch the track info to display additional context in the footer
             val trackInfo = event.sandra.lastfm.getTrackInfo(track.name, track.artist.name, username)
             // only display the footer if we received a valid response from the api
-            if (trackInfo.userPlayCount > -1) footer(buildString {
+            if (trackInfo != null) footer(buildString {
                 append(event.get("plays", trackInfo.userPlayCount))
                 if (trackInfo.duration > 0) append(" • ", trackInfo.duration.milliseconds)
                 if (trackInfo.tags.isNotEmpty()) {

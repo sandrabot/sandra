@@ -53,9 +53,9 @@ class LastRequestManager(private val sandra: Sandra) {
         }
     }.await()
 
-    suspend fun getTrackInfo(track: String, artist: String, username: String): Track = submitRequest {
-        buildRequest("track.getInfo", mapOf("track" to track, "artist" to artist, "username" to username)).let {
-            json.decodeFromJsonElement(TrackSerializer, it.jsonObject["track"]!!)
+    suspend fun getTrackInfo(track: String, artist: String, username: String): Track? = submitRequest {
+        buildRequest("track.getInfo", mapOf("track" to track, "artist" to artist, "username" to username)).run {
+            if (isEmpty()) null else json.decodeFromJsonElement(TrackSerializer, jsonObject["track"]!!)
         }
     }.await()
 
@@ -74,7 +74,7 @@ class LastRequestManager(private val sandra: Sandra) {
     }
 
     // todo maybe try making a worker, cuz this seems a lil sus without a queue
-    private suspend fun <T : Any> submitRequest(block: suspend () -> T): Deferred<T> =
+    private suspend fun <T : Any?> submitRequest(block: suspend () -> T): Deferred<T> =
         withContext(scope.coroutineContext) {
             launch {
                 // allow up to 5 requests per second?

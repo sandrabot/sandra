@@ -16,7 +16,6 @@
 
 package com.sandrabot.sandra.entities.lastfm
 
-import com.sandrabot.sandra.utils.asInt
 import com.sandrabot.sandra.utils.emptyJsonArray
 import com.sandrabot.sandra.utils.emptyJsonObject
 import kotlinx.serialization.json.*
@@ -25,14 +24,13 @@ object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         element.jsonObject.forEach { key, value ->
             when (key) {
-                "duration" -> put("duration", value.asInt())
-                "playcount" -> put("playCount", value.asInt())
-                "userplaycount" -> put("userPlayCount", value.asInt())
-                "userloved" -> put("userLoved", value.asInt())
-                "date" -> put("playedWhen", value.jsonObject["uts"]?.asInt())
-                "toptags" -> put("tags", value.jsonObject["tag"]!!.jsonArray)
-                "@attr" -> put("isNowPlaying", value.jsonObject["nowplaying"]!!.jsonPrimitive.boolean)
-                "image" -> put("images", value)
+                "duration" -> put("duration", value)
+                "playcount" -> put("playCount", value)
+                "userplaycount" -> put("userPlayCount", value)
+                "userloved" -> put("userLoved", value)
+                "date" -> put("playedWhen", value.jsonObject["uts"]!!)
+                "toptags" -> put("tags", value.jsonObject["tag"]!!)
+                "@attr" -> put("isNowPlaying", value.jsonObject["nowplaying"]!!)
                 else -> put(key, value)
             }
         }
@@ -45,11 +43,6 @@ object RecentTracksSerializer : JsonTransformingSerializer<PaginatedResult<Track
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         val recentTracks = element.jsonObject["recenttracks"]?.jsonObject ?: emptyJsonObject()
         put("results", recentTracks["track"]?.jsonArray ?: emptyJsonArray())
-        recentTracks["@attr"]?.jsonObject?.forEach { key, value ->
-            when (key) {
-                "user" -> put("user", value.jsonPrimitive.content)
-                else -> put(key, value.asInt())
-            }
-        }
+        recentTracks["@attr"]?.jsonObject?.forEach { key, value -> put(key, value) }
     }
 }
