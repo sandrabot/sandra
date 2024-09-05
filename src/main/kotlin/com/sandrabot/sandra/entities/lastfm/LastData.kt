@@ -43,20 +43,16 @@ data class Track(
     val playedWhen: Long = -1,
     val isNowPlaying: Boolean = false,
     val tags: List<Tag> = emptyList(),
-    val images: List<CoverImage> = emptyList(),
     val album: Album? = null,
     val wiki: Wiki? = null,
-) {
-    fun getImageUrl(size: ImageSize) = images.firstOrNull { it.size == size }?.url
-}
+) : ImageHolder()
 
 @Serializable
 data class Album(
     @JsonNames("#text", "title") val title: String,
     val artist: String? = null,
     val url: String? = null,
-    @JsonNames("image") val images: List<CoverImage> = emptyList(),
-)
+) : ImageHolder()
 
 @Serializable
 data class Artist(
@@ -87,3 +83,10 @@ data class Wiki(
     val content: String,
     val published: String,
 )
+
+@Serializable
+abstract class ImageHolder {
+    @JsonNames("image", "images") val images: List<CoverImage> = emptyList()
+
+    fun getImageUrl(size: ImageSize) = images.firstOrNull { it.size == size }?.url
+}
