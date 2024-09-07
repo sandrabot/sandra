@@ -27,7 +27,9 @@
     "lastfm": {
       "missing_username": "hey bro idk your last.fm username, you gotta sign in with `/settings` first",
       "missing_other": "it looks like %1$s hasn't signed into last.fm yet, tell them to use `/settings` first",
-      "missing_data": "missing data, are you sure the username **%1$s** is correct?"
+      "missing_data": "missing data, are you sure the username **%1$s** is correct?",
+      "now_playing": "now playing - %1$s",
+      "recent": "recently played - %1$s"
     },
     "paginator": {
       "modal_title": "jump to page",
@@ -157,8 +159,6 @@
     "fm": {
       "name": "fm",
       "description": "show chat what you're listening to",
-      "now_playing": "now playing - %1$s",
-      "recent": "recently played - %1$s",
       "plays": "plays: %1$,d",
       "arguments": {
         "user": {

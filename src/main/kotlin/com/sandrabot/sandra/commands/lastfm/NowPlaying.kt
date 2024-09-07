@@ -60,8 +60,8 @@ class NowPlaying : Command(arguments = "[user]") {
 
         val embed = Embed {
             author {
-                val context = if (track.isNowPlaying) "now_playing" else "recent"
-                name = event.get(context, user.effectiveName.sanitize())
+                val key = if (track.isNowPlaying) "now_playing" else "recent"
+                name = event.getAny("core.lastfm.$key", user.effectiveName.sanitize())
                 url = "https://www.last.fm/user/$username"
                 iconUrl = user.effectiveAvatarUrl
             }
