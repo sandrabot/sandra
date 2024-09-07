@@ -297,6 +297,19 @@
       "description": "sends a ping to test sandra's connection to discord",
       "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
+    "recent": {
+      "name": "recent",
+      "description": "check out your recently played tracks",
+      "entry": "%1$d. **[%2$s](%3$s)** by **%4$s**\n -# %5$s • %6$s",
+      "footer": "total scrobbles: %1$,d",
+      "now_playing": "*now playing*",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "take a look at someone else's chart"
+        }
+      }
+    },
     "reputation": {
       "name": "reputation",
       "description": "send someone a meaningless reputation point",
