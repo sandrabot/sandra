@@ -42,10 +42,10 @@ class NowPlaying : Command(arguments = "[user]") {
     override suspend fun execute(event: CommandEvent) {
 
         val user = event.arguments.user() ?: event.user
-        // ensure that the user has entered their last.fm username
+        // make sure the user has entered their last.fm username
         val username = event.sandra.config[user].lastUsername ?: run {
             val key = if (user == event.user) "missing_username" else "missing_other"
-            event.replyInfo(event.getAny("core.lastfm.$key", user)).asEphemeral().queue()
+            event.replyEmoji(Emotes.LASTFM, event.getAny("core.lastfm.$key", user)).asEphemeral().queue()
             return
         }
 
