@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.entities.SimpleRateLimiter
 import com.sandrabot.sandra.entities.lastfm.PaginatedResult
 import com.sandrabot.sandra.entities.lastfm.RecentTracksSerializer
 import com.sandrabot.sandra.entities.lastfm.Track
@@ -25,18 +26,29 @@ import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.emptyJsonObject
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.*
+import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
+import net.jodah.expiringmap.ExpirationPolicy
+import net.jodah.expiringmap.ExpiringMap
 import org.slf4j.LoggerFactory
+import java.util.concurrent.TimeUnit
+import kotlin.collections.set
 
 class LastRequestManager(private val sandra: Sandra) {
 
-    // todo implement request caching
+    private val rateLimiter = SimpleRateLimiter(5.0)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val cache: ExpiringMap<Int, JsonObject> = ExpiringMap.builder()
+        .expirationPolicy(ExpirationPolicy.CREATED)
+        .expiration(1, TimeUnit.MINUTES).build()
 
     @OptIn(ExperimentalSerializationApi::class)
     private val json = Json {
@@ -45,45 +57,38 @@ class LastRequestManager(private val sandra: Sandra) {
         prettyPrint = true
     }
 
-    suspend fun getRecentTracks(
-        username: String, page: Int = 1, limit: Int = 10,
-    ): PaginatedResult<Track> = submitRequest {
-        buildRequest("user.getRecentTracks", mapOf("username" to username, "page" to page, "limit" to limit)).let {
+    suspend fun getRecentTracks(username: String, page: Int = 1, limit: Int = 10): PaginatedResult<Track> =
+        buildRequest("user.getRecentTracks", "username" to username, "page" to page, "limit" to limit).let {
             json.decodeFromJsonElement(RecentTracksSerializer, it)
         }
-    }.await()
 
-    suspend fun getTrackInfo(track: String, artist: String, username: String): Track? = submitRequest {
-        buildRequest("track.getInfo", mapOf("track" to track, "artist" to artist, "username" to username)).run {
+    suspend fun getTrackInfo(track: String, artist: String, username: String): Track? =
+        buildRequest("track.getInfo", "track" to track, "artist" to artist, "username" to username).run {
             if (isEmpty()) null else json.decodeFromJsonElement(TrackSerializer, jsonObject["track"]!!)
         }
-    }.await()
 
-    private suspend fun buildRequest(method: String, params: Map<String, Any>): JsonObject {
+    private suspend fun buildRequest(method: String, vararg params: Pair<String, Any>): JsonObject {
         var requestUrl = "$LASTFM_API?method=$method&api_key=${sandra.settings.secrets.lastFmToken}&format=json"
-        if (params.isNotEmpty()) {
-            requestUrl += params.entries.joinToString(separator = "&", prefix = "&") { (key, value) -> "$key=$value" }
+        if (params.isNotEmpty()) requestUrl += params.joinToString(separator = "&", prefix = "&") { (key, value) ->
+            "$key=${value.toString().encodeURLParameter()}"
         }
-        LOGGER.info("Opening connection: $requestUrl")
-        val response = HTTP_CLIENT.get(requestUrl).body<JsonObject>()
+        val requestHash = requestUrl.hashCode()
+        // check the cache to see if this request was made recently
+        cache[requestHash]?.let { hit ->
+            LOGGER.debug("Cache hit for request: $requestUrl")
+            return hit
+        }
+        LOGGER.debug("Opening connection: $requestUrl")
+        val response = withContext(scope.coroutineContext) {
+            rateLimiter.acquire()
+            HTTP_CLIENT.get(requestUrl).body<JsonObject>()
+        }
         return if (response.isEmpty() || "error" in response) {
             // use the global instance here since we're only encoding, and we don't want it pretty printed
             LOGGER.error("Failed Last.fm request: ${Json.encodeToString(response)}")
             emptyJsonObject()
-        } else response
+        } else response.also { cache[requestHash] = it }
     }
-
-    // todo maybe try making a worker, cuz this seems a lil sus without a queue
-    private suspend fun <T : Any?> submitRequest(block: suspend () -> T): Deferred<T> =
-        withContext(scope.coroutineContext) {
-            launch {
-                // allow up to 5 requests per second?
-                delay(200L)
-            }
-            async {
-                block()
-            }
-        }
 
     private companion object {
         private const val LASTFM_API = "https://ws.audioscrobbler.com/2.0/"
