@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.commands.lastfm
 
+import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
@@ -75,9 +76,15 @@ class Recent : Command(arguments = "[user]") {
                 )
             }.joinToString("\n")
             footer(event.get("footer", recentTracks.total))
-            recentTracks.first().getImageUrl(ImageSize.MEDIUM)?.let {
-                val stream = HTTP_CLIENT.get(it).body<InputStream>()
-                color = findTrueAverageColor(ImageIO.read(stream)).rgb
+            // download the cover image, if available, and find the average color
+            recentTracks.first().getImageUrl(ImageSize.MEDIUM)?.let { url ->
+                color = try {
+                    val stream = HTTP_CLIENT.get(url).body<InputStream>()
+                    findTrueAverageColor(ImageIO.read(stream))
+                } catch (_: Exception) {
+                    // unable to decode the image, just use the default color instead
+                    Colors.WELL_READ
+                }.rgb
             }
         }
 
