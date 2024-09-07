@@ -44,8 +44,8 @@ class NowPlaying : Command(arguments = "[user]") {
         val user = event.arguments.user() ?: event.user
         // ensure that the user has entered their last.fm username
         val username = event.sandra.config[user].lastUsername ?: run {
-            val reply = if (user == event.user) "missing_username" else "missing_other_username"
-            event.replyInfo(event.get(reply, user)).asEphemeral().queue()
+            val key = if (user == event.user) "missing_username" else "missing_other"
+            event.replyInfo(event.getAny("core.lastfm.$key", user)).asEphemeral().queue()
             return
         }
 
@@ -53,8 +53,8 @@ class NowPlaying : Command(arguments = "[user]") {
         event.deferReply().queue()
 
         // retrieve the user's most recently played track
-        val track = event.sandra.lastfm.getRecentTracks(username, limit = 1).firstOrNull() ?: run {
-            event.sendError(event.get("missing_data", username)).queue()
+        val track = event.sandra.lastfm.getRecentTracks(username).firstOrNull() ?: run {
+            event.sendError(event.getAny("core.lastfm.missing_data", username)).queue()
             return
         }
 
