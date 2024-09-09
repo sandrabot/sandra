@@ -16,23 +16,17 @@
 
 package com.sandrabot.sandra.commands.lastfm
 
-import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
-import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.escape
-import com.sandrabot.sandra.utils.findTrueAverageColor
 import com.sandrabot.sandra.utils.sanitize
+import com.sandrabot.sandra.utils.tryAverageColor
 import dev.minn.jda.ktx.messages.Embed
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import java.io.InputStream
 import java.time.Instant
-import javax.imageio.ImageIO
 import kotlin.time.Duration.Companion.milliseconds
 
 @Suppress("unused")
@@ -85,15 +79,7 @@ class NowPlaying : Command(arguments = "[user]") {
             })
 
             // download the cover image, if available, and find the average color
-            track.getImageUrl(ImageSize.MEDIUM)?.let { url ->
-                color = try {
-                    val stream = HTTP_CLIENT.get(url).body<InputStream>()
-                    findTrueAverageColor(ImageIO.read(stream))
-                } catch (_: Exception) {
-                    // unable to decode the image, just use the default color instead
-                    Colors.WELL_READ
-                }.rgb
-            }
+            color = (track.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
         }
 
         event.sendMessageEmbeds(embed).flatMap { message ->
