@@ -27,7 +27,7 @@ object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
                 "duration" -> put("duration", value)
                 "playcount" -> put("playCount", value)
                 "userplaycount" -> put("userPlayCount", value)
-                "userloved" -> put("userLoved", value)
+                "userloved" -> put("userLoved", value.jsonPrimitive.int > 0)
                 "date" -> put("playedWhen", value.jsonObject["uts"]!!)
                 "toptags" -> put("tags", value.jsonObject["tag"]!!)
                 "@attr" -> put("isNowPlaying", value.jsonObject["nowplaying"]!!)

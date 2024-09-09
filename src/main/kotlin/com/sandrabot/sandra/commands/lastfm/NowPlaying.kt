@@ -17,6 +17,7 @@
 package com.sandrabot.sandra.commands.lastfm
 
 import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
@@ -71,6 +72,7 @@ class NowPlaying : Command(arguments = "[user]") {
             val trackInfo = event.sandra.lastfm.getTrackInfo(track.name, track.artist.name, username)
             // only display the footer if we received a valid response from the api
             if (trackInfo != null) footer(buildString {
+                if (trackInfo.userLoved) append(Unicode.MEDIUM_STAR, " ")
                 append(event.get("plays", trackInfo.userPlayCount))
                 if (trackInfo.duration > 0) append(" • ", trackInfo.duration.milliseconds)
                 if (trackInfo.tags.isNotEmpty()) {
