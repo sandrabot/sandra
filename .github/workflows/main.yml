@@ -1,0 +1,9 @@
+name: Build changes on main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: sandrabot/sandra/.github/workflows/build.yml@main
