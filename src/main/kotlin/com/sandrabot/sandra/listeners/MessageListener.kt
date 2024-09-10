@@ -22,6 +22,7 @@ import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
 import dev.minn.jda.ktx.events.CoroutineEventListener
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.MessageType
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.events.GenericEvent
@@ -104,8 +105,13 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
                         )
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)
-                        // If the notification channel is not where the message was sent, the reference will do nothing
-                        notifyChannel.sendMessage(formattedTemplate).setMessageReference(event.message).queue()
+                        notifyChannel.sendMessage(formattedTemplate).apply {
+                            // make sure that we actually have permission to reply to a message
+                            if (event.guild.selfMember.hasPermission(notifyChannel, Permission.MESSAGE_HISTORY)) {
+                                // if the notification channel is not where the message was sent, the reference will do nothing
+                                setMessageReference(event.message)
+                            }
+                        }.queue()
                     }
                 }
                 // TODO Feature: Level Up Rewards
