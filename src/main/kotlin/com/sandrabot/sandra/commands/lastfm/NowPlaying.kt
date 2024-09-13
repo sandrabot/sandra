@@ -26,6 +26,7 @@ import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.escape
 import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.tryAverageColor
+import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.messages.Embed
 import java.time.Instant
 import kotlin.time.Duration.Companion.milliseconds
@@ -84,10 +85,13 @@ class NowPlaying : Command(arguments = "[user]") {
             color = (track.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
         }
 
-        event.sendMessageEmbeds(embed).flatMap { message ->
+        val message = event.sendMessageEmbeds(embed).await()
+        // check for "explicit" album cover art, this prevents
+        // the embed from being shown in regular channels
+        if (message.embeds.isNotEmpty()) {
             // todo feature: customizable reactions
-            message.addReaction(Emotes.UPVOTE.asEmoji()).flatMap { message.addReaction(Emotes.DOWNVOTE.asEmoji()) }
-        }.queue()
+            message.addReaction(Emotes.UPVOTE.asEmoji()).flatMap { message.addReaction(Emotes.DOWNVOTE.asEmoji()) }.queue()
+        } else message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
 
     }
 

@@ -24,6 +24,7 @@ import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.escape
 import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.tryAverageColor
+import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.messages.Embed
 
 @Suppress("unused")
@@ -74,7 +75,10 @@ class Recent : Command(arguments = "[user]") {
             color = (recentTracks.first().tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
         }
 
-        event.sendMessageEmbeds(embed).queue()
+        val message = event.sendMessageEmbeds(embed).await()
+        // check for "explicit" album cover art, this prevents
+        // the embed from being shown in regular channels
+        if (message.embeds.isEmpty()) message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
 
     }
 

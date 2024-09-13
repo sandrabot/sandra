@@ -28,6 +28,7 @@
       "missing_username": "hey bro idk your last.fm username, you gotta sign in with `/settings` first",
       "missing_other": "it looks like %1$s hasn't signed into last.fm yet, tell them to use `/settings` first",
       "missing_data": "missing data, are you sure the username **%1$s** is correct?",
+      "explicit": "%1$s discord has deemed this album cover art explicit and must be viewed within an adult channel",
       "now_playing": "now playing - %1$s",
       "recent": "recently played - %1$s"
     },
