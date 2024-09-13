@@ -28,6 +28,7 @@ import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.tryAverageColor
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.messages.Embed
+import net.dv8tion.jda.api.utils.SplitUtil
 import java.time.Instant
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -77,7 +78,8 @@ class NowPlaying : Command(arguments = "[user]") {
                 append(event.get("plays", trackInfo.userPlayCount))
                 if (trackInfo.duration > 0) append(" • ", trackInfo.duration.milliseconds)
                 if (trackInfo.tags.isNotEmpty()) {
-                    append(" • ", trackInfo.tags.take(3).joinToString(", ") { it.name.lowercase() })
+                    val firstTags = trackInfo.tags.take(3).joinToString(", ") { it.name.lowercase() }
+                    append(" • ", SplitUtil.split(firstTags, 40, SplitUtil.Strategy.onChar(',')).first())
                 }
             })
 
