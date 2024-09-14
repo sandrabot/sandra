@@ -348,6 +348,25 @@
       },
       "reply": "you took a chance and rolled a %1$s out of %2$s"
     },
+    "settings": {
+      "name": "settings",
+      "description": "manage your personal preferences",
+      "lastfm": {
+        "name": "lastfm",
+        "description": "connect your last.fm account",
+        "invalid": "sorry pal, the username you provided is invalid. give it another go?",
+        "not_found": "user not found, are you sure **%1$s** is what you meant to type?",
+        "saved": "your last.fm username **%1$s** has been saved",
+        "connected": "account connected - %1$s",
+        "created": "account created",
+        "arguments": {
+          "username": {
+            "name": "username",
+            "description": "your last.fm username or url"
+          }
+        }
+      }
+    },
     "softban": {
       "name": "softban",
       "description": "gently ban someone, deletes their recent messages",

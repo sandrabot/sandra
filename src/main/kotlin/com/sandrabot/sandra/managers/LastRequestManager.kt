@@ -18,10 +18,7 @@ package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.SimpleRateLimiter
-import com.sandrabot.sandra.entities.lastfm.PaginatedResult
-import com.sandrabot.sandra.entities.lastfm.RecentTracksSerializer
-import com.sandrabot.sandra.entities.lastfm.Track
-import com.sandrabot.sandra.entities.lastfm.TrackSerializer
+import com.sandrabot.sandra.entities.lastfm.*
 import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.emptyJsonObject
 import io.ktor.client.call.*
@@ -66,6 +63,10 @@ class LastRequestManager(private val sandra: Sandra) {
         buildRequest("track.getInfo", "track" to track, "artist" to artist, "username" to username).run {
             if (isEmpty()) null else json.decodeFromJsonElement(TrackSerializer, jsonObject["track"]!!)
         }
+
+    suspend fun getUserInfo(username: String): LastUser? = buildRequest("user.getInfo", "username" to username).run {
+        if (isEmpty()) null else json.decodeFromJsonElement(LastUserSerializer, this)
+    }
 
     private suspend fun buildRequest(method: String, vararg params: Pair<String, Any>): JsonObject {
         var requestUrl = "$LASTFM_API?method=$method&api_key=${sandra.settings.secrets.lastFmToken}&format=json"

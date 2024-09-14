@@ -23,6 +23,23 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
 @Serializable
+data class LastUser(
+    val name: String,
+    val realName: String,
+    val country: String,
+    val gender: String,
+    val url: String,
+    val age: Int,
+    val subscriber: Int,
+    val playCount: Int,
+    val artistCount: Int,
+    val albumCount: Int,
+    val trackCount: Int,
+    val playlists: Int,
+    val registeredWhen: Long,
+) : ImageHolder()
+
+@Serializable
 data class PaginatedResult<T>(
     val page: Int = 1, val totalPages: Int = 1, private val results: List<T> = emptyList(),
     val user: String? = null, val perPage: Int = -1, val total: Int = -1,
@@ -89,5 +106,5 @@ abstract class ImageHolder {
     @JsonNames("image", "images")
     val images: List<CoverImage> = emptyList()
 
-    fun getImageUrl(size: ImageSize) = images.firstOrNull { it.size == size }?.url
+    fun getImageUrl(size: ImageSize) = images.firstOrNull { it.size == size }?.url?.ifEmpty { null }
 }
