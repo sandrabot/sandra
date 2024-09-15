@@ -30,7 +30,6 @@ class Settings : Command() {
 
     override suspend fun execute(event: CommandEvent) = Unit
 
-    @Suppress("unused")
     class LastFm : Command("[@username:text]") {
         // allow the user to just copy and paste the url if they want
         private val profileRegex = Regex("(?:https?://(?:www\\.)?last\\.fm/user/)?([\\w-]{2,15})")
