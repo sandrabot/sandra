@@ -46,7 +46,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.sentry:sentry-logback:7.12.1")
     implementation("net.jodah:expiringmap:0.5.11")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
     implementation("org.reflections:reflections:0.10.2")
     implementation("redis.clients:jedis:5.1.5")

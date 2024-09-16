@@ -18,7 +18,6 @@ package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.ServerController
 import com.sandrabot.sandra.config.SandraConfig
-import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.InteractionListener
 import com.sandrabot.sandra.listeners.MessageListener
@@ -42,7 +41,6 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
 
     // only initialize the api when enabled, this preserves resources and reduces logging
     val api = if (settings.apiEnabled) ServerController(this) else null
-    val color = if (settings.development) Colors.WELL_READ else Colors.SEA_SERPENT
 
     val commands = CommandManager()
     val messages = MessageManager()

@@ -58,7 +58,7 @@ class Settings : Command() {
                     iconUrl = event.user.effectiveAvatarUrl
                 }
                 thumbnail = lastUser.getImageUrl(ImageSize.EXTRALARGE)
-                color = (lastUser.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
+                color = (lastUser.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.settings.color).rgb
                 description = "${Emotes.SUCCESS} ${event.get("saved", username.escape())}"
                 field {
                     name = event.get("created")

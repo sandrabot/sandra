@@ -72,7 +72,7 @@ class Recent : Command(arguments = "[user]") {
             }.joinToString("\n")
             footer(event.get("footer", recentTracks.total))
             // download the cover image, if available, and find the average color
-            color = (recentTracks.first().tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
+            color = (recentTracks.first().tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.settings.color).rgb
         }
 
         val message = event.sendMessageEmbeds(embed).await()

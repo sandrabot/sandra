@@ -84,7 +84,7 @@ class NowPlaying : Command(arguments = "[user]") {
             })
 
             // download the cover image, if available, and find the average color
-            color = (track.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.color).rgb
+            color = (track.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.settings.color).rgb
         }
 
         val message = event.sendMessageEmbeds(embed).await()
