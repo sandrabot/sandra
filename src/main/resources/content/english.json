@@ -36,13 +36,7 @@
       "modal_title": "jump to page",
       "input_label": "page number to view",
       "input_placeholder": "number between 1 and %1$s",
-      "page_indicator": "viewing page %1$s of %2$s",
-      "buttons": {
-        "back": "back",
-        "exit": "exit",
-        "next": "next",
-        "jump": "jump to..."
-      }
+      "page": "page %1$,d / %2$,d"
     },
     "permissions": {
       "create_invite": "create invite",
@@ -198,6 +192,18 @@
         "support": "%1$s support server",
         "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
         "built": "built with %1$s by %2$s and %3$s"
+      }
+    },
+    "lyrics": {
+      "name": "lyrics",
+      "description": "display the lyrics for your current song",
+      "not_playing": "it looks like you're not listening to anything atm, try playing something first",
+      "powered_by": "powered by whatever api",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "wanna check out someone else's song?"
+        }
       }
     },
     "8ball": {
