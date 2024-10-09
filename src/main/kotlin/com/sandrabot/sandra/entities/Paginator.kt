@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback
+import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
@@ -80,8 +81,9 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
             }
         } ?: break
 
-        // destroy the paginator when the menu times out
-        context.hook.editOriginalComponents().queue(null, ERROR_HANDLER)
+        // disable the buttons when the menu times out
+        val disabled = messageData[currentPage].components.flatMap { it.buttons }.map { it.asDisabled() }
+        context.hook.editMessageComponentsById(messageId, ActionRow.of(disabled)).queue(null, ERROR_HANDLER)
     }
 
     private fun verifyButton(event: ButtonInteractionEvent): Boolean {
@@ -140,8 +142,8 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
         // if the callback has already been acknowledged, use the hook instead
         val messageData = MessageEditData.fromCreateData(messageData[currentPage])
         if (callback.isAcknowledged) {
-            callback.hook.editMessageById(messageId, messageData).queue()
-        } else callback.editMessage(messageData).queue()
+            callback.hook.editMessageById(messageId, messageData).queue(null, ERROR_HANDLER)
+        } else callback.editMessage(messageData).queue(null, ERROR_HANDLER)
     }
 
     private fun generateMessageData(pages: List<MessageEmbed>) = pages.mapIndexed { index, embed ->

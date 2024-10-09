@@ -20,7 +20,7 @@ plugins {
     application
     kotlin("jvm") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.20"
-    id("com.github.gmazzo.buildconfig") version "5.4.0"
+    id("com.github.gmazzo.buildconfig") version "5.5.0"
     id("io.ktor.plugin") version "2.3.12"
 }
 
@@ -40,8 +40,10 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("net.dv8tion:JDA:5.1.0")
     implementation("club.minnced:jda-ktx:0.12.0")
+    implementation("net.dv8tion:JDA:5.1.2") {
+        exclude(module = "opus-java")
+    }
 
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.sentry:sentry-logback:7.12.1")
@@ -49,7 +51,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:5.1.5")
+    implementation("redis.clients:jedis:5.2.0")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }
