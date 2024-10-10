@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
 import net.dv8tion.jda.api.interactions.components.LayoutComponent
 import net.dv8tion.jda.api.interactions.modals.Modal
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessagePollData
@@ -115,3 +116,4 @@ class CommandEvent(
 }
 
 fun ReplyCallbackAction.asEphemeral() = setEphemeral(true)
+fun <T> WebhookMessageCreateAction<T>.asEphemeral() = setEphemeral(false)

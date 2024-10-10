@@ -16,7 +16,9 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.constants.Colors
 import kotlinx.serialization.Serializable
+import java.awt.Color
 
 /**
  * This class is used to configure the Sandra instance during startup.
@@ -89,4 +91,11 @@ data class SandraConfig(
      */
     val shardsTotal: Int = -1,
 
-    )
+    ) {
+
+    /**
+     * Runtime helper for determining which color to use within embeds.
+     */
+    val color: Color get() = if (development) Colors.WELL_READ else Colors.SEA_SERPENT
+
+}

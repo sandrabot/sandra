@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,6 @@ import java.awt.Color
 object Colors {
 
     val SEA_SERPENT = Color(0x44CBCB)
-    val WELL_READ = Color(0XBB3434)
+    val WELL_READ = Color(0xBB3434)
 
 }

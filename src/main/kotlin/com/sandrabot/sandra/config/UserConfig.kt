@@ -33,6 +33,8 @@ class UserConfig(override val id: Long) : ExperienceConfig() {
     var reputation: Long = 0
     var reputationLast: Long = 0
 
+    var lastUsername: String? = null
+
     override fun toString(): String = "UserConfig:$id"
 
 }

@@ -22,13 +22,16 @@ package com.sandrabot.sandra.constants
  */
 object Unicode {
 
-    const val BUG = "🐛"
-    const val BULLET = "•"
-    const val CROSS_MARK = "❌"
-    const val FORTUNE_COOKIE = "🥠"
-    const val GAME_DIE = "🎲"
-    const val HEAVY_BLACK_HEART = "❤"
-    const val LINK = "🔗"
-    const val MAGIC_8_BALL = "🎱"
+    const val BUG = """🐛"""
+    const val BULLET = """•"""
+    const val CROSS_MARK = """❌"""
+    const val FORTUNE_COOKIE = """🥠"""
+    const val GAME_DIE = """🎲"""
+    const val HEAVY_BLACK_HEART = """❤"""
+    const val LEFT_BACKHAND = """👈"""
+    const val LINK = """🔗"""
+    const val MAGIC_8_BALL = """🎱"""
+    const val MEDIUM_STAR = """⭐"""
+    const val RIGHT_BACKHAND = """👉"""
 
 }

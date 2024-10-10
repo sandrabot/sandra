@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,10 @@ import net.dv8tion.jda.api.utils.ChunkingFilter
  */
 class Sandra(val settings: SandraConfig, val redis: RedisManager) {
 
+    val shards: ShardManager
+
     // only initialize the api when enabled, this preserves resources and reduces logging
     val api = if (settings.apiEnabled) ServerController(this) else null
-    val shards: ShardManager
 
     val commands = CommandManager()
     val messages = MessageManager()
@@ -47,6 +48,7 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
+    val lastfm = LastRequestManager(this)
     val subscriptions = SubscriptionManager(this)
 
     init {
