@@ -21,6 +21,7 @@ import com.sandrabot.sandra.constants.Constants
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.OnlineStatus
+import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import org.slf4j.LoggerFactory
@@ -37,7 +38,8 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onReady(event: ReadyEvent) {
         shardsReady += 1
         // change the status from idle to online, this signifies the shard is ready
-        event.jda.presence.setStatus(if (sandra.settings.development) OnlineStatus.DO_NOT_DISTURB else OnlineStatus.ONLINE)
+        val status = if (sandra.settings.development) OnlineStatus.DO_NOT_DISTURB else OnlineStatus.ONLINE
+        event.jda.presence.setPresence(status, Activity.customStatus("/help — sandrabot.com [${event.jda.shardInfo.shardId}]"))
         val shardInfo = event.jda.shardInfo
         // only the last shard to load will initialize the rest of our services
         if (shardsReady == shardInfo.shardTotal) {
