@@ -53,7 +53,7 @@ fun bootstrap(args: Array<String>) {
     println(useResourceStream("banner.txt") { String(readBytes()) })
     println(" | Version: ${BuildInfo.VERSION}")
     println(" | Commit: ${BuildInfo.COMMIT}")
-    BuildInfo.LOCAL_CHANGES.apply { if (isNotEmpty()) println("   * $this") }
+    BuildInfo.LOCAL_CHANGES.ifEmpty { null }?.let { println("   * $it") }
     println(" | JDA: ${JDAInfo.VERSION}\n")
 
     val json = Json {
@@ -64,8 +64,8 @@ fun bootstrap(args: Array<String>) {
 
     // allow the user to specify a custom config file
     val configFile = File(args.firstOrNull() ?: "config.json")
-    val config = if (configFile.exists()) try {
-        json.decodeFromString<SandraConfig>(configFile.readText())
+    val config: SandraConfig = if (configFile.exists()) try {
+        json.decodeFromString(configFile.readText())
     } catch (t: Throwable) {
         throw IllegalStateException("Failed to parse config file at ${configFile.absolutePath}", t)
     } else {

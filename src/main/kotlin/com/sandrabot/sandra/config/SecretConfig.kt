@@ -25,14 +25,9 @@ import kotlinx.serialization.Serializable
 data class SecretConfig(
 
     /**
-     * Token used for the production bot account.
+     * Token used to sign in to Discord.
      */
-    val productionToken: String = "",
-
-    /**
-     * Token used for the development bot account.
-     */
-    val developmentToken: String = "",
+    val token: String = "",
 
     /**
      * Token used for the API at https://botlist.space
