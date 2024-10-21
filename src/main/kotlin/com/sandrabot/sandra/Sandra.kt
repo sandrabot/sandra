@@ -35,8 +35,6 @@ import net.dv8tion.jda.api.sharding.ShardManager
  */
 class Sandra(val settings: SandraConfig, val redis: RedisManager) {
 
-    val shards: ShardManager
-
     // only initialize the api when enabled, this preserves resources and reduces logging
     val api = if (settings.apiEnabled) ServerController(this) else null
 
