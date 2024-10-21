@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +29,14 @@ object Constants {
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L
 
-    const val HASTEBIN = "https://haste.averen.dev"
-    const val DIRECT_SUPPORT = "https://discord.gg/sandra"
+    const val WEBSITE = "https://sandrabot.com"
+    const val DIRECT_SUPPORT = "$WEBSITE/support"
+
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
     const val BETA_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$BETA_APPLICATION_ID&permissions=274878220352&scope=bot%20applications.commands"
 
     val DEVELOPERS = arrayOf(AVERY, LOGAN)
     val VERSION = "${BuildInfo.VERSION}_${BuildInfo.COMMIT.take(8)}"
-    val USER_AGENT = "Sandra/$VERSION (+${Website.WEBSITE})"
+    val USER_AGENT = "Sandra/$VERSION (+$WEBSITE)"
 
 }

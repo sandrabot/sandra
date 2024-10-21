@@ -18,7 +18,6 @@ package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.ServerController
 import com.sandrabot.sandra.config.SandraConfig
-import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.listeners.InteractionListener
 import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
@@ -29,11 +28,10 @@ import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
-import net.dv8tion.jda.api.utils.ChunkingFilter
 
 /**
  * This class is the heart and soul of the bot. It provides
- * global access to all internal services throughout the bot.
+ * access to Sandra's internal services throughout the application.
  */
 class Sandra(val settings: SandraConfig, val redis: RedisManager) {
 
@@ -51,21 +49,14 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val lastfm = LastRequestManager(this)
     val subscriptions = SubscriptionManager(this)
 
-    init {
-        val token = if (settings.development) settings.secrets.developmentToken else settings.secrets.productionToken
-        val builder = DefaultShardManagerBuilder.createDefault(token)
-        builder.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
-        builder.setChunkingFilter(ChunkingFilter.include(Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT))
-        builder.setEventManagerProvider { CoroutineEventManager() }
-        builder.setShardsTotal(settings.shardsTotal)
-        builder.setStatus(OnlineStatus.IDLE)
-        builder.setBulkDeleteSplittingEnabled(false)
-        builder.setEnableShutdownHook(false)
-
-        // register all event listeners for the shard manager
-        builder.addEventListeners(InteractionListener(this), MessageListener(this), ReadyListener(this))
-
-        shards = builder.build()
-    }
+    val shards: ShardManager = DefaultShardManagerBuilder.createDefault(settings.secrets.token).apply {
+        enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
+        setEventManagerProvider { CoroutineEventManager() }
+        setShardsTotal(settings.shardsTotal)
+        setStatus(OnlineStatus.IDLE)
+        setBulkDeleteSplittingEnabled(false)
+        setEnableShutdownHook(false)
+        addEventListeners(InteractionListener(this@Sandra), MessageListener(this@Sandra), ReadyListener(this@Sandra))
+    }.build()
 
 }

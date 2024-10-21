@@ -18,8 +18,8 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
-    kotlin("jvm") version "2.0.20"
-    kotlin("plugin.serialization") version "2.0.20"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.serialization") version "2.0.21"
     id("com.github.gmazzo.buildconfig") version "5.5.0"
     id("io.ktor.plugin") version "2.3.12"
 }
@@ -45,7 +45,7 @@ dependencies {
         exclude(module = "opus-java")
     }
 
-    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("ch.qos.logback:logback-classic:1.5.10")
     implementation("io.sentry:sentry-logback:7.12.1")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")

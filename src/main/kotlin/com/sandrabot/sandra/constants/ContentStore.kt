@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,20 @@ object ContentStore {
     val locales: Set<DiscordLocale>
 
     init {
-        val localeMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
-        // stream the content directory to find available locales
-        useResourceStream("content") { reader().readLines().map { "content/$it" } }.forEach { path ->
-            // decode the json file by streaming it and flattening the paths
-            val content = useResourceStream(path) { Json.decodeFromStream<JsonObject>(this).flatten() }
-            // read the metadata to reliably select the appropriate locale
-            val locale = DiscordLocale.from(content["meta.locale"] as String)
-            // ensure that entries are not overwritten, also prevent metadata from being entered
-            localeMap.getOrPut(locale) { mutableMapOf() }.putAll(content.filterKeys { !it.startsWith("meta") })
+        val dataMap = mutableMapOf<DiscordLocale, MutableMap<String, Any>>()
+        for (locale in AvailableContent.entries) {
+            // parse the content file by streaming it and flattening the paths
+            val content = useResourceStream("content/${locale.commonName}.json") {
+                Json.decodeFromStream<JsonObject>(this).flatten()
+            }
+            // use the metadata to reliably select the appropriate locale
+            val discordLocale = DiscordLocale.from(content["meta.locale"] as String)
+            // prevent metadata from being entered into the content map
+            dataMap.getOrPut(discordLocale) { mutableMapOf() }.putAll(content.filterKeys { !it.startsWith("meta") })
         }
-        contentMap = localeMap
-        locales = localeMap.keys
+        // prevent runtime modifications to the content map
+        contentMap = dataMap.toMap()
+        locales = contentMap.keys
     }
 
     /**
