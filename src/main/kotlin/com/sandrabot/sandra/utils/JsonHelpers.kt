@@ -59,5 +59,3 @@ fun JsonArray.flatten() = map {
         is JsonPrimitive -> it.content
     }
 }
-
-fun JsonElement.asInt() = jsonPrimitive.content.toInt()
