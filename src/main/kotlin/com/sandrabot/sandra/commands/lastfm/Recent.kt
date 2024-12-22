@@ -60,11 +60,7 @@ class Recent : Command(arguments = "[user]") {
             thumbnail = recentTracks.first().getImageUrl(ImageSize.EXTRALARGE)?.replace("/300x300", "")
             // sometimes the api returns a total of 11 tracks when the user is listening to something
             description = recentTracks.take(10).mapIndexed { index, track ->
-                val timePlayed = if (track.playedWhen > 0) {
-                    // determine if the track was played today, then format accordingly
-                    val playedToday = System.currentTimeMillis() / 1000 - track.playedWhen < 86_400
-                    "<t:${track.playedWhen}:${if (playedToday) "t" else "f"}>"
-                } else event.get("now_playing")
+                val timePlayed = if (track.playedWhen > 0) "<t:${track.playedWhen}:R>" else event.get("now_playing")
                 event.get(
                     "entry", index + 1, track.name.escape(), track.url,
                     track.artist.name.escape(), timePlayed, track.album?.title?.escape()
