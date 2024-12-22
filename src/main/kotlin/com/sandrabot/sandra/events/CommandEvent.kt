@@ -116,4 +116,4 @@ class CommandEvent(
 }
 
 fun ReplyCallbackAction.asEphemeral() = setEphemeral(true)
-fun <T> WebhookMessageCreateAction<T>.asEphemeral() = setEphemeral(false)
+fun <T> WebhookMessageCreateAction<T>.asEphemeral() = setEphemeral(true)
