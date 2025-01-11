@@ -29,7 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -45,7 +44,7 @@ class LastRequestManager(private val sandra: Sandra) {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val cache: ExpiringMap<Int, JsonObject> = ExpiringMap.builder()
         .expirationPolicy(ExpirationPolicy.CREATED)
-        .expiration(1, TimeUnit.MINUTES).build()
+        .expiration(30, TimeUnit.SECONDS).build()
 
     @OptIn(ExperimentalSerializationApi::class)
     private val json = Json {
