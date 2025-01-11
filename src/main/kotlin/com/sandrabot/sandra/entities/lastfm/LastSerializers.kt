@@ -41,7 +41,6 @@ object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         element.jsonObject.forEach { key, value ->
             when (key) {
-                "duration" -> put("duration", value)
                 "playcount" -> put("playCount", value)
                 "userplaycount" -> put("userPlayCount", value)
                 "userloved" -> put("userLoved", value.jsonPrimitive.int > 0)
