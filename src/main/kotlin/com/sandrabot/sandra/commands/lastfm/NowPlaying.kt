@@ -65,7 +65,7 @@ class NowPlaying : Command(arguments = "[user]") {
             }
             title = track.name
             url = track.url
-            description = "**${track.artist.name.escape()}** • *${track.album?.title?.escape()}*"
+            description = "**${track.artist.name.escape()}** — *${track.album?.title?.escape()}*"
             thumbnail = track.getImageUrl(ImageSize.EXTRALARGE)?.replace("/300x300", "")
             // add the timestamp only when the track was recently played, rather than now playing
             if (track.playedWhen > 0) timestamp = Instant.ofEpochSecond(track.playedWhen)
