@@ -23,7 +23,6 @@ import com.sandrabot.sandra.managers.RedisManager
 import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.useResourceStream
 import io.sentry.Sentry
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.entities.Message
