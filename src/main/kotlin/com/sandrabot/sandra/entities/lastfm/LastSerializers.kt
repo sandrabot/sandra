@@ -30,7 +30,6 @@ object LastUserSerializer : JsonTransformingSerializer<LastUser>(LastUser.serial
                 "album_count" -> put("albumCount", value)
                 "track_count" -> put("trackCount", value)
                 "registered" -> put("registeredWhen", value.jsonObject["unixtime"]!!)
-                "image" -> put("images", value)
                 else -> put(key, value)
             }
         }

@@ -44,7 +44,7 @@ class NowPlaying : Command(arguments = "[user]") {
         event.deferReply().queue()
 
         // retrieve the user's most recently played track
-        val track = event.sandra.lastfm.getRecentTracks(username).firstOrNull() ?: run {
+        val track = event.sandra.lastfm.getRecentTracks(username)?.firstOrNull() ?: run {
             event.sendError(event.getAny("core.lastfm.missing_data", username)).queue()
             return
         }

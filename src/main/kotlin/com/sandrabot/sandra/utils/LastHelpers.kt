@@ -44,10 +44,10 @@ suspend fun ImageHolder.tryAverageColor(size: ImageSize): Color? = withContext(D
 fun CommandEvent.verifyLastUser(): Pair<User, String>? {
     val targetUser = arguments.user() ?: user
     // make sure the user has entered their last.fm username
-    val username = sandra.config[targetUser].lastUsername ?: run {
+    val username = sandra.config[targetUser].lastUsername
+    return if (username != null) Pair(targetUser, username) else {
         val key = if (targetUser == user) "missing_username" else "missing_other"
         replyEmoji(Emotes.LASTFM, getAny("core.lastfm.$key", targetUser)).asEphemeral().queue()
-        return null
+        null
     }
-    return Pair(targetUser, username)
 }

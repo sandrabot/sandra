@@ -20,7 +20,6 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.entities.SimpleRateLimiter
 import com.sandrabot.sandra.entities.lastfm.*
 import com.sandrabot.sandra.utils.HTTP_CLIENT
-import com.sandrabot.sandra.utils.emptyJsonObject
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -40,34 +39,33 @@ import kotlin.collections.set
 
 class LastRequestManager(private val sandra: Sandra) {
 
+    // limit last.fm api calls across the application to 5 requests per second
     private val rateLimiter = SimpleRateLimiter(5.0)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val cache: ExpiringMap<Int, JsonObject> = ExpiringMap.builder()
-        .expirationPolicy(ExpirationPolicy.CREATED)
-        .expiration(30, TimeUnit.SECONDS).build()
+    private val cache: ExpiringMap<Int, JsonObject> =
+        ExpiringMap.builder().expirationPolicy(ExpirationPolicy.CREATED).expiration(30, TimeUnit.SECONDS).build()
 
     @OptIn(ExperimentalSerializationApi::class)
     private val json = Json {
         ignoreUnknownKeys = true
         decodeEnumsCaseInsensitive = true
-        prettyPrint = true
     }
 
-    suspend fun getRecentTracks(username: String, page: Int = 1, limit: Int = 10): PaginatedResult<Track> =
-        buildRequest("user.getRecentTracks", "username" to username, "page" to page, "limit" to limit).let {
-            json.decodeFromJsonElement(RecentTracksSerializer, it)
-        }
+    suspend fun getTrackInfo(track: String, artist: String, username: String): Track? = buildRequest(
+        "track.getInfo", "track" to track, "artist" to artist, "username" to username
+    )?.let { response -> json.decodeFromJsonElement(TrackSerializer, response.jsonObject["track"]!!) }
 
-    suspend fun getTrackInfo(track: String, artist: String, username: String): Track? =
-        buildRequest("track.getInfo", "track" to track, "artist" to artist, "username" to username).run {
-            if (isEmpty()) null else json.decodeFromJsonElement(TrackSerializer, jsonObject["track"]!!)
-        }
+    suspend fun getUserInfo(username: String): LastUser? = buildRequest(
+        "user.getInfo", "username" to username
+    )?.let { response -> json.decodeFromJsonElement(LastUserSerializer, response) }
 
-    suspend fun getUserInfo(username: String): LastUser? = buildRequest("user.getInfo", "username" to username).run {
-        if (isEmpty()) null else json.decodeFromJsonElement(LastUserSerializer, this)
-    }
+    suspend fun getRecentTracks(
+        username: String, page: Int = 1, limit: Int = 10,
+    ): PaginatedResult<Track>? = buildRequest(
+        "user.getRecentTracks", "username" to username, "page" to page, "limit" to limit
+    )?.let { response -> json.decodeFromJsonElement(RecentTracksSerializer, response) }
 
-    private suspend fun buildRequest(method: String, vararg params: Pair<String, Any>): JsonObject {
+    private suspend fun buildRequest(method: String, vararg params: Pair<String, Any>): JsonObject? {
         var requestUrl = "$LASTFM_API?method=$method&api_key=${sandra.settings.secrets.lastFmToken}&format=json"
         if (params.isNotEmpty()) requestUrl += params.joinToString(separator = "&", prefix = "&") { (key, value) ->
             "$key=${value.toString().encodeURLParameter()}"
@@ -84,9 +82,8 @@ class LastRequestManager(private val sandra: Sandra) {
             HTTP_CLIENT.get(requestUrl).body<JsonObject>()
         }
         return if (response.isEmpty() || "error" in response) {
-            // use the global instance here since we're only encoding, and we don't want it pretty printed
-            LOGGER.error("Failed Last.fm request: ${Json.encodeToString(response)}")
-            emptyJsonObject()
+            LOGGER.error("Failed Last.fm request: ${json.encodeToString(response)}")
+            null
         } else response.also { cache[requestHash] = it }
     }
 

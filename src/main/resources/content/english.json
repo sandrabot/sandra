@@ -194,18 +194,6 @@
         "built": "built with %1$s by %2$s and %3$s"
       }
     },
-    "lyrics": {
-      "name": "lyrics",
-      "description": "display the lyrics for your current song",
-      "not_playing": "it looks like you're not listening to anything atm, try playing something first",
-      "powered_by": "powered by whatever api",
-      "arguments": {
-        "user": {
-          "name": "user",
-          "description": "wanna check out someone else's song?"
-        }
-      }
-    },
     "8ball": {
       "name": "8ball",
       "description": "seek guidance from the spherical one",
