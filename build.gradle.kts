@@ -66,18 +66,18 @@ application {
 
 buildConfig {
     className("BuildInfo")
-    val commit = executeCommand("git", "rev-parse", "HEAD")
-    val localChanges = executeCommand("git", "diff", "--shortstat")
+    val commit = gitCommand("rev-parse", "HEAD")
+    val localChanges = gitCommand("diff", "--shortstat")
     buildConfigField("String", "VERSION", "\"$version\"")
     buildConfigField("String", "COMMIT", "\"$commit\"")
     buildConfigField("String", "LOCAL_CHANGES", "\"$localChanges\"")
     buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
 }
 
-fun executeCommand(vararg parts: String): String {
+fun gitCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine = parts.asList()
+        commandLine = listOf("git", *parts)
         standardOutput = stdout
     }
     return stdout.toString("utf-8").trim()

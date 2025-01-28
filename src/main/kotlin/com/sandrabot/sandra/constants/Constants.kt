@@ -20,10 +20,7 @@ import com.sandrabot.sandra.BuildInfo
 
 object Constants {
 
-    val VERSION = buildString {
-        append(BuildInfo.VERSION, "_", BuildInfo.COMMIT.take(8))
-        if (BuildInfo.LOCAL_CHANGES.isNotBlank()) append(" (dev)")
-    }
+    val VERSION = BuildInfo.VERSION + "_" + if (BuildInfo.LOCAL_CHANGES.isBlank()) BuildInfo.COMMIT.take(8) else "DEV"
 
     const val APPLICATION_ID = 302915036492333067L
     const val BETA_APPLICATION_ID = 319951770526941186L
