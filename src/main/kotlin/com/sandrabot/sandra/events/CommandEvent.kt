@@ -21,7 +21,6 @@ import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
-import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
@@ -78,7 +77,7 @@ class CommandEvent(
     fun get(path: String, vararg args: Any?): String = localeContext.get(path, *args)
     fun getAny(path: String, vararg args: Any?): String = localeContext.getAny(path, *args)
 
-    fun embed(): EmbedBuilder = EmbedBuilder().setColor(Colors.WELL_READ)
+    fun embed(): EmbedBuilder = EmbedBuilder().setColor(sandra.settings.color)
 
     fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 
