@@ -84,8 +84,9 @@ class NowPlaying : Command(arguments = "[user]") {
         // check for "explicit" album cover art, this prevents
         // the embed from being shown in regular channels
         if (message.embeds.isNotEmpty()) {
-            // todo feature: customizable reactions
-            message.addReaction(Emotes.UPVOTE.asEmoji()).flatMap { message.addReaction(Emotes.DOWNVOTE.asEmoji()) }.queue()
+            val upvoteEmoji = event.guildConfig?.lastUpvoteEmoji?.asEmoji() ?: Emotes.UPVOTE.asEmoji()
+            val downvoteEmoji = event.guildConfig?.lastDownvoteEmoji?.asEmoji() ?: Emotes.DOWNVOTE.asEmoji()
+            message.addReaction(upvoteEmoji).flatMap { message.addReaction(downvoteEmoji) }.queue()
         } else message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
 
     }
