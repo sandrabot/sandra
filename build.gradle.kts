@@ -18,8 +18,8 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.serialization") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
     id("com.github.gmazzo.buildconfig") version "5.5.1"
     id("io.ktor.plugin") version "3.0.3"
 }
@@ -41,12 +41,12 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("club.minnced:jda-ktx:0.12.0")
-    implementation("net.dv8tion:JDA:5.2.2") {
+    implementation("net.dv8tion:JDA:5.2.3") {
         exclude(module = "opus-java")
     }
 
     implementation("ch.qos.logback:logback-classic:1.5.16")
-    implementation("io.sentry:sentry-logback:7.20.0")
+    implementation("io.sentry:sentry-logback:8.0.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")

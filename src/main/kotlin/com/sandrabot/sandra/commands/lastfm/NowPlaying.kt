@@ -22,10 +22,10 @@ import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.escape
 import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.tryAverageColor
+import com.sandrabot.sandra.utils.verifyLastUser
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.utils.SplitUtil
@@ -39,14 +39,7 @@ class NowPlaying : Command(arguments = "[user]") {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val user = event.arguments.user() ?: event.user
-        // make sure the user has entered their last.fm username
-        val username = event.sandra.config[user].lastUsername ?: run {
-            val key = if (user == event.user) "missing_username" else "missing_other"
-            event.replyEmoji(Emotes.LASTFM, event.getAny("core.lastfm.$key", user)).asEphemeral().queue()
-            return
-        }
-
+        val (user, username) = event.verifyLastUser() ?: return
         // acknowledge the interaction while we wait for additional requests
         event.deferReply().queue()
 
