@@ -66,12 +66,11 @@ application {
 
 buildConfig {
     className("BuildInfo")
-    val commit = gitCommand("rev-parse", "HEAD")
-    val localChanges = gitCommand("diff", "--shortstat")
-    buildConfigField("String", "VERSION", "\"$version\"")
-    buildConfigField("String", "COMMIT", "\"$commit\"")
-    buildConfigField("String", "LOCAL_CHANGES", "\"$localChanges\"")
-    buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+    buildConfigField("VERSION", provider { "${project.version}" })
+    buildConfigField("COMMIT", gitCommand("rev-parse", "HEAD"))
+    buildConfigField("LOCAL_CHANGES", gitCommand("diff", "--shortstat"))
+    buildConfigField("BUILD_TIME", System.currentTimeMillis())
+    useKotlinOutput { internalVisibility = false }
 }
 
 fun gitCommand(vararg parts: String): String {
