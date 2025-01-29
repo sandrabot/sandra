@@ -18,10 +18,10 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     application
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.serialization") version "2.0.21"
-    id("com.github.gmazzo.buildconfig") version "5.5.0"
-    id("io.ktor.plugin") version "2.3.12"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
+    id("com.github.gmazzo.buildconfig") version "5.5.1"
+    id("io.ktor.plugin") version "3.0.3"
 }
 
 group = "com.sandrabot"
@@ -41,15 +41,15 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("club.minnced:jda-ktx:0.12.0")
-    implementation("net.dv8tion:JDA:5.1.2") {
+    implementation("net.dv8tion:JDA:5.2.3") {
         exclude(module = "opus-java")
     }
 
-    implementation("ch.qos.logback:logback-classic:1.5.10")
-    implementation("io.sentry:sentry-logback:7.12.1")
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("io.sentry:sentry-logback:8.0.0")
     implementation("net.jodah:expiringmap:0.5.11")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("org.reflections:reflections:0.10.2")
     implementation("redis.clients:jedis:5.2.0")
 
@@ -66,18 +66,17 @@ application {
 
 buildConfig {
     className("BuildInfo")
-    val commit = executeCommand("git", "rev-parse", "HEAD")
-    val localChanges = executeCommand("git", "diff", "--shortstat")
-    buildConfigField("String", "VERSION", "\"$version\"")
-    buildConfigField("String", "COMMIT", "\"$commit\"")
-    buildConfigField("String", "LOCAL_CHANGES", "\"$localChanges\"")
-    buildConfigField("long", "BUILD_TIME", "${System.currentTimeMillis()}L")
+    buildConfigField("VERSION", provider { "${project.version}" })
+    buildConfigField("COMMIT", gitCommand("rev-parse", "HEAD"))
+    buildConfigField("LOCAL_CHANGES", gitCommand("diff", "--shortstat"))
+    buildConfigField("BUILD_TIME", System.currentTimeMillis())
+    useKotlinOutput { internalVisibility = false }
 }
 
-fun executeCommand(vararg parts: String): String {
+fun gitCommand(vararg parts: String): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine = parts.asList()
+        commandLine = listOf("git", *parts)
         standardOutput = stdout
     }
     return stdout.toString("utf-8").trim()

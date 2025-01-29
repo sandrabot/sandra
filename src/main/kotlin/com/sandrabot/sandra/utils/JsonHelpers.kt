@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import kotlinx.serialization.json.*
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
+
+fun emptyJsonObject(): JsonObject = JsonObject(emptyMap())
+fun emptyJsonArray(): JsonArray = JsonArray(emptyList())
 
 fun Map<*, *>.toJsonObject() = buildJsonObject {
     forEach { (key, value) -> put(key.toString(), value.toJsonElement()) }

@@ -21,7 +21,6 @@ import com.sandrabot.sandra.config.ChannelConfig
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
-import com.sandrabot.sandra.constants.Colors
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
@@ -36,6 +35,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
 import net.dv8tion.jda.api.interactions.components.LayoutComponent
 import net.dv8tion.jda.api.interactions.modals.Modal
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessagePollData
@@ -77,7 +77,7 @@ class CommandEvent(
     fun get(path: String, vararg args: Any?): String = localeContext.get(path, *args)
     fun getAny(path: String, vararg args: Any?): String = localeContext.getAny(path, *args)
 
-    fun embed(): EmbedBuilder = EmbedBuilder().setColor(Colors.WELL_READ)
+    fun embed(): EmbedBuilder = EmbedBuilder().setColor(sandra.settings.color)
 
     fun deferReply(ephemeral: Boolean = false) = event.deferReply(ephemeral)
 
@@ -115,3 +115,4 @@ class CommandEvent(
 }
 
 fun ReplyCallbackAction.asEphemeral() = setEphemeral(true)
+fun <T> WebhookMessageCreateAction<T>.asEphemeral() = setEphemeral(true)

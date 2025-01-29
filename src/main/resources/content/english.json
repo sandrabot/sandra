@@ -17,23 +17,26 @@
       "essential": "essential",
       "fun": "fun",
       "game": "game",
+      "lastfm": "last.fm",
       "moderation": "moderation",
       "music": "music",
       "owner": "owner",
       "social": "social",
       "utility": "utility"
     },
+    "lastfm": {
+      "missing_username": "hey bro idk your last.fm username, you gotta sign in with `/settings` first",
+      "missing_other": "it looks like %1$s hasn't signed into last.fm yet, tell them to use `/settings` first",
+      "missing_data": "missing data, are you sure the username **%1$s** is correct?",
+      "explicit": "%1$s discord has deemed this album cover art explicit and must be viewed within an adult channel",
+      "now_playing": "now playing - %1$s",
+      "recent": "recently played - %1$s"
+    },
     "paginator": {
       "modal_title": "jump to page",
       "input_label": "page number to view",
       "input_placeholder": "number between 1 and %1$s",
-      "page_indicator": "viewing page %1$s of %2$s",
-      "buttons": {
-        "back": "back",
-        "exit": "exit",
-        "next": "next",
-        "jump": "jump to..."
-      }
+      "page": "page %1$,d / %2$,d"
     },
     "permissions": {
       "create_invite": "create invite",
@@ -146,6 +149,17 @@
         "summary_placeholder": "summarize your concerns",
         "description_label": "alright give me the rundown",
         "description_placeholder": "go ahead, yap about it here"
+      }
+    },
+    "fm": {
+      "name": "fm",
+      "description": "show chat what you're listening to",
+      "plays": "plays: %1$,d",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "curious about someone else's listening habits?"
+        }
       }
     },
     "fortune": {
@@ -278,6 +292,19 @@
       "description": "sends a ping to test sandra's connection to discord",
       "reply": "it took me %1$s to **ping discord** and about %2$s to **receive your command**"
     },
+    "recent": {
+      "name": "recent",
+      "description": "check out your recently played tracks",
+      "entry": "%1$d. **[%2$s](%3$s)** by **%4$s**\n -# %5$s • %6$s",
+      "footer": "total scrobbles: %1$,d",
+      "now_playing": "*now playing*",
+      "arguments": {
+        "user": {
+          "name": "user",
+          "description": "take a look at someone else's chart"
+        }
+      }
+    },
     "reputation": {
       "name": "reputation",
       "description": "send someone a meaningless reputation point",
@@ -314,6 +341,25 @@
         }
       },
       "reply": "you took a chance and rolled a %1$s out of %2$s"
+    },
+    "settings": {
+      "name": "settings",
+      "description": "manage your personal preferences",
+      "lastfm": {
+        "name": "lastfm",
+        "description": "connect your last.fm account",
+        "invalid": "sorry pal, the username you provided is invalid. give it another go?",
+        "not_found": "user not found, are you sure **%1$s** is what you meant to type?",
+        "saved": "your last.fm username **%1$s** has been saved",
+        "connected": "account connected - %1$s",
+        "created": "account created",
+        "arguments": {
+          "username": {
+            "name": "username",
+            "description": "your last.fm username or url"
+          }
+        }
+      }
     },
     "softban": {
       "name": "softban",

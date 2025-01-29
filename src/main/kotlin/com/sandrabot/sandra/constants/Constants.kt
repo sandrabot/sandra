@@ -20,6 +20,8 @@ import com.sandrabot.sandra.BuildInfo
 
 object Constants {
 
+    val VERSION = BuildInfo.VERSION + "_" + if (BuildInfo.LOCAL_CHANGES.isBlank()) BuildInfo.COMMIT.take(8) else "DEV"
+
     const val APPLICATION_ID = 302915036492333067L
     const val BETA_APPLICATION_ID = 319951770526941186L
 
@@ -28,15 +30,13 @@ object Constants {
 
     const val AVERY = 579335274388258858L
     const val LOGAN = 275012982725935105L
+    val DEVELOPERS = arrayOf(AVERY, LOGAN)
 
     const val WEBSITE = "https://sandrabot.com"
     const val DIRECT_SUPPORT = "$WEBSITE/support"
+    val USER_AGENT = "Sandra/$VERSION (+$WEBSITE)"
 
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
     const val BETA_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$BETA_APPLICATION_ID&permissions=274878220352&scope=bot%20applications.commands"
-
-    val DEVELOPERS = arrayOf(AVERY, LOGAN)
-    val VERSION = "${BuildInfo.VERSION}_${BuildInfo.COMMIT.take(8)}"
-    val USER_AGENT = "Sandra/$VERSION (+$WEBSITE)"
 
 }

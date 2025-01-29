@@ -44,6 +44,7 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
+    val lastfm = LastRequestManager(this)
     val subscriptions = SubscriptionManager(this)
 
     val shards: ShardManager = DefaultShardManagerBuilder.createDefault(settings.secrets.token).apply {

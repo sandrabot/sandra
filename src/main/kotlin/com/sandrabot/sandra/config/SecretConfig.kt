@@ -30,6 +30,11 @@ data class SecretConfig(
     val token: String = "",
 
     /**
+     * Token used to access the last.fm api.
+     */
+    val lastFmToken: String = "",
+
+    /**
      * Token used for the API at https://botlist.space
      */
     val spaceToken: String = "",
