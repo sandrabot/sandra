@@ -37,6 +37,9 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 import kotlin.collections.set
 
+/**
+ * Manages Last.fm API requests and caches the results for 30 seconds.
+ */
 class LastRequestManager(private val sandra: Sandra) {
 
     // limit last.fm api calls across the application to 5 requests per second
@@ -51,14 +54,23 @@ class LastRequestManager(private val sandra: Sandra) {
         decodeEnumsCaseInsensitive = true
     }
 
+    /**
+     * Retrieves [username]'s personalized track information for the given [track] and [artist].
+     */
     suspend fun getTrackInfo(track: String, artist: String, username: String): Track? = buildRequest(
         "track.getInfo", "track" to track, "artist" to artist, "username" to username
     )?.let { response -> json.decodeFromJsonElement(TrackSerializer, response.jsonObject["track"]!!) }
 
+    /**
+     * Retrieves the [username]'s Last.fm profile
+     */
     suspend fun getUserInfo(username: String): LastUser? = buildRequest(
         "user.getInfo", "username" to username
     )?.let { response -> json.decodeFromJsonElement(LastUserSerializer, response) }
 
+    /**
+     * Retrieves [username]'s most recently played tracks
+     */
     suspend fun getRecentTracks(
         username: String, page: Int = 1, limit: Int = 10,
     ): PaginatedResult<Track>? = buildRequest(

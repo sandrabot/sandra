@@ -30,6 +30,11 @@ import java.awt.Color
 import java.io.InputStream
 import javax.imageio.ImageIO
 
+/**
+ * Attempts to calculate the "true" average color of the image, given the [size].
+ *
+ * @see findTrueAverageColor
+ */
 suspend fun ImageHolder.tryAverageColor(size: ImageSize): Color? = withContext(Dispatchers.IO) {
     try {
         val url = getImageUrl(size) ?: return@withContext null
@@ -41,6 +46,9 @@ suspend fun ImageHolder.tryAverageColor(size: ImageSize): Color? = withContext(D
     }
 }
 
+/**
+ * Ensures that the target user has previously entered a valid Last.fm username.
+ */
 fun CommandEvent.verifyLastUser(): Pair<User, String>? {
     val targetUser = arguments.user() ?: user
     // make sure the user has entered their last.fm username
