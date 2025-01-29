@@ -21,14 +21,21 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.math.max
 
-class SimpleRateLimiter(eventsPerSecond: Double) {
+/**
+ * A simple implementation of a rate limiter that
+ * only allows a certain number of calls per second.
+ */
+class SimpleRateLimiter(callsPerSecond: Double) {
 
     private val mutex = Mutex()
 
     @Volatile
     private var next: Long = Long.MIN_VALUE
-    private val delayNanos: Long = (1_000_000_000 / eventsPerSecond).toLong()
+    private val delayNanos: Long = (1_000_000_000 / callsPerSecond).toLong()
 
+    /**
+     * Acquires a permit from the rate limiter, blocking until one is available.
+     */
     suspend fun acquire() {
         val now = System.nanoTime()
         val until = mutex.withLock {
