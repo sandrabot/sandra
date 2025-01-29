@@ -24,11 +24,6 @@ object LastUserSerializer : JsonTransformingSerializer<LastUser>(LastUser.serial
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         element.jsonObject["user"]?.jsonObject?.forEach { key, value ->
             when (key) {
-                "realname" -> put("realName", value)
-                "playcount" -> put("playCount", value)
-                "artist_count" -> put("artistCount", value)
-                "album_count" -> put("albumCount", value)
-                "track_count" -> put("trackCount", value)
                 "registered" -> put("registeredWhen", value.jsonObject["unixtime"]!!)
                 else -> put(key, value)
             }
@@ -40,8 +35,6 @@ object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         element.jsonObject.forEach { key, value ->
             when (key) {
-                "playcount" -> put("playCount", value)
-                "userplaycount" -> put("userPlayCount", value)
                 "userloved" -> put("userLoved", value.jsonPrimitive.int > 0)
                 "date" -> put("playedWhen", value.jsonObject["uts"]!!)
                 "toptags" -> put("tags", value.jsonObject["tag"]!!)
