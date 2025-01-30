@@ -24,7 +24,6 @@ import com.sandrabot.sandra.utils.HTTP_CLIENT
 import com.sandrabot.sandra.utils.useResourceStream
 import io.sentry.Sentry
 import kotlinx.serialization.json.Json
-import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.utils.messages.MessageRequest
 import org.slf4j.LoggerFactory
@@ -50,10 +49,8 @@ fun bootstrap(args: Array<String>) {
     val beginStartup = System.currentTimeMillis()
     // print the startup banner and some version information
     println(useResourceStream("banner.txt") { String(readBytes()) })
-    println(" | Version: ${BuildInfo.VERSION}")
-    println(" | Commit: ${BuildInfo.COMMIT}")
-    BuildInfo.LOCAL_CHANGES.ifEmpty { null }?.let { println("   * $it") }
-    println(" | JDA: ${JDAInfo.VERSION}\n")
+    logger.info("Running Sandra version ${BuildInfo.VERSION} (${BuildInfo.COMMIT.take(8)})")
+    BuildInfo.LOCAL_CHANGES.takeIf { it.isNotBlank() }?.let { logger.info("Experimental build has $it") }
 
     val json = Json {
         ignoreUnknownKeys = true
