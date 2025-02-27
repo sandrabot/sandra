@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,13 @@
 package com.sandrabot.sandra.utils
 
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.exceptions.MissingPermissionException
 import net.dv8tion.jda.api.Permission
 
-fun CommandEvent.isMissingPermission(permission: Permission) = !hasPermission(permission)
-fun CommandEvent.hasPermission(permission: Permission): Boolean {
-    if (selfMember == null) return false
-    return if (permission.isChannel) {
-        selfMember.hasPermission(event.guildChannel, permission)
-    } else selfMember.hasPermission(permission)
-}
-
-fun CommandEvent.ensurePermission(permission: Permission) {
-    if (isMissingPermission(permission)) throw MissingPermissionException(this, permission)
-}
-
-fun CommandEvent.missingPermissionMessage(permission: Permission, self: Boolean): String {
-    val messageKey = if (self) "core.missing_permission" else "core.missing_user_permission"
-    val permissionName = getAny("core.permissions.${permission.translationKey}")
-    val contextKey = if (permission.isChannel) "core.channel" else "core.server"
-    return getAny(messageKey, permissionName, getAny(contextKey))
+fun CommandEvent.missingPermissionMessage(permission: Permission, self: Boolean = true): String {
+    val key = if (self) "core.missing_self_permission" else "core.missing_other_permission"
+    val name = getAny("core.permissions.${permission.translationKey}")
+    val context = getAny(if (permission.isChannel) "core.channel" else "core.server")
+    return getAny(key, name, context)
 }
 
 val Permission.translationKey

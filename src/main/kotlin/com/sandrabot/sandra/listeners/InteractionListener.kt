@@ -18,15 +18,15 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
 import com.sandrabot.sandra.utils.checkCommandBlocklist
-import com.sandrabot.sandra.utils.isMissingPermission
 import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.exceptions.ContextException
 import org.slf4j.LoggerFactory
 
 /**
@@ -44,53 +44,59 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
      * Handler for all [SlashCommandInteractionEvent] events.
      */
     private suspend fun onSlashCommand(slashEvent: SlashCommandInteractionEvent) {
-        // the command will only ever be null if it was manually removed with an eval
-        val qualifiedPath = slashEvent.fullCommandName.replace(' ', '.')
-        val command = sandra.commands[qualifiedPath] ?: run {
-            logger.warn("Received a command that is not registered with path: $qualifiedPath")
+        // the command will only ever be null if it failed to load, or it was disabled manually
+        val path = slashEvent.fullCommandName.replace(' ', '.')
+        val command = sandra.commands[path] ?: run {
+            LOGGER.warn("Received an unknown command that should be loaded: $path", ContextException())
             return
         }
+
         // the first thing we want to do is wrap this with our own object
         val event = CommandEvent(command, slashEvent, sandra)
         // check the blocklist to prevent responding in actively blocked contexts
         if (checkCommandBlocklist(event)) return
-        // do additional checks for guild commands, since discord added privileges we only need to check for ourselves
+        // restrict owner commands from being used by anyone
+        if (command.isOwnerOnly && !event.isOwner) {
+            event.replyError(event.getAny("core.owner_only")).asEphemeral().queue()
+            return
+        }
+
+        // do additional checks for commands sent from guilds
         if (slashEvent.isFromGuild) {
-            // make sure we have all the permissions we'll need to run this command
-            val allPermissions = basePermissions + command.selfPermissions
-            allPermissions.find { event.isMissingPermission(it) }?.let {
-                event.replyError(event.missingPermissionMessage(it, self = true)).setEphemeral(true).queue()
+            // discord should take care of these permissions for us, but we'll double-check them anyway
+            command.selfPermissions.find { !event.selfMember!!.hasPermission(slashEvent.guildChannel, it) }?.let {
+                event.replyError(event.missingPermissionMessage(it)).asEphemeral().queue()
+                return
+            }
+            command.userPermissions.find { !event.member!!.hasPermission(slashEvent.guildChannel, it) }?.let {
+                event.replyError(event.missingPermissionMessage(it, self = false)).asEphemeral().queue()
                 return
             }
         }
-        if (command.isOwnerOnly && !event.isOwner) {
-            event.replyError(event.getAny("core.owner_only")).setEphemeral(true).queue()
-            return
-        }
-        // and now we can log the command and execute it
-        val logUser = "${event.user.name} [${event.user.id}]"
-        val logChannel = if (event.guild != null) {
-            "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
-        } else "direct message"
-        logger.info("$qualifiedPath | $logUser | $logChannel | ${slashEvent.commandString}")
-        // catch any exceptions the commands could throw
+
+        // log the command context information for usage history
+        val channel = if (event.guild == null) "direct message"
+        else "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
+        LOGGER.info("$path | ${event.user.name} [${event.user.id}] | $channel | ${slashEvent.commandString}")
+
+        // execute the command, catch any exceptions and log them
         try {
             command.execute(event)
         } catch (t: Throwable) {
-            logger.error("An exception occurred while executing a command", t)
+            LOGGER.error("An exception occurred while executing a command", t)
+            // ensure that the user receives an error message explaining the issue
             val message = when (t) {
-                is MissingPermissionException -> event.missingPermissionMessage(t.permission, self = true)
+                is MissingPermissionException -> event.missingPermissionMessage(t.permission)
                 is MissingArgumentException -> event.getAny("core.missing_argument", t.argument.name)
                 else -> event.getAny("core.interaction_error")
             }
             if (event.isAcknowledged) event.sendError(message).queue()
-            else event.replyError(message).setEphemeral(true).queue()
+            else event.replyError(message).asEphemeral().queue()
         }
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(InteractionListener::class.java)
-        private val basePermissions = setOf(Permission.MESSAGE_EXT_EMOJI)
+        private val LOGGER = LoggerFactory.getLogger(InteractionListener::class.java)
     }
 
 }
