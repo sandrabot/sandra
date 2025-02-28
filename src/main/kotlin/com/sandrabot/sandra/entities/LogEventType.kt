@@ -17,5 +17,5 @@
 package com.sandrabot.sandra.entities
 
 enum class  LogEventType {
-    ALL, CATEGORY, CHANNEL, EMOTE, GUILD, MEMBER, MESSAGE, MOD, ROLE, USER, VOICE
+    ALL, AUTO_MOD, BANS, EMOJIS, EVENTS, INVITES, MEMBERS, MESSAGES, POLLS, STICKERS, USERS
 }

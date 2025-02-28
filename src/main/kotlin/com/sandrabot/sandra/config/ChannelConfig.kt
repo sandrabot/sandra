@@ -29,7 +29,7 @@ class ChannelConfig(override val id: Long) : Configuration() {
     var experienceNotifyEnabled: Boolean = true
     var experienceMultiplier: Double = 1.0
 
-    val enabledLogEvents = emptySet<LogEventType>()
+    val enabledLogEvents = mutableSetOf<LogEventType>()
 
     override fun toString(): String = "ChannelConfig:$id"
 
