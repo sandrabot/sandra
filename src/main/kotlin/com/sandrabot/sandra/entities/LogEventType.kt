@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.config
+package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.entities.LogEventType
-import kotlinx.serialization.Serializable
-
-/**
- * Stores Sandra-specific properties and settings for channels within guilds.
- */
-@Serializable
-class ChannelConfig(override val id: Long) : Configuration() {
-
-    var experienceEnabled: Boolean = true
-    var experienceNotifyEnabled: Boolean = true
-    var experienceMultiplier: Double = 1.0
-
-    val enabledLogEvents = emptySet<LogEventType>()
-
-    override fun toString(): String = "ChannelConfig:$id"
-
+enum class  LogEventType {
+    ALL, CATEGORY, CHANNEL, EMOTE, GUILD, MEMBER, MESSAGE, MOD, ROLE, USER, VOICE
 }

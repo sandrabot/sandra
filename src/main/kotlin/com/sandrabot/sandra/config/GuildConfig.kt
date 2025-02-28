@@ -41,6 +41,8 @@ class GuildConfig(override val id: Long) : Configuration() {
     var lastUpvoteEmoji: String? = null
     var lastDownvoteEmoji: String? = null
 
+    var loggingEnabled: Boolean = true
+
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
     fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }
 
