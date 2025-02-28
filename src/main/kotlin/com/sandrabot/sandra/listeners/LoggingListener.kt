@@ -46,15 +46,12 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun sendEvent(
         guild: Guild, eventType: LogEventType, actionType: ActionType?, messageProvider: (AuditLogEntry?) -> String,
     ) {
-        val guildConfig = sandra.config.getGuild(guild.idLong)
         // only continue if the logging feature is actually enabled
-        if (!guildConfig.loggingEnabled) return
+        val config = sandra.config[guild].takeIf { it.loggingEnabled } ?: return
         // count the amount of channels subscribed to this event
-        val channels = guildConfig.channels.filterValues {
+        val channels = config.channels.filterValues {
             eventType in it.enabledLogEvents || LogEventType.ALL in it.enabledLogEvents
-        }
-        // stop here if nobody is actually subscribed
-        if (channels.isEmpty()) return
+        }.takeUnless { it.isEmpty() } ?: return // don't continue if nobody is actually subscribed
         // always make sure we have a self member loaded to check permissions against
         val selfMember = if (guild.isLoaded) guild.selfMember else guild.retrieveMember(guild.jda.selfUser).await()
         // determine if we can provide the audit log entry
@@ -65,14 +62,14 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         // generate the message content for this log event
         val content = messageProvider(auditEntry)
         // send the message to each subscriber
-        for (channel in channels) {
-            val guildChannel = guild.getGuildChannelById(channel.key) ?: continue
-            // verify messages can be sent to this channel
-            if (guildChannel !is GuildMessageChannel) continue
+        for (id in channels.keys) {
+            val channel = guild.getGuildChannelById(id) ?: continue
+            // verify that messages can be sent to this channel
+            if (channel !is GuildMessageChannel) continue
             // ensure that we have permission to view and send messages in this channel
-            if (!selfMember.hasPermission(guildChannel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) continue
+            if (!selfMember.hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) continue
             // finally send the message to the event subscriber
-            guildChannel.sendMessage(content).queue()
+            channel.sendMessage(content).queue()
         }
     }
 
