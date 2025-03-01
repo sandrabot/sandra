@@ -19,6 +19,7 @@ package com.sandrabot.sandra
 import com.sandrabot.sandra.api.ServerController
 import com.sandrabot.sandra.config.SandraConfig
 import com.sandrabot.sandra.listeners.InteractionListener
+import com.sandrabot.sandra.listeners.LoggingListener
 import com.sandrabot.sandra.listeners.MessageListener
 import com.sandrabot.sandra.listeners.ReadyListener
 import com.sandrabot.sandra.managers.*
@@ -28,6 +29,7 @@ import net.dv8tion.jda.api.OnlineStatus
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.utils.MemberCachePolicy
 
 /**
  * This class is the heart and soul of the bot. It provides
@@ -50,11 +52,17 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val shards: ShardManager = DefaultShardManagerBuilder.createDefault(settings.secrets.token).apply {
         enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
         setEventManagerProvider { CoroutineEventManager() }
+        setMemberCachePolicy(MemberCachePolicy.ALL)
         setShardsTotal(settings.shardsTotal)
         setStatus(OnlineStatus.IDLE)
         setBulkDeleteSplittingEnabled(false)
         setEnableShutdownHook(false)
-        addEventListeners(InteractionListener(this@Sandra), MessageListener(this@Sandra), ReadyListener(this@Sandra))
+        addEventListeners(
+            LoggingListener(this@Sandra),
+            InteractionListener(this@Sandra),
+            MessageListener(this@Sandra),
+            ReadyListener(this@Sandra)
+        )
     }.build()
 
 }
