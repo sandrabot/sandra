@@ -62,6 +62,8 @@ import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateTagsEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent
+import net.dv8tion.jda.api.exceptions.ErrorHandler
+import net.dv8tion.jda.api.requests.ErrorResponse
 import kotlin.time.Duration.Companion.milliseconds
 
 class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
@@ -163,7 +165,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             // ensure that we have permission to view and send messages in this channel
             if (!selfMember.hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) continue
             // finally send the message to the event subscriber
-            channel.sendMessage(content).queue()
+            channel.sendMessage(content).queue(null, ERROR_HANDLER)
         }
     }
 
@@ -226,5 +228,11 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onUserUpdateAvatar(event: UserUpdateAvatarEvent) {}
     private suspend fun onUserUpdateGlobalName(event: UserUpdateGlobalNameEvent) {}
     private suspend fun onUserUpdateName(event: UserUpdateNameEvent) {}
+
+    private companion object {
+        private val ERROR_HANDLER = ErrorHandler().ignore(
+            ErrorResponse.MISSING_ACCESS, ErrorResponse.MISSING_PERMISSIONS, ErrorResponse.UNKNOWN_CHANNEL
+        )
+    }
 
 }
