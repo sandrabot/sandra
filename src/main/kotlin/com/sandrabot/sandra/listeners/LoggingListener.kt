@@ -63,6 +63,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -153,7 +154,11 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         // determine if we can provide the audit log entry
         val auditEntry = if (actionType != null && selfMember.hasPermission(Permission.VIEW_AUDIT_LOGS)) {
             delay(150.milliseconds) // race condition, allow discord time to generate the audit log entry
-            guild.retrieveAuditLogs().type(actionType).limit(1).await().firstOrNull()
+            try { // attempt to retrieve the latest audit log entry for this action type
+                guild.retrieveAuditLogs().type(actionType).limit(1).await().firstOrNull()
+            } catch (_: ErrorResponseException) {
+                null
+            }
         } else null
         // generate the message content for this log event
         val content = messageProvider(auditEntry)
