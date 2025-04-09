@@ -28,6 +28,7 @@ import dev.minn.jda.ktx.coroutines.await
 import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.system.exitProcess
+import kotlinx.coroutines.future.await as awaitFuture
 
 @Suppress("unused")
 class Owner : Command() {
@@ -43,7 +44,7 @@ class Owner : Command() {
                 event.reply("missing attachment").queue()
                 return
             }
-            val image = attachment.proxy.downloadAsIcon().await()
+            val image = attachment.proxy.downloadAsIcon().awaitFuture()
             event.jda.selfUser.manager.setAvatar(image).flatMap { event.reply("that should do the trick!") }
                 .onErrorFlatMap { event.reply("couldn't set the avatar; ${it.message}") }.queue()
         }
@@ -64,7 +65,7 @@ class Owner : Command() {
                 val message = event.replyEmoji(Emotes.LOADING, "downloading **${guild.name}** emojis... (**${emojis.size}**)").await()
                 for (emoji in emojis) {
                     val extension = if (emoji.isAnimated) "gif" else "png"
-                    emoji.image.downloadToFile(File("${guild.id}/${emoji.name}.$extension")).await()
+                    emoji.image.downloadToFile(File("${guild.id}/${emoji.name}.$extension")).awaitFuture()
                 }
                 val fileSize = (folder.listFiles()?.sumOf { it.readBytes().size } ?: 0) shr 10
                 message.editOriginal("download complete (**${folder.list()?.size}** files, ${fileSize.format()}kB)").queue()
