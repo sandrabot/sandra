@@ -21,6 +21,7 @@ import com.sandrabot.sandra.entities.Argument
 import com.sandrabot.sandra.entities.Command
 import net.dv8tion.jda.api.interactions.DiscordLocale
 import net.dv8tion.jda.api.interactions.DiscordLocale.ENGLISH_US
+import net.dv8tion.jda.api.interactions.InteractionContextType
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
 import net.dv8tion.jda.api.interactions.commands.build.*
 
@@ -35,7 +36,11 @@ fun Command.asCommandData(): SlashCommandData? {
     val path = "commands.$path"
     // compute a map of all possible names and descriptions for this command
     val (names, descriptions) = associateContent(path)
-    val data = Commands.slash(names[ENGLISH_US]!!, descriptions[ENGLISH_US]!!).setGuildOnly(guildOnly)
+    val context = buildSet {
+        add(InteractionContextType.GUILD)
+        if (!guildOnly) add(InteractionContextType.BOT_DM)
+    }
+    val data = Commands.slash(names[ENGLISH_US]!!, descriptions[ENGLISH_US]!!).setContexts(context)
     // convert locales to discord locales and set the translations for the command
     data.setNameLocalizations(names).setDescriptionLocalizations(descriptions)
     // set the default permissions for this command
