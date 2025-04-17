@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import redis.clients.jedis.JedisPoolConfig
 class RedisManager(config: RedisConfig) {
 
     private val pool = JedisPool(
-        JedisPoolConfig(), config.host, config.port, config.timeout, config.password, config.database
+        JedisPoolConfig(), config.host, config.port, config.timeout, config.user, config.password, config.database
     )
 
     fun shutdown() = pool.destroy()

@@ -31,6 +31,12 @@ data class RedisConfig(
     val host: String = "localhost",
 
     /**
+     * User used to authenticate with the redis server. Optional.
+     * **(Default: default)**
+     */
+    val user: String = "default",
+
+    /**
      * Password used to authenticate with the redis server. Optional.
      * **(Default: null)**
      */
