@@ -164,7 +164,8 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         val content = messageProvider(auditEntry)
         // send the message to each subscriber
         for (id in channels.keys) {
-            val channel = guild.getGuildChannelById(id) ?: continue
+            // remove stale channel data if the channel doesn't exist anymore
+            val channel = guild.getGuildChannelById(id) ?: config.channels.remove(id)
             // verify that messages can be sent to this channel
             if (channel !is GuildMessageChannel) continue
             // ensure that we have permission to view and send messages in this channel
