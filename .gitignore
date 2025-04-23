@@ -4,5 +4,6 @@ build/
 out/
 gradle.properties
 
+feedback/
 logs/
 config.json
