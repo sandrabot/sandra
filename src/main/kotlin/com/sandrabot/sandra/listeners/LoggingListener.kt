@@ -49,6 +49,8 @@ import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventDeleteEvent
 import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserAddEvent
 import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserRemoveEvent
 import net.dv8tion.jda.api.events.guild.scheduledevent.update.*
+import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentActionsEvent
+import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent
@@ -77,6 +79,10 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             is AutoModRuleCreateEvent -> onAutoModRuleCreate(event)
             is AutoModRuleDeleteEvent -> onAutoModRuleDelete(event)
             is AutoModRuleUpdateEvent -> onAutoModRuleUpdate(event)
+
+            // feature: security incident logging
+            is GuildUpdateSecurityIncidentActionsEvent -> onUpdateSecurityActions(event)
+            is GuildUpdateSecurityIncidentDetectionsEvent -> onUpdateSecurityDetections(event)
 
             // feature: emoji creation and edit history
             is EmojiAddedEvent -> onEmojiAdded(event)
@@ -183,6 +189,9 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onAutoModRuleCreate(event: AutoModRuleCreateEvent) {}
     private suspend fun onAutoModRuleDelete(event: AutoModRuleDeleteEvent) {}
     private suspend fun onAutoModRuleUpdate(event: AutoModRuleUpdateEvent) {}
+
+    private suspend fun onUpdateSecurityActions(event: GuildUpdateSecurityIncidentActionsEvent) {}
+    private suspend fun onUpdateSecurityDetections(event: GuildUpdateSecurityIncidentDetectionsEvent) {}
 
     private suspend fun onEmojiAdded(event: EmojiAddedEvent) {}
     private suspend fun onEmojiRemoved(event: EmojiRemovedEvent) {}

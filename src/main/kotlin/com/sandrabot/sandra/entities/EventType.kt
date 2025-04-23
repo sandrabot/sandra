@@ -17,5 +17,5 @@
 package com.sandrabot.sandra.entities
 
 enum class  EventType {
-    ALL, AUTO_MOD, BAN, EMOJI, EVENT, INVITE, MEMBER, MESSAGE, POLL, STICKER, USER
+    ALL, AUTO_MOD, BAN, EMOJI, EVENT, INVITE, MEMBER, MESSAGE, POLL, SECURITY, STICKER, USER
 }
