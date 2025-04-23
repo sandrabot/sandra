@@ -18,7 +18,6 @@ package com.sandrabot.sandra.api.routes
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.api.respondJson
-import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 private val runtime by lazy { Runtime.getRuntime() }
@@ -29,8 +28,15 @@ fun Route.statusRouting(sandra: Sandra) {
             "ping" to sandra.shards.averageGatewayPing,
             "guilds" to sandra.shards.guildCache.size(),
             "memory" to (runtime.totalMemory() - runtime.freeMemory() shr 20),
-            "uptime" to (System.currentTimeMillis() - sandra.statistics.startTime) / 1000
-        )
+            "uptime" to (System.currentTimeMillis() - sandra.statistics.startTime) / 1000,
+            "shards" to sandra.shards.shardCache.map { jda ->
+                mapOf(
+                    "id" to jda.shardInfo.shardId,
+                    "ping" to jda.gatewayPing,
+                    "guilds" to jda.guildCache.size(),
+                    "status" to jda.status.toString()
+                )
+            })
         call.respondJson(data = data)
     }
 }
