@@ -39,8 +39,9 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("club.minnced:jda-ktx:0.12.0")
-    implementation("net.dv8tion:JDA:5.3.2") {
+    implementation("net.dv8tion:JDA:5.4.0") {
         exclude(module = "opus-java")
+        exclude(module = "tink")
     }
 
     implementation("ch.qos.logback:logback-classic:1.5.18")

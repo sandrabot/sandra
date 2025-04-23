@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2024 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.entities.EventType
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,9 +26,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ChannelConfig(override val id: Long) : Configuration() {
 
+    @SerialName("experience")
     var experienceEnabled: Boolean = true
+    @SerialName("notify")
     var experienceNotifyEnabled: Boolean = true
+    @SerialName("multiplier")
     var experienceMultiplier: Double = 1.0
+
+    @SerialName("events")
+    val enabledEventTypes = mutableSetOf<EventType>()
 
     override fun toString(): String = "ChannelConfig:$id"
 
