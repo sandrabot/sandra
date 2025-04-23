@@ -16,6 +16,6 @@
 
 package com.sandrabot.sandra.entities
 
-enum class  LogEventType {
-    ALL, AUTO_MOD, BANS, EMOJIS, EVENTS, INVITES, MEMBERS, MESSAGES, POLLS, STICKERS, USERS
+enum class  EventType {
+    ALL, AUTO_MOD, BAN, EMOJI, EVENT, INVITE, MEMBER, MESSAGE, POLL, STICKER, USER
 }

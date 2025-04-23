@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.config
 
-import com.sandrabot.sandra.entities.LogEventType
+import com.sandrabot.sandra.entities.EventType
 import kotlinx.serialization.Serializable
 
 /**
@@ -29,7 +29,7 @@ class ChannelConfig(override val id: Long) : Configuration() {
     var experienceNotifyEnabled: Boolean = true
     var experienceMultiplier: Double = 1.0
 
-    val enabledLogEvents = mutableSetOf<LogEventType>()
+    val enabledEventTypes = mutableSetOf<EventType>()
 
     override fun toString(): String = "ChannelConfig:$id"
 

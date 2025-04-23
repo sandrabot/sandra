@@ -17,7 +17,7 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.entities.LogEventType
+import com.sandrabot.sandra.entities.EventType
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import kotlinx.coroutines.delay
@@ -141,15 +141,15 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     }
 
     private suspend fun sendEvent(
-        guild: Guild, eventType: LogEventType, actionType: ActionType?, messageProvider: (AuditLogEntry?) -> String,
+        guild: Guild, eventType: EventType, actionType: ActionType?, messageProvider: (AuditLogEntry?) -> String,
     ) {
         // only continue if the logging feature is actually enabled
         val config = sandra.config[guild].takeIf { it.loggingEnabled } ?: return
-        // count the amount of channels subscribed to this event
+        // filter channels that are subscribed to this event
         val channels = config.channels.filterValues {
-            eventType in it.enabledLogEvents || LogEventType.ALL in it.enabledLogEvents
-        }.takeUnless { it.isEmpty() } ?: return // don't continue if nobody is actually subscribed
-        // always make sure we have a self member loaded to check permissions against
+            eventType in it.enabledEventTypes || EventType.ALL in it.enabledEventTypes
+        }.takeUnless { it.isEmpty() } ?: return // we can stop here if nobody is actually subscribed
+        // always make sure we have a self-member loaded to check permissions against
         val selfMember = if (guild.isLoaded) guild.selfMember else guild.retrieveMember(guild.jda.selfUser).await()
         // determine if we can provide the audit log entry
         val auditEntry = if (actionType != null && selfMember.hasPermission(Permission.VIEW_AUDIT_LOGS)) {
@@ -170,7 +170,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             if (channel !is GuildMessageChannel) continue
             // ensure that we have permission to view and send messages in this channel
             if (!selfMember.hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) continue
-            // finally send the message to the event subscriber
+            // finally, send the message to the event subscriber
             channel.sendMessage(content).queue(null, ERROR_HANDLER)
         }
     }
