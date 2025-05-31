@@ -16,10 +16,10 @@
 
 plugins {
     application
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
-    id("com.github.gmazzo.buildconfig") version "5.6.2"
-    id("io.ktor.plugin") version "3.1.2"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.21"
+    id("com.github.gmazzo.buildconfig") version "5.6.5"
+    id("io.ktor.plugin") version "3.1.3"
 }
 
 group = "com.sandrabot"
@@ -39,18 +39,18 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("club.minnced:jda-ktx:0.12.0")
-    implementation("net.dv8tion:JDA:5.4.0") {
+    implementation("net.dv8tion:JDA:5.5.1") {
         exclude(module = "opus-java")
         exclude(module = "tink")
     }
 
     implementation("ch.qos.logback:logback-classic:1.5.18")
-    implementation("io.sentry:sentry-logback:8.7.0")
+    implementation("io.sentry:sentry-logback:8.13.2")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:5.2.0")
+    implementation("redis.clients:jedis:6.0.0")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }

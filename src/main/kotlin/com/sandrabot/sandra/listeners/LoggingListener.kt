@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.events.automod.AutoModRuleUpdateEvent
 import net.dv8tion.jda.api.events.emoji.EmojiAddedEvent
 import net.dv8tion.jda.api.events.emoji.EmojiRemovedEvent
 import net.dv8tion.jda.api.events.emoji.update.EmojiUpdateNameEvent
-import net.dv8tion.jda.api.events.emoji.update.EmojiUpdateRolesEvent
 import net.dv8tion.jda.api.events.guild.GuildBanEvent
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent
@@ -44,11 +43,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent
 import net.dv8tion.jda.api.events.guild.member.update.*
-import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventCreateEvent
-import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventDeleteEvent
-import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserAddEvent
-import net.dv8tion.jda.api.events.guild.scheduledevent.ScheduledEventUserRemoveEvent
-import net.dv8tion.jda.api.events.guild.scheduledevent.update.*
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentActionsEvent
 import net.dv8tion.jda.api.events.guild.update.GuildUpdateSecurityIncidentDetectionsEvent
 import net.dv8tion.jda.api.events.message.MessageBulkDeleteEvent
@@ -67,6 +61,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import kotlin.time.Duration.Companion.milliseconds
 
 class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
@@ -88,7 +83,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             is EmojiAddedEvent -> onEmojiAdded(event)
             is EmojiRemovedEvent -> onEmojiRemoved(event)
             is EmojiUpdateNameEvent -> onEmojiUpdateName(event)
-            is EmojiUpdateRolesEvent -> onEmojiUpdateRoles(event)
 
             // feature: sticker creation and updates
             is GuildStickerAddedEvent -> onGuildStickerAdded(event)
@@ -117,19 +111,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             is GuildMemberUpdatePendingEvent -> onGuildMemberUpdatePending(event)
             is GuildMemberUpdateTimeOutEvent -> onGuildMemberUpdateTimeOut(event)
 
-            // feature: event creation and updates
-            is ScheduledEventCreateEvent -> onScheduledEventCreate(event)
-            is ScheduledEventDeleteEvent -> onScheduledEventDelete(event)
-            is ScheduledEventUserAddEvent -> onScheduledEventUserAdd(event)
-            is ScheduledEventUserRemoveEvent -> onScheduledEventUserRemove(event)
-            is ScheduledEventUpdateNameEvent -> onScheduledEventUpdateName(event)
-            is ScheduledEventUpdateDescriptionEvent -> onScheduledEventUpdateDescription(event)
-            is ScheduledEventUpdateStartTimeEvent -> onScheduledEventUpdateStartTime(event)
-            is ScheduledEventUpdateEndTimeEvent -> onScheduledEventUpdateEndTime(event)
-            is ScheduledEventUpdateImageEvent -> onScheduledEventUpdateImage(event)
-            is ScheduledEventUpdateLocationEvent -> onScheduledEventUpdateLocation(event)
-            is ScheduledEventUpdateStatusEvent -> onScheduledEventUpdateStatus(event)
-
             // feature: deleted messages and edit history
             is MessageBulkDeleteEvent -> onMessageBulkDelete(event)
             is MessageDeleteEvent -> onMessageDelete(event)
@@ -147,7 +128,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     }
 
     private suspend fun sendEvent(
-        guild: Guild, eventType: EventType, actionType: ActionType?, messageProvider: (AuditLogEntry?) -> String,
+        guild: Guild, eventType: EventType, actionType: ActionType?, provider: (AuditLogEntry?) -> MessageCreateData,
     ) {
         // only continue if the logging feature is actually enabled
         val config = sandra.config[guild].takeIf { it.loggingEnabled } ?: return
@@ -167,7 +148,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             }
         } else null
         // generate the message content for this log event
-        val content = messageProvider(auditEntry)
+        val message = provider(auditEntry)
         // send the message to each subscriber
         for (id in channels.keys) {
             // remove stale channel data if the channel doesn't exist anymore
@@ -177,12 +158,14 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             // ensure that we have permission to view and send messages in this channel
             if (!selfMember.hasPermission(channel, Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND)) continue
             // finally, send the message to the event subscriber
-            channel.sendMessage(content).queue(null, ERROR_HANDLER)
+            channel.sendMessage(message).queue(null, ERROR_HANDLER)
         }
     }
 
-    private suspend fun sendUserEvent() {
-        TODO("Not yet implemented")
+    private suspend fun sendUserEvent(provider: (AuditLogEntry?) -> MessageCreateData) {
+        // this will basically always load active guilds??
+        sandra.shards.guildCache.associateWith { sandra.config[it] }.filterValues { it.loggingEnabled }
+            .forEach { (guild, _) -> sendEvent(guild, EventType.USER, null, provider) }
     }
 
     private suspend fun onAutoModExecution(event: AutoModExecutionEvent) {}
@@ -196,7 +179,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onEmojiAdded(event: EmojiAddedEvent) {}
     private suspend fun onEmojiRemoved(event: EmojiRemovedEvent) {}
     private suspend fun onEmojiUpdateName(event: EmojiUpdateNameEvent) {}
-    private suspend fun onEmojiUpdateRoles(event: EmojiUpdateRolesEvent) {}
 
     private suspend fun onGuildStickerAdded(event: GuildStickerAddedEvent) {}
     private suspend fun onGuildStickerRemoved(event: GuildStickerRemovedEvent) {}
@@ -220,18 +202,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onGuildMemberUpdateNickname(event: GuildMemberUpdateNicknameEvent) {}
     private suspend fun onGuildMemberUpdatePending(event: GuildMemberUpdatePendingEvent) {}
     private suspend fun onGuildMemberUpdateTimeOut(event: GuildMemberUpdateTimeOutEvent) {}
-
-    private suspend fun onScheduledEventCreate(event: ScheduledEventCreateEvent) {}
-    private suspend fun onScheduledEventDelete(event: ScheduledEventDeleteEvent) {}
-    private suspend fun onScheduledEventUserAdd(event: ScheduledEventUserAddEvent) {}
-    private suspend fun onScheduledEventUserRemove(event: ScheduledEventUserRemoveEvent) {}
-    private suspend fun onScheduledEventUpdateName(event: ScheduledEventUpdateNameEvent) {}
-    private suspend fun onScheduledEventUpdateDescription(event: ScheduledEventUpdateDescriptionEvent) {}
-    private suspend fun onScheduledEventUpdateStartTime(event: ScheduledEventUpdateStartTimeEvent) {}
-    private suspend fun onScheduledEventUpdateEndTime(event: ScheduledEventUpdateEndTimeEvent) {}
-    private suspend fun onScheduledEventUpdateImage(event: ScheduledEventUpdateImageEvent) {}
-    private suspend fun onScheduledEventUpdateLocation(event: ScheduledEventUpdateLocationEvent) {}
-    private suspend fun onScheduledEventUpdateStatus(event: ScheduledEventUpdateStatusEvent) {}
 
     private suspend fun onMessageBulkDelete(event: MessageBulkDeleteEvent) {}
     private suspend fun onMessageDelete(event: MessageDeleteEvent) {}
