@@ -23,7 +23,6 @@ import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.RedisPrefix
 import com.sandrabot.sandra.entities.Service
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
@@ -46,7 +45,7 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30.seconds), Ex
 
     private val json = Json { encodeDefaults = true }
     private val accessedKeys = mutableSetOf<Long>()
-    private val configs: ExpiringMap<Long, Configuration> =
+    private val configMap: ExpiringMap<Long, Configuration> =
         ExpiringMap.builder().expirationPolicy(ExpirationPolicy.ACCESSED).expiration(1, TimeUnit.HOURS)
             .asyncExpirationListener(this).build()
 
@@ -62,7 +61,7 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30.seconds), Ex
     override suspend fun execute() = synchronized(accessedKeys) {
         // create a copy of the list before clearing it and releasing the lock
         accessedKeys.toList().also { accessedKeys.clear() }
-    }.forEach { store(it, configs[it] ?: return@forEach) }
+    }.forEach { store(it, configMap[it] ?: return@forEach) }
 
     override fun expired(key: Long, value: Configuration) = store(key, value)
 
@@ -70,24 +69,24 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30.seconds), Ex
         sandra.redis[prefix(config::class) + "$id"] = json.encodeToString(config)
     }
 
-    fun getGuild(id: Long) = get<GuildConfig>(id)
-    fun getUser(id: Long) = get<UserConfig>(id)
+    fun getGuild(id: Long): GuildConfig = get(id)
+    fun getUser(id: Long): UserConfig = get(id)
 
     operator fun get(guild: Guild) = getGuild(guild.idLong)
     operator fun get(user: User) = getUser(user.idLong)
 
-    private inline fun <reified T : Configuration> get(id: Long): T = configs.getOrPut(id) {
+    private inline fun <reified T : Configuration> get(id: Long): T = configMap.getOrPut(id) {
         sandra.redis[prefix(T::class) + "$id"]?.let { json.decodeFromString<T>(it) } ?: when (T::class) {
             GuildConfig::class -> GuildConfig(id)
             UserConfig::class -> UserConfig(id)
-            else -> throw AssertionError("Illegal configuration type: ${T::class}")
+            else -> throw IllegalStateException("Illegal configuration type: ${T::class}")
         }
     }.also { synchronized(accessedKeys) { accessedKeys += id } } as T
 
     private fun <T : Configuration> prefix(clazz: KClass<T>) = when (clazz) {
         GuildConfig::class -> RedisPrefix.GUILD
         UserConfig::class -> RedisPrefix.USER
-        else -> throw AssertionError("Illegal configuration type: $clazz")
+        else -> throw IllegalStateException("Illegal configuration type: $clazz")
     }
 
 }
