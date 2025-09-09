@@ -55,9 +55,6 @@ import net.dv8tion.jda.api.events.sticker.GuildStickerRemovedEvent
 import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateDescriptionEvent
 import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateNameEvent
 import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateTagsEvent
-import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
-import net.dv8tion.jda.api.events.user.update.UserUpdateGlobalNameEvent
-import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
@@ -119,11 +116,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             // feature: poll announcements and vote history
             is MessagePollVoteAddEvent -> onMessagePollVoteAdd(event)
             is MessagePollVoteRemoveEvent -> onMessagePollVoteRemove(event)
-
-            // feature: username changes and updates
-            is UserUpdateAvatarEvent -> onUserUpdateAvatar(event)
-            is UserUpdateGlobalNameEvent -> onUserUpdateGlobalName(event)
-            is UserUpdateNameEvent -> onUserUpdateName(event)
         }
     }
 
@@ -160,12 +152,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             // finally, send the message to the event subscriber
             channel.sendMessage(message).queue(null, ERROR_HANDLER)
         }
-    }
-
-    private suspend fun sendUserEvent(provider: (AuditLogEntry?) -> MessageCreateData) {
-        // this will basically always load active guilds??
-        sandra.shards.guildCache.associateWith { sandra.config[it] }.filterValues { it.loggingEnabled }
-            .forEach { (guild, _) -> sendEvent(guild, EventType.USER, null, provider) }
     }
 
     private suspend fun onAutoModExecution(event: AutoModExecutionEvent) {}
@@ -209,10 +195,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
 
     private suspend fun onMessagePollVoteAdd(event: MessagePollVoteAddEvent) {}
     private suspend fun onMessagePollVoteRemove(event: MessagePollVoteRemoveEvent) {}
-
-    private suspend fun onUserUpdateAvatar(event: UserUpdateAvatarEvent) {}
-    private suspend fun onUserUpdateGlobalName(event: UserUpdateGlobalNameEvent) {}
-    private suspend fun onUserUpdateName(event: UserUpdateNameEvent) {}
 
     private companion object {
         private val ERROR_HANDLER = ErrorHandler().ignore(
