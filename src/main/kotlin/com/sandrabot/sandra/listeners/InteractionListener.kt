@@ -26,7 +26,6 @@ import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.exceptions.ContextException
 import org.slf4j.LoggerFactory
 
 /**
@@ -47,7 +46,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // the command will only ever be null if it failed to load, or it was disabled manually
         val path = slashEvent.fullCommandName.replace(' ', '.')
         val command = sandra.commands[path] ?: run {
-            LOGGER.warn("Received an unknown command that should be loaded: $path", ContextException())
+            LOGGER.warn("Registered command is missing from runtime: $path")
             return
         }
 

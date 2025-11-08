@@ -38,15 +38,21 @@ class Owner : Command() {
     /**
      * Updates the avatar for the bot account that's currently signed in.
      */
-    class Avatar : Command(arguments = "[image:attachment]") {
+    class Avatar : Command(arguments = "[@image:attachment]") {
         override suspend fun execute(event: CommandEvent) {
-            val attachment = event.arguments.attachment("image") ?: run {
-                event.reply("missing attachment").queue()
+            event.deferReply(ephemeral = true).await()
+            val attachment = event.arguments.attachment("image")!!.takeIf { it.isImage } ?: run {
+                event.sendMessage("attachment must be an image").queue()
                 return
             }
-            val image = attachment.proxy.downloadAsIcon().awaitFuture()
-            event.jda.selfUser.manager.setAvatar(image).flatMap { event.reply("that should do the trick!") }
-                .onErrorFlatMap { event.reply("couldn't set the avatar; ${it.message}") }.queue()
+            val image = try {
+                attachment.proxy.downloadAsIcon().awaitFuture()
+            } catch (e: Exception) {
+                event.sendMessage("download failed: ${e.message}").queue()
+                return
+            }
+            event.jda.selfUser.manager.setAvatar(image).flatMap { event.sendMessage("that should do the trick!") }
+                .onErrorFlatMap { event.sendMessage("upload failed: ${it.message}") }.queue()
         }
     }
 
