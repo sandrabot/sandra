@@ -66,8 +66,8 @@
   "commands": {
     "avatar": {
       "name": "avatar",
-      "description": "look up a user's avatar",
-      "button": "click to open",
+      "description": "steal somebody else's avatar",
+      "button": "open in browser",
       "arguments": {
         "user": {
           "name": "user",
