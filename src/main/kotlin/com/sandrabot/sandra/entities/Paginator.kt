@@ -21,9 +21,12 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.truncate
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
-import dev.minn.jda.ktx.interactions.components.Modal
+import dev.minn.jda.ktx.interactions.components.*
 import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.withTimeoutOrNull
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
+import net.dv8tion.jda.api.components.textinput.TextInputStyle
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
@@ -32,8 +35,6 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.callbacks.IMessageEditCallback
-import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
@@ -82,18 +83,18 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
         } ?: break
 
         // disable the buttons when the menu times out
-        val disabled = messageData[currentPage].components.flatMap { it.buttons }.map { it.asDisabled() }
+        val disabled = messageData[currentPage].componentTree.findAll<Button>().asDisabled()
         context.hook.editMessageComponentsById(messageId, ActionRow.of(disabled)).queue(null, ERROR_HANDLER)
     }
 
     private fun verifyButton(event: ButtonInteractionEvent): Boolean {
-        val currentButtons = messageData[currentPage].components.flatMap { it.buttons }
+        val currentButtons = messageData[currentPage].componentTree.findAll<Button>()
         // only acknowledge button clicks that belong to this paginator
         if (event.button !in currentButtons) return false
         // only allow the command author to advance the pages
         return if (event.user == context.user) {
             // verify that the button is actually enabled
-            !currentButtons.first { event.componentId == it.id }.isDisabled
+            !currentButtons.first { event.componentId == it.customId }.isDisabled
         } else {
             // acknowledge the interaction but ignore it
             event.deferEdit().queue()
@@ -103,11 +104,11 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
 
     private fun handleButton(event: ButtonInteractionEvent) = when (event.componentId) {
         pageButtonId -> event.replyModal(Modal(jumpModalId, context.getAny("core.paginator.modal_title")) {
-            short(jumpInputId, context.getAny("core.paginator.input_label")) {
+            label(context.getAny("core.paginator.input_label"), child = TextInput(jumpInputId, TextInputStyle.SHORT) {
                 placeholder = context.getAny("core.paginator.input_placeholder", messageData.size)
-                maxLength = messageData.size.toString().length
-                isRequired = true
-            }
+                requiredLength = 1..messageData.size.toString().length
+                required = true
+            })
         }).queue()
 
         nextButtonId -> {
@@ -147,20 +148,21 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
     }
 
     private fun generateMessageData(pages: List<MessageEmbed>) = pages.mapIndexed { index, embed ->
+        // TODO what if we migrate to components instead of embeds it will be so sexy
         MessageCreate {
             content = contentProvider?.invoke(index)?.truncate(Message.MAX_CONTENT_LENGTH)
             embeds += embed
             actionRow(
-                Button.primary(
-                    backButtonId, Emoji.fromUnicode(Unicode.LEFT_BACKHAND)
+                primary(
+                    backButtonId, emoji = Emoji.fromUnicode(Unicode.LEFT_BACKHAND)
                 ).withDisabled(index == 0),
 
-                Button.secondary(
+                secondary(
                     pageButtonId, context.getAny("core.paginator.page", index + 1, pages.size)
                 ).withDisabled(pages.size < 2),
 
-                Button.primary(
-                    nextButtonId, Emoji.fromUnicode(Unicode.RIGHT_BACKHAND)
+                primary(
+                    nextButtonId, emoji = Emoji.fromUnicode(Unicode.RIGHT_BACKHAND)
                 ).withDisabled(index == pages.lastIndex),
             )
         }
