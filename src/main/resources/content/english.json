@@ -130,7 +130,6 @@
       "name": "feedback",
       "description": "have an idea? let my devs know what you're thinking",
       "disclaimer": "## %1$s you are sending feedback to the sandra developers\nplease try to include __as much information as possible__ to ensure your concerns are understood\n*do not abuse this command, otherwise you may be barred from submitting feedback in the future*\n\nselect the type of feedback you'd like to submit below",
-      "waiting": "%1$s i'm patiently awaiting your input... if you clicked out on accident, just **use the command** again",
       "select_placeholder": "pick an option...",
       "bug_label": "bug report",
       "bug_description": "the bot is acting up and it's bugging me",
