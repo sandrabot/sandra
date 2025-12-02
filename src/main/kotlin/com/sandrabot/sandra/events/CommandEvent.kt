@@ -26,6 +26,7 @@ import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.components.MessageTopLevelComponent
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.entities.emoji.Emoji
@@ -33,8 +34,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
-import net.dv8tion.jda.api.interactions.components.LayoutComponent
-import net.dv8tion.jda.api.interactions.modals.Modal
+import net.dv8tion.jda.api.modals.Modal
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
@@ -85,8 +85,8 @@ class CommandEvent(
     fun reply(message: MessageCreateData) = event.reply(message)
     fun replyEmbeds(embed: MessageEmbed) = event.replyEmbeds(embed)
     fun replyEmbeds(embeds: Collection<MessageEmbed>) = event.replyEmbeds(embeds)
-    fun replyComponents(component: LayoutComponent) = event.replyComponents(component)
-    fun replyComponents(components: Collection<LayoutComponent>) = event.replyComponents(components)
+    fun replyComponents(component: MessageTopLevelComponent) = event.replyComponents(component)
+    fun replyComponents(components: Collection<MessageTopLevelComponent>) = event.replyComponents(components)
     fun replyModal(modal: Modal) = event.replyModal(modal)
     fun replyPoll(poll: MessagePollData) = event.replyPoll(poll)
 
@@ -101,8 +101,8 @@ class CommandEvent(
     fun sendMessage(message: MessageCreateData) = event.hook.sendMessage(message)
     fun sendMessageEmbeds(embed: MessageEmbed) = event.hook.sendMessageEmbeds(embed)
     fun sendMessageEmbeds(embeds: Collection<MessageEmbed>) = event.hook.sendMessageEmbeds(embeds)
-    fun sendMessageComponents(component: LayoutComponent) = event.hook.sendMessageComponents(component)
-    fun sendMessageComponents(components: Collection<LayoutComponent>) = event.hook.sendMessageComponents(components)
+    fun sendMessageComponents(component: MessageTopLevelComponent) = event.hook.sendMessageComponents(component)
+    fun sendMessageComponents(components: Collection<MessageTopLevelComponent>) = event.hook.sendMessageComponents(components)
     fun sendMessagePoll(poll: MessagePollData) = event.hook.sendMessagePoll(poll)
 
     fun sendEmoji(emoji: String, content: String) = sendMessage("$emoji $content")
