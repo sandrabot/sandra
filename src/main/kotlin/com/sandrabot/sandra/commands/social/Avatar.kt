@@ -18,7 +18,8 @@ package com.sandrabot.sandra.commands.social
 
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import net.dv8tion.jda.api.interactions.components.buttons.Button
+import com.sandrabot.sandra.events.asEphemeral
+import dev.minn.jda.ktx.messages.MessageCreate
 
 @Suppress("unused")
 class Avatar : Command(arguments = "[user]") {
@@ -26,9 +27,14 @@ class Avatar : Command(arguments = "[user]") {
     override suspend fun execute(event: CommandEvent) {
 
         val user = event.arguments.user() ?: event.user
-        val avatarUrl = user.effectiveAvatarUrl + "?size=2048"
-        val button = Button.link(avatarUrl, event.get("button"))
-        event.reply(avatarUrl).addActionRow(button).setEphemeral(true).queue()
+        val url = user.effectiveAvatarUrl + "?size=2048" // largest possible resolution
+        event.reply(MessageCreate(useComponentsV2 = true) {
+            container {
+                mediaGallery { item(url) }
+                separator()
+                actionRow { linkButton(url, event.get("button")) }
+            }
+        }).asEphemeral().queue()
 
     }
 

@@ -27,6 +27,7 @@ version = "5.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -38,8 +39,9 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("club.minnced:jda-ktx:0.12.0")
-    implementation("net.dv8tion:JDA:5.6.1") {
+//    implementation("club.minnced:jda-ktx:0.13.0")
+    implementation("io.github.freya022:jda-ktx:e7b0e50683")
+    implementation("net.dv8tion:JDA:6.1.2") {
         exclude(module = "opus-java")
     }
 

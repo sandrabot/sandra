@@ -23,12 +23,14 @@ import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.sanitize
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
+import dev.minn.jda.ktx.interactions.components.danger
+import dev.minn.jda.ktx.interactions.components.secondary
 import kotlinx.coroutines.withTimeoutOrNull
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.components.actionrow.ActionRow
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.minutes
@@ -69,11 +71,12 @@ class SoftBan : Command(
         }
 
         val isQuiet = event.arguments.boolean("quiet") ?: false
-        val confirmButton = Button.danger("softban:confirm:" + event.id, event.get("button_confirm"))
-        val cancelButton = Button.secondary("softban:cancel:" + event.id, event.get("button_cancel"))
+        val confirmButton = danger("softban:confirm:" + event.id, event.get("button_confirm"))
+        val cancelButton = secondary("softban:cancel:" + event.id, event.get("button_cancel"))
         // allow the moderator to double-check the user they've selected
         val confirmMessage = event.reply(event.get("confirmation", Emotes.MOD, targetUser.asMention))
-            .setAllowedMentions(emptySet()).setActionRow(confirmButton, cancelButton).setEphemeral(isQuiet).await()
+            .setAllowedMentions(emptySet()).addComponents(ActionRow.of(confirmButton, cancelButton))
+            .setEphemeral(isQuiet).await()
 
         // allow 1 minute for the moderator to make a selection
         val buttonEvent = withTimeoutOrNull(1.minutes) {

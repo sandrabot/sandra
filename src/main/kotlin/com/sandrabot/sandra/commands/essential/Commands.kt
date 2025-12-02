@@ -19,17 +19,17 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
+import dev.minn.jda.ktx.interactions.components.StringSelectMenu
+import dev.minn.jda.ktx.interactions.components.option
 import kotlinx.coroutines.withTimeoutOrNull
+import net.dv8tion.jda.api.components.actionrow.ActionRow
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
-import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
-import net.dv8tion.jda.api.requests.ErrorResponse
 import kotlin.time.Duration.Companion.minutes
 
 @Suppress("unused")
@@ -39,28 +39,29 @@ class Commands : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val menuId = "commands:select:" + event.interaction.id
-        val builder = StringSelectMenu.create(menuId).setPlaceholder(event.get("placeholder"))
+        // TODO we should map with MessageCreateData and use v2 components
         val localeEmbeds = embedMap.getOrPut(event.localeContext.locale) { generateEmbeds(event) }
-        localeEmbeds.keys.filterNot { it == Category.OWNER && !event.isOwner }.map {
-            val label = "${event.getAny("core.categories.${it.displayName}")} ${event.get("command_title")}"
-            SelectOption.of(label, it.name).withEmoji(Emoji.fromFormatted(it.emote))
-        }.also(builder::addOptions)
+        val selectMenu = StringSelectMenu("select:${event.id}", placeholder = event.get("placeholder")) {
+            localeEmbeds.keys.filterNot { it == Category.OWNER && !event.isOwner }.map {
+                val label = event.getAny("core.categories.${it.displayName}") + " " + event.get("command_title")
+                option(label, it.name, emoji = Emoji.fromFormatted(it.emote))
+            }
+        }
 
-        val essential = localeEmbeds[Category.ESSENTIAL] ?: throw AssertionError("Missing essential category")
-        event.replyEmbeds(essential).addActionRow(builder.build()).setEphemeral(true).await()
+        val embeds = localeEmbeds[Category.ESSENTIAL] ?: throw IllegalStateException("Missing essential category")
+        event.replyEmbeds(embeds).addComponents(ActionRow.of(selectMenu)).asEphemeral().await()
 
+        // allow the user to make any number of selections until 1 minute from the last interaction
         while (true) withTimeoutOrNull(1.minutes) {
-            // await is a blocking call, this is where we wait for the select event
             val selectEvent = event.sandra.shards.await<StringSelectInteractionEvent>()
-            if (menuId == selectEvent.componentId && event.user == selectEvent.user) {
+            if (selectMenu.customId == selectEvent.componentId) {
                 val newEmbeds = localeEmbeds[Category.valueOf(selectEvent.values.first())]!!
                 selectEvent.editMessageEmbeds(newEmbeds).await()
             }
         } ?: break
 
         // remove all components from the message when we're done
-        event.hook.editOriginalComponents().queue(null, ERROR_HANDLER)
+        event.hook.editOriginalComponents().queue(null, null)
 
     }
 
@@ -81,10 +82,6 @@ class Commands : Command() {
             ).setFooter(event.get("more_information"))
             descriptions.map { embed.setDescription(it).build() }
         }.filterNot { (category, list) -> category == Category.CUSTOM || list.isEmpty() }
-    }
-
-    private companion object {
-        private val ERROR_HANDLER = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTEGRATION)
     }
 
 }
