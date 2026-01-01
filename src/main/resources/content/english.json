@@ -94,9 +94,9 @@
     "commands": {
       "name": "commands",
       "description": "glance through all my commands & categories",
-      "placeholder": "pick a category to view..",
-      "command_title": "commands",
-      "more_information": "use /help [command] for more info"
+      "placeholder": "make a selection...",
+      "title": "commands",
+      "footnote": "-# use `/help [command]` for more detailed info"
     },
     "daily": {
       "name": "daily",
