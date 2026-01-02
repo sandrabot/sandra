@@ -183,11 +183,10 @@ private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
     val option = findOption(event, argument) ?: return null
     // all commands can be searched by their localized names
     val commands = event.sandra.commands.values.associateBy { command ->
-        if (command.isSubcommand) command.path.split('.').runningReduce { a, b -> "$a.$b" }
-            .joinToString("/") { event.getAny("commands.$it.name") } else event.getAny("commands.${command.path}.name")
+        command.readablePaths.joinToString(" ", transform = event::getAny)
     }
     // since we don't support fuzzy searching, the option is the key
-    return commands[option.asString.lowercase().replace(spaceRegex, "/")]
+    return commands[option.asString.lowercase().replace(spaceRegex, " ")]
 }
 
 private fun parseDuration(event: CommandEvent, argument: Argument): Duration? {
