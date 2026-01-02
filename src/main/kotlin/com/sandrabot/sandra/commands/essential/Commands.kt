@@ -44,7 +44,7 @@ class Commands : Command() {
             if (selectEvent.componentId == "select:${event.id}") {
                 val category = Category.valueOf(selectEvent.values.first())
                 selectEvent.editMessage(MessageEditData.fromCreateData(messageData[category]!!)).queue()
-            } else selectEvent.deferEdit().queue()
+            }
         } ?: break
 
         event.hook.deleteOriginal().queue()
