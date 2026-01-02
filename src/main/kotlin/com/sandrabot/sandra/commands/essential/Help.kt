@@ -25,7 +25,6 @@ import com.sandrabot.sandra.events.CommandEvent
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.interactions.components.Thumbnail
 import dev.minn.jda.ktx.messages.MessageCreate
-import net.dv8tion.jda.api.components.separator.Separator
 
 @Suppress("unused")
 class Help : Command(arguments = "[command]") {
@@ -37,7 +36,7 @@ class Help : Command(arguments = "[command]") {
             val logan = event.sandra.shards.retrieveUserById(Constants.LOGAN).await().name
             container {
                 text(event.get("title", Emotes.FUN))
-                separator(isDivider = false, spacing = Separator.Spacing.SMALL)
+                separator(isDivider = false)
                 text(event.get("config", Emotes.CONFIG))
                 text(event.get("commands", Emotes.COMMANDS))
                 text(event.get("invite", Emotes.INVITE, invite))
@@ -60,7 +59,7 @@ class Help : Command(arguments = "[command]") {
                         val readablePath = command.path.replace('.', ' ')
                         val commandTitle = event.getAny("commands.commands.title")
                         val description = event.getAny("commands.${command.path}.description")
-                        text("## $readablePath ${Unicode.BULLET} ${command.category.name.lowercase()} $commandTitle\n> $description")
+                        text("## $readablePath ${Unicode.BULLET} ${command.category.name.lowercase()} $commandTitle\n$description")
                         if (command.arguments.isNotEmpty()) {
                             val joined = command.arguments.joinToString(" ") { it.usage }
                             text("### ${Emotes.INFO} ${event.get("usage_title")}\n> **/$readablePath** $joined")

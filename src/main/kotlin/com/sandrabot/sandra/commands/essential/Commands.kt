@@ -56,9 +56,9 @@ class Commands : Command() {
         return sorted.mapValues { (category, list) ->
             MessageCreate(useComponentsV2 = true) {
                 container {
-                    accentColor = event.sandra.settings.color
                     val displayName = event.getAny("core.categories.${category.displayName}")
-                    text("# ${category.emoji} $displayName ${event.get("title")}")
+                    text("# ${category.emoji.formatted} $displayName ${event.get("title")}")
+                    separator(isDivider = false)
                     text(list.sortedBy { it.name }.joinToString("\n") { command ->
                         val description = event.getAny("commands.${command.name}.description")
                         "`/ ${command.name}` - $description"

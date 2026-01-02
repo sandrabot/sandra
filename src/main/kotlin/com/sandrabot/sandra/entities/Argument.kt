@@ -100,8 +100,8 @@ fun compileArguments(tokens: String): List<Argument> {
         // figure out if options are applicable and validate them
         val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type.optionType) {
             // only argument types with text, integer, and double value types may use options
-            OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER ->
-                rawOptions.lowercase().split(',').distinct().take(25).let { list ->
+            OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER -> rawOptions.lowercase().split(',').distinct()
+                .take(25).let { list ->
                     when (type.optionType) {
                         OptionType.STRING -> list
                         OptionType.INTEGER -> list.map(String::toLongOrNull)
@@ -181,9 +181,11 @@ private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
 
 private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
     val option = findOption(event, argument) ?: return null
-    // allow top level commands to be searched by their localized names
-    val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
-        .associateBy { event.getAny("commands.${it.name}.name") }
+    // all commands can be searched by their localized names
+    val commands = event.sandra.commands.values.associateBy { command ->
+        if (command.isSubcommand) command.path.split('.').runningReduce { a, b -> "$a.$b" }
+            .joinToString("/") { event.getAny("commands.$it.name") } else event.getAny("commands.${command.path}.name")
+    }
     // since we don't support fuzzy searching, the option is the key
     return commands[option.asString.lowercase().replace(spaceRegex, "/")]
 }
