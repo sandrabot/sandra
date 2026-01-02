@@ -121,7 +121,8 @@
     },
     "dog": {
       "name": "dog",
-      "description": "fetches a dog from the depths of the internet"
+      "description": "fetches a dog from the depths of the internet",
+      "footnote": "powered by [random.dog](https://random.dog)"
     },
     "evaluate": {
       "name": "evaluate",
@@ -164,7 +165,7 @@
     "fortune": {
       "name": "fortune",
       "description": "break open a fortune cookie to reveal your luck",
-      "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads\n\n`%1$s`"
+      "reply": "as the cookie crumbles in your fingers, it reveals a piece of paper that reads:\n> `%1$s`"
     },
     "help": {
       "name": "help",

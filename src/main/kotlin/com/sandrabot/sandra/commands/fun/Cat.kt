@@ -42,13 +42,11 @@ class Cat : Command() {
         val catUrl = jsonBody["url"]?.jsonPrimitive?.content
         if (response.status == HttpStatusCode.OK && catUrl != null) {
             event.sendMessage(MessageCreate(useComponentsV2 = true) {
-                container {
-                    mediaGallery { item(catUrl) }
-                    val catTags = jsonBody["tags"]?.jsonArray?.map { it.jsonPrimitive.content }
-                    val actualTags = catTags?.takeUnless { it.isEmpty() }?.take(3)?.joinToString()
-                    val tags = if (actualTags.isNullOrBlank()) "" else " ${Unicode.BULLET} $actualTags"
-                    text("-# ${event.get("footnote") + tags}")
-                }
+                mediaGallery { item(catUrl) }
+                val catTags = jsonBody["tags"]?.jsonArray?.map { it.jsonPrimitive.content }
+                val actualTags = catTags?.takeUnless { it.isEmpty() }?.take(3)?.joinToString()
+                val tags = if (actualTags.isNullOrBlank()) "" else " ${Unicode.BULLET} $actualTags"
+                text("-# ${event.get("footnote") + tags}")
             }).queue()
         } else event.sendError(event.getAny("core.interaction_error")).asEphemeral().queue()
 

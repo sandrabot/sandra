@@ -37,7 +37,7 @@ class Shards : Command() {
             val value = event.get("status", status, it.gatewayPing.format(), it.guildCache.size().format())
             embed.addField(event.get("shard_title", it.shardInfo.shardId), value, true)
         }
-        event.sendMessageEmbeds(embed.build()).queue()
+        event.replyEmbeds(embed.build()).queue()
 
     }
 

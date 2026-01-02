@@ -19,7 +19,7 @@ package com.sandrabot.sandra.commands.`fun`
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.HTTP_CLIENT
-import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.messages.MessageCreate
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
@@ -30,9 +30,12 @@ class Dog : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
 
-        event.deferReply(ephemeral = true).await()
+        event.deferReply().queue()
         val url = HTTP_CLIENT.get("https://random.dog/woof").bodyAsText()
-        event.sendMessage("https://random.dog/$url").queue()
+        event.sendMessage(MessageCreate(useComponentsV2 = true) {
+            mediaGallery { item("https://random.dog/$url") }
+            text("-# ${event.get("footnote")}")
+        }).queue()
 
     }
 

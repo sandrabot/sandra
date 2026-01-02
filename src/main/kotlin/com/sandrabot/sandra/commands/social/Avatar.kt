@@ -31,7 +31,8 @@ class Avatar : Command(arguments = "[user]") {
         event.reply(MessageCreate(useComponentsV2 = true) {
             container {
                 mediaGallery { item(url) }
-                separator()
+                text("# @${user.name}")
+                separator(isDivider = false)
                 actionRow { linkButton(url, event.get("button")) }
             }
         }).asEphemeral().queue()
