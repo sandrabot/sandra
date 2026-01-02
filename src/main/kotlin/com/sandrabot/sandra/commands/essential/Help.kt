@@ -55,16 +55,25 @@ class Help : Command(arguments = "[command]") {
                 container {
                     section {
                         accessory = Thumbnail(command.category.emoji.asCustom().imageUrl)
-                        text(event.get("extra_help", Constants.DIRECT_SUPPORT))
-                        val readablePath = command.path.replace('.', ' ')
-                        val commandTitle = event.getAny("commands.commands.title")
+                        val fullName = command.readablePaths.joinToString(" ", transform = event::getAny)
                         val description = event.getAny("commands.${command.path}.description")
-                        text("## $readablePath ${Unicode.BULLET} ${command.category.name.lowercase()} $commandTitle\n$description")
+                        text("# /$fullName ${Unicode.BULLET} ${event.get("name")}\n> $description")
                         if (command.arguments.isNotEmpty()) {
-                            val joined = command.arguments.joinToString(" ") { it.usage }
-                            text("### ${Emotes.INFO} ${event.get("usage_title")}\n> **/$readablePath** $joined")
+                            val usage = command.arguments.joinToString(" ") { it.usage }
+                            text("### ${Emotes.PROMPT} ${event.get("usage")}\n`/$fullName $usage`")
+                        }
+                        if (command.subcommands.isNotEmpty()) {
+                            val otherCommands = buildString {
+                                command.subcommands.forEach { command ->
+                                    val fullName = command.readablePaths.joinToString(" ", transform = event::getAny)
+                                    val description = event.getAny("commands.${command.path}.description")
+                                    append("`/", fullName, "` - ", description, "\n")
+                                }
+                            }
+                            text("### ${Emotes.COMMANDS} ${event.get("subcommands")}\n>>> $otherCommands")
                         }
                     }
+                    text(event.get("extra_help", Constants.DIRECT_SUPPORT))
                     separator()
                     text(event.get("required_arguments"))
                 }

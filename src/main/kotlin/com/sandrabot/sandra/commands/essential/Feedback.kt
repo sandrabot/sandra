@@ -56,7 +56,7 @@ class Feedback : Command() {
         // send the confirmation message along with the selection menu
         event.reply(MessageCreate(useComponentsV2 = true) {
             container {
-                text(event.get("disclaimer", Emotes.INFO))
+                text(event.get("disclaimer", Emotes.NOTICE))
                 actionRow(selectMenu)
             }
         }).asEphemeral().queue()
