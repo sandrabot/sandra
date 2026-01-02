@@ -60,7 +60,7 @@ class Help : Command(arguments = "[command]") {
                         val readablePath = command.path.replace('.', ' ')
                         val commandTitle = event.getAny("commands.commands.title")
                         val description = event.getAny("commands.${command.path}.description")
-                        text("## $readablePath • ${command.category.name.lowercase()} $commandTitle\n> $description")
+                        text("## $readablePath ${Unicode.BULLET} ${command.category.name.lowercase()} $commandTitle\n> $description")
                         if (command.arguments.isNotEmpty()) {
                             val joined = command.arguments.joinToString(" ") { it.usage }
                             text("### ${Emotes.INFO} ${event.get("usage_title")}\n> **/$readablePath** $joined")
