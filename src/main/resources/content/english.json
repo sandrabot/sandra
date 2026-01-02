@@ -167,30 +167,23 @@
     },
     "help": {
       "name": "help",
-      "description": "look at some basic & essential info about me",
+      "description": "are you lost? let's get you pointed in the right direction",
       "arguments": {
         "command": {
           "name": "command",
-          "description": "the command you want to take a closer look at"
+          "description": "a command you want to take a closer look at"
         }
       },
       "not_found": "whoops, i **couldn't find** that command. try using **/commands** to find what you're looking for",
-      "required_arguments": "any options that are surrounded by <> are required",
-      "extra_help": "need some extra help? chat with us",
-      "description_title": "description",
-      "usage_title": "usage",
-      "info_embed": {
-        "title": "*your favorite neighborhood robot* <:fun:987918991135764542>",
-        "configure": "%1$s configure settings",
-        "configure_content": "> if you need to **configure** my **settings**, use `/config`",
-        "commands": "%1$s commands",
-        "commands_content": "> or if you want to see my **command list**, use `/commands`",
-        "invite": "%1$s invite sandra",
-        "invite_content": "> would you like me to join **your server**? **[click to invite me](%1$s)**",
-        "support": "%1$s support server",
-        "support_content": "> need **more help**? chat with us in **[sandra's hangout](%1$s)**",
-        "built": "built with %1$s by %2$s and %3$s"
-      }
+      "required_arguments": "-# options shown like <this> are required, [this] is optional",
+      "extra_help": "*need some extra help? chat with us in **[sandra's hangout](%1$s)***",
+      "usage_title": "command usage",
+      "title": "## *your favorite neighborhood robot* %1$s",
+      "config": "### %1$s configure your settings\n> if you need to **configure** my **settings**, use `/config`",
+      "commands": "### %1$s command list\n> if you want to see my **command list**, use `/commands`",
+      "invite": "### %1$s invite sandra\n> would you like me to join **your server**? **[click to invite me](%2$s)**",
+      "support": "### %1$s support server\n> need **more help**? chat with us in **[sandra's hangout](%2$s)**",
+      "creators": "built with %1$s by **%2$s** and **%3$s**"
     },
     "8ball": {
       "name": "8ball",
