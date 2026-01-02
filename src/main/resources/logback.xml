@@ -21,7 +21,7 @@
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%yellow([%d{HH:mm:ss.SSS}]) %highlight(%-5level) %green([%t]) %cyan(%c{0}) %boldRed(::) %msg%n</pattern>
+            <pattern>%yellow([%d{HH:mm:ss.SSS}]) %highlight(%-5level) %green([%t]) %cyan(%c{0}) %boldRed(») %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -32,7 +32,7 @@
             <fileNamePattern>logs/%d{yyyy,aux}/%d{MM,aux}/%d{ddMMyy}.log.gz</fileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>[%d{MM.dd.yy HH:mm:ss.SSS}] %-5level [%t] %c :: %msg%n</pattern>
+            <pattern>[%d{MM.dd.yy HH:mm:ss.SSS}] %-5level [%t] %c » %msg%n</pattern>
         </encoder>
     </appender>
 

@@ -23,12 +23,13 @@ import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.sanitize
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
+import dev.minn.jda.ktx.messages.MessageCreate
+import dev.minn.jda.ktx.messages.MessageEdit
 import kotlinx.coroutines.withTimeoutOrNull
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.requests.ErrorResponse
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.minutes
@@ -50,6 +51,8 @@ class SoftBan : Command(
             event.replyError(event.get("no_self")).asEphemeral().queue()
             return
         }
+        val isQuiet = event.arguments.boolean("quiet") ?: false
+        event.deferReply(ephemeral = isQuiet).queue()
         // check the banlist to see if the target user is already banned
         event.guild!!.retrieveBan(targetUser).onErrorMap { null }.await()?.let { userBan ->
             val realReason = userBan.reason?.sanitize() ?: event.get("default_reason")
@@ -68,20 +71,22 @@ class SoftBan : Command(
             return
         }
 
-        val isQuiet = event.arguments.boolean("quiet") ?: false
-        val confirmButton = Button.danger("softban:confirm:" + event.id, event.get("button_confirm"))
-        val cancelButton = Button.secondary("softban:cancel:" + event.id, event.get("button_cancel"))
         // allow the moderator to double-check the user they've selected
-        val confirmMessage = event.reply(event.get("confirmation", Emotes.MOD, targetUser.asMention))
-            .setAllowedMentions(emptySet()).setActionRow(confirmButton, cancelButton).setEphemeral(isQuiet).await()
+        event.sendMessage(MessageCreate(useComponentsV2 = true) {
+            container {
+                text(event.get("confirmation", Emotes.MOD, targetUser.asMention))
+                actionRow {
+                    dangerButton("confirm:${event.id}", event.get("button_confirm"))
+                    secondaryButton("cancel:${event.id}", event.get("button_cancel"))
+                }
+            }
+        }).setAllowedMentions(emptySet()).queue()
 
         // allow 1 minute for the moderator to make a selection
         val buttonEvent = withTimeoutOrNull(1.minutes) {
             while (true) {
                 // this is a blocking call while we wait for the button click
-                val interaction = event.jda.await<ButtonInteractionEvent> {
-                    it.button == confirmButton || it.button == cancelButton
-                }
+                val interaction = event.jda.await<ButtonInteractionEvent> { "${event.id}" in it.componentId }
                 // verify who actually clicked the button, since anyone could've done it
                 if (interaction.user == event.user) return@withTimeoutOrNull interaction
                 // otherwise just acknowledge the click and wait for another one
@@ -89,8 +94,8 @@ class SoftBan : Command(
             }
         } as ButtonInteractionEvent?
 
-        if (buttonEvent == null || buttonEvent.button == cancelButton) {
-            confirmMessage.deleteOriginal().queue(null, ERROR_HANDLER)
+        if (buttonEvent == null || "cancel" in buttonEvent.componentId) {
+            event.hook.deleteOriginal().queue(null, ERROR_HANDLER)
             return
         }
 
@@ -107,10 +112,14 @@ class SoftBan : Command(
         // automatically delete any messages the target user sent within the past day
         event.guild.ban(targetUser, 1, TimeUnit.DAYS).reason(realReason)
             .flatMap { event.guild.unban(targetUser).reason(realReason) }.flatMap {
-                confirmMessage.editOriginal(event.get("success", Emotes.SUCCESS, targetUser.name)).setComponents()
+                event.hook.editOriginal(MessageEdit(useComponentsV2 = true) {
+                    container { text(event.get("success", Emotes.SUCCESS, targetUser.name)) }
+                })
             }.onErrorFlatMap {
                 banNotification?.delete()?.queue()
-                confirmMessage.editOriginal(Emotes.FAILURE + " " + event.getAny("core.interaction_error")).setComponents()
+                event.hook.editOriginal(MessageEdit(useComponentsV2 = true) {
+                    container { text(Emotes.FAILURE + " " + event.getAny("core.interaction_error")) }
+                })
             }.queue()
 
     }

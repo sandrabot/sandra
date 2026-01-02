@@ -17,9 +17,10 @@
 package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.constants.Emotes
+import net.dv8tion.jda.api.entities.emoji.Emoji
 import kotlin.reflect.KClass
 
-enum class Category(val emote: String) {
+enum class Category(emote: String) {
 
     CUSTOM(Emotes.PATREON),
     ESSENTIAL(Emotes.PIN),
@@ -33,6 +34,7 @@ enum class Category(val emote: String) {
     UTILITY(Emotes.PROMPT);
 
     val displayName = name.lowercase()
+    val emoji = Emoji.fromFormatted(emote)
 
     companion object {
         fun fromClass(clazz: KClass<out Command>): Category {

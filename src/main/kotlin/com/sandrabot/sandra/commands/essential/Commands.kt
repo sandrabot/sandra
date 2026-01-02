@@ -19,72 +19,66 @@ package com.sandrabot.sandra.commands.essential
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
-import dev.minn.jda.ktx.coroutines.await
+import com.sandrabot.sandra.events.asEphemeral
 import dev.minn.jda.ktx.events.await
+import dev.minn.jda.ktx.interactions.components.option
+import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.withTimeoutOrNull
-import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
-import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.interactions.DiscordLocale
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
-import net.dv8tion.jda.api.requests.ErrorResponse
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
 import kotlin.time.Duration.Companion.minutes
 
 @Suppress("unused")
 class Commands : Command() {
 
-    private val embedMap = mutableMapOf<DiscordLocale, Map<Category, List<MessageEmbed>>>()
+    private val messageDataMap = mutableMapOf<DiscordLocale, Map<Category, MessageCreateData>>()
 
     override suspend fun execute(event: CommandEvent) {
+        val messageData = messageDataMap.getOrPut(event.localeContext.locale) { generateMessageData(event) }
+        event.reply(messageData[Category.ESSENTIAL]!!).asEphemeral().queue()
 
-        val menuId = "commands:select:" + event.interaction.id
-        val builder = StringSelectMenu.create(menuId).setPlaceholder(event.get("placeholder"))
-        val localeEmbeds = embedMap.getOrPut(event.localeContext.locale) { generateEmbeds(event) }
-        localeEmbeds.keys.filterNot { it == Category.OWNER && !event.isOwner }.map {
-            val label = "${event.getAny("core.categories.${it.displayName}")} ${event.get("command_title")}"
-            SelectOption.of(label, it.name).withEmoji(Emoji.fromFormatted(it.emote))
-        }.also(builder::addOptions)
-
-        val essential = localeEmbeds[Category.ESSENTIAL] ?: throw AssertionError("Missing essential category")
-        event.replyEmbeds(essential).addActionRow(builder.build()).setEphemeral(true).await()
-
-        while (true) withTimeoutOrNull(1.minutes) {
-            // await is a blocking call, this is where we wait for the select event
+        while (true) withTimeoutOrNull(5.minutes) {
             val selectEvent = event.sandra.shards.await<StringSelectInteractionEvent>()
-            if (menuId == selectEvent.componentId && event.user == selectEvent.user) {
-                val newEmbeds = localeEmbeds[Category.valueOf(selectEvent.values.first())]!!
-                selectEvent.editMessageEmbeds(newEmbeds).await()
+            if (selectEvent.componentId == "select:${event.id}") {
+                val category = Category.valueOf(selectEvent.values.first())
+                selectEvent.editMessage(MessageEditData.fromCreateData(messageData[category]!!)).queue()
             }
         } ?: break
 
-        // remove all components from the message when we're done
-        event.hook.editOriginalComponents().queue(null, ERROR_HANDLER)
-
+        event.hook.deleteOriginal().queue()
     }
 
-    private fun generateEmbeds(event: CommandEvent): Map<Category, List<MessageEmbed>> {
-        // gather all top-level commands and sort them by category
+    private fun generateMessageData(event: CommandEvent): Map<Category, MessageCreateData> {
         val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
-        // remap the list of commands into a list of embeds
-        return commands.groupBy { it.category }.mapValues { (category, list) ->
-            val descriptions = list.sortedBy { it.name }.map { command ->
-                // build the descriptions and join them into pages of 20 commands each
-                val description = event.getAny("commands.${command.name}.description")
-                buildString { append("`/", command.name, "` - ", description, "\n") }
-            }.chunked(20).map { it.joinToString("") }
-            // start putting the page embeds together by reusing the builder
-            val categoryText = event.getAny("core.categories.${category.displayName}")
-            val embed = event.embed().setThumbnail(event.selfUser.effectiveAvatarUrl).setTitle(
-                "${category.emote} $categoryText ${event.get("command_title")}"
-            ).setFooter(event.get("more_information"))
-            descriptions.map { embed.setDescription(it).build() }
-        }.filterNot { (category, list) -> category == Category.CUSTOM || list.isEmpty() }
-    }
-
-    private companion object {
-        private val ERROR_HANDLER = ErrorHandler().ignore(ErrorResponse.UNKNOWN_INTEGRATION)
+        val sorted = commands.groupBy { it.category }.filterNot { (c, l) -> c == Category.CUSTOM || l.isEmpty() }
+        return sorted.mapValues { (category, list) ->
+            MessageCreate(useComponentsV2 = true) {
+                container {
+                    val displayName = event.getAny("core.categories.${category.displayName}")
+                    text("# ${category.emoji.formatted} $displayName ${event.get("title")}")
+                    separator(isDivider = false)
+                    text(list.sortedBy { it.name }.joinToString("\n") { command ->
+                        val description = event.getAny("commands.${command.name}.description")
+                        "`/ ${command.name}` - $description"
+                    })
+                    separator()
+                    text(event.get("footnote"))
+                }
+                actionRow {
+                    stringSelectMenu("select:${event.id}", placeholder = event.get("placeholder")) {
+                        val entries = sorted.keys.toMutableSet()
+                        if (!event.isOwner) entries -= Category.OWNER
+                        entries.forEach { category ->
+                            val displayName = event.getAny("core.categories.${category.displayName}")
+                            val label = displayName + " " + event.get("title")
+                            option(label, category.name, emoji = category.emoji)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
