@@ -89,7 +89,8 @@
     },
     "cat": {
       "name": "cat",
-      "description": "gracefully displays a cat for your viewing pleasure"
+      "description": "displays a cat for your viewing pleasure",
+      "footnote": "powered by [cataas.com](https://cataas.com)"
     },
     "commands": {
       "name": "commands",

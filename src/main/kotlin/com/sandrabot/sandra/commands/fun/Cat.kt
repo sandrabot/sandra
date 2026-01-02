@@ -16,16 +16,19 @@
 
 package com.sandrabot.sandra.commands.`fun`
 
+import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.HTTP_CLIENT
-import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.messages.MessageCreate
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 
 @Suppress("unused")
@@ -33,12 +36,21 @@ class Cat : Command() {
 
     override suspend fun execute(event: CommandEvent) = withContext(Dispatchers.IO) {
 
-        event.deferReply(ephemeral = true).await()
+        event.deferReply().queue()
         val response = HTTP_CLIENT.get("https://cataas.com/cat?json=true")
-        val catId = response.body<JsonObject>()["_id"]?.jsonPrimitive?.content
-        if (response.status == HttpStatusCode.OK && catId != null) {
-            event.sendMessage("https://cataas.com/cat/$catId").queue()
-        } else event.sendError(event.getAny("core.interaction_error")).queue()
+        val jsonBody = response.body<JsonObject>()
+        val catUrl = jsonBody["url"]?.jsonPrimitive?.content
+        if (response.status == HttpStatusCode.OK && catUrl != null) {
+            event.sendMessage(MessageCreate(useComponentsV2 = true) {
+                container {
+                    mediaGallery { item(catUrl) }
+                    val catTags = jsonBody["tags"]?.jsonArray?.map { it.jsonPrimitive.content }
+                    val actualTags = catTags?.takeUnless { it.isEmpty() }?.take(3)?.joinToString()
+                    val tags = if (actualTags.isNullOrBlank()) "" else " ${Unicode.BULLET} $actualTags"
+                    text("-# ${event.get("footnote") + tags}")
+                }
+            }).queue()
+        } else event.sendError(event.getAny("core.interaction_error")).asEphemeral().queue()
 
     }
 
