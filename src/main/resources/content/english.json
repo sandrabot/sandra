@@ -369,7 +369,7 @@
       "no_interact_self": "this is embarrassing, but i don't have a role high enough to interact with %1$s",
       "ban_notification": "## %1$s you have been soft-banned from %2$s\nyou should be able to rejoin the server at any time, but you may need to be invited again\n\n>>> **%3$s** gave the reason: **%4$s**",
       "confirmation": "## %1$s are you sure you want to softban %2$s?\ntheir most recent messages will be deleted and cannot be recovered",
-      "success": "%1$s **%2$s** has been soft-banned from this server. now, who's gonna invite them back?",
+      "success": "## %1$s **%2$s** was soft-banned\nnow, who's gonna invite them back? not me!",
       "reason": "/softban was used by %1$s; %2$s",
       "default_reason": "no reason given",
       "button_confirm": "confirm softban",
