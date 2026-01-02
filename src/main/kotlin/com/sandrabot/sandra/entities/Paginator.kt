@@ -18,17 +18,16 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.events.CommandEvent
-import com.sandrabot.sandra.utils.truncate
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
-import dev.minn.jda.ktx.interactions.components.*
+import dev.minn.jda.ktx.interactions.components.Modal
+import dev.minn.jda.ktx.interactions.components.TextInput
+import dev.minn.jda.ktx.interactions.components.findAll
 import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.withTimeoutOrNull
-import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.MessageTopLevelComponent
 import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.components.textinput.TextInputStyle
-import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
@@ -41,17 +40,16 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData
 import kotlin.time.Duration.Companion.minutes
 
 /**
- * Allows you to easily paginate command responses using [MessageEmbed] as pages in the current [context].
- * You may use [contentProvider] to set custom message content for each page when necessary.
+ * Allows you to easily paginate command responses using [MessageTopLevelComponent] as pages in the current [context].
  */
-class Paginator(private val context: CommandEvent, private val contentProvider: ((Int) -> String?)? = null) {
+class Paginator(private val context: CommandEvent) {
 
     // create unique component ids for this interaction
-    private val backButtonId = "paginator:back:${context.id}"
-    private val pageButtonId = "paginator:page:${context.id}"
-    private val nextButtonId = "paginator:next:${context.id}"
-    private val jumpModalId = "paginator:modal:${context.id}"
-    private val jumpInputId = "paginator:input:${context.id}"
+    private val backButtonId = "back:${context.id}"
+    private val pageButtonId = "page:${context.id}"
+    private val nextButtonId = "next:${context.id}"
+    private val jumpModalId = "modal:${context.id}"
+    private val jumpInputId = "jump:${context.id}"
 
     private val messageData = mutableListOf<MessageCreateData>()
 
@@ -63,9 +61,10 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
      * Initializes the paginator using the [pages] provided.
      * The first page to be displayed can be customized with [startingPage].
      */
-    suspend fun paginate(pages: List<MessageEmbed>, startingPage: Int = currentPage) = initialize(pages, startingPage)
+    suspend fun paginate(pages: List<Collection<MessageTopLevelComponent>>, startingPage: Int = currentPage) =
+        initialize(pages, startingPage)
 
-    private suspend fun initialize(pages: List<MessageEmbed>, page: Int) {
+    private suspend fun initialize(pages: List<Collection<MessageTopLevelComponent>>, page: Int) {
         if (pages.isEmpty()) throw IllegalArgumentException("Pages must not be empty")
         if (currentPage !in pages.indices) throw IllegalArgumentException("Starting page must be in range ${pages.indices}")
         if (messageData.isNotEmpty()) throw IllegalStateException("Paginator is already initialized")
@@ -82,9 +81,7 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
             }
         } ?: break
 
-        // disable the buttons when the menu times out
-        val disabled = messageData[currentPage].componentTree.findAll<Button>().asDisabled()
-        context.hook.editMessageComponentsById(messageId, ActionRow.of(disabled)).queue(null, ERROR_HANDLER)
+        context.hook.deleteOriginal().queue()
     }
 
     private fun verifyButton(event: ButtonInteractionEvent): Boolean {
@@ -147,24 +144,22 @@ class Paginator(private val context: CommandEvent, private val contentProvider: 
         } else callback.editMessage(messageData).queue(null, ERROR_HANDLER)
     }
 
-    private fun generateMessageData(pages: List<MessageEmbed>) = pages.mapIndexed { index, embed ->
-        // TODO what if we migrate to components instead of embeds it will be so sexy
-        MessageCreate {
-            content = contentProvider?.invoke(index)?.truncate(Message.MAX_CONTENT_LENGTH)
-            embeds += embed
-            actionRow(
-                primary(
-                    backButtonId, emoji = Emoji.fromUnicode(Unicode.LEFT_BACKHAND)
-                ).withDisabled(index == 0),
-
-                secondary(
-                    pageButtonId, context.getAny("core.paginator.page", index + 1, pages.size)
-                ).withDisabled(pages.size < 2),
-
-                primary(
-                    nextButtonId, emoji = Emoji.fromUnicode(Unicode.RIGHT_BACKHAND)
-                ).withDisabled(index == pages.lastIndex),
-            )
+    private fun generateMessageData(pages: List<Collection<MessageTopLevelComponent>>) = List(pages.size) { index ->
+        MessageCreate(useComponentsV2 = true) {
+            components += pages[index]
+            actionRow {
+                primaryButton(
+                    backButtonId, emoji = Emoji.fromUnicode(Unicode.LEFT_BACKHAND), disabled = index == 0
+                )
+                secondaryButton(
+                    pageButtonId,
+                    context.getAny("core.paginator.page", index + 1, pages.size),
+                    disabled = pages.size < 2
+                )
+                primaryButton(
+                    nextButtonId, emoji = Emoji.fromUnicode(Unicode.RIGHT_BACKHAND), disabled = index == pages.lastIndex
+                )
+            }
         }
     }.let { messageData += it }
 
