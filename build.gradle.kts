@@ -27,7 +27,6 @@ version = "5.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -48,10 +47,10 @@ dependencies {
     implementation("io.sentry:sentry-logback:8.29.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.reflections:reflections:0.10.2")
     // TODO Migrate to new client connection API introduced in 7.2.0
-    implementation("redis.clients:jedis:7.1.0")
+    implementation("redis.clients:jedis:7.2.0")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }
