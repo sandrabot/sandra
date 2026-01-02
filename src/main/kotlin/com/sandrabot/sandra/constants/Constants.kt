@@ -33,9 +33,9 @@ object Constants {
     val DEVELOPERS = arrayOf(AVERY, LOGAN)
 
     const val WEBSITE = "https://sandrabot.com"
-    const val DIRECT_SUPPORT = "$WEBSITE/support"
     val USER_AGENT = "Sandra/$VERSION (+$WEBSITE)"
 
+    const val DIRECT_SUPPORT = "https://discord.gg/q5zuYAwZGm"
     const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
     const val BETA_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$BETA_APPLICATION_ID&permissions=274878220352&scope=bot%20applications.commands"
 

@@ -22,20 +22,20 @@ import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
-import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.await
 import dev.minn.jda.ktx.interactions.components.Modal
 import dev.minn.jda.ktx.interactions.components.StringSelectMenu
+import dev.minn.jda.ktx.interactions.components.TextInput
 import dev.minn.jda.ktx.interactions.components.option
 import dev.minn.jda.ktx.messages.Embed
+import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.io.IOException
+import net.dv8tion.jda.api.components.textinput.TextInputStyle
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
-import net.dv8tion.jda.api.exceptions.ErrorHandler
-import net.dv8tion.jda.api.requests.ErrorResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -45,49 +45,51 @@ import kotlin.time.Duration.Companion.minutes
 class Feedback : Command() {
     override suspend fun execute(event: CommandEvent) {
 
-        val selectMenu = StringSelectMenu("feedback:select:" + event.interaction.id, event.get("select_placeholder")) {
+        // build the selection menu for the type of feedback the user intends to submit
+        val selectMenu = StringSelectMenu("select:${event.id}", placeholder = event.get("select_placeholder")) {
             option(event.get("bug_label"), "bug", event.get("bug_description"), Emoji.fromUnicode(Unicode.BUG))
             option(event.get("suggest_label"), "suggest", event.get("suggest_description"), Emotes.PROMPT.asEmoji())
             option(event.get("other_label"), "other", event.get("other_description"), Emotes.CHAT.asEmoji())
             option(event.get("cancel_label"), "cancel", event.get("cancel_description"), Emotes.LEAVE.asEmoji())
         }
-        val hook = event.reply(event.get("disclaimer", Emotes.NOTICE)).addActionRow(selectMenu).asEphemeral().await()
 
-        // allow the user some time to read the disclaimer, but don't wait too long to timeout
+        // send the confirmation message along with the selection menu
+        event.reply(MessageCreate(useComponentsV2 = true) {
+            container {
+                text(event.get("disclaimer", Emotes.NOTICE))
+                actionRow(selectMenu)
+            }
+        }).asEphemeral().queue()
+
+        // wait for the user to read the disclaimer before making a selection
         val selectEvent = withTimeoutOrNull(2.minutes) {
-            event.jda.await<StringSelectInteractionEvent> { it.componentId == selectMenu.id && it.user == event.user }
+            event.jda.await<StringSelectInteractionEvent> { it.componentId == selectMenu.customId }
         }
 
-        // just delete the message if it times out or the user cancels
-        if (selectEvent == null || "cancel" in selectEvent.values) {
-            // we don't need to acknowledge the select event if we're deleting the message anyway
-            hook.deleteOriginal().queue(null, ERROR_HANDLER)
-            return
-        }
+        // delete the original message after they've made a selection, or it times out
+        event.hook.deleteOriginal().queue(null, null)
+        if (selectEvent == null || "cancel" in selectEvent.values) return
 
-        val modal = Modal("feedback:modal:" + event.interaction.id, event.get("modal.title")) {
-            short("summary", event.get("modal.summary_label"), required = true) {
+        val modal = Modal("modal:${event.id}", event.get("modal.title")) {
+            val summary = TextInput("summary", TextInputStyle.SHORT, required = true) {
                 placeholder = event.get("modal.summary_placeholder")
-                setRequiredRange(8, 50)
+                requiredLength = 8..50
             }
-            paragraph("description", event.get("modal.description_label"), required = true) {
+            val description = TextInput("description", TextInputStyle.PARAGRAPH, required = true) {
                 placeholder = event.get("modal.description_placeholder")
-                setRequiredRange(20, 2000)
+                requiredLength = 20..2000
             }
+            label(event.get("modal.summary_label"), child = summary)
+            label(event.get("modal.description_label"), child = description)
         }
 
-        // edit the message to say we're waiting for their response, thus removing inactive components
-        hook.editOriginal(event.get("waiting", Emotes.LOADING)).setComponents().queue()
         selectEvent.replyModal(modal).queue()
 
         // let the user take their time to write out their thoughts, but don't
         // wait too long since interaction tokens expire after 15 minutes
-        val modalEvent = withTimeoutOrNull(12.minutes) {
-            event.jda.await<ModalInteractionEvent> { it.modalId == modal.id && it.user == event.user }
-        } ?: run {
-            hook.deleteOriginal().queue(null, ERROR_HANDLER)
-            return
-        }
+        val modalEvent = withTimeoutOrNull(10.minutes) {
+            event.jda.await<ModalInteractionEvent> { it.modalId == modal.id }
+        } ?: return
 
         val type = selectEvent.values.first()
         val summary = modalEvent.getValue("summary")!!.asString.trim()
@@ -112,30 +114,31 @@ class Feedback : Command() {
         }
 
         // after we've saved the file, we can consider this a success
-        modalEvent.editMessage(event.get("thanks", Emotes.SUCCESS)).queue()
+        modalEvent.reply(MessageCreate(useComponentsV2 = true) {
+            container { text(event.get("thanks", Emotes.SUCCESS)) }
+        }).asEphemeral().queue()
 
         // optionally post the feedback publicly in a channel
-        val channel = event.sandra.shards.getTextChannelById(event.sandra.settings.features.feedbackChannel)
+        val channelId = event.sandra.settings.features.feedbackChannel.takeIf { it != 0L } ?: return
+        val channel = event.sandra.shards.getTextChannelById(channelId)
         if (channel == null || !channel.canTalk()) {
-            // warn if for some reason the feedback channel is inaccessible
-            LOGGER.warn("The feedback submission channel is currently unavailable! Currently selected channel: ${event.sandra.settings.features.feedbackChannel}")
+            LOGGER.warn("Unable to access the currently selected feedback channel: $channel [$channelId]")
             return
         }
 
-        Embed {
+        channel.sendMessageEmbeds(Embed {
             description = content
             val emoji = selectMenu.options.first { it.value == type }.emoji!!.let {
                 if (it is CustomEmoji) it.asCustom().asMention else it.name
             }
             title = "$emoji ${event.get(type + "_label")} ${Unicode.BULLET} $summary"
             footer(event.get("footer", event.user.name, event.user.id), event.user.effectiveAvatarUrl)
-        }.also { embed -> channel.sendMessageEmbeds(embed).queue() }
+        }).queue(null) {
+            LOGGER.warn("Failed to send message in designated feedback channel: $channel [$channelId]")
+        }
     }
 
     private companion object {
         val LOGGER: Logger = LoggerFactory.getLogger(Feedback::class.java)
-        val ERROR_HANDLER = ErrorHandler().ignore(
-            ErrorResponse.UNKNOWN_INTERACTION, ErrorResponse.UNKNOWN_MESSAGE
-        )
     }
 }

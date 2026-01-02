@@ -19,13 +19,14 @@ package com.sandrabot.sandra.entities
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.utils.spaceRegex
-import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.entities.channel.concrete.*
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.OptionType
-import java.util.*
 import kotlin.time.Duration
 
 private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z\d,.]+))?]""")
@@ -99,13 +100,12 @@ fun compileArguments(tokens: String): List<Argument> {
         // figure out if options are applicable and validate them
         val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type.optionType) {
             // only argument types with text, integer, and double value types may use options
-            OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER ->
-                rawOptions.lowercase().split(',').distinct().take(25).let { list ->
+            OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER -> rawOptions.lowercase().split(',').distinct()
+                .take(25).let { list ->
                     when (type.optionType) {
                         OptionType.STRING -> list
                         OptionType.INTEGER -> list.map(String::toLongOrNull)
                         OptionType.NUMBER -> list.map(String::toDoubleOrNull)
-                        else -> throw AssertionError("Illegal option type in $text")
                     }.also { mappedList ->
                         // throw if any options couldn't be converted
                         if (null in mappedList) throw IllegalArgumentException("Illegal option type in $text")
@@ -169,7 +169,7 @@ private fun findOption(event: CommandEvent, argument: Argument): OptionMapping? 
     event.options.firstOrNull { argument.name == it.name && argument.type.optionType == it.type }
 
 private inline fun <reified T : GuildChannel> parseChannels(event: CommandEvent, argument: Argument): T? =
-    findOption(event, argument)?.asChannel?.let { if (it is T) it else null }
+    findOption(event, argument)?.asChannel?.let { it as? T }
 
 private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
     val option = findOption(event, argument) ?: return null
@@ -181,11 +181,12 @@ private fun parseCategory(event: CommandEvent, argument: Argument): Category? {
 
 private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
     val option = findOption(event, argument) ?: return null
-    // allow top level commands to be searched by their localized names
-    val commands = event.sandra.commands.values.filterNot { it.isSubcommand }
-        .associateBy { event.getAny("commands.${it.name}.name") }
+    // all commands can be searched by their localized names
+    val commands = event.sandra.commands.values.associateBy { command ->
+        command.readablePaths.joinToString(" ", transform = event::getAny)
+    }
     // since we don't support fuzzy searching, the option is the key
-    return commands[option.asString.lowercase().replace(spaceRegex, "/")]
+    return commands[option.asString.lowercase().replace(spaceRegex, " ")]
 }
 
 private fun parseDuration(event: CommandEvent, argument: Argument): Duration? {
