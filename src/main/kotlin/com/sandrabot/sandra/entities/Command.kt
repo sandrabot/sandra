@@ -89,13 +89,24 @@ abstract class Command(
     val path: String by lazy {
         if (isSubcommand) {
             var topLevel = this
-            do topLevel = topLevel.parent ?: break while (true)
+            while (true) topLevel = topLevel.parent ?: break
             buildString {
                 append(topLevel.name)
                 if (subgroup != null) append('.', subgroup)
                 append('.', name)
             }
         } else name
+    }
+
+    /**
+     * This method returns a [List] of content paths that will resemble the command's full name
+     * after it is retrieved from the [com.sandrabot.sandra.constants.ContentStore]
+     *
+     * @see com.sandrabot.sandra.constants.ContentStore
+     * @see LocaleContext
+     */
+    val readablePaths: List<String> by lazy {
+        path.split('.').runningReduce { a, b -> "$a.$b" }.map { "commands.$it.name" }
     }
 
     /**
