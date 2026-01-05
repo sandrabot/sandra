@@ -34,9 +34,10 @@ object ConfigMapTransformer : JsonTransformingSerializer<Map<Long, Configuration
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
     override fun selectDeserializer(element: JsonElement) = when {
-        "cash" in element.jsonObject -> UserConfig.serializer()
-        "members" in element.jsonObject -> GuildConfig.serializer()
-        "experience" in element.jsonObject -> MemberConfig.serializer()
-        else -> ChannelConfig.serializer()
+        "cash" in element.jsonObject -> UserConfig.serializer() // the first obvious key is cash, only users have money
+        "level" in element.jsonObject -> MemberConfig.serializer() // second to users, only members have xp levels
+        "members" in element.jsonObject -> GuildConfig.serializer() // guilds always contain a collection of members
+        "multiplier" in element.jsonObject -> ChannelConfig.serializer() // only channels have experience multipliers
+        else -> throw IllegalStateException("Unable to select polymorphic deserializer for JsonElement: $element")
     }
 }

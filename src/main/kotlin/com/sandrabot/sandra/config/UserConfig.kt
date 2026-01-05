@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -26,13 +27,19 @@ class UserConfig(override val id: Long) : ExperienceConfig() {
 
     var cash: Long = 0
 
+    @SerialName("daily_last")
     var dailyLast: Long = 0
+    @SerialName("daily_streak")
     var dailyStreak: Int = 0
+    @SerialName("daily_longest")
     var dailyLongestStreak: Int = 0
 
+    @SerialName("rep")
     var reputation: Long = 0
+    @SerialName("rep_last")
     var reputationLast: Long = 0
 
+    @SerialName("last_username")
     var lastUsername: String? = null
 
     override fun toString(): String = "UserConfig:$id"

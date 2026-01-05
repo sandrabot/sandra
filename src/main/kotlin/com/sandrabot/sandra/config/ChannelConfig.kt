@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,8 +25,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ChannelConfig(override val id: Long) : Configuration() {
 
+    @SerialName("experience")
     var experienceEnabled: Boolean = true
+    @SerialName("notify")
     var experienceNotifyEnabled: Boolean = true
+    @SerialName("multiplier")
     var experienceMultiplier: Double = 1.0
 
     override fun toString(): String = "ChannelConfig:$id"

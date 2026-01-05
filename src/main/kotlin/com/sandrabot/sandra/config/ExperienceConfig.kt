@@ -16,11 +16,16 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 abstract class ExperienceConfig : Configuration() {
+
+    @SerialName("last")
     var experienceLast: Long = 0
+    @SerialName("xp")
     var experience: Int = 0
     var level: Int = 0
+
 }

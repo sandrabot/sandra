@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,14 +32,22 @@ class GuildConfig(override val id: Long) : Configuration() {
     @Serializable(with = ConfigMapTransformer::class)
     val members = mutableMapOf<Long, MemberConfig>()
 
+    @SerialName("experience")
     var experienceEnabled: Boolean = true
+    @SerialName("compounds")
     var experienceCompounds: Boolean = true
+    @SerialName("multiplier")
     var experienceMultiplier: Double = 1.0
+    @SerialName("notify")
     var experienceNotifyEnabled: Boolean = true
+    @SerialName("notify_template")
     var experienceNotifyTemplate: String? = null
+    @SerialName("notify_channel")
     var experienceNotifyChannel: Long = 0L
 
+    @SerialName("last_upvote")
     var lastUpvoteEmoji: String? = null
+    @SerialName("last_downvote")
     var lastDownvoteEmoji: String? = null
 
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
