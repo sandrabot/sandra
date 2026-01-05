@@ -71,7 +71,7 @@ class NowPlaying : Command(arguments = "[user]") {
                 append(event.get("plays", trackInfo.userPlayCount))
                 if (trackInfo.duration > 0) append(" • ", trackInfo.duration.milliseconds)
                 if (trackInfo.tags.isNotEmpty()) {
-                    val firstTags = trackInfo.tags.take(3).joinToString(", ") { it.name.lowercase() }
+                    val firstTags = trackInfo.tags.take(3).joinToString { it.name.lowercase() }
                     append(" • ", SplitUtil.split(firstTags, 40, SplitUtil.Strategy.onChar(',')).first())
                 }
             })

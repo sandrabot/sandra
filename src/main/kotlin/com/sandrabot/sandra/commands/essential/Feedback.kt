@@ -67,7 +67,7 @@ class Feedback : Command() {
         }
 
         // delete the original message after they've made a selection, or it times out
-        event.hook.deleteOriginal().queue(null, null)
+        event.hook.deleteOriginal().queue()
         if (selectEvent == null || "cancel" in selectEvent.values) return
 
         val modal = Modal("modal:${event.id}", event.get("modal.title")) {

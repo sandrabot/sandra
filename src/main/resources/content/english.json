@@ -95,7 +95,7 @@
     "commands": {
       "name": "commands",
       "description": "glance through all my commands & categories",
-      "placeholder": "make a selection...",
+      "placeholder": "pick another category...",
       "title": "commands",
       "footnote": "-# use `/help [command]` for more detailed info"
     },
