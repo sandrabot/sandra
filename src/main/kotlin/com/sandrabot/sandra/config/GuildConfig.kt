@@ -18,6 +18,8 @@ package com.sandrabot.sandra.config
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 
 /**
  * Stores Sandra-specific properties and settings for guilds.
@@ -31,6 +33,17 @@ class GuildConfig(override val id: Long) : Configuration() {
 
     @Serializable(with = ConfigMapTransformer::class)
     val members = mutableMapOf<Long, MemberConfig>()
+
+    @SerialName("auto_roles")
+    var autoRolesEnabled: Boolean = true
+    @SerialName("save_roles")
+    var saveRolesEnabled: Boolean = true
+    @SerialName("delay_roles")
+    var delayDefaultRoles: Boolean = true
+    @SerialName("default_roles")
+    val defaultRoles = mutableSetOf<Long>()
+    @SerialName("bot_role")
+    var defaultBotRole: Long = 0L
 
     @SerialName("experience")
     var experienceEnabled: Boolean = true
@@ -52,6 +65,9 @@ class GuildConfig(override val id: Long) : Configuration() {
 
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
     fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }
+
+    operator fun get(channel: MessageChannel) = channels.getOrPut(channel.idLong) { ChannelConfig(channel.idLong) }
+    operator fun get(member: Member) = members.getOrPut(member.idLong) { MemberConfig(member.idLong) }
 
     override fun toString(): String = "GuildConfig:$id"
 
