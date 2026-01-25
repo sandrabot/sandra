@@ -49,33 +49,38 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
     }
 
     private fun onGuildJoin(event: GuildJoinEvent) {
-        LOGGER.info("Joined guild: ${event.guild.name} [${event.guild.id}] | Owned by ${event.guild.ownerId}")
+        LOGGER.info("Added to guild: ${event.guild.name} [${event.guild.id}] | Owned by ${event.guild.ownerId}")
     }
 
     private fun onGuildLeave(event: GuildLeaveEvent) {
-        LOGGER.info("Left guild: ${event.guild.name} [${event.guild.id}] | Owned by ${event.guild.ownerId}")
+        LOGGER.info("Removed from guild: ${event.guild.name} [${event.guild.id}] | Owned by ${event.guild.ownerId}")
     }
 
     private fun onMemberJoin(event: GuildMemberJoinEvent) {
         val guildConfig = sandra.config[event.guild]
         val selfMember = event.guild.selfMember
 
-        // FEATURE: Default Bot Role
         if (event.user.isBot) {
+
+            // FEATURE: Default Bot Role
             if (guildConfig.autoRolesEnabled && guildConfig.defaultBotRole != 0L) {
-                if (!selfMember.hasPermission(Permission.MANAGE_ROLES) || !selfMember.canInteract(event.member)) return
-                val defaultBotRole = event.guild.getRoleById(guildConfig.defaultBotRole) ?: run {
+                // there's nothing we can do if we don't have this permission
+                if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) return
+                val botRole = event.guild.getRoleById(guildConfig.defaultBotRole) ?: run {
                     // TODO role data is stale, schedule data cleanup
                     return
                 }
-                if (selfMember.canInteract(defaultBotRole)) {
-                    // TODO localised reasons for auditable actions
-                    event.guild.addRoleToMember(event.member, defaultBotRole).reason("default bot role").queue()
-                    LOGGER.debug("Default Bot Role: Giving {} to {}", defaultBotRole, event.member)
+                // verify that we can interact with the member and their new role
+                if (selfMember.canInteract(event.member) && selfMember.canInteract(botRole)) {
+                    // TODO localized reasons for auditable actions
+                    event.guild.addRoleToMember(event.member, botRole).reason("default bot role").queue(null, HANDLER)
+                    LOGGER.debug("Default Bot Role: Giving role [{}] to {}", botRole.id, event.member)
                 }
             }
+
             // stop here for bot accounts, nothing else applies to them
             return
+
         }
 
         // TODO Feature: Auto Kick
@@ -83,32 +88,37 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
         // TODO Feature: Welcome Messages
 
         // FEATURE: Auto Roles
-        handleAutoRoles(event, guildConfig)
+        if (guildConfig.autoRolesEnabled) handleAutoRoles(event, guildConfig)
     }
 
     private fun handleAutoRoles(event: GenericGuildMemberEvent, guildConfig: GuildConfig) {
-        if (!guildConfig.autoRolesEnabled || !event.guild.selfMember.hasPermission(Permission.MANAGE_ROLES)) return
-        // a single role may be given for different reasons in certain situations
+        val selfMember = event.guild.selfMember
+
+        // there's nothing we can do if we don't have this permission
+        if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) return
+        // a single role may be given for multiple reasons in certain situations
         val roleMap = mutableMapOf<Role, MutableSet<String>>()
         val memberConfig = guildConfig[event.member]
 
         // FEATURE: Delayed Default Roles
         if (guildConfig.delayDefaultRoles && event.member.isPending) {
-            if (guildConfig.saveRolesEnabled && memberConfig.savedRoles.isNotEmpty()) {
-                // continue if roles should be restored, bypass member verification for known members
-            } else return
+            // unless the user has previous roles, they must finish member onboarding first
+            if (!guildConfig.saveRolesEnabled || memberConfig.savedRoles.isEmpty()) return
+            LOGGER.debug("Delayed Default Roles: Bypassing onboarding for member with previous roles {}", event.member)
         }
 
         // FEATURE: Default Roles
-        val defaultRoles = guildConfig.defaultRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
-        if (guildConfig.defaultRoles.size != defaultRoles.size) {
-            // TODO role data is stale, schedule data cleanup
+        if (guildConfig.defaultRoles.isNotEmpty()) {
+            val defaultRoles = guildConfig.defaultRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
+            if (guildConfig.defaultRoles.size != defaultRoles.size) {
+                // TODO role data is stale, schedule data cleanup
+            }
+            // TODO localised reasons for auditable actions
+            defaultRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("default roles") }
+            LOGGER.debug("Default Roles: Adding entries {} for {}", defaultRoles.map { it.id }, event.member)
         }
-        // TODO localised reasons for auditable actions
-        defaultRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("default roles") }
-        LOGGER.debug("Auto Role: Adding {} default roles for {}: {}", defaultRoles.size, event.member, defaultRoles)
 
-        // FEATURE: Save Roles
+        // FEATURE: Saved Roles
         if (guildConfig.saveRolesEnabled && memberConfig.savedRoles.isNotEmpty()) {
             val savedRoles = memberConfig.savedRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
             if (memberConfig.savedRoles.size != savedRoles.size) {
@@ -117,21 +127,20 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
             memberConfig.savedRoles.clear()
             // TODO localised reasons for auditable actions
             savedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("previously saved roles") }
-            LOGGER.debug("Auto Role: Adding {} saved roles for {}: {}", savedRoles.size, event.member, savedRoles)
+            LOGGER.debug("Saved Roles: Adding entries {} for {}", savedRoles.map { it.id }, event.member)
         }
 
         // TODO Feature: Sync Ranks
 
         // TODO optionally block certain roles from being reapplied automatically (mods, admins)
 
-        // ensure that we are able to interact with the given roles
-        val reachableMap = roleMap.filterKeys { role -> event.guild.selfMember.canInteract(role) }
-        // do nothing if none of the roles are within reach
-        if (reachableMap.isEmpty()) return
+        // verify that we are able to interact with the given roles
+        val reachableMap = roleMap.filterKeys { role ->
+            selfMember.canInteract(role)
+        }.takeUnless { it.isEmpty() } ?: return
 
-        val reason = reachableMap.flatMap { (_, reasons) -> reasons }.toSet().sorted().joinToString()
-        LOGGER.debug("Auto Role: Modifying {} roles for {} [{}]", reachableMap.size, event.member, reachableMap.keys)
-        event.guild.modifyMemberRoles(event.member, reachableMap.keys).reason(reason).queue(null, HANDLER)
+        val distinctReasons = reachableMap.flatMap { (_, reasons) -> reasons }.toSet().sorted().joinToString()
+        event.guild.modifyMemberRoles(event.member, reachableMap.keys).reason(distinctReasons).queue(null, HANDLER)
     }
 
     private fun onMemberRemove(event: GuildMemberRemoveEvent) {
@@ -139,15 +148,20 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
 
         // FEATURE: Save Roles
         if (guildConfig.autoRolesEnabled && guildConfig.saveRolesEnabled) {
-            // attempt to store the member's current roles, this information is already lost if the member wasn't cached
-            val member = event.member ?: return
-            guildConfig[member].savedRoles += member.roles.map { it.idLong }
+            // attempt to store the member's current roles
+            // this information is already lost if the member wasn't cached
+            // discord does not provide the member meta-data when a remove event is dispatched
+            val member = event.member?.takeUnless { it.user.isBot } ?: return
+            val roles = member.roles.takeUnless { it.isEmpty() } ?: return
+            guildConfig[member].savedRoles += roles.map { it.idLong }
         }
     }
 
     private fun onMemberUpdatePending(event: GuildMemberUpdatePendingEvent) {
+        val guildConfig = sandra.config[event.guild]
+
         // FEATURE: Delayed Default Roles
-        handleAutoRoles(event, sandra.config[event.guild])
+        if (guildConfig.autoRolesEnabled && guildConfig.delayDefaultRoles) handleAutoRoles(event, guildConfig)
     }
 
     private companion object {
