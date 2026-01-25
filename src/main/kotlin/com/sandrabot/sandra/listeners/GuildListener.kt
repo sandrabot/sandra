@@ -103,11 +103,7 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
         val memberConfig = guildConfig[event.member]
 
         // FEATURE: Delayed Default Roles
-        if (guildConfig.delayDefaultRoles && event.member.isPending) {
-            // unless the user has previous roles, they must finish member onboarding first
-            if (!guildConfig.saveRolesEnabled || memberConfig.savedRoles.isEmpty()) return
-            LOGGER.debug("Delayed Default Roles: Bypassing onboarding for member with previous roles {}", event.member)
-        }
+        if (guildConfig.delayDefaultRoles && event.member.isPending) return
 
         // FEATURE: Default Roles
         if (guildConfig.defaultRoles.isNotEmpty()) {
