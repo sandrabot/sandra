@@ -18,6 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
+import com.sandrabot.sandra.constants.ContentStore
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Role
@@ -72,8 +73,8 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
                 }
                 // verify that we can interact with the member and their new role
                 if (selfMember.canInteract(event.member) && selfMember.canInteract(botRole)) {
-                    // TODO localized reasons for auditable actions
-                    event.guild.addRoleToMember(event.member, botRole).reason("default bot role").queue(null, HANDLER)
+                    val reason = ContentStore[event.guild.locale, "core.reasons.bot_role"]
+                    event.guild.addRoleToMember(event.member, botRole).reason(reason).queue(null, HANDLER)
                     LOGGER.debug("Default Bot Role: Giving role [{}] to {}", botRole.id, event.member)
                 }
             }
@@ -113,8 +114,7 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
             if (guildConfig.defaultRoles.size != defaultRoles.size) {
                 // TODO role data is stale, schedule data cleanup
             }
-            // TODO localised reasons for auditable actions
-            defaultRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("default roles") }
+            defaultRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("default_roles") }
             LOGGER.debug("Default Roles: Adding entries {} for {}", defaultRoles.map { it.id }, event.member)
         }
 
@@ -125,8 +125,7 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
                 // TODO role data is stale, schedule data cleanup
             }
             memberConfig.savedRoles.clear()
-            // TODO localised reasons for auditable actions
-            savedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("previously saved roles") }
+            savedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("saved_roles") }
             LOGGER.debug("Saved Roles: Adding entries {} for {}", savedRoles.map { it.id }, event.member)
         }
 
@@ -139,8 +138,11 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
             selfMember.canInteract(role)
         }.takeUnless { it.isEmpty() } ?: return
 
-        val distinctReasons = reachableMap.flatMap { (_, reasons) -> reasons }.toSet().sorted().joinToString()
+        val distinctReasons = reachableMap.values.asSequence().flatten().distinct().map {
+            ContentStore[event.guild.locale, "core.reasons.$it"]
+        }.sorted().joinToString()
         event.guild.modifyMemberRoles(event.member, reachableMap.keys).reason(distinctReasons).queue(null, HANDLER)
+        LOGGER.debug("Auto Role: Modifying {} roles for {}", reachableMap.size, event.member)
     }
 
     private fun onMemberRemove(event: GuildMemberRemoveEvent) {
