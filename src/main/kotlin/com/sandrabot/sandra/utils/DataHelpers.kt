@@ -16,8 +16,18 @@
 
 package com.sandrabot.sandra.utils
 
+import com.sandrabot.sandra.config.Configuration
 import com.sandrabot.sandra.config.GuildConfig
+import kotlinx.serialization.json.Json
 import net.dv8tion.jda.api.entities.Guild
+
+private val json = Json {
+    encodeDefaults = true
+    prettyPrint = true
+}
+
+@Suppress("unused")
+fun Configuration.toData() = json.encodeToString(this)
 
 fun GuildConfig.cleanRoleData(guild: Guild) {
     val currentRoles = guild.roleCache.map { it.idLong }

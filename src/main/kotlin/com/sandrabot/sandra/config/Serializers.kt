@@ -25,11 +25,11 @@ object ConfigMapTransformer : JsonTransformingSerializer<Map<Long, Configuration
 ) {
     // Convert the map into a list of only values
     override fun transformSerialize(element: JsonElement): JsonElement =
-        buildJsonArray { element.jsonObject.map { add(it.value) } }
+        buildJsonArray { element.jsonObject.forEach { add(it.value) } }
 
     // Convert the list back to a map with the id as they key
     override fun transformDeserialize(element: JsonElement): JsonElement =
-        buildJsonObject { element.jsonArray.map { put(it.jsonObject["id"].toString(), it.jsonObject) } }
+        buildJsonObject { element.jsonArray.forEach { put(it.jsonObject["id"].toString(), it.jsonObject) } }
 }
 
 object ConfigSerializer : JsonContentPolymorphicSerializer<Configuration>(Configuration::class) {
