@@ -42,6 +42,8 @@ class GuildConfig(override val id: Long) : Configuration() {
     var delayDefaultRoles: Boolean = true
     @SerialName("default_roles")
     val defaultRoles = mutableSetOf<Long>()
+    @SerialName("revoked_roles")
+    val revokedRoles = mutableSetOf<Long>()
     @SerialName("bot_role")
     var defaultBotRole: Long = 0L
 

@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Guild
 fun GuildConfig.cleanRoleData(guild: Guild) {
     val currentRoles = guild.roleCache.map { it.idLong }
     if (defaultRoles.isNotEmpty()) defaultRoles.removeIf { it !in currentRoles }
+    if (revokedRoles.isNotEmpty()) revokedRoles.removeIf { it !in currentRoles }
     if (defaultBotRole != 0L && defaultBotRole !in currentRoles) defaultBotRole = 0L
     members.values.forEach { config -> config.savedRoles.removeIf { it !in currentRoles } }
 }

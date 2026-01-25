@@ -122,13 +122,17 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
             val savedRoles = memberConfig.savedRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
             if (memberConfig.savedRoles.size != savedRoles.size) guildConfig.cleanRoleData(event.guild)
             memberConfig.savedRoles.clear()
-            savedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("saved_roles") }
-            LOGGER.debug("Saved Roles: Adding entries {} for {}", savedRoles.map { it.id }, event.member)
+
+            // FEATURE: Revoke Saved Roles
+            val revokedRoles = guildConfig.revokedRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
+            if (guildConfig.revokedRoles.size != revokedRoles.size) guildConfig.cleanRoleData(event.guild)
+            val allowedRoles = if (revokedRoles.isEmpty()) savedRoles else savedRoles - revokedRoles.toSet()
+
+            allowedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("saved_roles") }
+            LOGGER.debug("Saved Roles: Adding entries {} for {}", allowedRoles.map { it.id }, event.member)
         }
 
         // TODO Feature: Sync Ranks
-
-        // TODO optionally block certain roles from being reapplied automatically (mods, admins)
 
         // verify that we are able to interact with the given roles
         val reachableMap = roleMap.filterKeys { role ->
