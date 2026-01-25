@@ -142,7 +142,9 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
         val distinctReasons = reachableMap.values.asSequence().flatten().distinct().map {
             ContentStore[event.guild.locale, "core.reasons.$it"]
         }.sorted().joinToString()
-        event.guild.modifyMemberRoles(event.member, reachableMap.keys).reason(distinctReasons).queue(null, HANDLER)
+
+        val roles = event.member.roles + reachableMap.keys
+        event.guild.modifyMemberRoles(event.member, roles).reason(distinctReasons).queue(null, HANDLER)
         LOGGER.debug("Auto Role: Modifying {} roles for {}", reachableMap.size, event.member)
     }
 
