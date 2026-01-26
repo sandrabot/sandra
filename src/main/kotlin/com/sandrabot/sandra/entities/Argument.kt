@@ -18,7 +18,7 @@ package com.sandrabot.sandra.entities
 
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.exceptions.MissingArgumentException
-import com.sandrabot.sandra.utils.spaceRegex
+import com.sandrabot.sandra.utils.removeExtraSpaces
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
@@ -29,9 +29,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import kotlin.time.Duration
 
-private val tokenRegex = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z\d,.]+))?]""")
-private val durationRegex = Regex("""^(?!$)(?:(\d+)d ?)?(?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?$""")
-private val emoteRegex = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
+private val TOKEN_REGEX = Regex("""\[(@)?(?:([A-z]+):)?([A-z]+)(?::([A-z\d,.]+))?]""")
+private val DURATION_REGEX = Regex("""^(?!$)(?:(\d+)d ?)?(?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?$""")
+private val EMOJI_REGEX = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 
 /**
  * Represents an object that may be parsed from text and consumed by a command as an argument.
@@ -89,16 +89,15 @@ class Argument internal constructor(
  *  * `[time:integer] [time:duration]` - Throws [IllegalArgumentException], the name "time" is already used
  *  * `[quantity:integer:1.0,2.0]` - Throws [IllegalArgumentException], the option type is DOUBLE when INTEGER is required
  */
-@Suppress("KDocUnresolvedReference")
 fun compileArguments(tokens: String): List<Argument> {
     val arguments = mutableListOf<Argument>()
-    tokenRegex.findAll(tokens).forEach { matchResult ->
+    TOKEN_REGEX.findAll(tokens).forEach { matchResult ->
         val (text, asterisk, rawName, rawType, rawOptions) = matchResult.groupValues
         val isRequired = asterisk.isNotEmpty()
         val type = ArgumentType.fromName(rawType)
 
         // figure out if options are applicable and validate them
-        val options: List<*> = if (rawOptions.isEmpty()) emptyList<String>() else when (type.optionType) {
+        val options = if (rawOptions.isEmpty()) emptyList() else when (type.optionType) {
             // only argument types with text, integer, and double value types may use options
             OptionType.STRING, OptionType.INTEGER, OptionType.NUMBER -> rawOptions.lowercase().split(',').distinct()
                 .take(25).let { list ->
@@ -156,7 +155,7 @@ fun parseArguments(event: CommandEvent, arguments: List<Argument>): ArgumentResu
             ArgumentType.CATEGORY -> parseCategory(event, argument)
             ArgumentType.COMMAND -> parseCommand(event, argument)
             ArgumentType.DURATION -> parseDuration(event, argument)
-            ArgumentType.EMOTE -> parseEmote(event, argument)
+            ArgumentType.EMOJI -> parseEmoji(event, argument)
         }
         if (argument.isRequired && value == null) throw MissingArgumentException(event, argument)
         if (value != null) parsed[argument.name] = value
@@ -186,13 +185,13 @@ private fun parseCommand(event: CommandEvent, argument: Argument): Command? {
         command.readablePaths.joinToString(" ", transform = event::getAny)
     }
     // since we don't support fuzzy searching, the option is the key
-    return commands[option.asString.lowercase().replace(spaceRegex, " ")]
+    return commands[option.asString.lowercase().removeExtraSpaces()]
 }
 
 private fun parseDuration(event: CommandEvent, argument: Argument): Duration? {
     val option = findOption(event, argument) ?: return null
     // due to regex negative lookahead, we need to match the entire string
-    val match = durationRegex.matchEntire(option.asString) ?: return null
+    val match = DURATION_REGEX.matchEntire(option.asString) ?: return null
     // the time units must be in order, so that makes this easy enough
     val (_, days, hours, minutes, seconds) = match.groupValues.map { it.ifBlank { "0" } }
     // this is sadly the most straightforward way to parse the duration, as
@@ -201,10 +200,10 @@ private fun parseDuration(event: CommandEvent, argument: Argument): Duration? {
     return duration?.let { if (it.inWholeSeconds > 0) duration else null }
 }
 
-private fun parseEmote(event: CommandEvent, argument: Argument): RichCustomEmoji? {
+private fun parseEmoji(event: CommandEvent, argument: Argument): RichCustomEmoji? {
     val option = findOption(event, argument) ?: return null
     // only match the entire string to be consistent with the other types
-    val match = emoteRegex.matchEntire(option.asString) ?: return null
+    val match = EMOJI_REGEX.matchEntire(option.asString) ?: return null
     // check against all guilds, usually the emote isn't from the calling guild
     return event.sandra.shards.getEmojiById(match.groupValues[1])
 }

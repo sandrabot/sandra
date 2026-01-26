@@ -60,9 +60,10 @@ enum class ArgumentType(val optionType: OptionType) {
     DURATION(OptionType.STRING),
 
     /**
-     * Searches for emotes in guilds. Resolves [net.dv8tion.jda.api.entities.emoji.RichCustomEmoji] objects.
+     * Searches for emojis in all available guilds. Resolves
+     * [net.dv8tion.jda.api.entities.emoji.RichCustomEmoji] objects.
      */
-    EMOTE(OptionType.STRING),
+    EMOJI(OptionType.STRING),
 
     /**
      * Resolves any integer between -2^53 and 2^53 as a [Long].
