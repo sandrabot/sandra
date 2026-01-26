@@ -35,21 +35,6 @@ data class SecretConfig(
     val lastFmToken: String = "",
 
     /**
-     * Token used for the API at https://botlist.space
-     */
-    val spaceToken: String = "",
-
-    /**
-     * Token used for the API at https://bots.ondiscord.xyz
-     */
-    val bodToken: String = "",
-
-    /**
-     * Token used for the API at https://discord.boats
-     */
-    val boatToken: String = "",
-
-    /**
      * Token used for the API at https://discordbotlist.com
      */
     val dblToken: String = "",
