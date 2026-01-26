@@ -18,7 +18,6 @@ package com.sandrabot.sandra.commands.lastfm
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
@@ -27,6 +26,7 @@ import com.sandrabot.sandra.utils.sanitize
 import com.sandrabot.sandra.utils.tryAverageColor
 import com.sandrabot.sandra.utils.verifyLastUser
 import dev.minn.jda.ktx.coroutines.await
+import dev.minn.jda.ktx.emoji.toEmoji
 import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.utils.SplitUtil
 import java.time.Instant
@@ -84,9 +84,9 @@ class NowPlaying : Command(arguments = "[user]") {
         // check for "explicit" album cover art, this prevents
         // the embed from being shown in regular channels
         if (message.embeds.isNotEmpty()) {
-            val upvoteEmoji = event.guildConfig?.lastUpvoteEmoji?.asEmoji() ?: Emotes.UPVOTE.asEmoji()
-            val downvoteEmoji = event.guildConfig?.lastDownvoteEmoji?.asEmoji() ?: Emotes.DOWNVOTE.asEmoji()
-            message.addReaction(upvoteEmoji).flatMap { message.addReaction(downvoteEmoji) }.queue()
+            val upvoteEmoji = event.guildConfig?.lastUpvoteEmoji ?: Emotes.UPVOTE
+            val downvoteEmoji = event.guildConfig?.lastDownvoteEmoji ?: Emotes.DOWNVOTE
+            message.addReaction(upvoteEmoji.toEmoji()).flatMap { message.addReaction(downvoteEmoji.toEmoji()) }.queue()
         } else message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
 
     }

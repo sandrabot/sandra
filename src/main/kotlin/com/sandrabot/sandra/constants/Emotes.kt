@@ -16,11 +16,6 @@
 
 package com.sandrabot.sandra.constants
 
-import net.dv8tion.jda.api.entities.emoji.Emoji
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion
-
-fun String.asEmoji(): EmojiUnion = Emoji.fromFormatted(this)
-
 @Suppress("unused")
 object Emotes {
 

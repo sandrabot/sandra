@@ -29,12 +29,15 @@ class Ping : Command() {
     override suspend fun execute(event: CommandEvent) {
 
         event.deferReply(ephemeral = true).await()
-        val (rest, websocket) = arrayOf(event.jda.restPing.await(), event.jda.gatewayPing).map { ping ->
-            val formatted = ping.milliseconds.format()
-            if (ping > 250) "${Emotes.NOTICE} $formatted" else formatted
-        }
-        event.sendInfo(event.get("reply", rest, websocket)).queue()
+        val rest = event.jda.restPing.await().format()
+        val gateway = event.jda.gatewayPing.format()
+        event.sendInfo(event.get("reply", rest, gateway)).queue()
 
+    }
+
+    private fun Long.format(): String {
+        val formatted = this.milliseconds.format()
+        return if (this > 250) "${Emotes.NOTICE} $formatted" else formatted
     }
 
 }
