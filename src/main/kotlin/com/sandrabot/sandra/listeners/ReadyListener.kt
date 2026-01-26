@@ -54,25 +54,25 @@ class ReadyListener(private val sandra: Sandra) : CoroutineEventListener {
                     list.map { command -> sandra.commands.commandData[command.path] }
                 }
                 val globalCommands = event.jda.updateCommands().addCommands(global).await()
-                logger.info("Successfully updated global command list with ${globalCommands.size} commands")
+                LOGGER.info("Successfully updated global command list with ${globalCommands.size} commands")
                 // update the owner command list for all of our development servers
                 arrayOf(
                     Constants.GUILD_HANGOUT, Constants.GUILD_DEVELOPMENT
                 ).mapNotNull { sandra.shards.getGuildById(it) }.forEach { guild ->
                     val ownerCommands = guild.updateCommands().addCommands(owner).await()
-                    logger.info("Successfully updated owner command list with ${ownerCommands.size} commands for ${guild.id}")
+                    LOGGER.info("Successfully updated owner command list with ${ownerCommands.size} commands for ${guild.id}")
                 }
             } catch (t: Throwable) {
-                logger.error("An exception occurred while updating command lists", t)
-            } else logger.warn("Slash command updates have been disabled, changes will not be reflected")
-            logger.info("Shard ${shardInfo.shardString} has completed all additional tasks, ready to serve ${sandra.shards.guildCache.size()} guilds")
+                LOGGER.error("An exception occurred while updating command lists", t)
+            } else LOGGER.warn("Slash command updates have been disabled, changes will not be reflected")
+            LOGGER.info("Shard ${shardInfo.shardString} has completed all additional tasks, ready to serve ${sandra.shards.guildCache.size()} guilds")
             // this is the last ready event we will ever care about, so we don't need this listener anymore
             sandra.shards.removeEventListener(this)
         }
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(ReadyListener::class.java)
+        private val LOGGER = LoggerFactory.getLogger(ReadyListener::class.java)
     }
 
 }

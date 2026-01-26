@@ -58,7 +58,7 @@ class CommandManager {
                     throw IllegalArgumentException("Duplicate command path ${command.path} is already in use")
                 commands[command.path] = command
             } catch (t: Throwable) {
-                logger.error("An exception occurred while loading command $clazz", t)
+                LOGGER.error("An exception occurred while loading command $clazz", t)
                 null
             }
         }
@@ -66,7 +66,7 @@ class CommandManager {
         // this allows them to be retrieved much easier by the command listener
         commands.values.flatMap { it.allSubcommands }.forEach { commands[it.path] = it }
         val children = commands.count { it.value.isSubcommand }
-        logger.info("Finished loading ${commands.size - children} top-level commands with $children subcommands")
+        LOGGER.info("Finished loading ${commands.size - children} top-level commands with $children subcommands")
     }
 
     /**
@@ -75,7 +75,7 @@ class CommandManager {
     operator fun get(path: String): Command? = commands[path]
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(CommandManager::class.java)
+        private val LOGGER = LoggerFactory.getLogger(CommandManager::class.java)
     }
 
 }

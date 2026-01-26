@@ -53,7 +53,7 @@ abstract class Service(
      */
     open fun start() {
         if (isActive) return
-        job = serviceScope.launch {
+        job = SERVICE_SCOPE.launch {
             delay(initialDelay)
             while (isActive) try {
                 execute()
@@ -61,7 +61,7 @@ abstract class Service(
             } catch (_: CancellationException) {
                 // these can be safely ignored, only occurs when service shuts down
             } catch (t: Throwable) {
-                logger.error("Unhandled exception occurred while executing a service task, halting service", t)
+                LOGGER.error("Unhandled exception occurred while executing a service task, halting service", t)
                 shutdown()
             }
         }
@@ -78,8 +78,8 @@ abstract class Service(
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(Service::class.java)
-        private val serviceScope = CoroutineScope(Dispatchers.Default)
+        private val LOGGER = LoggerFactory.getLogger(Service::class.java)
+        private val SERVICE_SCOPE = CoroutineScope(Dispatchers.Default)
     }
 
 }

@@ -137,10 +137,10 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
         with(event.message.attachments) {
             if (isNotEmpty()) forEach { append("\nDirect Message Attachment: ${it.url}") }
         }
-    }.let { logger.info(it) }
+    }.let { LOGGER.info(it) }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(MessageListener::class.java)
+        private val LOGGER = LoggerFactory.getLogger(MessageListener::class.java)
     }
 
 }
