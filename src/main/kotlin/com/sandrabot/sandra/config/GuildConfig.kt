@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
  */
 @Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable
-class GuildConfig(override val id: Long) : Configuration() {
+data class GuildConfig(override val id: Long) : Configuration() {
 
     @Serializable(with = ConfigMapTransformer::class)
     val channels = mutableMapOf<Long, ChannelConfig>()

@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
  * Stores Sandra-specific properties and settings for members.
  */
 @Serializable
-class MemberConfig(override val id: Long) : ExperienceConfig() {
+data class MemberConfig(override val id: Long) : ExperienceConfig() {
 
     override fun toString(): String = "MemberConfig:$id"
 

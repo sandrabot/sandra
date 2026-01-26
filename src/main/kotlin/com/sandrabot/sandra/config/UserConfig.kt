@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
  * Stores Sandra-specific properties and settings for users.
  */
 @Serializable
-class UserConfig(override val id: Long) : ExperienceConfig() {
+data class UserConfig(override val id: Long) : ExperienceConfig() {
 
     var cash: Long = 0
 
