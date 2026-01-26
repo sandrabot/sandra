@@ -23,9 +23,7 @@ import com.sandrabot.sandra.utils.HTTP_CLIENT
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -35,7 +33,6 @@ import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
-import kotlin.collections.set
 
 /**
  * Manages Last.fm API requests and caches the results for 30 seconds.
@@ -44,7 +41,6 @@ class LastRequestManager(private val sandra: Sandra) {
 
     // limit last.fm api calls across the application to 5 requests per second
     private val rateLimiter = SimpleRateLimiter(5.0)
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val cache: ExpiringMap<Int, JsonObject> =
         ExpiringMap.builder().expirationPolicy(ExpirationPolicy.CREATED).expiration(30, TimeUnit.SECONDS).build()
 
@@ -89,7 +85,7 @@ class LastRequestManager(private val sandra: Sandra) {
             return hit
         }
         LOGGER.debug("Opening connection: $requestUrl")
-        val response = withContext(scope.coroutineContext) {
+        val response = withContext(Dispatchers.IO) {
             rateLimiter.acquire()
             HTTP_CLIENT.get(requestUrl).body<JsonObject>()
         }
