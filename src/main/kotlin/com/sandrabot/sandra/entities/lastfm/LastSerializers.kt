@@ -22,7 +22,7 @@ import kotlinx.serialization.json.*
 
 object LastUserSerializer : JsonTransformingSerializer<LastUser>(LastUser.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
-        element.jsonObject["user"]?.jsonObject?.forEach { key, value ->
+        element.jsonObject["user"]?.jsonObject?.forEach { (key, value) ->
             when (key) {
                 "registered" -> put("registeredWhen", value.jsonObject["unixtime"]!!)
                 else -> put(key, value)
@@ -33,7 +33,7 @@ object LastUserSerializer : JsonTransformingSerializer<LastUser>(LastUser.serial
 
 object TrackSerializer : JsonTransformingSerializer<Track>(Track.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
-        element.jsonObject.forEach { key, value ->
+        element.jsonObject.forEach { (key, value) ->
             when (key) {
                 "userloved" -> put("userLoved", value.jsonPrimitive.int > 0)
                 "date" -> put("playedWhen", value.jsonObject["uts"]!!)
@@ -51,6 +51,6 @@ object RecentTracksSerializer : JsonTransformingSerializer<PaginatedResult<Track
     override fun transformDeserialize(element: JsonElement): JsonElement = buildJsonObject {
         val recentTracks = element.jsonObject["recenttracks"]?.jsonObject ?: emptyJsonObject()
         put("results", recentTracks["track"]?.jsonArray ?: emptyJsonArray())
-        recentTracks["@attr"]?.jsonObject?.forEach { key, value -> put(key, value) }
+        recentTracks["@attr"]?.jsonObject?.forEach { (key, value) -> put(key, value) }
     }
 }

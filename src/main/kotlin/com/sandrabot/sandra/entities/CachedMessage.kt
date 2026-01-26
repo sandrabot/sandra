@@ -20,12 +20,12 @@ import net.dv8tion.jda.api.entities.Message
 
 class CachedMessage(
     val id: Long, val author: Long, val channel: Long,
-    var content: String, val attachments: List<Attachment>
+    var content: String, val attachments: List<String>,
 ) {
 
-    constructor(message: Message) : this(message.idLong, message.author.idLong, message.channel.idLong,
-        message.contentRaw, message.attachments.map { Attachment(it.fileName, it.url) })
-
-    class Attachment(val fileName: String, val url: String)
+    constructor(message: Message) : this(
+        message.idLong, message.author.idLong, message.channel.idLong,
+        message.contentRaw, message.attachments.map { it.url }
+    )
 
 }

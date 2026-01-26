@@ -18,10 +18,10 @@ package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.constants.asEmoji
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
+import dev.minn.jda.ktx.emoji.toEmoji
 import dev.minn.jda.ktx.events.await
 import dev.minn.jda.ktx.interactions.components.Modal
 import dev.minn.jda.ktx.interactions.components.StringSelectMenu
@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.time.Duration.Companion.minutes
@@ -48,9 +47,9 @@ class Feedback : Command() {
         // build the selection menu for the type of feedback the user intends to submit
         val selectMenu = StringSelectMenu("select:${event.id}", placeholder = event.get("select_placeholder")) {
             option(event.get("bug_label"), "bug", event.get("bug_description"), Emoji.fromUnicode(Unicode.BUG))
-            option(event.get("suggest_label"), "suggest", event.get("suggest_description"), Emotes.PROMPT.asEmoji())
-            option(event.get("other_label"), "other", event.get("other_description"), Emotes.CHAT.asEmoji())
-            option(event.get("cancel_label"), "cancel", event.get("cancel_description"), Emotes.LEAVE.asEmoji())
+            option(event.get("suggest_label"), "suggest", event.get("suggest_description"), Emotes.PROMPT.toEmoji())
+            option(event.get("other_label"), "other", event.get("other_description"), Emotes.CHAT.toEmoji())
+            option(event.get("cancel_label"), "cancel", event.get("cancel_description"), Emotes.LEAVE.toEmoji())
         }
 
         // send the confirmation message along with the selection menu
@@ -139,6 +138,6 @@ class Feedback : Command() {
     }
 
     private companion object {
-        val LOGGER: Logger = LoggerFactory.getLogger(Feedback::class.java)
+        private val LOGGER = LoggerFactory.getLogger(Feedback::class.java)
     }
 }

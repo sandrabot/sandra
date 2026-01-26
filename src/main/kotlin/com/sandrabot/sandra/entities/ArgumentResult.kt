@@ -53,7 +53,7 @@ class ArgumentResult(val results: Map<String, Any>) {
     fun attachment(name: String = "attachment"): Message.Attachment? = get(name)
     fun channel(name: String = "channel"): TextChannel? = get(name)
     fun mentionable(name: String = "mentionable"): IMentionable? = get(name)
-    fun emote(name: String = "emote"): RichCustomEmoji? = get(name)
+    fun emoji(name: String = "emoji"): RichCustomEmoji? = get(name)
     fun member(name: String = "member"): Member? = get(name)
     fun news(name: String = "news"): NewsChannel? = get(name)
     fun role(name: String = "role"): Role? = get(name)

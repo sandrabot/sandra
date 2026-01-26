@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
  */
 @Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable
-class GuildConfig(override val id: Long) : Configuration() {
+data class GuildConfig(override val id: Long) : Configuration() {
 
     @Serializable(with = ConfigMapTransformer::class)
     val channels = mutableMapOf<Long, ChannelConfig>()

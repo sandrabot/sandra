@@ -22,18 +22,15 @@ import net.dv8tion.jda.api.utils.MarkdownSanitizer
 import java.io.InputStream
 import kotlin.time.Duration
 
-private val digitRegex = Regex("""\d+""")
-private val doubleRegex = Regex("""[,.]""")
-private val decimalRegex = Regex("""(\d+\.\d{2})\d+(.*)""")
-val spaceRegex = Regex("""\s+""")
+private val DIGIT_REGEX = Regex("""\d+""")
+private val DOUBLE_REGEX = Regex("""[,.]""")
+private val DECIMAL_REGEX = Regex("""(\d+\.\d{2})\d+(.*)""")
+private val SPACE_REGEX = Regex("""\s+""")
 
 fun String.escape(single: Boolean = true): String = MarkdownSanitizer.escape(this, single)
 fun String.sanitize(): String = MarkdownSanitizer.sanitize(this)
-fun String.removeExtraSpaces(): String = replace(spaceRegex, " ").trim()
-fun String.splitSpaces(limit: Int = 0): List<String> = split(spaceRegex, limit)
-fun String.capitalizeWords(): String = split(" ").joinToString {
-    it.lowercase().replaceFirstChar { ch -> ch.uppercase() }
-}
+fun String.removeExtraSpaces(): String = replace(SPACE_REGEX, " ").trim()
+fun String.splitSpaces(limit: Int = 0): List<String> = split(SPACE_REGEX, limit)
 
 fun String.truncate(maxLength: Int) = if (length > maxLength) {
     substring(0, maxLength - 3).substringBeforeLast(' ') + "..."
@@ -41,8 +38,8 @@ fun String.truncate(maxLength: Int) = if (length > maxLength) {
 
 fun User.format(): String = "**${effectiveName.sanitize()}**"
 fun Number.format(): String = "**%,d**".format(this).replace(",", "**,**")
-fun Double.format(): String = "**%,.2f**".format(this).replace(doubleRegex, "**$0**")
-fun Duration.format(): String = toString().replace(decimalRegex, "$1$2").replace(digitRegex, "**$0**")
+fun Double.format(): String = "**%,.2f**".format(this).replace(DOUBLE_REGEX, "**$0**")
+fun Duration.format(): String = toString().replace(DECIMAL_REGEX, "$1$2").replace(DIGIT_REGEX, "**$0**")
 
 fun User.probableLocale(): DiscordLocale =
     mutualGuilds.groupingBy { it.locale }.eachCount().maxByOrNull { it.value }?.key ?: DiscordLocale.ENGLISH_US

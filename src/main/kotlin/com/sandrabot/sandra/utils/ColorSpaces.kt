@@ -37,22 +37,21 @@ fun findTrueAverageColor(image: BufferedImage): Color {
     val colorsB = ArrayList<Float>(pixelCount)
     for (x in 0 until image.width) {
         for (y in 0 until image.height) {
-            val pixel = Color(image.getRGB(x, y))
-            CIELabColorSpace.fromRGB(
-                floatArrayOf(pixel.red.toFloat(), pixel.green.toFloat(), pixel.blue.toFloat())
-            ).let { (l, a, b) ->
-                colorsL += l
-                colorsA += a
-                colorsB += b
-            }
+            val pixel = image.getRGB(x, y)
+            val red = (pixel shr 16) and 0xff
+            val green = (pixel shr 8) and 0xff
+            val blue = pixel and 0xff
+            val (l, a, b) = CIELabColorSpace.fromRGB(floatArrayOf(red.toFloat(), green.toFloat(), blue.toFloat()))
+            colorsL += l
+            colorsA += a
+            colorsB += b
         }
     }
     val averageL = colorsL.average().toFloat()
     val averageA = colorsA.average().toFloat()
     val averageB = colorsB.average().toFloat()
-    return CIELabColorSpace.toRGB(
-        floatArrayOf(averageL, averageA, averageB)
-    ).let { (r, g, b) -> Color(r.roundToInt(), g.roundToInt(), b.roundToInt()) }
+    val (r, g, b) = CIELabColorSpace.toRGB(floatArrayOf(averageL, averageA, averageB))
+    return Color(r.roundToInt(), g.roundToInt(), b.roundToInt())
 }
 
 
@@ -89,7 +88,7 @@ object SRGBColorSpace : ColorSpace(TYPE_RGB, 3) {
         val z = colorValue[2]
 
         // Use D50 chromatically adapted matrix as Photoshop does.
-        val tR = (3.1338561f * x) + (-1.6168667f * y) + (-0.4906146f * z)
+        val tR = (3.133856f * x) + (-1.6168667f * y) + (-0.4906146f * z)
         val tG = (-0.9787684f * x) + (1.9161415f * y) + (0.0334540f * z)
         val tB = (0.0719453f * x) + (-0.2289914f * y) + (1.4052427f * z)
 
@@ -100,6 +99,7 @@ object SRGBColorSpace : ColorSpace(TYPE_RGB, 3) {
         return floatArrayOf(r, g, b)
     }
 
+    @Suppress("unused")
     private fun readResolve(): Any = SRGBColorSpace
 }
 
@@ -111,10 +111,10 @@ object SRGBColorSpace : ColorSpace(TYPE_RGB, 3) {
 object CIELabColorSpace : ColorSpace(TYPE_Lab, 3) {
     // We use illuminant D50 "CIE 1931 2 Degree Standard Observer" as Photoshop does.
     // Values are normalized.
-    private const val Xn = 0.964212f
-    private const val Yn = 1.0f
-    private const val Zn = 0.825188f
-    private const val delta = 24.0f / 116.0f
+    private const val WEIGHT_X = 0.964212f
+    private const val WEIGHT_Y = 1.0f
+    private const val WEIGHT_Z = 0.825188f
+    private const val DELTA = 24.0f / 116.0f
 
     override fun toRGB(colorValue: FloatArray): FloatArray {
         return SRGBColorSpace.fromCIEXYZ(toCIEXYZ(colorValue))
@@ -124,26 +124,26 @@ object CIELabColorSpace : ColorSpace(TYPE_Lab, 3) {
         return fromCIEXYZ(SRGBColorSpace.toCIEXYZ(rgbValue))
     }
 
-    private fun fTo(t: Float): Float = if (t > delta) t.pow(3.0f) else (t - (16.0f / 116.0f)) / 7.787f
+    private fun fTo(t: Float): Float = if (t > DELTA) t.pow(3.0f) else (t - (16.0f / 116.0f)) / 7.787f
 
     override fun toCIEXYZ(colorValue: FloatArray): FloatArray {
         val tY = (colorValue[0] + 16.0f) / 116.0f
         val tX = (colorValue[1] / 500.0f) + tY
         val tZ = tY - (colorValue[2] / 200.0f)
 
-        val x = Xn * fTo(tX)
-        val y = Yn * fTo(tY)
-        val z = Zn * fTo(tZ)
+        val x = WEIGHT_X * fTo(tX)
+        val y = WEIGHT_Y * fTo(tY)
+        val z = WEIGHT_Z * fTo(tZ)
 
         return floatArrayOf(x, y, z)
     }
 
-    private fun fFrom(t: Float): Float = if (t > delta.pow(3.0f)) cbrt(t) else (7.787f * t) + (16.0f / 116.0f)
+    private fun fFrom(t: Float): Float = if (t > DELTA.pow(3.0f)) cbrt(t) else (7.787f * t) + (16.0f / 116.0f)
 
     override fun fromCIEXYZ(colorValue: FloatArray): FloatArray {
-        val x = colorValue[0] / Xn
-        val y = colorValue[1] / Yn
-        val z = colorValue[2] / Zn
+        val x = colorValue[0] / WEIGHT_X
+        val y = colorValue[1] / WEIGHT_Y
+        val z = colorValue[2] / WEIGHT_Z
 
         val l = (116.0f * fFrom(y)) - 16.0f
         val a = 500.0f * (fFrom(x) - fFrom(y))
@@ -152,5 +152,6 @@ object CIELabColorSpace : ColorSpace(TYPE_Lab, 3) {
         return floatArrayOf(l, a, b)
     }
 
+    @Suppress("unused")
     private fun readResolve(): Any = CIELabColorSpace
 }

@@ -27,12 +27,12 @@ class Fortune : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.replyEmoji(Unicode.FORTUNE_COOKIE, event.get("reply", fortunes.random())).asEphemeral().queue()
+        event.replyEmoji(Unicode.FORTUNE_COOKIE, event.get("reply", FORTUNES.random())).asEphemeral().queue()
 
     }
 
     private companion object {
-        private val fortunes = useResourceStream("fortunes.txt") { String(readBytes()).lines() }
+        private val FORTUNES = useResourceStream("fortunes.txt") { String(readBytes()).lines() }
     }
 
 }

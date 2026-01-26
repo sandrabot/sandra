@@ -39,9 +39,6 @@ class BotListService(private val sandra: Sandra) : Service(6.hours, initialDelay
         // https://top.gg/bot/302915036492333067
         send(TOP_GG, sandra.settings.secrets.topGgToken, mapOf("shards" to guildsPerShard))
 
-        // https://botlist.space/bot/302915036492333067
-        send(BOTLIST_SPACE, sandra.settings.secrets.spaceToken, mapOf("shards" to guildsPerShard))
-
         guildsPerShard.forEachIndexed { shard, guilds ->
             // https://discord.bots.gg/bots/302915036492333067
             val botsGgData = mapOf("guildCount" to guilds, "shardCount" to guildsPerShard.size, "shardId" to shard)
@@ -62,7 +59,6 @@ class BotListService(private val sandra: Sandra) : Service(6.hours, initialDelay
 
     private companion object {
         private const val TOP_GG = "https://top.gg/api/bots/%d/stats"
-        private const val BOTLIST_SPACE = "https://api.botlist.space/v1/bots/%d"
         private const val BOTS_GG = "https://discord.bots.gg/api/v1/bots/%d/stats"
         private const val DISCORD_BOT_LIST = "https://discordbotlist.com/api/bots/%d/stats"
     }

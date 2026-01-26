@@ -64,7 +64,7 @@ class Evaluate : Command(guildOnly = true) {
     }
 
     private suspend fun waitForMessage(sandra: Sandra): Unit = sandra.shards.await<MessageReceivedEvent> {
-        it.channel.idLong in activeChannels && it.author.idLong in Constants.DEVELOPERS && it.message.contentRaw.matches(snippetRegex)
+        it.channel.idLong in activeChannels && it.author.idLong in Constants.DEVELOPERS && it.message.contentRaw.matches(SNIPPET_REGEX)
     }.let {
         handleSnippet(it, sandra)
         waitForMessage(sandra)
@@ -74,7 +74,7 @@ class Evaluate : Command(guildOnly = true) {
         // send a response, so we actually know when the engine is thinking
         val reply = event.message.reply("${Emotes.LOADING} hold on a sec while i crunch the numbers").await()
         // start parsing and building the snippet into a script
-        val snippetMatch = snippetRegex.matchEntire(event.message.contentRaw) ?: throw AssertionError("No match")
+        val snippetMatch = SNIPPET_REGEX.matchEntire(event.message.contentRaw) ?: throw AssertionError("No match")
         val rawSnippet = snippetMatch.groupValues.drop(1).first { it.isNotBlank() }
         // find and rearrange any additional imports. we should also persist these across executions
         val importLines = rawSnippet.lines().takeWhile { it.startsWith("import") }
@@ -92,9 +92,9 @@ class Evaluate : Command(guildOnly = true) {
         if (result == null) {
             reply.editMessage("evaluated in ${duration.format()} with no returns").queue()
         } else handleResult(reply, duration.format(), result.toString())
-        val debugImports = if (logger.isDebugEnabled) allImports else ""
+        val debugImports = if (LOGGER.isDebugEnabled) allImports else ""
         // log the context, script, and result of the evaluation
-        logger.info("""
+        LOGGER.info("""
             |Evaluated snippet submitted by ${event.author.name} [${event.author.idLong}] in ${event.channel.name} [${event.channel.idLong}]
             |$debugImports$snippet
             |
@@ -145,8 +145,8 @@ class Evaluate : Command(guildOnly = true) {
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(Evaluate::class.java)
-        private val snippetRegex = Regex("""^```kotlin\n(.+)\n```|^`([^`]+)""", RegexOption.DOT_MATCHES_ALL)
+        private val LOGGER = LoggerFactory.getLogger(Evaluate::class.java)
+        private val SNIPPET_REGEX = Regex("""^```kotlin\n(.+)\n```|^`([^`]+)""", RegexOption.DOT_MATCHES_ALL)
     }
 
 }

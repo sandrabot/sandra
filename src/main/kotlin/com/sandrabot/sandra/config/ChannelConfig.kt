@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
  * Stores Sandra-specific properties and settings for channels within guilds.
  */
 @Serializable
-class ChannelConfig(override val id: Long) : Configuration() {
+data class ChannelConfig(override val id: Long) : Configuration() {
 
     @SerialName("experience")
     var experienceEnabled: Boolean = true

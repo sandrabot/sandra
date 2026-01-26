@@ -30,21 +30,24 @@ import dev.minn.jda.ktx.messages.MessageCreate
 class Help : Command(arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
-        if (event.options.isEmpty()) event.reply(MessageCreate(useComponentsV2 = true) {
-            val invite = if (event.sandra.settings.development) Constants.BETA_INVITE else Constants.DIRECT_INVITE
-            val avery = event.sandra.shards.retrieveUserById(Constants.AVERY).await().name
-            val logan = event.sandra.shards.retrieveUserById(Constants.LOGAN).await().name
-            container {
-                text(event.get("title", Emotes.FUN))
-                separator(isDivider = false)
-                text(event.get("config", Emotes.CONFIG))
-                text(event.get("commands", Emotes.COMMANDS))
-                text(event.get("invite", Emotes.INVITE, invite))
-                text(event.get("support", Emotes.CHAT, Constants.DIRECT_SUPPORT))
-                separator()
-                text(event.get("creators", Unicode.PINK_HEART, avery, logan))
-            }
-        }).queue() else {
+
+        if (event.options.isEmpty()) {
+            event.reply(MessageCreate(useComponentsV2 = true) {
+                val invite = if (event.sandra.settings.development) Constants.BETA_INVITE else Constants.DIRECT_INVITE
+                val avery = event.sandra.shards.retrieveUserById(Constants.AVERY).await().name
+                val logan = event.sandra.shards.retrieveUserById(Constants.LOGAN).await().name
+                container {
+                    text(event.get("title", Emotes.FUN))
+                    separator(isDivider = false)
+                    text(event.get("config", Emotes.CONFIG))
+                    text(event.get("commands", Emotes.COMMANDS))
+                    text(event.get("invite", Emotes.INVITE, invite))
+                    text(event.get("support", Emotes.CHAT, Constants.DIRECT_SUPPORT))
+                    separator()
+                    text(event.get("creators", Unicode.PINK_HEART, avery, logan))
+                }
+            }).queue()
+        } else {
             val command = event.arguments.command()
             // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
             if (command == null || command.category == Category.CUSTOM || (command.isOwnerOnly && !event.isOwner)) {
@@ -79,6 +82,7 @@ class Help : Command(arguments = "[command]") {
                 }
             }).queue()
         }
+
     }
 
 }

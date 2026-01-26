@@ -82,7 +82,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         try {
             command.execute(event)
         } catch (t: Throwable) {
-            LOGGER.error("An exception occurred while executing a command", t)
+            LOGGER.error("Unhandled exception occurred while executing a command", t)
             // ensure that the user receives an error message explaining the issue
             val message = when (t) {
                 is MissingPermissionException -> event.missingPermissionMessage(t.permission)

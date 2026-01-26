@@ -49,5 +49,5 @@ val Permission.translationKey
         Permission.MANAGE_ROLES -> "manage_roles"
         Permission.MANAGE_PERMISSIONS -> "manage_permissions"
         Permission.MODERATE_MEMBERS -> "moderate_members"
-        else -> throw AssertionError("Missing permission translation key mapping: $this")
+        else -> throw IllegalArgumentException("Missing permission translation key mapping: $this")
     }
