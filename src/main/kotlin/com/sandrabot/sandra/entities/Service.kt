@@ -61,7 +61,7 @@ abstract class Service(
             } catch (_: CancellationException) {
                 // these can be safely ignored, only occurs when service shuts down
             } catch (t: Throwable) {
-                logger.error("An exception occurred while executing a service task, halting service", t)
+                logger.error("Unhandled exception occurred while executing a service task, halting service", t)
                 shutdown()
             }
         }
