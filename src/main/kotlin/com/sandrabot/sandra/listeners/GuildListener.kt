@@ -120,9 +120,12 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
             memberConfig.savedRoles.clear()
 
             // FEATURE: Revoke Saved Roles
-            val revokedRoles = guildConfig.revokedRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
-            if (guildConfig.revokedRoles.size != revokedRoles.size) guildConfig.cleanRoleData(event.guild)
-            val allowedRoles = if (revokedRoles.isEmpty()) savedRoles else savedRoles - revokedRoles.toSet()
+            val allowedRoles = if (guildConfig.revokedRoles.isNotEmpty()) {
+                val revokedRoles = guildConfig.revokedRoles.mapNotNull { roleId -> event.guild.getRoleById(roleId) }
+                if (guildConfig.revokedRoles.size != revokedRoles.size) guildConfig.cleanRoleData(event.guild)
+                LOGGER.debug("Revoked Roles: Removing entries {} for {}", revokedRoles.map { it.id }, event.member)
+                savedRoles - revokedRoles.toSet()
+            } else savedRoles
 
             allowedRoles.forEach { role -> roleMap.getOrPut(role) { mutableSetOf() }.add("saved_roles") }
             LOGGER.debug("Saved Roles: Adding entries {} for {}", allowedRoles.map { it.id }, event.member)

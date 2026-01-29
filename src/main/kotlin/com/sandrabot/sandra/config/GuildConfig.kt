@@ -19,7 +19,7 @@ package com.sandrabot.sandra.config
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 
 /**
  * Stores Sandra-specific properties and settings for guilds.
@@ -68,7 +68,7 @@ data class GuildConfig(override val id: Long) : Configuration() {
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
     fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }
 
-    operator fun get(channel: MessageChannel) = channels.getOrPut(channel.idLong) { ChannelConfig(channel.idLong) }
+    operator fun get(channel: GuildMessageChannel) = channels.getOrPut(channel.idLong) { ChannelConfig(channel.idLong) }
     operator fun get(member: Member) = members.getOrPut(member.idLong) { MemberConfig(member.idLong) }
 
     override fun toString(): String = "GuildConfig:$id"
