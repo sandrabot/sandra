@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,6 +24,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MemberConfig(override val id: Long) : ExperienceConfig() {
+
+    @SerialName("saved_roles")
+    val savedRoles = mutableSetOf<Long>()
 
     override fun toString(): String = "MemberConfig:$id"
 

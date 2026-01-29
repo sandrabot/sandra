@@ -61,6 +61,11 @@
       "manage_roles": "manage roles",
       "manage_permissions": "manage permissions",
       "moderate_members": "timeout members"
+    },
+    "reasons": {
+      "bot_role": "default bot role",
+      "default_roles": "default roles",
+      "saved_roles": "saved roles"
     }
   },
   "commands": {
