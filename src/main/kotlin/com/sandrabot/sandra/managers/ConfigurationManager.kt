@@ -30,7 +30,6 @@ import net.jodah.expiringmap.ExpirationListener
 import net.jodah.expiringmap.ExpirationPolicy
 import net.jodah.expiringmap.ExpiringMap
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -66,27 +65,25 @@ class ConfigurationManager(private val sandra: Sandra) : Service(30.seconds), Ex
     override fun expired(key: Long, value: Configuration) = store(key, value)
 
     private fun store(id: Long, config: Configuration) {
-        sandra.redis[prefix(config::class) + "$id"] = json.encodeToString(config)
+        sandra.redis[config.prefix() + "$id"] = json.encodeToString(config)
     }
 
-    fun getGuild(id: Long): GuildConfig = get(id)
-    fun getUser(id: Long): UserConfig = get(id)
+    fun getGuild(id: Long): GuildConfig = get(id, RedisPrefix.GUILD) { GuildConfig(id) }
+    fun getUser(id: Long): UserConfig = get(id, RedisPrefix.USER) { UserConfig(id) }
 
     operator fun get(guild: Guild) = getGuild(guild.idLong)
     operator fun get(user: User) = getUser(user.idLong)
 
-    private inline fun <reified T : Configuration> get(id: Long): T = configMap.getOrPut(id) {
-        sandra.redis[prefix(T::class) + "$id"]?.let { json.decodeFromString<T>(it) } ?: when (T::class) {
-            GuildConfig::class -> GuildConfig(id)
-            UserConfig::class -> UserConfig(id)
-            else -> throw IllegalStateException("Illegal configuration type: ${T::class}")
-        }
+    private inline fun <reified T : Configuration> get(
+        id: Long, prefix: RedisPrefix, default: () -> T,
+    ): T = configMap.getOrPut(id) {
+        sandra.redis[prefix + "$id"]?.let { json.decodeFromString<T>(it) } ?: default()
     }.also { synchronized(accessedKeys) { accessedKeys += id } } as T
 
-    private fun <T : Configuration> prefix(clazz: KClass<T>) = when (clazz) {
-        GuildConfig::class -> RedisPrefix.GUILD
-        UserConfig::class -> RedisPrefix.USER
-        else -> throw IllegalStateException("Illegal configuration type: $clazz")
+    private fun Configuration.prefix() = when (this) {
+        is GuildConfig -> RedisPrefix.GUILD
+        is UserConfig -> RedisPrefix.USER
+        else -> throw IllegalArgumentException("Illegal configuration type: ${this::class}")
     }
 
 }

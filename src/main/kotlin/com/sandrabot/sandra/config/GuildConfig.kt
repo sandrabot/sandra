@@ -54,7 +54,7 @@ data class GuildConfig(override val id: Long) : Configuration() {
     @SerialName("multiplier")
     var experienceMultiplier: Double = 1.0
     @SerialName("notify")
-    var experienceNotifyEnabled: Boolean = true
+    var experienceNotifyEnabled: Boolean = false
     @SerialName("notify_template")
     var experienceNotifyTemplate: String? = null
     @SerialName("notify_channel")

@@ -17,27 +17,31 @@
 package com.sandrabot.sandra.managers
 
 import com.sandrabot.sandra.config.RedisConfig
-import redis.clients.jedis.Jedis
-import redis.clients.jedis.JedisPool
-import redis.clients.jedis.JedisPoolConfig
+import redis.clients.jedis.DefaultJedisClientConfig
+import redis.clients.jedis.RedisClient
 
 /**
  * Responsible for managing connections to the redis database and manipulating records.
  */
 class RedisManager(config: RedisConfig) {
 
-    private val pool = JedisPool(
-        JedisPoolConfig(), config.host, config.port, config.timeout, config.user, config.password, config.database
-    )
+    private val client: RedisClient
 
-    fun shutdown() = pool.destroy()
+    init {
+        val clientConfig = DefaultJedisClientConfig.builder()
+            .user(config.user).password(config.password)
+            .database(config.database).clientName("sandra").build()
+        client = RedisClient.builder().hostAndPort(config.host, config.port).clientConfig(clientConfig).build()
+    }
 
-    fun <T> use(block: Jedis.() -> T) = pool.resource.use { block(it) }
+    fun shutdown(): Unit = client.close()
 
-    operator fun get(key: String): String? = use { get(key) }
+    fun ping(): String = client.ping()
 
-    operator fun set(key: String, value: String): Unit = use { set(key, value) }
+    operator fun get(key: String): String? = client.get(key)
 
-    operator fun minus(key: String): Unit = use { del(key) }
+    operator fun set(key: String, value: String): String = client.set(key, value)
+
+    operator fun minus(key: String): Long = client.del(key)
 
 }

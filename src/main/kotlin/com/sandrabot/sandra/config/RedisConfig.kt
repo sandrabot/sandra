@@ -49,12 +49,6 @@ data class RedisConfig(
     val port: Int = 6379,
 
     /**
-     * Timeout in milliseconds for redis connections.
-     * **(Default: 2000)**
-     */
-    val timeout: Int = 2000,
-
-    /**
      * Database number to use for the redis connection.
      * **(Default: 0)**
      */

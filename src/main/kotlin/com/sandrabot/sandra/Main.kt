@@ -84,7 +84,7 @@ fun bootstrap(args: Array<String>) {
 
     // configure and test the redis connection
     val redisManager = RedisManager(config.redis)
-    val ping = measureTime { redisManager.use { ping() } }
+    val ping = measureTime { redisManager.ping() }
     logger.info("Verified database connection at ${config.redis.host}:${config.redis.port}/${config.redis.database} in $ping")
 
     // eliminate the possibility of accidental mass mentions

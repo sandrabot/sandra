@@ -19,7 +19,7 @@ plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.serialization") version "2.3.0"
     id("com.github.gmazzo.buildconfig") version "6.0.7"
-    id("io.ktor.plugin") version "3.3.3"
+    id("io.ktor.plugin") version "3.4.0"
 }
 
 group = "com.sandrabot"
@@ -38,7 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
-    implementation("club.minnced:jda-ktx:0.14.0")
+    implementation("club.minnced:jda-ktx:0.14.1")
     implementation("net.dv8tion:JDA:6.3.0") {
         exclude(module = "opus-java")
         exclude(module = "tink")
@@ -50,14 +50,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("org.reflections:reflections:0.10.2")
-    // TODO Migrate to new client connection API introduced in 7.2.0
     implementation("redis.clients:jedis:7.2.1")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 application {
