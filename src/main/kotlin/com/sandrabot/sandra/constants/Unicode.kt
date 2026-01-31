@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ object Unicode {
     const val BULLET = "•"
     const val CROSS_MARK = "❌"
     const val FORTUNE_COOKIE = "🥠"
+    const val FRAMED_PICTURE = "🖼"
     const val GAME_DIE = "🎲"
     const val LEFT_BACKHAND = "👈"
     const val LINK = "🔗"

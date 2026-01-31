@@ -16,6 +16,17 @@
 
 package com.sandrabot.sandra.constants
 
-enum class EventType {
-    ALL, AUTO_MOD, BAN, EMOJI, INVITE, MEMBER, MESSAGE, POLL, SECURITY, STICKER
+enum class EventType(val emoji: String) {
+
+    ALL(Emotes.FOLDER),
+    AUTO_MOD(Emotes.MOD),
+    BAN(Emotes.BAN),
+    EMOJI(Emotes.FUN),
+    INVITE(Emotes.INVITE),
+    MEMBER(Emotes.USER),
+    MESSAGE(Emotes.CHAT),
+    POLL(Emotes.PROMPT),
+    SECURITY(Emotes.NOTICE),
+    STICKER(Unicode.FRAMED_PICTURE),
+
 }
