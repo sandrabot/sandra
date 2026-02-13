@@ -18,6 +18,7 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.utils.*
 import dev.minn.jda.ktx.events.CoroutineEventListener
@@ -87,7 +88,7 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
             val multiplier = guildConfig.computeMultiplier(channelConfig)
             if (memberConfig.awardExperience(randomExperience(multiplier))) {
                 // Check if the guild has level up notifications enabled
-                if (guildConfig.experienceNotifyEnabled) {
+                if (guildConfig.experienceNotifyEnabled && isFeatureAllowed(sandra, guildId, FeatureFlag.NOTIFY)) {
                     // Check if the guild has a specific channel for notifications
                     // Otherwise, check if this channel can receive notifications
                     val notifyChannel = if (guildConfig.experienceNotifyChannel != 0L) {
@@ -117,7 +118,9 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
         // Feature: Global Experience
         // Check to see if this user can receive experience
         // Award a random amount of experience between 15 and 25
-        if (userConfig.canExperience()) userConfig.awardExperience(randomExperience())
+        if (userConfig.canExperience() && isContextAllowed(sandra, authorId, guildId, FeatureFlag.EXPERIENCE)) {
+            userConfig.awardExperience(randomExperience())
+        }
 
         // TODO Feature: Message Replies
     }
@@ -125,12 +128,10 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
     /**
      * Processes any private messages that the bot receives.
      */
-    private fun handlePrivateMessage(event: MessageReceivedEvent) = buildString {
-        append("Direct Message: ", event.author.name, " [", event.author.id, "] | ", event.message.contentDisplay)
-        with(event.message.attachments) {
-            if (isNotEmpty()) forEach { append("\nDirect Message Attachment: ${it.url}") }
-        }
-    }.let { LOGGER.info(it) }
+    private fun handlePrivateMessage(event: MessageReceivedEvent) {
+        LOGGER.info("Direct Message: ${event.author.name} [${event.author.id}] | ${event.message.contentDisplay}")
+        event.message.attachments.forEach { LOGGER.info("Direct Message Attachment: ${it.url}") }
+    }
 
     private companion object {
         private val LOGGER = LoggerFactory.getLogger(MessageListener::class.java)
