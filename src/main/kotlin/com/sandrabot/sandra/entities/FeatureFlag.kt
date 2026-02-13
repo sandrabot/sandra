@@ -14,26 +14,10 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.config
+package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.entities.FeatureFlag
-import kotlinx.serialization.Serializable
+enum class FeatureFlag {
 
-/**
- * Object used to configure various features without necessitating hard-coded values.
- */
-@Serializable
-data class FeatureConfig(
+    ALL, AUTO_ROLE, COMMANDS, EXPERIENCE, FEEDBACK, LASTFM, LOGGING, MINIGAMES, SOCIAL, WELCOME
 
-    /**
-     * A set of features [FeatureFlag] that should be disabled globally.
-     */
-    val disabledFeatures: Set<FeatureFlag> = setOf(),
-
-    /**
-     * The channel where feedback messages should be sent.
-     * **(Default: 0)**
-     */
-    val feedbackChannel: Long = 0L,
-
-    )
+}
