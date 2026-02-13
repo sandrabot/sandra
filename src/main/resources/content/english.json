@@ -10,6 +10,7 @@
     "missing_self_permission": "i need the **%1$s** permission in this **%2$s** to do that",
     "missing_other_permission": "you need the **%1$s** permission in this **%2$s** to do that",
     "owner_only": "this command **can only be used** by **my developers**, nice try tho",
+    "restricted": "this feature is **restricted** or is otherwise unavailable to you at this time",
     "channel": "channel",
     "server": "server",
     "categories": {

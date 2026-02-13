@@ -27,15 +27,14 @@ class AccessManager(private val sandra: Sandra) {
     private val restrictedMap: MutableMap<Long, MutableSet<FeatureFlag>> =
         sandra.redis[RedisPrefix.SETTING + "access"]?.let { Json.decodeFromString(it) } ?: mutableMapOf()
 
-    fun isRevoked(id: Long, feature: FeatureFlag): Boolean {
+    fun isAccessRevoked(id: Long, feature: FeatureFlag): Boolean {
         val set = restrictedMap[id] ?: return false
         return feature in set || FeatureFlag.ALL in set
     }
 
-    fun isAllowed(id: Long, feature: FeatureFlag) = !isRevoked(id, feature)
-
-    fun isDisabled(feature: FeatureFlag) = feature in disabledFeatures
-    fun isEnabled(feature: FeatureFlag) = !isDisabled(feature)
+    fun isFeatureDisabled(feature: FeatureFlag): Boolean {
+        return feature in disabledFeatures || FeatureFlag.ALL in disabledFeatures
+    }
 
     fun isRestricted(id: Long) = id in restrictedMap
 

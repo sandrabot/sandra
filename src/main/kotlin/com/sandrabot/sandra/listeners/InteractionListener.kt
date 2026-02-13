@@ -21,6 +21,7 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
+import com.sandrabot.sandra.utils.isAccessRestricted
 import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.events.GenericEvent
@@ -52,6 +53,17 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         // the first thing we want to do is wrap this with our own object
         val event = CommandEvent(command, slashEvent, sandra)
 
+        // log the command context information for usage history
+        val channel = if (event.guild == null) "direct message"
+        else "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
+        LOGGER.info("$path | ${event.user.name} [${event.user.id}] | $channel | ${slashEvent.commandString}")
+
+        // and the next thing is gonna be checking with the access manager
+        if (event.isAccessRestricted() && !event.isOwner) {
+            event.replyWarning(event.getAny("core.restricted")).asEphemeral().queue()
+            return
+        }
+
         // restrict owner commands from being used by anyone
         if (command.isOwnerOnly && !event.isOwner) {
             event.replyError(event.getAny("core.owner_only")).asEphemeral().queue()
@@ -70,11 +82,6 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
                 return
             }
         }
-
-        // log the command context information for usage history
-        val channel = if (event.guild == null) "direct message"
-        else "${event.channel.name} [${event.channel.id}] | ${event.guild.name} [${event.guild.id}]"
-        LOGGER.info("$path | ${event.user.name} [${event.user.id}] | $channel | ${slashEvent.commandString}")
 
         // execute the command, catch any exceptions and log them
         try {
