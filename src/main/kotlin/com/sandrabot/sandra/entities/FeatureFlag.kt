@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities.blocklist
+package com.sandrabot.sandra.entities
 
-enum class FeatureType {
+enum class FeatureFlag {
 
-    COMMANDS, FEEDBACK, GUILD_CHAT, GLOBAL_EXPERIENCE, MESSAGES
-
-}
-
-enum class TargetType {
-
-    GUILD, USER
+    ALL, AUTO_ROLE, COMMANDS, EXPERIENCE, FEEDBACK, LASTFM, LOGGING, MINIGAMES, NOTIFY, SOCIAL, WELCOME
 
 }

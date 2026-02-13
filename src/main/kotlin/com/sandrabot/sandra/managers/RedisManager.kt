@@ -44,4 +44,6 @@ class RedisManager(config: RedisConfig) {
 
     operator fun minus(key: String): Long = client.del(key)
 
+    operator fun contains(key: String): Boolean = client.exists(key)
+
 }

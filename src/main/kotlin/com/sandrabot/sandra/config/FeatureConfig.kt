@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.entities.FeatureFlag
 import kotlinx.serialization.Serializable
 
 /**
@@ -23,6 +24,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class FeatureConfig(
+
+    /**
+     * A set of features [FeatureFlag] that should be disabled globally.
+     */
+    val disabledFeatures: Set<FeatureFlag> = setOf(),
 
     /**
      * The channel where feedback messages should be sent.
