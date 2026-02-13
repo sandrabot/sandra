@@ -18,6 +18,8 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.EventType
+import com.sandrabot.sandra.entities.FeatureFlag
+import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import kotlinx.coroutines.delay
@@ -125,11 +127,12 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     ) {
         // only continue if the logging feature is actually enabled
         val config = sandra.config[guild].takeIf { it.loggingEnabled } ?: return
+        // consult with the access manager to determine if this feature is available
+        if (isFeatureRestricted(sandra, guild.idLong, FeatureFlag.LOGGING)) return
         // filter channels that are subscribed to this event
         val channels = config.channels.filterValues {
             eventType in it.loggingEventsEnabled || EventType.ALL in it.loggingEventsEnabled
         }.takeUnless { it.isEmpty() } ?: return // we can stop here if nobody is actually subscribed
-        // always make sure we have a self-member loaded to check permissions against
         // determine if we can provide the audit log entry
         val auditEntry = if (actionType != null && guild.selfMember.hasPermission(Permission.VIEW_AUDIT_LOGS)) {
             delay(150.milliseconds) // race condition, allow discord time to generate the audit log entry
