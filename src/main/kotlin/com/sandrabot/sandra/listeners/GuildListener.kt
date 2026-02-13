@@ -19,7 +19,9 @@ package com.sandrabot.sandra.listeners
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.constants.ContentStore
+import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.utils.cleanRoleData
+import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Role
@@ -66,6 +68,8 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
 
             // FEATURE: Default Bot Role
             if (guildConfig.autoRolesEnabled && guildConfig.defaultBotRole != 0L) {
+                // check with the access manager first thing
+                if (isFeatureRestricted(sandra, event.guild.idLong, FeatureFlag.AUTO_ROLE)) return
                 // there's nothing we can do if we don't have this permission
                 if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) return
                 val botRole = event.guild.getRoleById(guildConfig.defaultBotRole) ?: run {
@@ -94,8 +98,10 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
     }
 
     private fun handleAutoRoles(event: GenericGuildMemberEvent, guildConfig: GuildConfig) {
-        val selfMember = event.guild.selfMember
+        // first things first, check with the access manager
+        if (isFeatureRestricted(sandra, event.guild.idLong, FeatureFlag.AUTO_ROLE)) return
 
+        val selfMember = event.guild.selfMember
         // there's nothing we can do if we don't have this permission
         if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) return
         // a single role may be given for multiple reasons in certain situations
@@ -148,8 +154,10 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
     }
 
     private fun onMemberRemove(event: GuildMemberRemoveEvent) {
-        val guildConfig = sandra.config[event.guild]
+        // don't preserve role data for restricted guilds
+        if (isFeatureRestricted(sandra, event.guild.idLong, FeatureFlag.AUTO_ROLE)) return
 
+        val guildConfig = sandra.config[event.guild]
         // FEATURE: Save Roles
         if (guildConfig.autoRolesEnabled && guildConfig.saveRolesEnabled) {
             // attempt to store the member's current roles

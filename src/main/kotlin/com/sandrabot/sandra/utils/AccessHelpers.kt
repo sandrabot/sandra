@@ -16,10 +16,15 @@
 
 package com.sandrabot.sandra.utils
 
+import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.commands.essential.Feedback
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.events.CommandEvent
+
+fun isFeatureRestricted(sandra: Sandra, id: Long, feature: FeatureFlag): Boolean {
+    return sandra.access.isFeatureDisabled(feature) || sandra.access.isAccessRevoked(id, feature)
+}
 
 fun CommandEvent.isAccessRestricted(): Boolean = when {
     command is Feedback -> checkContext(FeatureFlag.FEEDBACK)
@@ -30,7 +35,6 @@ fun CommandEvent.isAccessRestricted(): Boolean = when {
 } || checkContext(FeatureFlag.COMMANDS)
 
 private fun CommandEvent.checkContext(feature: FeatureFlag): Boolean {
-    if (sandra.access.isFeatureDisabled(feature)) return true
-    val isUserRevoked = sandra.access.isAccessRevoked(user.idLong, feature)
-    return if (isFromGuild) isUserRevoked || sandra.access.isAccessRevoked(guild!!.idLong, feature) else isUserRevoked
+    val isUserRevoked = isFeatureRestricted(sandra, user.idLong, feature)
+    return if (isFromGuild) isUserRevoked || isFeatureRestricted(sandra, guild!!.idLong, feature) else isUserRevoked
 }
