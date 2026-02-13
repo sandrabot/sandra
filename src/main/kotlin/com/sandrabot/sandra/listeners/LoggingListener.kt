@@ -19,9 +19,11 @@ package com.sandrabot.sandra.listeners
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.EventType
 import com.sandrabot.sandra.entities.FeatureFlag
+import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
+import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.delay
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.audit.ActionType
@@ -64,6 +66,7 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 
 class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
@@ -154,6 +157,15 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         }
     }
 
+    private suspend fun sendEventMessage(
+        guild: Guild, eventType: EventType, actionType: ActionType,
+        provider: (AuditLogEntry?, LocaleContext) -> String
+    ) = sendEvent(guild, eventType, actionType) { entry ->
+        val now = Clock.System.now().epochSeconds
+        val content = provider(entry, LocaleContext(guild.locale, "logging"))
+        MessageCreate("${eventType.emoji} <t:$now:T> <t:$now:R> $content")
+    }
+
     private suspend fun onAutoModExecution(event: AutoModExecutionEvent) {}
     private suspend fun onAutoModRuleCreate(event: AutoModRuleCreateEvent) {}
     private suspend fun onAutoModRuleDelete(event: AutoModRuleDeleteEvent) {}
@@ -175,8 +187,15 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onGuildInviteCreate(event: GuildInviteCreateEvent) {}
     private suspend fun onGuildInviteDelete(event: GuildInviteDeleteEvent) {}
 
-    private suspend fun onGuildBan(event: GuildBanEvent) {}
-    private suspend fun onGuildUnban(event: GuildUnbanEvent) {}
+    private suspend fun onGuildBan(event: GuildBanEvent) =
+        sendEventMessage(event.guild, EventType.BAN, ActionType.BAN) { entry, context ->
+            context["ban", event.user.asMention, event.user.id, entry?.user?.asMention, entry?.reason]
+        }
+
+    private suspend fun onGuildUnban(event: GuildUnbanEvent) =
+        sendEventMessage(event.guild, EventType.BAN, ActionType.UNBAN) { entry, context ->
+            context["unban", event.user.asMention, event.user.id, entry?.user?.asMention, entry?.reason]
+        }
 
     private suspend fun onGuildMemberJoin(event: GuildMemberJoinEvent) {}
     private suspend fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {}

@@ -411,5 +411,9 @@
       "heads": "heads",
       "tails": "tails"
     }
+  },
+  "logging": {
+    "ban": "%1$s [**%2$s**] was banned from the server by %3$s because: `%4$s`",
+    "unban": "%1$s [**%2$s**] was unbanned by %3$s because: `%4$s`"
   }
 }
