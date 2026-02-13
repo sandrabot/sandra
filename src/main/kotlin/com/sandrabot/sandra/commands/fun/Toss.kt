@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.`fun`
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
@@ -27,7 +27,7 @@ class Toss : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        val (emote, side) = if (Random.nextBoolean()) Emotes.CASH to "heads" else Emotes.TAILS to "tails"
+        val (emote, side) = if (Random.nextBoolean()) Emojis.CASH to "heads" else Emojis.TAILS to "tails"
         event.replyEmoji(emote, event.get("reply", event.get(side))).asEphemeral().queue()
 
     }

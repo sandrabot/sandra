@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.essential
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
@@ -47,15 +47,15 @@ class Feedback : Command() {
         // build the selection menu for the type of feedback the user intends to submit
         val selectMenu = StringSelectMenu("select:${event.id}", placeholder = event.get("select_placeholder")) {
             option(event.get("bug_label"), "bug", event.get("bug_description"), Emoji.fromUnicode(Unicode.BUG))
-            option(event.get("suggest_label"), "suggest", event.get("suggest_description"), Emotes.PROMPT.toEmoji())
-            option(event.get("other_label"), "other", event.get("other_description"), Emotes.CHAT.toEmoji())
-            option(event.get("cancel_label"), "cancel", event.get("cancel_description"), Emotes.LEAVE.toEmoji())
+            option(event.get("suggest_label"), "suggest", event.get("suggest_description"), Emojis.PROMPT.toEmoji())
+            option(event.get("other_label"), "other", event.get("other_description"), Emojis.CHAT.toEmoji())
+            option(event.get("cancel_label"), "cancel", event.get("cancel_description"), Emojis.LEAVE.toEmoji())
         }
 
         // send the confirmation message along with the selection menu
         event.reply(MessageCreate(useComponentsV2 = true) {
             container {
-                text(event.get("disclaimer", Emotes.NOTICE))
+                text(event.get("disclaimer", Emojis.NOTICE))
                 actionRow(selectMenu)
             }
         }).asEphemeral().queue()
@@ -114,7 +114,7 @@ class Feedback : Command() {
 
         // after we've saved the file, we can consider this a success
         modalEvent.reply(MessageCreate(useComponentsV2 = true) {
-            container { text(event.get("thanks", Emotes.SUCCESS)) }
+            container { text(event.get("thanks", Emojis.SUCCESS)) }
         }).asEphemeral().queue()
 
         // optionally post the feedback publicly in a channel

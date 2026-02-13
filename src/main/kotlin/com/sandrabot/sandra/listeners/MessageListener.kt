@@ -17,7 +17,7 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.utils.*
@@ -98,7 +98,7 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
                     if (notifyChannel is GuildMessageChannel && notifyChannel.canTalk()) {
                         // Figure out which template to use and format it with the correct details
                         val notifyTemplate = guildConfig.experienceNotifyTemplate ?: localeContext.getAny(
-                            "core.experience_notify", Emotes.LEVEL_UP
+                            "core.experience_notify", Emojis.LEVEL_UP
                         )
                         // Member will never be null since we always ignore bots and webhooks
                         val formattedTemplate = notifyTemplate.formatTemplate(sandra, event.guild, event.member!!)

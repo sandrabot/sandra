@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.moderation
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
@@ -56,7 +56,7 @@ class SoftBan : Command(
         // check the banlist to see if the target user is already banned
         event.guild!!.retrieveBan(targetUser).onErrorMap { null }.await()?.let { userBan ->
             val realReason = userBan.reason?.sanitize() ?: event.get("default_reason")
-            event.replyEmoji(Emotes.BAN, event.get("already_banned", targetUser.name, realReason)).queue()
+            event.replyEmoji(Emojis.BAN, event.get("already_banned", targetUser.name, realReason)).queue()
             return
         }
         // verify permission hierarchy for all parties involved
@@ -74,7 +74,7 @@ class SoftBan : Command(
         // allow the moderator to double-check the user they've selected
         event.sendMessage(MessageCreate(useComponentsV2 = true) {
             container {
-                text(event.get("confirmation", Emotes.MOD, targetUser.asMention))
+                text(event.get("confirmation", Emojis.MOD, targetUser.asMention))
                 actionRow {
                     dangerButton("confirm:${event.id}", event.get("button_confirm"))
                     secondaryButton("cancel:${event.id}", event.get("button_cancel"))
@@ -105,7 +105,7 @@ class SoftBan : Command(
         var banNotification: Message? = null
         if (!targetUser.isBot && !targetUser.isSystem) {
             // attempt to send the user a ban notification with the reason provided
-            val message = event.get("ban_notification", Emotes.NOTICE, event.guild.name.sanitize(), event.user.name, reason)
+            val message = event.get("ban_notification", Emojis.NOTICE, event.guild.name.sanitize(), event.user.name, reason)
             banNotification = targetUser.openPrivateChannel().flatMap { it.sendMessage(message) }.onErrorMap { null }.await()
         }
 
@@ -113,12 +113,12 @@ class SoftBan : Command(
         event.guild.ban(targetUser, 1, TimeUnit.DAYS).reason(realReason)
             .flatMap { event.guild.unban(targetUser).reason(realReason) }.flatMap {
                 event.hook.editOriginal(MessageEdit(useComponentsV2 = true) {
-                    container { text(event.get("success", Emotes.SUCCESS, targetUser.name)) }
+                    container { text(event.get("success", Emojis.SUCCESS, targetUser.name)) }
                 })
             }.onErrorFlatMap {
                 banNotification?.delete()?.queue()
                 event.hook.editOriginal(MessageEdit(useComponentsV2 = true) {
-                    container { text(Emotes.FAILURE + " " + event.getAny("core.interaction_error")) }
+                    container { text(Emojis.FAILURE + " " + event.getAny("core.interaction_error")) }
                 })
             }.queue()
 

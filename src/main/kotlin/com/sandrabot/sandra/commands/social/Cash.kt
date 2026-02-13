@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.social
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
@@ -32,7 +32,7 @@ class Cash : Command(arguments = "[user]") {
         val cash = event.sandra.config[targetUser].cash.format()
         val reply = event.get(if (targetUser == event.user) "self" else "other", targetUser, cash)
         // to prevent mention spam, disable all mentions in the reply
-        event.replyEmoji(Emotes.CASH, reply).setAllowedMentions(emptySet()).queue()
+        event.replyEmoji(Emojis.CASH, reply).setAllowedMentions(emptySet()).queue()
 
     }
 

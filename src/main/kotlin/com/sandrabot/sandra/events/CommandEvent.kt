@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
@@ -92,10 +92,10 @@ class CommandEvent(
 
     fun replyEmoji(emoji: String, content: String) = reply("$emoji $content")
     fun replyEmoji(emoji: Emoji, content: String) = replyEmoji(emoji.formatted, content)
-    fun replyInfo(content: String) = replyEmoji(Emotes.INFO, content)
-    fun replySuccess(content: String) = replyEmoji(Emotes.SUCCESS, content)
-    fun replyWarning(content: String) = replyEmoji(Emotes.NOTICE, content)
-    fun replyError(content: String) = replyEmoji(Emotes.FAILURE, content)
+    fun replyInfo(content: String) = replyEmoji(Emojis.INFO, content)
+    fun replySuccess(content: String) = replyEmoji(Emojis.SUCCESS, content)
+    fun replyWarning(content: String) = replyEmoji(Emojis.NOTICE, content)
+    fun replyError(content: String) = replyEmoji(Emojis.FAILURE, content)
 
     fun sendMessage(content: String) = event.hook.sendMessage(content)
     fun sendMessage(message: MessageCreateData) = event.hook.sendMessage(message)
@@ -107,10 +107,10 @@ class CommandEvent(
 
     fun sendEmoji(emoji: String, content: String) = sendMessage("$emoji $content")
     fun sendEmoji(emoji: Emoji, content: String) = sendEmoji(emoji.formatted, content)
-    fun sendInfo(content: String) = sendEmoji(Emotes.INFO, content)
-    fun sendSuccess(content: String) = sendEmoji(Emotes.SUCCESS, content)
-    fun sendWarning(content: String) = sendEmoji(Emotes.NOTICE, content)
-    fun sendError(content: String) = sendEmoji(Emotes.FAILURE, content)
+    fun sendInfo(content: String) = sendEmoji(Emojis.INFO, content)
+    fun sendSuccess(content: String) = sendEmoji(Emojis.SUCCESS, content)
+    fun sendWarning(content: String) = sendEmoji(Emojis.NOTICE, content)
+    fun sendError(content: String) = sendEmoji(Emojis.FAILURE, content)
 
 }
 

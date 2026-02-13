@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.sandrabot.sandra.commands.essential
 
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
@@ -37,12 +37,12 @@ class Help : Command(arguments = "[command]") {
                 val avery = event.sandra.shards.retrieveUserById(Constants.AVERY).await().name
                 val logan = event.sandra.shards.retrieveUserById(Constants.LOGAN).await().name
                 container {
-                    text(event.get("title", Emotes.FUN))
+                    text(event.get("title", Emojis.FUN))
                     separator(isDivider = false)
-                    text(event.get("config", Emotes.CONFIG))
-                    text(event.get("commands", Emotes.COMMANDS))
-                    text(event.get("invite", Emotes.INVITE, invite))
-                    text(event.get("support", Emotes.CHAT, Constants.DIRECT_SUPPORT))
+                    text(event.get("config", Emojis.CONFIG))
+                    text(event.get("commands", Emojis.TERMINAL))
+                    text(event.get("invite", Emojis.INVITE, invite))
+                    text(event.get("support", Emojis.CHAT, Constants.DIRECT_SUPPORT))
                     separator()
                     text(event.get("creators", Unicode.PINK_HEART, avery, logan))
                 }
@@ -63,7 +63,7 @@ class Help : Command(arguments = "[command]") {
                         text("# /$fullName ${Unicode.BULLET} ${event.get("name")}\n> $description")
                         if (command.arguments.isNotEmpty()) {
                             val usage = command.arguments.joinToString(" ") { it.usage }
-                            text("### ${Emotes.PROMPT} ${event.get("usage")}\n`/$fullName $usage`")
+                            text("### ${Emojis.PROMPT} ${event.get("usage")}\n`/$fullName $usage`")
                         }
                         if (command.subcommands.isNotEmpty()) {
                             val otherCommands = buildString {
@@ -73,7 +73,7 @@ class Help : Command(arguments = "[command]") {
                                     append("`/", fullName, "` - ", description, "\n")
                                 }
                             }
-                            text("### ${Emotes.COMMANDS} ${event.get("subcommands")}\n>>> $otherCommands")
+                            text("### ${Emojis.TERMINAL} ${event.get("subcommands")}\n>>> $otherCommands")
                         }
                     }
                     text(event.get("extra_help", Constants.DIRECT_SUPPORT))

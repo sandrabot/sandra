@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.utils
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.lastfm.ImageHolder
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
@@ -55,7 +55,7 @@ fun CommandEvent.verifyLastUser(): Pair<User, String>? {
     val username = sandra.config[targetUser].lastUsername
     return if (username != null) Pair(targetUser, username) else {
         val key = if (targetUser == user) "missing_username" else "missing_other"
-        replyEmoji(Emotes.LASTFM, getAny("core.lastfm.$key", targetUser)).asEphemeral().queue()
+        replyEmoji(Emojis.LASTFM, getAny("core.lastfm.$key", targetUser)).asEphemeral().queue()
         null
     }
 }
