@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
-import com.sandrabot.sandra.entities.blocklist.FeatureType
 import com.sandrabot.sandra.utils.*
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.Permission
@@ -72,9 +72,6 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
         val guildId = event.guild.idLong
         val channelId = event.channel.idLong
 
-        // Check the blocklist to prevent responding in actively blocked contexts
-        if (checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.MESSAGES)) return
-
         val guildConfig = sandra.config.getGuild(guildId)
         val memberConfig = guildConfig.getMember(authorId)
         val channelConfig = guildConfig.getChannel(channelId)
@@ -91,7 +88,7 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
             val multiplier = guildConfig.computeMultiplier(channelConfig)
             if (memberConfig.awardExperience(randomExperience(multiplier))) {
                 // Check if the guild has level up notifications enabled
-                if (guildConfig.experienceNotifyEnabled) {
+                if (guildConfig.experienceNotifyEnabled && isFeatureAllowed(sandra, guildId, FeatureFlag.NOTIFY)) {
                     // Check if the guild has a specific channel for notifications
                     // Otherwise, check if this channel can receive notifications
                     val notifyChannel = if (guildConfig.experienceNotifyChannel != 0L) {
@@ -119,11 +116,10 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
         }
 
         // Feature: Global Experience
-        // Check to make sure this user is allowed to gain global experience
-        if (!checkBlocklist(sandra, event.channel, authorId, guildId, FeatureType.GLOBAL_EXPERIENCE)) {
-            // Check to see if this user can receive experience
-            // Award a random amount of experience between 15 and 25
-            if (userConfig.canExperience()) userConfig.awardExperience(randomExperience())
+        // Check to see if this user can receive experience
+        // Award a random amount of experience between 15 and 25
+        if (userConfig.canExperience() && isContextAllowed(sandra, authorId, guildId, FeatureFlag.EXPERIENCE)) {
+            userConfig.awardExperience(randomExperience())
         }
 
         // TODO Feature: Message Replies
@@ -132,12 +128,10 @@ class MessageListener(private val sandra: Sandra) : CoroutineEventListener {
     /**
      * Processes any private messages that the bot receives.
      */
-    private fun handlePrivateMessage(event: MessageReceivedEvent) = buildString {
-        append("Direct Message: ", event.author.name, " [", event.author.id, "] | ", event.message.contentDisplay)
-        with(event.message.attachments) {
-            if (isNotEmpty()) forEach { append("\nDirect Message Attachment: ${it.url}") }
-        }
-    }.let { LOGGER.info(it) }
+    private fun handlePrivateMessage(event: MessageReceivedEvent) {
+        LOGGER.info("Direct Message: ${event.author.name} [${event.author.id}] | ${event.message.contentDisplay}")
+        event.message.attachments.forEach { LOGGER.info("Direct Message Attachment: ${it.url}") }
+    }
 
     private companion object {
         private val LOGGER = LoggerFactory.getLogger(MessageListener::class.java)

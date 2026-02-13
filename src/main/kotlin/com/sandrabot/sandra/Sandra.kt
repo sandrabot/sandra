@@ -40,7 +40,7 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val commands = CommandManager()
     val messages = MessageManager()
     val statistics = StatisticsManager()
-    val blocklist = BlocklistManager(this)
+    val access = AccessManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
     val lastfm = LastRequestManager(this)

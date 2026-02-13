@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ private fun shutdownHook(sandra: Sandra) = with(sandra) {
     try {
         // disable any auxiliary services first
         botList.shutdown()
-        blocklist.shutdown()
+        access.shutdown()
         subscriptions.shutdown()
 
         // stop accepting new requests and sign out from discord
