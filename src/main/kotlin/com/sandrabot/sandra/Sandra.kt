@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
     val commands = CommandManager()
     val messages = MessageManager()
     val statistics = StatisticsManager()
-    val blocklist = BlocklistManager(this)
     val botList = BotListService(this)
     val config = ConfigurationManager(this)
     val lastfm = LastRequestManager(this)

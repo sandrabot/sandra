@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
-import com.sandrabot.sandra.utils.checkCommandBlocklist
 import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.events.GenericEvent
@@ -52,8 +51,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
 
         // the first thing we want to do is wrap this with our own object
         val event = CommandEvent(command, slashEvent, sandra)
-        // check the blocklist to prevent responding in actively blocked contexts
-        if (checkCommandBlocklist(event)) return
+
         // restrict owner commands from being used by anyone
         if (command.isOwnerOnly && !event.isOwner) {
             event.replyError(event.getAny("core.owner_only")).asEphemeral().queue()
