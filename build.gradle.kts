@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 plugins {
     application
-    kotlin("jvm") version "2.3.0"
-    kotlin("plugin.serialization") version "2.3.0"
+    kotlin("jvm") version "2.3.10"
+    kotlin("plugin.serialization") version "2.3.10"
     id("com.github.gmazzo.buildconfig") version "6.0.7"
     id("io.ktor.plugin") version "3.4.0"
 }
@@ -44,8 +44,8 @@ dependencies {
         exclude(module = "tink")
     }
 
-    implementation("ch.qos.logback:logback-classic:1.5.25")
-    implementation("io.sentry:sentry-logback:8.31.0")
+    implementation("ch.qos.logback:logback-classic:1.5.29")
+    implementation("io.sentry:sentry-logback:8.32.0")
     implementation("net.jodah:expiringmap:0.5.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")

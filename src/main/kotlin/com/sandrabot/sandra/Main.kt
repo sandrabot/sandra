@@ -111,6 +111,7 @@ private fun shutdownHook(sandra: Sandra) = with(sandra) {
     try {
         // disable any auxiliary services first
         botList.shutdown()
+        access.shutdown()
         subscriptions.shutdown()
 
         // stop accepting new requests and sign out from discord
