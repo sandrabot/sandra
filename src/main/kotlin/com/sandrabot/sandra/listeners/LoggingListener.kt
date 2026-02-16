@@ -17,9 +17,11 @@
 package com.sandrabot.sandra.listeners
 
 import com.sandrabot.sandra.Sandra
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.EventType
 import com.sandrabot.sandra.entities.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
+import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
@@ -158,12 +160,12 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     }
 
     private suspend fun sendEventMessage(
-        guild: Guild, eventType: EventType, actionType: ActionType,
+        guild: Guild, eventType: EventType, actionType: ActionType, emoji: String? = null,
         provider: (AuditLogEntry?, LocaleContext) -> String
     ) = sendEvent(guild, eventType, actionType) { entry ->
         val now = Clock.System.now().epochSeconds
         val content = provider(entry, LocaleContext(guild.locale, "logging"))
-        MessageCreate("${eventType.emoji} <t:$now:T> <t:$now:R> $content")
+        MessageCreate("${emoji ?: eventType.emoji} <t:$now:T> <t:$now:R> $content")
     }
 
     private suspend fun onAutoModExecution(event: AutoModExecutionEvent) {}
@@ -184,8 +186,19 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onGuildStickerUpdateDescription(event: GuildStickerUpdateDescriptionEvent) {}
     private suspend fun onGuildStickerUpdateTags(event: GuildStickerUpdateTagsEvent) {}
 
-    private suspend fun onGuildInviteCreate(event: GuildInviteCreateEvent) {}
-    private suspend fun onGuildInviteDelete(event: GuildInviteDeleteEvent) {}
+    private suspend fun onGuildInviteCreate(event: GuildInviteCreateEvent) =
+        sendEventMessage(event.guild, EventType.INVITE, ActionType.INVITE_CREATE) { entry, context ->
+            val expirations = mutableListOf<String>()
+            if (event.invite.maxAge > 0) expirations += "<t:${event.invite.timeCreated.toEpochSecond() + event.invite.maxAge}:R>"
+            if (event.invite.maxUses > 0) expirations += context["invite_uses", event.invite.maxUses.format()]
+            if (expirations.isEmpty()) expirations += "**${context.getAny("core.never")}**"
+            context["invite_create", entry?.user?.asMention, event.invite.code, event.channel.asMention, expirations.joinToString()]
+        }
+
+    private suspend fun onGuildInviteDelete(event: GuildInviteDeleteEvent) =
+        sendEventMessage(event.guild, EventType.INVITE, ActionType.INVITE_DELETE, Emojis.UNINVITE) { entry, context ->
+            context["invite_delete", entry?.user?.asMention, event.code, event.channel.asMention]
+        }
 
     private suspend fun onGuildBan(event: GuildBanEvent) =
         sendEventMessage(event.guild, EventType.BAN, ActionType.BAN) { entry, context ->

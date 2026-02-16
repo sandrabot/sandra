@@ -13,6 +13,7 @@
     "restricted": "this feature is **restricted** or is otherwise unavailable to you at this time",
     "channel": "channel",
     "server": "server",
+    "never": "never",
     "categories": {
       "custom": "custom",
       "essential": "essential",
@@ -413,7 +414,10 @@
     }
   },
   "logging": {
-    "ban": "%1$s [**%2$s**] was banned from the server by %3$s because: `%4$s`",
-    "unban": "%1$s [**%2$s**] was unbanned by %3$s because: `%4$s`"
+    "invite_create": "%1$s created an invite (**%2$s**) for %3$s that expires %4$s",
+    "invite_delete": "%1$s deleted an invite (**%2$s**) for %3$s",
+    "invite_uses": "after %1$s uses",
+    "ban": "%1$s (**%2$s**) was banned from the server by %3$s because: `%4$s`",
+    "unban": "%1$s (**%2$s**) was unbanned by %3$s because: `%4$s`"
   }
 }
