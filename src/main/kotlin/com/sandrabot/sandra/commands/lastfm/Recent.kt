@@ -40,7 +40,7 @@ class Recent : Command(arguments = "[user]") {
         val recentTracks = event.sandra.lastfm.getRecentTracks(username)
         // make sure we received a valid response from the api
         if (recentTracks?.isEmpty() != false) {
-            event.sendError(event.getAny("core.lastfm.missing_data", username)).queue()
+            event.sendFailure(event.getAny("core.lastfm.missing_data", username)).queue()
             return
         }
 

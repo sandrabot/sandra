@@ -109,8 +109,8 @@ class CommandEvent(
     fun sendEmoji(emoji: Emoji, content: String) = sendEmoji(emoji.formatted, content)
     fun sendInfo(content: String) = sendEmoji(Emojis.INFO, content)
     fun sendSuccess(content: String) = sendEmoji(Emojis.SUCCESS, content)
-    fun sendWarning(content: String) = sendEmoji(Emojis.NOTICE, content)
-    fun sendError(content: String) = sendEmoji(Emojis.FAILURE, content)
+    fun sendNotice(content: String) = sendEmoji(Emojis.NOTICE, content)
+    fun sendFailure(content: String) = sendEmoji(Emojis.FAILURE, content)
 
 }
 

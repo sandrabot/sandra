@@ -40,12 +40,12 @@ class Settings : Command() {
             var username = event.arguments.text("username")!!
             // verify the input is a valid last.fm url or plain username
             profileRegex.matchEntire(username)?.let { username = it.groupValues[1] } ?: run {
-                event.sendError(event.get("invalid")).queue()
+                event.sendFailure(event.get("invalid")).queue()
                 return
             }
             // ask the api to make sure this account actually exists
             val lastUser = event.sandra.lastfm.getUserInfo(username) ?: run {
-                event.sendError(event.get("not_found", username.escape())).queue()
+                event.sendFailure(event.get("not_found", username.escape())).queue()
                 return
             }
             // update the user's config with the new username
