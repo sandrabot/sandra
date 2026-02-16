@@ -420,6 +420,10 @@
     "invite_create": "%1$s created an invite (**%2$s**) for %3$s that expires %4$s",
     "invite_delete": "%1$s deleted an invite (**%2$s**) for %3$s",
     "invite_uses": "after %1$s uses",
+    "sticker_create": "%1$s created a sticker named **%2$s**",
+    "sticker_delete": "%1$s deleted a sticker named **%2$s**",
+    "sticker_rename": "%1$s renamed a sticker to **%2$s** (was **%3$s**)",
+    "sticker_description": "%1$s updated the sticker description for **%2$s**",
     "ban": "%1$s (**%2$s**) was banned from the server by %3$s because: `%4$s`",
     "unban": "%1$s (**%2$s**) was unbanned by %3$s because: `%4$s`"
   }

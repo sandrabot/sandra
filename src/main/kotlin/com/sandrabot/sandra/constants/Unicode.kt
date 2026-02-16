@@ -26,7 +26,6 @@ object Unicode {
     const val BULLET = "•"
     const val CROSS_MARK = "❌"
     const val FORTUNE_COOKIE = "🥠"
-    const val FRAMED_PICTURE = "🖼"
     const val GAME_DIE = "🎲"
     const val LEFT_BACKHAND = "👈"
     const val LINK = "🔗"

@@ -27,6 +27,6 @@ enum class EventType(val emoji: String) {
     MESSAGE(Emojis.CHAT),
     POLL(Emojis.PROMPT),
     SECURITY(Emojis.NOTICE),
-    STICKER(Unicode.FRAMED_PICTURE),
+    STICKER(Emojis.IMAGE),
 
 }

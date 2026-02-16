@@ -63,7 +63,6 @@ import net.dv8tion.jda.api.events.sticker.GuildStickerAddedEvent
 import net.dv8tion.jda.api.events.sticker.GuildStickerRemovedEvent
 import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateDescriptionEvent
 import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateNameEvent
-import net.dv8tion.jda.api.events.sticker.update.GuildStickerUpdateTagsEvent
 import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
@@ -96,7 +95,6 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             is GuildStickerRemovedEvent -> onGuildStickerRemoved(event)
             is GuildStickerUpdateNameEvent -> onGuildStickerUpdateName(event)
             is GuildStickerUpdateDescriptionEvent -> onGuildStickerUpdateDescription(event)
-            is GuildStickerUpdateTagsEvent -> onGuildStickerUpdateTags(event)
 
             // feature: invite creation and deletion
             is GuildInviteCreateEvent -> onGuildInviteCreate(event)
@@ -140,7 +138,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         }.takeUnless { it.isEmpty() } ?: return // we can stop here if nobody is actually subscribed
         // determine if we can provide the audit log entry
         val auditEntry = if (actionType != null && guild.selfMember.hasPermission(Permission.VIEW_AUDIT_LOGS)) {
-            delay(150.milliseconds) // race condition, allow discord time to generate the audit log entry
+            delay(200.milliseconds) // race condition, allow discord time to generate the audit log entry
             try { // attempt to retrieve the latest audit log entry for this action type
                 guild.retrieveAuditLogs().type(actionType).limit(1).await().firstOrNull()
             } catch (_: ErrorResponseException) {
@@ -191,11 +189,25 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             context["emoji_rename", entry?.user?.asMention, event.emoji.asMention, event.newName, event.oldName]
         }
 
-    private suspend fun onGuildStickerAdded(event: GuildStickerAddedEvent) {}
-    private suspend fun onGuildStickerRemoved(event: GuildStickerRemovedEvent) {}
-    private suspend fun onGuildStickerUpdateName(event: GuildStickerUpdateNameEvent) {}
-    private suspend fun onGuildStickerUpdateDescription(event: GuildStickerUpdateDescriptionEvent) {}
-    private suspend fun onGuildStickerUpdateTags(event: GuildStickerUpdateTagsEvent) {}
+    private suspend fun onGuildStickerAdded(event: GuildStickerAddedEvent) =
+        sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_CREATE) { entry, context ->
+            context["sticker_create", entry?.user?.asMention, event.sticker.name]
+        }
+
+    private suspend fun onGuildStickerRemoved(event: GuildStickerRemovedEvent) =
+        sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_DELETE) { entry, context ->
+            context["sticker_delete", entry?.user?.asMention, event.sticker.name]
+        }
+
+    private suspend fun onGuildStickerUpdateName(event: GuildStickerUpdateNameEvent) =
+        sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_UPDATE) { entry, context ->
+            context["sticker_rename", entry?.user?.asMention, event.newValue, event.oldValue]
+        }
+
+    private suspend fun onGuildStickerUpdateDescription(event: GuildStickerUpdateDescriptionEvent) =
+        sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_UPDATE, provider = { entry, context ->
+            context["sticker_description", entry?.user?.asMention, event.sticker.name]
+        })
 
     private suspend fun onGuildInviteCreate(event: GuildInviteCreateEvent) =
         sendEventMessage(event.guild, EventType.INVITE, ActionType.INVITE_CREATE) { entry, context ->
