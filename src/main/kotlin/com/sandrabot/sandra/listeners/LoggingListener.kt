@@ -176,9 +176,20 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onUpdateSecurityActions(event: GuildUpdateSecurityIncidentActionsEvent) {}
     private suspend fun onUpdateSecurityDetections(event: GuildUpdateSecurityIncidentDetectionsEvent) {}
 
-    private suspend fun onEmojiAdded(event: EmojiAddedEvent) {}
-    private suspend fun onEmojiRemoved(event: EmojiRemovedEvent) {}
-    private suspend fun onEmojiUpdateName(event: EmojiUpdateNameEvent) {}
+    private suspend fun onEmojiAdded(event: EmojiAddedEvent) =
+        sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_CREATE) { entry, context ->
+            context["emoji_create", entry?.user?.asMention, event.emoji.asMention, event.emoji.name]
+        }
+
+    private suspend fun onEmojiRemoved(event: EmojiRemovedEvent) =
+        sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_DELETE) { entry, context ->
+            context["emoji_delete", entry?.user?.asMention, event.emoji.name]
+        }
+
+    private suspend fun onEmojiUpdateName(event: EmojiUpdateNameEvent) =
+        sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_UPDATE) { entry, context ->
+            context["emoji_rename", entry?.user?.asMention, event.emoji.asMention, event.newName, event.oldName]
+        }
 
     private suspend fun onGuildStickerAdded(event: GuildStickerAddedEvent) {}
     private suspend fun onGuildStickerRemoved(event: GuildStickerRemovedEvent) {}

@@ -414,6 +414,9 @@
     }
   },
   "logging": {
+    "emoji_create": "%1$s created an emoji %2$s named **%3$s**",
+    "emoji_delete": "%1$s deleted an emoji named **%2$s**",
+    "emoji_rename": "%1$s renamed an emoji %2$s to **%3$s** (was **%4$s**)",
     "invite_create": "%1$s created an invite (**%2$s**) for %3$s that expires %4$s",
     "invite_delete": "%1$s deleted an invite (**%2$s**) for %3$s",
     "invite_uses": "after %1$s uses",
