@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package com.sandrabot.sandra.entities
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import net.dv8tion.jda.api.entities.emoji.Emoji
 import kotlin.reflect.KClass
 
 enum class Category(emote: String) {
 
-    CUSTOM(Emotes.PATREON),
-    ESSENTIAL(Emotes.PIN),
-    FUN(Emotes.FUN),
-    GAME(Emotes.CASH),
-    LASTFM(Emotes.LASTFM),
-    MODERATION(Emotes.MOD),
-    MUSIC(Emotes.MUSIC),
-    OWNER(Emotes.CONFIG),
-    SOCIAL(Emotes.USER),
-    UTILITY(Emotes.PROMPT);
+    CUSTOM(Emojis.DONATE),
+    ESSENTIAL(Emojis.PIN),
+    FUN(Emojis.FUN),
+    GAME(Emojis.CASH),
+    LASTFM(Emojis.LASTFM),
+    MODERATION(Emojis.MOD),
+    MUSIC(Emojis.MUSIC),
+    OWNER(Emojis.CONFIG),
+    SOCIAL(Emojis.USER),
+    UTILITY(Emojis.PROMPT);
 
     val displayName = name.lowercase()
     val emoji = Emoji.fromFormatted(emote)

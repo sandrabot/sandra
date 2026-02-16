@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.essential
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
@@ -37,7 +37,7 @@ class Ping : Command() {
 
     private fun Long.format(): String {
         val formatted = this.milliseconds.format()
-        return if (this > 250) "${Emotes.NOTICE} $formatted" else formatted
+        return if (this > 250) "${Emojis.NOTICE} $formatted" else formatted
     }
 
 }

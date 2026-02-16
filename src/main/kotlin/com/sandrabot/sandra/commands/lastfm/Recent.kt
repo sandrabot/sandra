@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.lastfm
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
@@ -40,7 +40,7 @@ class Recent : Command(arguments = "[user]") {
         val recentTracks = event.sandra.lastfm.getRecentTracks(username)
         // make sure we received a valid response from the api
         if (recentTracks?.isEmpty() != false) {
-            event.sendError(event.getAny("core.lastfm.missing_data", username)).queue()
+            event.sendFailure(event.getAny("core.lastfm.missing_data", username)).queue()
             return
         }
 
@@ -67,7 +67,7 @@ class Recent : Command(arguments = "[user]") {
         val message = event.sendMessageEmbeds(embed).await()
         // check for "explicit" album cover art, this prevents
         // the embed from being shown in regular channels
-        if (message.embeds.isEmpty()) message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
+        if (message.embeds.isEmpty()) message.editMessage(event.getAny("core.lastfm.explicit", Emojis.NOTICE)).queue()
 
     }
 

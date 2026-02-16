@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.social
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
@@ -33,7 +33,7 @@ class Reputation : Command(arguments = "[@user]") {
         if (!event.userConfig.canReputation() && !event.isOwner) {
             val nextRep = event.userConfig.reputationLast + 72_000_000 // 20 hours
             val remaining = ((nextRep - System.currentTimeMillis()) / 1_000).seconds.format()
-            event.replyEmoji(Emotes.TIME, event.get("cooldown", remaining)).asEphemeral().queue()
+            event.replyEmoji(Emojis.TIME, event.get("cooldown", remaining)).asEphemeral().queue()
             return
         }
 
@@ -58,7 +58,7 @@ class Reputation : Command(arguments = "[@user]") {
 
         // reply with the target user's updated rep count
         val reply = event.get("reply", targetUser, targetConfig.reputation.format())
-        event.replyEmoji(Emotes.LEVEL_UP, reply).queue()
+        event.replyEmoji(Emojis.LEVEL_UP, reply).queue()
 
     }
 

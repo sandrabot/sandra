@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.essential
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
 import com.sandrabot.sandra.events.CommandEvent
@@ -40,12 +40,12 @@ class Settings : Command() {
             var username = event.arguments.text("username")!!
             // verify the input is a valid last.fm url or plain username
             profileRegex.matchEntire(username)?.let { username = it.groupValues[1] } ?: run {
-                event.sendError(event.get("invalid")).queue()
+                event.sendFailure(event.get("invalid")).queue()
                 return
             }
             // ask the api to make sure this account actually exists
             val lastUser = event.sandra.lastfm.getUserInfo(username) ?: run {
-                event.sendError(event.get("not_found", username.escape())).queue()
+                event.sendFailure(event.get("not_found", username.escape())).queue()
                 return
             }
             // update the user's config with the new username
@@ -59,7 +59,7 @@ class Settings : Command() {
                 }
                 thumbnail = lastUser.getImageUrl(ImageSize.EXTRALARGE)
                 color = (lastUser.tryAverageColor(ImageSize.MEDIUM) ?: event.sandra.settings.color).rgb
-                description = "${Emotes.SUCCESS} ${event.get("saved", username.escape())}"
+                description = "${Emojis.SUCCESS} ${event.get("saved", username.escape())}"
                 field {
                     name = event.get("created")
                     value = "<t:${lastUser.registeredWhen}:f>, <t:${lastUser.registeredWhen}:R>"

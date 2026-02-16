@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.sandrabot.sandra.commands.owner
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
-import com.sandrabot.sandra.constants.Emotes
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
@@ -28,6 +27,7 @@ import dev.minn.jda.ktx.coroutines.await
 import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.system.exitProcess
+import com.sandrabot.sandra.constants.Emojis as Emotes
 import kotlinx.coroutines.future.await as awaitFuture
 
 @Suppress("unused")

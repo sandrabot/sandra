@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class Cat : Command() {
                 val tags = if (actualTags.isNullOrBlank()) "" else " ${Unicode.BULLET} $actualTags"
                 text("-# ${event.get("footnote") + tags}")
             }).queue()
-        } else event.sendError(event.getAny("core.interaction_error")).asEphemeral().queue()
+        } else event.sendFailure(event.getAny("core.interaction_error")).asEphemeral().queue()
 
     }
 

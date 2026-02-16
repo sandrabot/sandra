@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.sandrabot.sandra.commands.lastfm
 
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.lastfm.ImageSize
@@ -45,7 +45,7 @@ class NowPlaying : Command(arguments = "[user]") {
 
         // retrieve the user's most recently played track
         val track = event.sandra.lastfm.getRecentTracks(username)?.firstOrNull() ?: run {
-            event.sendError(event.getAny("core.lastfm.missing_data", username)).queue()
+            event.sendFailure(event.getAny("core.lastfm.missing_data", username)).queue()
             return
         }
 
@@ -84,10 +84,10 @@ class NowPlaying : Command(arguments = "[user]") {
         // check for "explicit" album cover art, this prevents
         // the embed from being shown in regular channels
         if (message.embeds.isNotEmpty()) {
-            val upvoteEmoji = event.guildConfig?.lastUpvoteEmoji ?: Emotes.UPVOTE
-            val downvoteEmoji = event.guildConfig?.lastDownvoteEmoji ?: Emotes.DOWNVOTE
+            val upvoteEmoji = event.guildConfig?.lastUpvoteEmoji ?: Emojis.UPVOTE
+            val downvoteEmoji = event.guildConfig?.lastDownvoteEmoji ?: Emojis.DOWNVOTE
             message.addReaction(upvoteEmoji.toEmoji()).flatMap { message.addReaction(downvoteEmoji.toEmoji()) }.queue()
-        } else message.editMessage(event.getAny("core.lastfm.explicit", Emotes.NOTICE)).queue()
+        } else message.editMessage(event.getAny("core.lastfm.explicit", Emojis.NOTICE)).queue()
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.sandrabot.sandra.commands.owner
 
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.constants.Constants
-import com.sandrabot.sandra.constants.Emotes
+import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.utils.format
@@ -72,7 +72,7 @@ class Evaluate : Command(guildOnly = true) {
 
     private suspend fun handleSnippet(event: MessageReceivedEvent, sandra: Sandra) {
         // send a response, so we actually know when the engine is thinking
-        val reply = event.message.reply("${Emotes.LOADING} hold on a sec while i crunch the numbers").await()
+        val reply = event.message.reply("${Emojis.LOADING} hold on a sec while i crunch the numbers").await()
         // start parsing and building the snippet into a script
         val snippetMatch = SNIPPET_REGEX.matchEntire(event.message.contentRaw) ?: throw AssertionError("No match")
         val rawSnippet = snippetMatch.groupValues.drop(1).first { it.isNotBlank() }
@@ -126,6 +126,7 @@ class Evaluate : Command(guildOnly = true) {
     private fun updateEngineBindings(messageEvent: MessageReceivedEvent, sandra: Sandra) {
         val guildConfig = sandra.config.getGuild(messageEvent.guild.idLong)
         scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE).apply {
+            remove("kotlin.script.state")
             put("event", messageEvent)
             put("guild", messageEvent.guild)
             put("id", messageEvent.guild.id)
