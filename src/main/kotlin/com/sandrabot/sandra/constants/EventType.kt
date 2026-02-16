@@ -18,15 +18,15 @@ package com.sandrabot.sandra.constants
 
 enum class EventType(val emoji: String) {
 
-    ALL(Emotes.FOLDER),
-    AUTO_MOD(Emotes.MOD),
-    BAN(Emotes.BAN),
-    EMOJI(Emotes.FUN),
-    INVITE(Emotes.INVITE),
-    MEMBER(Emotes.USER),
-    MESSAGE(Emotes.CHAT),
-    POLL(Emotes.PROMPT),
-    SECURITY(Emotes.NOTICE),
+    ALL(Emojis.FOLDER),
+    AUTO_MOD(Emojis.MOD),
+    BAN(Emojis.BAN),
+    EMOJI(Emojis.FUN),
+    INVITE(Emojis.INVITE),
+    MEMBER(Emojis.USER),
+    MESSAGE(Emojis.CHAT),
+    POLL(Emojis.PROMPT),
+    SECURITY(Emojis.NOTICE),
     STICKER(Unicode.FRAMED_PICTURE),
 
 }
