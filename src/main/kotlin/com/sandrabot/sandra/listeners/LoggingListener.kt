@@ -158,7 +158,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     }
 
     private suspend fun sendEventMessage(
-        guild: Guild, eventType: EventType, actionType: ActionType, emoji: String? = null,
+        guild: Guild, eventType: EventType, actionType: ActionType?, emoji: String? = null,
         provider: (AuditLogEntry?, LocaleContext) -> String
     ) = sendEvent(guild, eventType, actionType) { entry ->
         val now = Clock.System.now().epochSeconds
@@ -171,8 +171,45 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onAutoModRuleDelete(event: AutoModRuleDeleteEvent) {}
     private suspend fun onAutoModRuleUpdate(event: AutoModRuleUpdateEvent) {}
 
-    private suspend fun onUpdateSecurityActions(event: GuildUpdateSecurityIncidentActionsEvent) {}
-    private suspend fun onUpdateSecurityDetections(event: GuildUpdateSecurityIncidentDetectionsEvent) {}
+    private suspend fun onUpdateSecurityActions(event: GuildUpdateSecurityIncidentActionsEvent) =
+        sendEventMessage(event.guild, EventType.SECURITY, null) { _, context ->
+            val oldValues = mapOf(
+                "invites" to event.oldValue?.invitesDisabledUntil,
+                "direct_messages" to event.oldValue?.directMessagesDisabledUntil,
+            ).filterValues { it != null }
+            val newValues = mapOf(
+                "invites" to event.newValue?.invitesDisabledUntil,
+                "direct_messages" to event.newValue?.directMessagesDisabledUntil,
+            ).filterValues { it != null }
+            if (newValues.size > oldValues.size) {
+                val actions = newValues.keys.subtract(oldValues.keys).map { context.getAny("core.$it") }
+                val timestamp = newValues.values.firstOrNull()?.toEpochSecond()
+                context["security_action", actions.joinToString("** & **"), "<t:$timestamp:s>"]
+            } else {
+                val actions = oldValues.keys.subtract(newValues.keys).map { context.getAny("core.$it") }
+                context["security_action_restore", actions.joinToString("** & **")]
+            }
+        }
+
+    private suspend fun onUpdateSecurityDetections(event: GuildUpdateSecurityIncidentDetectionsEvent) =
+        sendEventMessage(event.guild, EventType.SECURITY, null) { _, context ->
+            val oldValues = mapOf(
+                "raid" to event.oldValue?.timeDetectedRaid,
+                "dm_spam" to event.oldValue?.timeDetectedDmSpam,
+            ).filterValues { it != null }
+            val newValues = mapOf(
+                "raid" to event.newValue?.timeDetectedRaid,
+                "dm_spam" to event.newValue?.timeDetectedDmSpam,
+            ).filterValues { it != null }
+            if (newValues.size > oldValues.size) {
+                val actions = newValues.keys.subtract(oldValues.keys).map { context.getAny("core.$it") }
+                val timestamp = newValues.values.firstOrNull()?.toEpochSecond()
+                context["security_detection", actions.joinToString("** & **"), "<t:$timestamp:s>"]
+            } else {
+                val actions = oldValues.keys.subtract(newValues.keys).map { context.getAny("core.$it") }
+                context["security_detection_restore", actions.joinToString("** & **")]
+            }
+        }
 
     private suspend fun onEmojiAdded(event: EmojiAddedEvent) =
         sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_CREATE) { entry, context ->
