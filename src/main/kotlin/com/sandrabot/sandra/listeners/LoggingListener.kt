@@ -26,6 +26,7 @@ import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import dev.minn.jda.ktx.messages.MessageCreate
+import io.ktor.util.date.*
 import kotlinx.coroutines.delay
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.audit.ActionType
@@ -67,7 +68,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler
 import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 
 class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
@@ -161,7 +161,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         guild: Guild, eventType: EventType, actionType: ActionType?, emoji: String? = null,
         provider: (AuditLogEntry?, LocaleContext) -> String
     ) = sendEvent(guild, eventType, actionType) { entry ->
-        val now = Clock.System.now().epochSeconds
+        val now = getTimeMillis() / 1000
         val content = provider(entry, LocaleContext(guild.locale, "logging"))
         MessageCreate("${emoji ?: eventType.emoji} <t:$now:T> <t:$now:R> $content")
     }
