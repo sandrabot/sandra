@@ -18,10 +18,7 @@ package com.sandrabot.sandra
 
 import com.sandrabot.sandra.api.ServerController
 import com.sandrabot.sandra.config.SandraConfig
-import com.sandrabot.sandra.listeners.GuildListener
-import com.sandrabot.sandra.listeners.InteractionListener
-import com.sandrabot.sandra.listeners.MessageListener
-import com.sandrabot.sandra.listeners.ReadyListener
+import com.sandrabot.sandra.listeners.*
 import com.sandrabot.sandra.managers.*
 import com.sandrabot.sandra.services.BotListService
 import dev.minn.jda.ktx.events.CoroutineEventManager
@@ -60,6 +57,7 @@ class Sandra(val settings: SandraConfig, val redis: RedisManager) {
         addEventListeners(
             GuildListener(this@Sandra),
             InteractionListener(this@Sandra),
+            LoggingListener(this@Sandra),
             MessageListener(this@Sandra),
             ReadyListener(this@Sandra),
         )

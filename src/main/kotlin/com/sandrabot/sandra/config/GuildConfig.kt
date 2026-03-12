@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,9 @@ data class GuildConfig(override val id: Long) : Configuration() {
     var lastUpvoteEmoji: String? = null
     @SerialName("last_downvote")
     var lastDownvoteEmoji: String? = null
+
+    @SerialName("logging")
+    var loggingEnabled: Boolean = false
 
     fun getChannel(id: Long): ChannelConfig = channels.getOrPut(id) { ChannelConfig(id) }
     fun getMember(id: Long): MemberConfig = members.getOrPut(id) { MemberConfig(id) }

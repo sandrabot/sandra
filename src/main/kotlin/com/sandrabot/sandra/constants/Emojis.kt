@@ -30,6 +30,7 @@ object Emojis {
     const val FAILURE = "<:failure:1278461668728504380>"
     const val FOLDER = "<:folder:1471993647737208934>"
     const val FUN = "<:fun:1278461721349984268>"
+    const val IMAGE = "<:image:1472841835214012443>"
     const val INFO = "<:info:1278461761858834613>"
     const val INVITE = "<:invite:1471969124786901165>"
     const val JOIN = "<:join:1278461800312213637>"
