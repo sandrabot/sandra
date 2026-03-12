@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.api.plugins.configureRouting
 import com.sandrabot.sandra.api.plugins.configureSerialization
 import com.sandrabot.sandra.api.plugins.configureStatusPages
-import com.sandrabot.sandra.utils.toJsonObject
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
 
 class ServerController(private val sandra: Sandra) {
 
@@ -45,11 +42,4 @@ class ServerController(private val sandra: Sandra) {
         ktorServer.stop()
     }
 
-}
-
-suspend inline fun ApplicationCall.respondJson(
-    status: HttpStatusCode = HttpStatusCode.OK, success: Boolean = true, data: Map<String, Any?> = emptyMap()
-) {
-    val dataMap = mapOf("code" to status.value, "success" to success, "data" to data)
-    respond(status = status, dataMap.toJsonObject())
 }

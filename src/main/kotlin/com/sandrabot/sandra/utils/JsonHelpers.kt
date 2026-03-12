@@ -16,10 +16,18 @@
 
 package com.sandrabot.sandra.utils
 
+import com.sandrabot.sandra.constants.Constants
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import kotlinx.serialization.json.*
 
-fun emptyJsonObject(): JsonObject = JsonObject(emptyMap())
-fun emptyJsonArray(): JsonArray = JsonArray(emptyList())
+suspend inline fun ApplicationCall.respondJson(
+    status: HttpStatusCode = HttpStatusCode.OK, success: Boolean = true, vararg data: Pair<String, Any?>,
+) {
+    val dataMap = mapOf("status" to status.value, "success" to success, "version" to Constants.VERSION, *data)
+    respond(status = status, dataMap.toJsonObject())
+}
 
 fun Map<*, *>.toJsonObject() = buildJsonObject {
     forEach { (key, value) -> put(key.toString(), value.toJsonElement()) }
@@ -38,6 +46,9 @@ fun Any?.toJsonElement(): JsonElement = when (this) {
 
 fun Iterable<*>.toJsonArray() = JsonArray(map { it.toJsonElement() })
 fun Array<*>.toJsonArray() = JsonArray(map { it.toJsonElement() })
+
+fun emptyJsonObject(): JsonObject = JsonObject(emptyMap())
+fun emptyJsonArray(): JsonArray = JsonArray(emptyList())
 
 fun JsonObject.flatten(root: String = "", map: MutableMap<String, Any> = mutableMapOf()): Map<String, Any> =
     entries.forEach { (key, value) ->

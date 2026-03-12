@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2023 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package com.sandrabot.sandra.api.routes
 
 import com.sandrabot.sandra.Sandra
-import com.sandrabot.sandra.api.respondJson
+import com.sandrabot.sandra.utils.respondJson
 import io.ktor.server.routing.*
 
 private val runtime by lazy { Runtime.getRuntime() }
 
 fun Route.statusRouting(sandra: Sandra) {
     get("/status") {
-        val data = mapOf(
+        val data = arrayOf(
             "ping" to sandra.shards.averageGatewayPing,
             "guilds" to sandra.shards.guildCache.size(),
             "memory" to (runtime.totalMemory() - runtime.freeMemory() shr 20),
