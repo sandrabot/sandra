@@ -53,6 +53,7 @@ fun bootstrap(args: Array<String>) {
     BuildInfo.LOCAL_CHANGES.takeIf { it.isNotBlank() }?.let { logger.info("Experimental build has $it") }
 
     val json = Json {
+        decodeEnumsCaseInsensitive = true
         ignoreUnknownKeys = true
         encodeDefaults = true
         prettyPrint = true
