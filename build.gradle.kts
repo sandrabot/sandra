@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,8 @@
 
 plugins {
     application
-    kotlin("jvm") version "2.3.10"
-    kotlin("plugin.serialization") version "2.3.10"
+    kotlin("jvm") version "2.3.20"
+    kotlin("plugin.serialization") version "2.3.20"
     id("com.github.gmazzo.buildconfig") version "6.0.9"
     id("io.ktor.plugin") version "3.4.1"
 }
@@ -39,7 +39,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     implementation("club.minnced:jda-ktx:0.14.1")
-    implementation("net.dv8tion:JDA:6.3.1") {
+    implementation("net.dv8tion:JDA:6.3.2") {
         exclude(module = "opus-java")
         exclude(module = "tink")
     }
