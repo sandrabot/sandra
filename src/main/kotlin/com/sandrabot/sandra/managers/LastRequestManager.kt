@@ -46,8 +46,8 @@ class LastRequestManager(private val sandra: Sandra) {
 
     @OptIn(ExperimentalSerializationApi::class)
     private val json = Json {
-        ignoreUnknownKeys = true
         decodeEnumsCaseInsensitive = true
+        ignoreUnknownKeys = true
     }
 
     /**
