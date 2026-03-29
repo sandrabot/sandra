@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -162,7 +162,7 @@ class GuildListener(private val sandra: Sandra) : CoroutineEventListener {
         if (guildConfig.autoRolesEnabled && guildConfig.saveRolesEnabled) {
             // attempt to store the member's current roles
             // this information is already lost if the member wasn't cached
-            // discord does not provide the member meta-data when a remove event is dispatched
+            // discord does not provide the full member object when a remove event is dispatched
             val member = event.member?.takeUnless { it.user.isBot } ?: return
             val roles = member.roles.takeUnless { it.isEmpty() } ?: return
             guildConfig[member].savedRoles += roles.map { it.idLong }

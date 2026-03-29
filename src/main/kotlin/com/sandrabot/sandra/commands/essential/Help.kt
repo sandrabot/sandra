@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,7 @@ class Help : Command(arguments = "[command]") {
             val command = event.arguments.command()
             // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
             if (command == null || command.category == Category.CUSTOM || (command.isOwnerOnly && !event.isOwner)) {
-                event.replyError(event.get("not_found")).queue()
+                event.replyNotice(event.get("not_found")).queue()
                 return
             }
             event.reply(MessageCreate(useComponentsV2 = true) {
