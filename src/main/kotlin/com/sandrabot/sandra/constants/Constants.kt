@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,7 @@ object Constants {
     val USER_AGENT = "Sandra/$VERSION (+$WEBSITE)"
 
     const val DIRECT_SUPPORT = "https://discord.gg/q5zuYAwZGm"
-    const val DIRECT_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$APPLICATION_ID&permissions=473296087&scope=bot%20applications.commands"
-    const val BETA_INVITE = "https://discord.com/api/oauth2/authorize?client_id=$BETA_APPLICATION_ID&permissions=274878220352&scope=bot%20applications.commands"
+    const val DIRECT_INVITE = "https://discord.com/oauth2/authorize?client_id=$APPLICATION_ID"
+    const val BETA_INVITE = "https://discord.com/oauth2/authorize?client_id=$BETA_APPLICATION_ID"
 
 }

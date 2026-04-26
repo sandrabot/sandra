@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,13 +60,13 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
 
         // and the next thing is gonna be checking with the access manager
         if (event.isAccessRestricted() && !event.isOwner) {
-            event.replyWarning(event.getAny("core.restricted")).asEphemeral().queue()
+            event.replyNotice(event.getAny("core.restricted")).asEphemeral().queue()
             return
         }
 
         // restrict owner commands from being used by anyone
         if (command.isOwnerOnly && !event.isOwner) {
-            event.replyError(event.getAny("core.owner_only")).asEphemeral().queue()
+            event.replyNotice(event.getAny("core.owner_only")).asEphemeral().queue()
             return
         }
 
@@ -74,11 +74,11 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         if (slashEvent.isFromGuild) {
             // discord should take care of these permissions for us, but we'll double-check them anyway
             command.selfPermissions.find { !event.selfMember!!.hasPermission(slashEvent.guildChannel, it) }?.let {
-                event.replyError(event.missingPermissionMessage(it)).asEphemeral().queue()
+                event.replyFailure(event.missingPermissionMessage(it)).asEphemeral().queue()
                 return
             }
             command.userPermissions.find { !event.member!!.hasPermission(slashEvent.guildChannel, it) }?.let {
-                event.replyError(event.missingPermissionMessage(it, self = false)).asEphemeral().queue()
+                event.replyFailure(event.missingPermissionMessage(it, self = false)).asEphemeral().queue()
                 return
             }
         }
@@ -95,7 +95,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
                 else -> event.getAny("core.interaction_error")
             }
             if (event.isAcknowledged) event.sendFailure(message).queue()
-            else event.replyError(message).asEphemeral().queue()
+            else event.replyFailure(message).asEphemeral().queue()
         }
     }
 

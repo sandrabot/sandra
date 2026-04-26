@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ class Magic8Ball : Command(arguments = "[@question:text]") {
         val question = event.arguments.text(name = "question")!!
         // only allow users to submit shorter questions to prevent spamming
         if (question.length > 60) {
-            event.replyError(event.get("too_long")).asEphemeral().queue()
+            event.replyNotice(event.get("too_long")).asEphemeral().queue()
             return
         }
 

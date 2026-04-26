@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,11 @@ import com.sandrabot.sandra.config.MemberConfig
 import com.sandrabot.sandra.config.UserConfig
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emojis
-import com.sandrabot.sandra.entities.*
+import com.sandrabot.sandra.constants.Subscription
+import com.sandrabot.sandra.entities.ArgumentResult
+import com.sandrabot.sandra.entities.Command
+import com.sandrabot.sandra.entities.LocaleContext
+import com.sandrabot.sandra.entities.parseArguments
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.components.MessageTopLevelComponent
@@ -94,8 +98,8 @@ class CommandEvent(
     fun replyEmoji(emoji: Emoji, content: String) = replyEmoji(emoji.formatted, content)
     fun replyInfo(content: String) = replyEmoji(Emojis.INFO, content)
     fun replySuccess(content: String) = replyEmoji(Emojis.SUCCESS, content)
-    fun replyWarning(content: String) = replyEmoji(Emojis.NOTICE, content)
-    fun replyError(content: String) = replyEmoji(Emojis.FAILURE, content)
+    fun replyNotice(content: String) = replyEmoji(Emojis.NOTICE, content)
+    fun replyFailure(content: String) = replyEmoji(Emojis.FAILURE, content)
 
     fun sendMessage(content: String) = event.hook.sendMessage(content)
     fun sendMessage(message: MessageCreateData) = event.hook.sendMessage(message)

@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.useResourceStream
 import dev.minn.jda.ktx.coroutines.await
@@ -52,10 +53,10 @@ class Evaluate : Command(guildOnly = true) {
     override suspend fun execute(event: CommandEvent) {
 
         if (event.channel.idLong in activeChannels) {
-            event.reply("this channel has already enabled eval prompts").setEphemeral(true).queue()
+            event.reply("this channel has already enabled eval prompts").asEphemeral().queue()
         } else {
             activeChannels += event.channel.idLong
-            event.reply("enabled eval prompts for this channel").setEphemeral(true).queue()
+            event.reply("enabled eval prompts for this channel").asEphemeral().queue()
             // only allow the engine to be started once, otherwise return
             if (isEngineStopped) isEngineStopped = false else return
             waitForMessage(event.sandra)
