@@ -19,7 +19,7 @@ package com.sandrabot.sandra.listeners
 import com.sandrabot.sandra.Sandra
 import com.sandrabot.sandra.config.GuildConfig
 import com.sandrabot.sandra.constants.ContentStore
-import com.sandrabot.sandra.entities.FeatureFlag
+import com.sandrabot.sandra.constants.FeatureFlag
 import com.sandrabot.sandra.utils.cleanRoleData
 import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.events.CoroutineEventListener

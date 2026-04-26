@@ -16,10 +16,10 @@
 
 package com.sandrabot.sandra.commands.essential
 
+import com.sandrabot.sandra.constants.Category
 import com.sandrabot.sandra.constants.Constants
 import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.Unicode
-import com.sandrabot.sandra.entities.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import dev.minn.jda.ktx.coroutines.await

@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.sandrabot.sandra.entities
+package com.sandrabot.sandra.constants
 
-enum class Subscription {
+enum class FeatureFlag {
 
-    BOOSTER, DONOR, SPONSOR, BENEFACTOR, DEVELOPER
+    ALL, AUTO_ROLE, COMMANDS, EXPERIENCE, FEEDBACK, LASTFM, LOGGING, MINIGAMES, NOTIFY, SOCIAL, WELCOME
 
 }
