@@ -11,13 +11,6 @@
     "missing_other_permission": "you need the **%1$s** permission in this **%2$s** to do that",
     "owner_only": "this command **can only be used** by **my developers**, nice try tho",
     "restricted": "this feature is **restricted** or is otherwise unavailable to you at this time",
-    "channel": "channel",
-    "server": "server",
-    "never": "never",
-    "raid": "raid",
-    "dm_spam": "spam in dms",
-    "invites": "invites",
-    "direct_messages": "direct messages",
     "categories": {
       "custom": "custom",
       "essential": "essential",
@@ -67,6 +60,15 @@
       "manage_roles": "manage roles",
       "manage_permissions": "manage permissions",
       "moderate_members": "timeout members"
+    },
+    "phrases": {
+      "channel": "channel",
+      "direct_messages": "direct messages",
+      "dm_spam": "spam in dms",
+      "invites": "invites",
+      "never": "never",
+      "raid": "raid",
+      "server": "server"
     },
     "reasons": {
       "bot_role": "default bot role",

@@ -182,11 +182,11 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
                 "direct_messages" to event.newValue?.directMessagesDisabledUntil,
             ).filterValues { it != null }
             if (newValues.size > oldValues.size) {
-                val actions = newValues.keys.subtract(oldValues.keys).map { context.getAny("core.$it") }
+                val actions = newValues.keys.subtract(oldValues.keys).map { context.getAny("core.phrases.$it") }
                 val timestamp = newValues.values.firstOrNull()?.toEpochSecond()
                 context["security_action", actions.joinToString("** & **"), "<t:$timestamp:s>"]
             } else {
-                val actions = oldValues.keys.subtract(newValues.keys).map { context.getAny("core.$it") }
+                val actions = oldValues.keys.subtract(newValues.keys).map { context.getAny("core.phrases.$it") }
                 context["security_action_restore", actions.joinToString("** & **")]
             }
         }
@@ -251,7 +251,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             val expirations = mutableListOf<String>()
             if (event.invite.maxAge > 0) expirations += "<t:${event.invite.timeCreated.toEpochSecond() + event.invite.maxAge}:R>"
             if (event.invite.maxUses > 0) expirations += context["invite_uses", event.invite.maxUses.format()]
-            if (expirations.isEmpty()) expirations += "**${context.getAny("core.never")}**"
+            if (expirations.isEmpty()) expirations += "**${context.getAny("core.phrases.never")}**"
             context["invite_create", entry?.user?.asMention, event.invite.code, event.channel.asMention, expirations.joinToString()]
         }
 
