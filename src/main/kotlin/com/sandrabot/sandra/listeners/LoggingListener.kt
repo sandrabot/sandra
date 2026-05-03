@@ -21,6 +21,7 @@ import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.EventType
 import com.sandrabot.sandra.constants.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
+import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
@@ -68,6 +69,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException
 import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
 
@@ -283,8 +285,28 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             context["unban", someone, event.user.asMention, event.user.id, reason]
         }
 
-    private suspend fun onGuildMemberJoin(event: GuildMemberJoinEvent) {}
-    private suspend fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {}
+    private suspend fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
+        sendEventMessage(event.guild, EventType.MEMBER, null, Emojis.JOIN) { _, context ->
+            val timestamp = event.user.timeCreated.toEpochSecond()
+            context["member_join", event.user.asMention, event.user.id, "<t:$timestamp:R>"]
+        }
+    }
+
+    private suspend fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {
+        sendEventMessage(event.guild, EventType.MEMBER, ActionType.KICK, Emojis.LEAVE) { entry, context ->
+            if (entry != null && entry.targetIdLong == event.user.idLong) {
+                val someone = entry.user?.asMention ?: context.getAny("core.phrases.someone")
+                val reason = entry.reason ?: context.getAny("core.phrases.no_reason")
+                context["kick", someone, event.user.asMention, event.user.id, reason]
+            } else {
+                val formatted = event.member?.takeIf { it.hasTimeJoined() }?.let {
+                    (getTimeMillis() / 1000 - it.timeJoined.toEpochSecond()).seconds.format()
+                } ?: "*${context.getAny("core.phrases.some_time")}*"
+                context["member_leave", event.user.asMention, event.user.id, formatted]
+            }
+        }
+    }
+
     private suspend fun onGuildMemberRoleAdd(event: GuildMemberRoleAddEvent) {}
     private suspend fun onGuildMemberRoleRemove(event: GuildMemberRoleRemoveEvent) {}
     private suspend fun onGuildMemberUpdateAvatar(event: GuildMemberUpdateAvatarEvent) {}
