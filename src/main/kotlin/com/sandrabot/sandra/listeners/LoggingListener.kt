@@ -21,7 +21,6 @@ import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.EventType
 import com.sandrabot.sandra.constants.FeatureFlag
 import com.sandrabot.sandra.entities.LocaleContext
-import com.sandrabot.sandra.utils.format
 import com.sandrabot.sandra.utils.isFeatureRestricted
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.events.CoroutineEventListener
@@ -216,61 +215,72 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
 
     private suspend fun onEmojiAdded(event: EmojiAddedEvent) =
         sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_CREATE) { entry, context ->
-            context["emoji_create", entry?.user?.asMention, event.emoji.asMention, event.emoji.name]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["emoji_create", someone, event.emoji.asMention, event.emoji.name]
         }
 
     private suspend fun onEmojiRemoved(event: EmojiRemovedEvent) =
         sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_DELETE) { entry, context ->
-            context["emoji_delete", entry?.user?.asMention, event.emoji.name]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["emoji_delete", someone, event.emoji.name]
         }
 
     private suspend fun onEmojiUpdateName(event: EmojiUpdateNameEvent) =
         sendEventMessage(event.guild, EventType.EMOJI, ActionType.EMOJI_UPDATE) { entry, context ->
-            context["emoji_rename", entry?.user?.asMention, event.emoji.asMention, event.newName, event.oldName]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["emoji_rename", someone, event.emoji.asMention, event.newName, event.oldName]
         }
 
     private suspend fun onGuildStickerAdded(event: GuildStickerAddedEvent) =
         sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_CREATE) { entry, context ->
-            context["sticker_create", entry?.user?.asMention, event.sticker.name]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["sticker_create", someone, event.sticker.name]
         }
 
     private suspend fun onGuildStickerRemoved(event: GuildStickerRemovedEvent) =
         sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_DELETE) { entry, context ->
-            context["sticker_delete", entry?.user?.asMention, event.sticker.name]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["sticker_delete", someone, event.sticker.name]
         }
 
     private suspend fun onGuildStickerUpdateName(event: GuildStickerUpdateNameEvent) =
         sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_UPDATE) { entry, context ->
-            context["sticker_rename", entry?.user?.asMention, event.newValue, event.oldValue]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["sticker_rename", someone, event.newValue, event.oldValue]
         }
 
     private suspend fun onGuildStickerUpdateDescription(event: GuildStickerUpdateDescriptionEvent) =
         sendEventMessage(event.guild, EventType.STICKER, ActionType.STICKER_UPDATE, provider = { entry, context ->
-            context["sticker_description", entry?.user?.asMention, event.sticker.name]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["sticker_description", someone, event.sticker.name]
         })
 
     private suspend fun onGuildInviteCreate(event: GuildInviteCreateEvent) =
         sendEventMessage(event.guild, EventType.INVITE, ActionType.INVITE_CREATE) { entry, context ->
-            val expirations = mutableListOf<String>()
-            if (event.invite.maxAge > 0) expirations += "<t:${event.invite.timeCreated.toEpochSecond() + event.invite.maxAge}:R>"
-            if (event.invite.maxUses > 0) expirations += context["invite_uses", event.invite.maxUses.format()]
-            if (expirations.isEmpty()) expirations += "**${context.getAny("core.phrases.never")}**"
-            context["invite_create", entry?.user?.asMention, event.invite.code, event.channel.asMention, expirations.joinToString()]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            context["invite_create", someone, event.channel.asMention, event.invite.code]
         }
 
     private suspend fun onGuildInviteDelete(event: GuildInviteDeleteEvent) =
         sendEventMessage(event.guild, EventType.INVITE, ActionType.INVITE_DELETE, Emojis.UNINVITE) { entry, context ->
-            context["invite_delete", entry?.user?.asMention, event.code, event.channel.asMention]
+            if (entry != null) {
+                val someone = entry.user?.asMention ?: context.getAny("core.phrases.someone")
+                context["invite_delete", someone, event.channel.asMention, event.code]
+            } else context["invite_expire", event.channel.asMention, event.code]
         }
 
     private suspend fun onGuildBan(event: GuildBanEvent) =
         sendEventMessage(event.guild, EventType.BAN, ActionType.BAN) { entry, context ->
-            context["ban", event.user.asMention, event.user.id, entry?.user?.asMention, entry?.reason]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            val reason = entry?.reason ?: context.getAny("core.phrases.no_reason")
+            context["ban", someone, event.user.asMention, event.user.id, reason]
         }
 
     private suspend fun onGuildUnban(event: GuildUnbanEvent) =
         sendEventMessage(event.guild, EventType.BAN, ActionType.UNBAN) { entry, context ->
-            context["unban", event.user.asMention, event.user.id, entry?.user?.asMention, entry?.reason]
+            val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
+            val reason = entry?.reason ?: context.getAny("core.phrases.no_reason")
+            context["unban", someone, event.user.asMention, event.user.id, reason]
         }
 
     private suspend fun onGuildMemberJoin(event: GuildMemberJoinEvent) {}

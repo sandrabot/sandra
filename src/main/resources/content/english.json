@@ -67,8 +67,10 @@
       "dm_spam": "spam in dms",
       "invites": "invites",
       "never": "never",
+      "no_reason": "no reason given",
       "raid": "raid",
-      "server": "server"
+      "server": "server",
+      "someone": "someone"
     },
     "reasons": {
       "bot_role": "default bot role",
@@ -380,7 +382,6 @@
       "confirmation": "## %1$s are you sure you want to softban %2$s?\ntheir most recent messages will be deleted and cannot be recovered",
       "success": "## %1$s **%2$s** was soft-banned\nnow, who's gonna invite them back? not me!",
       "reason": "/softban was used by %1$s; %2$s",
-      "default_reason": "no reason given",
       "button_confirm": "confirm softban",
       "button_cancel": "cancel",
       "arguments": {
@@ -423,9 +424,9 @@
     "emoji_create": "%1$s created an emoji %2$s named **%3$s**",
     "emoji_delete": "%1$s deleted an emoji named **%2$s**",
     "emoji_rename": "%1$s renamed an emoji %2$s to **%3$s** (was **%4$s**)",
-    "invite_create": "%1$s created an invite (**%2$s**) for %3$s that expires %4$s",
-    "invite_delete": "%1$s deleted an invite (**%2$s**) for %3$s",
-    "invite_uses": "after %1$s uses",
+    "invite_create": "%1$s created an invite in %2$s (**%3$s**)",
+    "invite_delete": "%1$s deleted an invite in %2$s (**%3$s**)",
+    "invite_expire": "an invite in %1$s has expired (**%2$s**)",
     "security_action": "**%1$s** have been temporarily disabled in this server until %2$s",
     "security_action_restore": "**%1$s** have been re-enabled in this server following a recent security incident",
     "security_detection": "discord has detected a **%1$s** incident in this server that started at %2$s",
@@ -434,7 +435,7 @@
     "sticker_delete": "%1$s deleted a sticker named **%2$s**",
     "sticker_rename": "%1$s renamed a sticker to **%2$s** (was **%3$s**)",
     "sticker_description": "%1$s updated the sticker description for **%2$s**",
-    "ban": "%1$s (**%2$s**) was banned from the server by %3$s because: `%4$s`",
-    "unban": "%1$s (**%2$s**) was unbanned by %3$s because: `%4$s`"
+    "ban": "%1$s banned %2$s (**%3$s**) from the server because: `%4$s`",
+    "unban": "%1$s unbanned %2$s (**%3$s**) from the server because: `%4$s`"
   }
 }
