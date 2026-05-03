@@ -140,7 +140,10 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         val auditEntry = if (actionType != null && guild.selfMember.hasPermission(Permission.VIEW_AUDIT_LOGS)) {
             delay(200.milliseconds) // race condition, allow discord time to generate the audit log entry
             try { // attempt to retrieve the latest audit log entry for this action type
-                guild.retrieveAuditLogs().type(actionType).limit(1).await().firstOrNull()
+                guild.retrieveAuditLogs().type(actionType).limit(1).await().firstOrNull()?.takeUnless {
+                    // only accept the latest entry if it was created within the last second
+                    getTimeMillis() - it.timeCreated.toInstant().toEpochMilli() > 1_000
+                }
             } catch (_: ErrorResponseException) {
                 null // nothing we can really do if this fails
             }
