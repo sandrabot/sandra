@@ -156,13 +156,13 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
             val channel = guild.getGuildChannelById(id) ?: config.channels.remove(id)
             // verify that messages can be sent to this channel
             if (channel !is GuildMessageChannel || !channel.canTalk()) continue
-            channel.sendMessage(message).queue(null, ERROR_HANDLER)
+            channel.sendMessage(message).setAllowedMentions(emptySet()).queue(null, ERROR_HANDLER)
         }
     }
 
     private suspend fun sendEventMessage(
         guild: Guild, eventType: EventType, actionType: ActionType?, emoji: String? = null,
-        provider: (AuditLogEntry?, LocaleContext) -> String
+        provider: (AuditLogEntry?, LocaleContext) -> String,
     ) = sendEvent(guild, eventType, actionType) { entry ->
         val now = getTimeMillis() / 1000
         val content = provider(entry, LocaleContext(guild.locale, "logging"))
