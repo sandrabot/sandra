@@ -16,22 +16,17 @@
 
 package com.sandrabot.sandra.constants
 
-/**
- * A central place to keep track of Unicode characters used throughout the bot.
- * The names will typically be related to the official Unicode description.
- */
-object Unicode {
+enum class EventType(val emoji: String) {
 
-    const val BUG = "🐛"
-    const val BULLET = "•"
-    const val CROSS_MARK = "❌"
-    const val FORTUNE_COOKIE = "🥠"
-    const val GAME_DIE = "🎲"
-    const val LEFT_BACKHAND = "👈"
-    const val LINK = "🔗"
-    const val MAGIC_8_BALL = "🎱"
-    const val MEDIUM_STAR = "⭐"
-    const val PINK_HEART = "🩷"
-    const val RIGHT_BACKHAND = "👉"
+    ALL(Emojis.FOLDER),
+    AUTO_MOD(Emojis.MOD),
+    BAN(Emojis.BAN),
+    EMOJI(Emojis.FUN),
+    INVITE(Emojis.INVITE),
+    MEMBER(Emojis.USER),
+    MESSAGE(Emojis.CHAT),
+    POLL(Emojis.PROMPT),
+    SECURITY(Emojis.NOTICE),
+    STICKER(Emojis.IMAGE),
 
 }

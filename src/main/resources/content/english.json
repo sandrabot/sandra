@@ -11,8 +11,6 @@
     "missing_other_permission": "you need the **%1$s** permission in this **%2$s** to do that",
     "owner_only": "this command **can only be used** by **my developers**, nice try tho",
     "restricted": "this feature is **restricted** or is otherwise unavailable to you at this time",
-    "channel": "channel",
-    "server": "server",
     "categories": {
       "custom": "custom",
       "essential": "essential",
@@ -62,6 +60,18 @@
       "manage_roles": "manage roles",
       "manage_permissions": "manage permissions",
       "moderate_members": "timeout members"
+    },
+    "phrases": {
+      "channel": "channel",
+      "direct_messages": "direct messages",
+      "dm_spam": "spam in dms",
+      "invites": "invites",
+      "never": "never",
+      "no_reason": "no reason given",
+      "raid": "raid",
+      "server": "server",
+      "some_time": "some amount of time",
+      "someone": "someone"
     },
     "reasons": {
       "bot_role": "default bot role",
@@ -373,7 +383,6 @@
       "confirmation": "## %1$s are you sure you want to softban %2$s?\ntheir most recent messages will be deleted and cannot be recovered",
       "success": "## %1$s **%2$s** was soft-banned\nnow, who's gonna invite them back? not me!",
       "reason": "/softban was used by %1$s; %2$s",
-      "default_reason": "no reason given",
       "button_confirm": "confirm softban",
       "button_cancel": "cancel",
       "arguments": {
@@ -411,5 +420,26 @@
       "heads": "heads",
       "tails": "tails"
     }
+  },
+  "logging": {
+    "emoji_create": "%1$s created an emoji %2$s named **%3$s**",
+    "emoji_delete": "%1$s deleted an emoji named **%2$s**",
+    "emoji_rename": "%1$s renamed an emoji %2$s to **%3$s** (was **%4$s**)",
+    "invite_create": "%1$s created an invite in %2$s (**%3$s**)",
+    "invite_delete": "%1$s deleted an invite in %2$s (**%3$s**)",
+    "invite_expire": "an invite in %1$s has expired (**%2$s**)",
+    "member_join": "%1$s (**%2$s**) joined the server, their account was created %3$s",
+    "member_leave": "%1$s (**%2$s**) left the server, they were a member here for %3$s",
+    "security_action": "**%1$s** have been temporarily disabled in this server until %2$s",
+    "security_action_restore": "**%1$s** have been re-enabled in this server following a recent security incident",
+    "security_detection": "discord has detected a **%1$s** incident in this server that started at %2$s",
+    "security_detection_restore": "discord has determined that the **%1$s** has concluded",
+    "sticker_create": "%1$s created a sticker named **%2$s**",
+    "sticker_delete": "%1$s deleted a sticker named **%2$s**",
+    "sticker_rename": "%1$s renamed a sticker to **%2$s** (was **%3$s**)",
+    "sticker_description": "%1$s updated the sticker description for **%2$s**",
+    "kick": "%1$s kicked %2$s (**%3$s**) from the server because: `%4$s`",
+    "ban": "%1$s banned %2$s (**%3$s**) from the server because: `%4$s`",
+    "unban": "%1$s unbanned %2$s (**%3$s**) from the server because: `%4$s`"
   }
 }

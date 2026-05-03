@@ -55,7 +55,7 @@ class SoftBan : Command(
         event.deferReply(ephemeral = isQuiet).queue()
         // check the banlist to see if the target user is already banned
         event.guild!!.retrieveBan(targetUser).onErrorMap { null }.await()?.let { userBan ->
-            val realReason = userBan.reason?.sanitize() ?: event.get("default_reason")
+            val realReason = userBan.reason?.sanitize() ?: event.getAny("core.phrases.no_reason")
             event.replyEmoji(Emojis.BAN, event.get("already_banned", targetUser.name, realReason)).queue()
             return
         }
@@ -99,7 +99,7 @@ class SoftBan : Command(
             return
         }
 
-        val reason = event.arguments.text("reason") ?: event.get("default_reason")
+        val reason = event.arguments.text("reason") ?: event.getAny("core.phrases.no_reason")
         val realReason = event.get("reason", event.user.name, reason)
 
         var banNotification: Message? = null
