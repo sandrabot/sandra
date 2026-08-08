@@ -63,11 +63,11 @@
     },
     "phrases": {
       "channel": "channel",
+      "default_reason": "no reason given",
       "direct_messages": "direct messages",
       "dm_spam": "spam in dms",
       "invites": "invites",
       "never": "never",
-      "no_reason": "no reason given",
       "raid": "raid",
       "server": "server",
       "some_time": "some amount of time",

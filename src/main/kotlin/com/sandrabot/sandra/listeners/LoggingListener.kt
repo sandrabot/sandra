@@ -274,14 +274,14 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
     private suspend fun onGuildBan(event: GuildBanEvent) =
         sendEventMessage(event.guild, EventType.BAN, ActionType.BAN) { entry, context ->
             val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
-            val reason = entry?.reason ?: context.getAny("core.phrases.no_reason")
+            val reason = entry?.reason ?: context.getAny("core.phrases.default_reason")
             context["ban", someone, event.user.asMention, event.user.id, reason]
         }
 
     private suspend fun onGuildUnban(event: GuildUnbanEvent) =
         sendEventMessage(event.guild, EventType.BAN, ActionType.UNBAN) { entry, context ->
             val someone = entry?.user?.asMention ?: context.getAny("core.phrases.someone")
-            val reason = entry?.reason ?: context.getAny("core.phrases.no_reason")
+            val reason = entry?.reason ?: context.getAny("core.phrases.default_reason")
             context["unban", someone, event.user.asMention, event.user.id, reason]
         }
 
@@ -296,7 +296,7 @@ class LoggingListener(val sandra: Sandra) : CoroutineEventListener {
         sendEventMessage(event.guild, EventType.MEMBER, ActionType.KICK, Emojis.LEAVE) { entry, context ->
             if (entry != null && entry.targetIdLong == event.user.idLong) {
                 val someone = entry.user?.asMention ?: context.getAny("core.phrases.someone")
-                val reason = entry.reason ?: context.getAny("core.phrases.no_reason")
+                val reason = entry.reason ?: context.getAny("core.phrases.default_reason")
                 context["kick", someone, event.user.asMention, event.user.id, reason]
             } else {
                 val formatted = event.member?.takeIf { it.hasTimeJoined() }?.let {
