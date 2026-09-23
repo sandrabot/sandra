@@ -22,18 +22,17 @@ import com.sandrabot.sandra.constants.Category
 import com.sandrabot.sandra.constants.FeatureFlag
 import com.sandrabot.sandra.events.CommandEvent
 
-fun isFeatureAllowed(sandra: Sandra, user: Long, feature: FeatureFlag) = !isFeatureRestricted(sandra, user, feature)
+fun isFeatureAllowed(sandra: Sandra, id: Long, feature: FeatureFlag) = !isFeatureRestricted(sandra, id, feature)
 fun isFeatureRestricted(sandra: Sandra, id: Long, feature: FeatureFlag): Boolean {
     return sandra.access.isFeatureDisabled(feature) || sandra.access.isAccessRevoked(id, feature)
 }
 
-fun isContextAllowed(
-    sandra: Sandra, authorId: Long, guildId: Long, feature: FeatureFlag,
-) = !isContextRestricted(sandra, authorId, guildId, feature)
+fun isContextAllowed(sandra: Sandra, userId: Long, guildId: Long?, feature: FeatureFlag) =
+    !isContextRestricted(sandra, userId, guildId, feature)
 
-fun isContextRestricted(sandra: Sandra, user: Long, guild: Long?, feature: FeatureFlag): Boolean {
-    val isUserRevoked = isFeatureRestricted(sandra, user, feature)
-    return if (guild != null) isUserRevoked || isFeatureRestricted(sandra, guild, feature) else isUserRevoked
+fun isContextRestricted(sandra: Sandra, userId: Long, guildId: Long?, feature: FeatureFlag): Boolean {
+    val isUserRevoked = isFeatureRestricted(sandra, userId, feature)
+    return if (guildId != null) isUserRevoked || isFeatureRestricted(sandra, guildId, feature) else isUserRevoked
 }
 
 fun CommandEvent.isAccessRestricted(): Boolean = when {

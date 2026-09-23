@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Avery Carroll and Logan Devecka
+ * Copyright 2017-2026 Avery Carroll and Logan Devecka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.sandrabot.sandra.config
 
+import com.sandrabot.sandra.constants.EventType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -24,6 +25,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ChannelConfig(override val id: Long) : Configuration() {
+
+    @SerialName("events")
+    val loggingEventsEnabled = mutableSetOf<EventType>()
 
     @SerialName("experience")
     var experienceEnabled: Boolean = true

@@ -50,7 +50,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("redis.clients:jedis:7.4.1")
+    implementation("redis.clients:jedis:7.5.0")
 
     runtimeOnly(kotlin("scripting-jsr223"))
 }
