@@ -94,7 +94,7 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
                 is MissingArgumentException -> event.getAny("core.missing_argument", t.argument.name)
                 else -> event.getAny("core.interaction_error")
             }
-            if (event.isAcknowledged) event.sendFailure(message).queue()
+            if (event.isAcknowledged) event.sendFailure(message).asEphemeral().queue()
             else event.replyFailure(message).asEphemeral().queue()
         }
     }
