@@ -22,6 +22,10 @@ import com.sandrabot.sandra.constants.Emojis
 import com.sandrabot.sandra.constants.Unicode
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
+import com.sandrabot.sandra.events.asEphemeral
+import com.sandrabot.sandra.utils.getCommandDescription
+import com.sandrabot.sandra.utils.getCommandFullName
+import com.sandrabot.sandra.utils.getCommandUsage
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.interactions.components.Thumbnail
 import dev.minn.jda.ktx.messages.MessageCreate
@@ -31,9 +35,14 @@ class Help : Command(arguments = "[command]") {
 
     override suspend fun execute(event: CommandEvent) {
 
+        // when no arguments are supplied, respond with help info
         if (event.options.isEmpty()) {
+
+            // reply with some general information about the bot
             event.reply(MessageCreate(useComponentsV2 = true) {
+                // determine which application invite link to use for quickly adding the bot
                 val invite = if (event.sandra.settings.development) Constants.BETA_INVITE else Constants.DIRECT_INVITE
+                // retrieve the usernames for the developer acknowledgement in the footer
                 val avery = event.sandra.shards.retrieveUserById(Constants.AVERY).await().name
                 val logan = event.sandra.shards.retrieveUserById(Constants.LOGAN).await().name
                 container {
@@ -46,30 +55,38 @@ class Help : Command(arguments = "[command]") {
                     separator()
                     text(event.get("creators", Unicode.PINK_HEART, avery, logan))
                 }
-            }).queue()
+            }).queue() // not ephemeral, can be used to inform other users
+
         } else {
+
+            // an argument was submitted, resolve the command
             val command = event.arguments.command()
-            // additionally respond with "not found" if the command can't or shouldn't be listed in /commands
+            // respond with "not found" if the command doesn't exist, or if it should be hidden
             if (command == null || command.category == Category.CUSTOM || (command.isOwnerOnly && !event.isOwner)) {
-                event.replyNotice(event.get("not_found")).queue()
+                event.replyNotice(event.get("not_found")).asEphemeral().queue()
                 return
             }
+
+            // create and send a message with all the relevant information for this command
             event.reply(MessageCreate(useComponentsV2 = true) {
                 container {
                     section {
+                        // show the command category emoji as the thumbnail image
                         accessory = Thumbnail(command.category.emoji.asCustom().imageUrl)
-                        val fullName = command.readablePaths.joinToString(" ", transform = event::getAny)
-                        val description = event.getAny("commands.${command.path}.description")
+                        val fullName = event.localeContext.getCommandFullName(command)
+                        val description = event.localeContext.getCommandDescription(command)
                         text("# /$fullName ${Unicode.BULLET} ${event.get("name")}\n> $description")
+                        // list all the command arguments, if applicable
                         if (command.arguments.isNotEmpty()) {
-                            val usage = command.arguments.joinToString(" ") { it.usage }
+                            val usage = event.localeContext.getCommandUsage(command)
                             text("### ${Emojis.PROMPT} ${event.get("usage")}\n`/$fullName $usage`")
                         }
+                        // list all the available subcommands, if applicable
                         if (command.subcommands.isNotEmpty()) {
                             val otherCommands = buildString {
                                 command.subcommands.forEach { command ->
-                                    val fullName = command.readablePaths.joinToString(" ", transform = event::getAny)
-                                    val description = event.getAny("commands.${command.path}.description")
+                                    val fullName = event.localeContext.getCommandFullName(command)
+                                    val description = event.localeContext.getCommandDescription(command)
                                     append("`/", fullName, "` - ", description, "\n")
                                 }
                             }
@@ -80,7 +97,8 @@ class Help : Command(arguments = "[command]") {
                     separator()
                     text(event.get("required_arguments"))
                 }
-            }).queue()
+            }).queue() // not ephemeral, can be used to inform other users
+
         }
 
     }

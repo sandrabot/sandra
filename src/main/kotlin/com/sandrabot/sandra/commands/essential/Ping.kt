@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +28,11 @@ class Ping : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
-        event.deferReply(ephemeral = true).await()
+        // acknowledge the interaction before performing a slow rest action
+        event.deferReply(ephemeral = true).queue()
+        // request the current user to determine the general api response time
         val rest = event.jda.restPing.await().format()
+        // a rough estimation of websocket latency from the last gateway heartbeat
         val gateway = event.jda.gatewayPing.format()
         event.sendInfo(event.get("reply", rest, gateway)).queue()
 
@@ -37,6 +40,7 @@ class Ping : Command() {
 
     private fun Long.format(): String {
         val formatted = this.milliseconds.format()
+        // prepend a warning emoji if the latency is above 250ms
         return if (this > 250) "${Emojis.NOTICE} $formatted" else formatted
     }
 

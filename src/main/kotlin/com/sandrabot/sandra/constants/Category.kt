@@ -29,7 +29,7 @@ enum class Category(emote: String) {
     LASTFM(Emojis.LASTFM),
     MODERATION(Emojis.MOD),
     MUSIC(Emojis.MUSIC),
-    OWNER(Emojis.CONFIG),
+    OWNER(Emojis.TERMINAL),
     SOCIAL(Emojis.USER),
     UTILITY(Emojis.PROMPT);
 

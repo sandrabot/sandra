@@ -20,7 +20,11 @@ import com.sandrabot.sandra.constants.Category
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
+import com.sandrabot.sandra.utils.getCategoryName
+import com.sandrabot.sandra.utils.getCommandDescription
+import com.sandrabot.sandra.utils.getCommandName
 import dev.minn.jda.ktx.events.await
+import dev.minn.jda.ktx.interactions.components.StringSelectMenu
 import dev.minn.jda.ktx.interactions.components.option
 import dev.minn.jda.ktx.messages.MessageCreate
 import kotlinx.coroutines.withTimeoutOrNull
@@ -33,47 +37,58 @@ class Commands : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
+        // create a list of all available top-level commands
         val topCommands = event.sandra.commands.values.filterNot { it.isSubcommand }
-        val grouped = topCommands.groupBy { it.category }.filterNot { (category, commands) ->
-            category == Category.CUSTOM || commands.isEmpty()
+        // group the commands by category, hide custom commands and owner commands
+        val groupedCommands = topCommands.groupBy { it.category }.filterNot { (category, _) ->
+            category == Category.CUSTOM || (category == Category.OWNER && !event.isOwner)
         }
 
-        val messageData = grouped.mapValues { (category, commands) ->
+        // use the command name "commands" to display titles as well
+        val commandsTitle = event.get("name")
+        // build the string selection menu for changing pages between categories
+        val selectMenu = StringSelectMenu("select:${event.id}", placeholder = event.get("placeholder")) {
+            // add all available categories as possible menu options
+            groupedCommands.keys.sortedBy { it.name }.forEach { category ->
+                val categoryName = event.localeContext.getCategoryName(category)
+                option("$categoryName $commandsTitle", category.name, emoji = category.emoji)
+            }
+        }
+
+        // create a map of localized message data for each available category
+        val messageData = groupedCommands.mapValues { (category, commands) ->
             MessageCreate(useComponentsV2 = true) {
-                val displayTitle = event.get("title")
                 container {
-                    val displayName = event.getAny("core.categories.${category.displayName}")
-                    text("# ${category.emoji.formatted} $displayName $displayTitle")
+                    val categoryName = event.localeContext.getCategoryName(category)
+                    text("# ${category.emoji.formatted} $categoryName $commandsTitle")
                     separator(isDivider = false)
                     text(commands.sortedBy { it.name }.joinToString("\n") { command ->
-                        val name = event.getAny("commands.${command.name}.name")
-                        val description = event.getAny("commands.${command.name}.description")
+                        // use the command's base name since we're not listing subcommands
+                        val name = event.localeContext.getCommandName(command)
+                        val description = event.localeContext.getCommandDescription(command)
                         "`/$name` - $description"
                     })
                     separator()
                     text(event.get("footnote"))
                 }
-                actionRow {
-                    stringSelectMenu("select:${event.id}", placeholder = event.get("placeholder")) {
-                        val entries = grouped.keys.toMutableSet()
-                        if (!event.isOwner) entries -= Category.OWNER
-                        entries.forEach { category ->
-                            val displayName = event.getAny("core.categories.${category.displayName}")
-                            option("$displayName $displayTitle", category.name, emoji = category.emoji)
-                        }
-                    }
-                }
+                actionRow(selectMenu)
             }
         }
 
+        // respond to the interaction with the "essential" command category as default
         event.reply(messageData[Category.ESSENTIAL]!!).asEphemeral().queue()
 
+        // wait for 5 minutes after each interaction for the user to make another selection
         while (true) withTimeoutOrNull(5.minutes) {
-            val selectEvent = event.jda.await<StringSelectInteractionEvent> { it.componentId == "select:${event.id}" }
-            val category = Category.valueOf(selectEvent.values.first())
-            selectEvent.editMessage(MessageEditData.fromCreateData(messageData[category]!!)).queue()
+            // blocking call to await the next interaction event that matches the select menu
+            val selectEvent = event.jda.await<StringSelectInteractionEvent> { it.componentId == selectMenu.customId }
+            // figure out the new category from the selected value
+            val newCategory = Category.valueOf(selectEvent.values.first())
+            // edit the original message with the message data for the new category
+            selectEvent.editMessage(MessageEditData.fromCreateData(messageData[newCategory]!!)).queue()
         } ?: break
 
+        // delete the original message after the 5-minute timeout
         event.hook.deleteOriginal().queue()
     }
 

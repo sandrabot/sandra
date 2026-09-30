@@ -41,8 +41,6 @@ private val EMOJI_REGEX = Regex("""<a?:\S{2,32}:(\d{17,19})>""")
 class Argument internal constructor(
     val name: String, val type: ArgumentType, val isRequired: Boolean, val choices: List<*>,
 ) {
-    val usage = if (isRequired) "<$name>" else "[$name]"
-
     override fun toString(): String {
         val required = if (isRequired) "@" else ""
         val size = if (choices.isNotEmpty()) "[${choices.size}]" else ""
