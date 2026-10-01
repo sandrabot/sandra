@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2026 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ class Toss : Command() {
 
     override suspend fun execute(event: CommandEvent) {
 
+        // randomly decide to display heads or tails for the coin toss
         val (emote, side) = if (Random.nextBoolean()) Emojis.CASH to "heads" else Emojis.TAILS to "tails"
         event.replyEmoji(emote, event.get("reply", event.get(side))).asEphemeral().queue()
 

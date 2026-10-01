@@ -28,6 +28,7 @@ import com.sandrabot.sandra.entities.ArgumentResult
 import com.sandrabot.sandra.entities.Command
 import com.sandrabot.sandra.entities.LocaleContext
 import com.sandrabot.sandra.entities.parseArguments
+import com.sandrabot.sandra.utils.getInteractionError
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.components.MessageTopLevelComponent
@@ -115,6 +116,9 @@ class CommandEvent(
     fun sendSuccess(content: String) = sendEmoji(Emojis.SUCCESS, content)
     fun sendNotice(content: String) = sendEmoji(Emojis.NOTICE, content)
     fun sendFailure(content: String) = sendEmoji(Emojis.FAILURE, content)
+
+    fun replyInteractionError() = replyFailure(localeContext.getInteractionError()).asEphemeral()
+    fun sendInteractionError() = sendFailure(localeContext.getInteractionError()).asEphemeral()
 
 }
 

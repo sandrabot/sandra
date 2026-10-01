@@ -1,11 +1,11 @@
 /*
- * Copyright 2017-2024 Avery Carroll and Logan Devecka
+ * Copyright 2026 Avery Carroll, Logan Devecka, and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,9 @@ class Roll : Command(arguments = "[sides:integer:4,6,8,10,12,20] [max:integer]")
 
     override suspend fun execute(event: CommandEvent) {
 
+        // set the maximum bound using sides first, then max, otherwise 20 by default
         val bound = event.arguments.integer("sides") ?: event.arguments.integer("max") ?: 20
+        // respond to the interaction with a random number within bounds
         val reply = event.get("reply", (1..bound).random().format(), bound.format())
         event.replyEmoji(Unicode.GAME_DIE, reply).asEphemeral().queue()
 

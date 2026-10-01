@@ -21,8 +21,10 @@ import com.sandrabot.sandra.events.CommandEvent
 import com.sandrabot.sandra.events.asEphemeral
 import com.sandrabot.sandra.exceptions.MissingArgumentException
 import com.sandrabot.sandra.exceptions.MissingPermissionException
+import com.sandrabot.sandra.utils.getInteractionError
+import com.sandrabot.sandra.utils.getMissingArgumentError
+import com.sandrabot.sandra.utils.getMissingPermissionError
 import com.sandrabot.sandra.utils.isAccessRestricted
-import com.sandrabot.sandra.utils.missingPermissionMessage
 import dev.minn.jda.ktx.events.CoroutineEventListener
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -74,11 +76,11 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
         if (slashEvent.isFromGuild) {
             // discord should take care of these permissions for us, but we'll double-check them anyway
             command.selfPermissions.find { !event.selfMember!!.hasPermission(slashEvent.guildChannel, it) }?.let {
-                event.replyFailure(event.missingPermissionMessage(it)).asEphemeral().queue()
+                event.replyFailure(event.localeContext.getMissingPermissionError(it, true)).asEphemeral().queue()
                 return
             }
             command.userPermissions.find { !event.member!!.hasPermission(slashEvent.guildChannel, it) }?.let {
-                event.replyFailure(event.missingPermissionMessage(it, self = false)).asEphemeral().queue()
+                event.replyFailure(event.localeContext.getMissingPermissionError(it, false)).asEphemeral().queue()
                 return
             }
         }
@@ -90,9 +92,9 @@ class InteractionListener(private val sandra: Sandra) : CoroutineEventListener {
             LOGGER.error("Unhandled exception occurred while executing a command", t)
             // ensure that the user receives an error message explaining the issue
             val message = when (t) {
-                is MissingPermissionException -> event.missingPermissionMessage(t.permission)
-                is MissingArgumentException -> event.getAny("core.missing_argument", t.argument.name)
-                else -> event.getAny("core.interaction_error")
+                is MissingPermissionException -> event.localeContext.getMissingPermissionError(t.permission, true)
+                is MissingArgumentException -> event.localeContext.getMissingArgumentError(command, t.argument)
+                else -> event.localeContext.getInteractionError()
             }
             if (event.isAcknowledged) event.sendFailure(message).asEphemeral().queue()
             else event.replyFailure(message).asEphemeral().queue()
