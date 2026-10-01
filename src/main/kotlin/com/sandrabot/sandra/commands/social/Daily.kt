@@ -55,23 +55,26 @@ class Daily : Command(arguments = "[user]") {
         // deposit the adjusted amount into the target user's account
         event.sandra.config[targetUser].cash += amount
 
+        val context = event.localeContext.withRoot("streak")
         // figure out which message to display and format it accordingly
         val streakInfo = when (event.userConfig.dailyStreak) {
             0 -> if (lastStreak > 0) {
-                event.get("streak.ended", lastStreak.format(), event.userConfig.dailyLongestStreak.format())
-            } else event.get("streak.hint")
+                context["ended", lastStreak.format(), event.userConfig.dailyLongestStreak.format()]
+            } else context["hint"]
 
-            1 -> event.get("streak.started")
+            1 -> context["started"]
 
             else -> {
                 val nextDailySeconds = (event.userConfig.dailyLast + 72_000_000) / 1_000
-                event.get("streak.continued", event.userConfig.dailyStreak.format(), "<t:$nextDailySeconds:t>")
+                context["continued", event.userConfig.dailyStreak.format(), "<t:$nextDailySeconds:t>"]
             }
         }
 
-        val context = if (event.user == targetUser) "self" else "other"
-        val header = event.get(context, Emojis.CASH, amount.format(), targetUser)
-        event.reply("$header\n$streakInfo").queue()
+        // determine which header to show the user depending on the context
+        val path = if (event.user == targetUser) "self" else "other"
+        val header = event.get(path, Emojis.CASH, amount.format(), targetUser)
+        // to prevent mentioning other users, disable all mentions in the response
+        event.reply("$header\n$streakInfo").setAllowedMentions(emptyList()).queue()
 
     }
 }

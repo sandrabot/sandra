@@ -73,6 +73,7 @@
     "avatar": {
       "name": "avatar",
       "description": "steal somebody else's avatar",
+      "title": "## avatar for %1$s",
       "button": "open in browser",
       "arguments": {
         "user": {
@@ -86,6 +87,7 @@
       "description": "check how much money you have",
       "self": "according to my records, you have $%2$s in your wallet",
       "other": "after a quick search, i found that %1$s has $%2$s in their wallet",
+      "no_bots": "sadly, bots aren't allowed to have money, so there's nothing to show here",
       "arguments": {
         "user": {
           "name": "user",

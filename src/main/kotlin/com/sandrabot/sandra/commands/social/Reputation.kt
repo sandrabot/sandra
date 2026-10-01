@@ -58,7 +58,8 @@ class Reputation : Command(arguments = "[@user]") {
 
         // reply with the target user's updated rep count
         val reply = event.get("reply", targetUser, targetConfig.reputation.format())
-        event.replyEmoji(Emojis.LEVEL_UP, reply).queue()
+        // to prevent mentioning other users, disable all mentions in the response
+        event.replyEmoji(Emojis.LEVEL_UP, reply).setAllowedMentions(emptyList()).queue()
 
     }
 
